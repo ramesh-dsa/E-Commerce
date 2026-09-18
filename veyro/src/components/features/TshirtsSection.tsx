@@ -20,7 +20,7 @@ export function TshirtsSection() {
   ).slice(0, 8);
 
   return (
-    <section className="w-full py-14 sm:py-20 bg-[#faf9f7] border-t border-[#eeebe5]">
+    <section className="w-full py-16 sm:py-24 bg-white border-t border-[#f0f0ed]">
       <Container>
         <SectionHeading
           eyebrow="CLOTHING ARCHIVE • 240+ GSM"
@@ -30,32 +30,49 @@ export function TshirtsSection() {
           actionHref="#"
         />
 
-        {/* Fit Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
-          {fits.map((fit) => {
+        {/* Editorial Fit Filters */}
+        <div className="flex flex-wrap items-center gap-y-3 mb-12">
+          {fits.map((fit, index) => {
             const isActive = selectedFit === fit;
             return (
-              <button
-                key={fit}
-                type="button"
-                onClick={() => setSelectedFit(fit)}
-                className={`px-3.5 py-1.5 text-xs font-medium tracking-wide uppercase transition-all duration-150 rounded-[2px] cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? "bg-veyro-accent text-veyro-black font-semibold shadow-xs"
-                    : "bg-white border border-[#e5e1d8] text-[#555555] hover:border-veyro-black"
-                }`}
-              >
-                {fit === "ALL" ? "All Silhouettes" : `${fit} Fit`}
-              </button>
+              <React.Fragment key={fit}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedFit(fit)}
+                  className={`text-[13px] sm:text-[14px] font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? "text-veyro-black border-b-2 border-veyro-black pb-1"
+                      : "text-veyro-muted hover:text-veyro-black pb-1 border-b-2 border-transparent"
+                  }`}
+                >
+                  {fit === "ALL" ? "All Silhouettes" : `${fit} Fit`}
+                </button>
+                {index < fits.length - 1 && (
+                  <span className="text-veyro-muted/30 mx-3 sm:mx-5 font-light text-lg pb-1 pointer-events-none">/</span>
+                )}
+              </React.Fragment>
             );
           })}
         </div>
 
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {displayedTees.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        {/* Asymmetric Product Gallery */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr">
+          {displayedTees.map((product, index) => {
+            // First item gets massive focal treatment
+            const isFirst = index === 0;
+            return (
+              <div 
+                key={product.id} 
+                className={isFirst ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}
+              >
+                <ProductCard 
+                  product={product} 
+                  isFeatured={isFirst} 
+                  className="h-full"
+                />
+              </div>
+            );
+          })}
         </div>
       </Container>
     </section>
