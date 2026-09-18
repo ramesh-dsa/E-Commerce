@@ -20,7 +20,7 @@ export interface HeroPanelData {
 
 export function HeroPanel({ panel }: { panel: HeroPanelData }) {
   return (
-    <div className="group relative h-[560px] sm:h-[590px] lg:h-[615px] xl:h-[635px] w-full overflow-hidden bg-[#111111] select-none">
+    <div className="group relative h-[600px] sm:h-[650px] lg:h-[720px] xl:h-[780px] w-full overflow-hidden bg-[#111111] select-none">
       {/* Background Campaign Image - Object cover spanning full panel */}
       <Image
         src={panel.image}

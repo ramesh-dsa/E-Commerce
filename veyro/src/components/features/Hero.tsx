@@ -6,25 +6,6 @@ import { HeroPanel, HeroPanelData } from "./HeroPanel";
 export function Hero() {
   const panels: HeroPanelData[] = [
     {
-      id: "clothing",
-      image: "/hero/panel-clothing.jpg",
-      alt: "Men's relaxed joggers and track pants collection",
-      href: "#",
-      titleLines: ["JOGGERS AND", "TRACK PANTS"],
-      ctaText: "BUY 2 AT",
-      ctaPrice: "₹1699",
-      layoutStyle: "panel-clothing",
-    },
-    {
-      id: "outerwear",
-      image: "/hero/panel-outerwear.jpg",
-      alt: "Men's modern streetwear windcheaters",
-      href: "#",
-      title: "WINDCHEATERS",
-      subtitle: "Your Go-To For Windy Days",
-      layoutStyle: "panel-outerwear",
-    },
-    {
       id: "footwear",
       image: "/hero/panel-footwear.jpg",
       alt: "Clean slate men's retro low-top sneakers",
@@ -127,7 +108,7 @@ export function Hero() {
           Uses a CSS variable for the gap so the inline transform calc() is responsive.
         */}
         <div 
-          className={`relative w-full h-[560px] sm:h-[590px] lg:h-[615px] xl:h-[635px] overflow-hidden bg-white ${isTransitioning ? 'pointer-events-none' : ''}`}
+          className={`relative w-full h-[600px] sm:h-[650px] lg:h-[720px] xl:h-[780px] overflow-hidden bg-white ${isTransitioning ? 'pointer-events-none' : ''}`}
           style={{ '--panel-gap': '11px' } as React.CSSProperties}
         >
           {panels.map((panel, index) => {

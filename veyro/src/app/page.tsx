@@ -1,7 +1,7 @@
 import { Navbar, Footer } from "@/components/layout";
 import {
   Hero,
-  PromoBanner,
+  PromoFlipBanner,
   NewArrivalsSection,
   BrandPillarsSection,
   TshirtsSection,
@@ -20,8 +20,8 @@ export default function Home() {
         {/* Multi-Panel Fashion Campaign Hero */}
         <Hero />
 
-        {/* Split Promotional Offer Strip */}
-        <PromoBanner />
+        {/* 3D Flipping Promotional Offers */}
+        <PromoFlipBanner />
 
         {/* 1. Latest Drops / New Arrivals Grid with Category Tabs */}
         <NewArrivalsSection />
