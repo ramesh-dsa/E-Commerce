@@ -11,6 +11,7 @@ import {
   CloseIcon,
 } from "@/components/ui/Icons";
 import { Logo } from "@/components/ui/Logo";
+import { AnnouncementBar } from "./AnnouncementBar";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -26,6 +27,8 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white transition-all border-b border-[#f0f0ed]/70">
+      <AnnouncementBar />
+
       {/* 100% Full-width Navbar with 48-56px desktop horizontal padding */}
       <div className="flex h-[74px] sm:h-[78px] lg:h-[82px] w-full items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-14">
         {/* Left: Brand Wordmark & Main Nav Links */}
@@ -62,12 +65,12 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setActiveNav(link.label)}
                   aria-current={isActive ? "page" : undefined}
-                  className="relative group inline-flex flex-col items-center pt-1 pb-[8px] text-[13.5px] xl:text-[14px] font-semibold tracking-[0.05em] uppercase text-[#111111] whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#ffd400] focus-visible:ring-offset-4 rounded-xs"
+                  className="relative group inline-flex flex-col items-center pt-1 pb-[8px] text-[13.5px] xl:text-[14px] font-semibold tracking-[0.05em] uppercase text-[#111111] whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#fcd017] focus-visible:ring-offset-4 rounded-xs"
                 >
                   <span>{link.label}</span>
                   <span
                     aria-hidden="true"
-                    className={`absolute bottom-0 left-0 w-full h-[2.5px] bg-[#ffd400] origin-left transition-transform duration-500 ease-out motion-reduce:transition-none pointer-events-none ${
+                    className={`absolute bottom-0 left-0 w-full h-[2.5px] bg-[#fcd017] origin-left transition-transform duration-500 ease-out motion-reduce:transition-none pointer-events-none ${
                       isActive
                         ? "scale-x-100"
                         : "scale-x-0 group-hover:scale-x-100 group-focus-visible:scale-x-100"
@@ -210,7 +213,7 @@ export function Navbar() {
                         {isActive && (
                           <span
                             aria-hidden="true"
-                            className="absolute -bottom-1 left-0 w-full h-[3px] bg-[#ffd400]"
+                            className="absolute -bottom-1 left-0 w-full h-[3px] bg-[#fcd017]"
                           />
                         )}
                       </span>

@@ -48,8 +48,8 @@ const tshirts: Product[] = [
     colorHex: "#111111",
     material: "100% Combed Cotton, 240gsm",
     price: 1199,
-    imageUrl: "/products/tshirts/VEY-TSH-OVR-001__front__black.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-OVR-001__back__black.webp",
+    imageUrl: "/products/tshirts/veyro-tee-01-primary.webp",
+    secondaryImageUrl: "/products/tshirts/veyro-tee-01-hover.webp",
     galleryImages: [
       "/products/tshirts/VEY-TSH-OVR-001__lifestyle__black.webp",
     ],
@@ -93,9 +93,9 @@ const tshirts: Product[] = [
     colorHex: "#F5F0EB",
     material: "100% Combed Cotton, 240gsm",
     price: 1199,
-    imageUrl: "/products/tshirts/VEY-TSH-OVR-002__front__off-white.webp",
+    imageUrl: "/products/tshirts/veyro-tee-02-primary.webp",
     secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-OVR-002__back__off-white.webp",
+      "/products/tshirts/veyro-tee-02-hover.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -137,8 +137,7 @@ const tshirts: Product[] = [
     price: 1099,
     originalPrice: 1299,
     discount: "15% OFF",
-    imageUrl: "/products/tshirts/VEY-TSH-OVR-003__front__olive.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-OVR-003__back__olive.webp",
+    imageUrl: "/products/tshirts/veyro-tee-03-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -179,9 +178,9 @@ const tshirts: Product[] = [
     material: "Cotton Blend (80/20), 220gsm",
     price: 1399,
     badge: "NEW",
-    imageUrl: "/products/tshirts/VEY-TSH-OVR-004__front__charcoal.webp",
+    imageUrl: "/products/tshirts/veyro-tee-04-primary.webp",
     secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-OVR-004__back__charcoal.webp",
+      "/products/tshirts/veyro-tee-04-hover.webp",
     sizes: TEE_SIZES,
     isNewArrival: true,
     inStock: true,
@@ -228,8 +227,7 @@ const tshirts: Product[] = [
     colorHex: "#FFFFFF",
     material: "100% Cotton Jersey, 180gsm",
     price: 799,
-    imageUrl: "/products/tshirts/VEY-TSH-REG-001__front__white.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-REG-001__back__white.webp",
+    imageUrl: "/products/tshirts/veyro-tee-05-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -269,9 +267,7 @@ const tshirts: Product[] = [
     colorHex: "#5B7B95",
     material: "100% Cotton Jersey, 180gsm",
     price: 999,
-    imageUrl: "/products/tshirts/VEY-TSH-REG-002__front__muted-blue.webp",
-    secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-REG-002__back__muted-blue.webp",
+    imageUrl: "/products/tshirts/veyro-tee-06-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -312,9 +308,7 @@ const tshirts: Product[] = [
     material: "100% Cotton, 200gsm",
     price: 1099,
     badge: "NEW",
-    imageUrl: "/products/tshirts/VEY-TSH-REG-003__front__forest-green.webp",
-    secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-REG-003__back__forest-green.webp",
+    imageUrl: "/products/tshirts/veyro-tee-07-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: true,
     inStock: true,
@@ -359,8 +353,7 @@ const tshirts: Product[] = [
     originalPrice: 1099,
     discount: "18% OFF",
     badge: "SALE",
-    imageUrl: "/products/tshirts/VEY-TSH-RLX-001__front__stone.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-RLX-001__back__stone.webp",
+    imageUrl: "/products/tshirts/veyro-tee-08-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -400,8 +393,7 @@ const tshirts: Product[] = [
     colorHex: "#1E2A3A",
     material: "100% Cotton, 200gsm",
     price: 999,
-    imageUrl: "/products/tshirts/VEY-TSH-RLX-002__front__navy.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-RLX-002__back__navy.webp",
+    imageUrl: "/products/tshirts/veyro-tee-09-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -444,8 +436,7 @@ const tshirts: Product[] = [
     material: "Cotton Blend (80/20), 200gsm",
     price: 1299,
     badge: "NEW",
-    imageUrl: "/products/tshirts/VEY-TSH-GFX-001__front__black.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-GFX-001__back__black.webp",
+    imageUrl: "/products/tshirts/veyro-tee-10-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: true,
     inStock: true,
@@ -492,9 +483,7 @@ const tshirts: Product[] = [
     material: "Cotton Blend (80/20), 220gsm",
     price: 1499,
     badge: "NEW",
-    imageUrl: "/products/tshirts/VEY-TSH-GFX-002__front__off-white.webp",
-    secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-GFX-002__back__off-white.webp",
+    imageUrl: "/products/tshirts/veyro-tee-11-primary.webp",
     galleryImages: [
       "/products/tshirts/VEY-TSH-GFX-002__lifestyle__off-white.webp",
     ],
@@ -536,53 +525,7 @@ const tshirts: Product[] = [
     ],
   },
 
-  {
-    id: "vey-tsh-gfx-003",
-    sku: "VEY-TSH-GFX-003",
-    slug: "sigil-graphic-tee-forest-green",
-    name: "Sigil Graphic Tee",
-    category: "Clothing",
-    subcategory: "T-Shirts",
-    subcategoryTag: "Graphic",
-    fit: "Regular",
-    colorName: "Forest Green",
-    colorHex: "#2D5A3D",
-    material: "100% Cotton, 200gsm",
-    price: 1199,
-    imageUrl: "/products/tshirts/VEY-TSH-GFX-003__front__forest-green.webp",
-    secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-GFX-003__back__forest-green.webp",
-    sizes: TEE_SIZES,
-    isNewArrival: false,
-    inStock: true,
-    shortDescription:
-      "A small, precise graphic on the left chest. Forest green with a minimal emblem — the quiet flex.",
-    longDescription:
-      "The Sigil Graphic Tee takes the minimal approach to graphic design. A small, emblematic graphic sits on the left chest — visible but not announcing itself. The forest green base provides a rich, earthy backdrop while the regular fit and 200gsm cotton keep it wearable for every day. For those who appreciate design details that don't demand attention.",
-    features: [
-      "Minimal chest emblem — small, precise, considered placement",
-      "200gsm cotton — structured enough for a clean drape",
-      "Regular fit — classic proportions, versatile styling",
-      "Forest green base — rich, natural, complementary colour",
-      "Heat-transfer print — smooth, durable, no cracking",
-    ],
-    care: [
-      "Machine wash cold inside-out to protect print",
-      "Tumble dry low",
-      "Do not iron directly on print",
-      "Do not bleach",
-    ],
-    sizeGuide: "Regular fit — true to size",
-    collections: [],
-    tags: ["graphic", "minimal", "forest-green", "emblem", "regular-fit"],
-    relatedProducts: [
-      "vey-tsh-gfx-001",
-      "vey-tsh-reg-003",
-      "vey-tsh-ovr-003",
-      "vey-ftw-ret-003",
-    ],
-  },
-
+  
   // ── TEXTURED & PREMIUM ────────────────────────────────────────────────
 
   {
@@ -599,8 +542,7 @@ const tshirts: Product[] = [
     material: "100% Cotton Waffle Knit, 210gsm",
     price: 1599,
     badge: "NEW",
-    imageUrl: "/products/tshirts/VEY-TSH-TXR-001__front__beige.webp",
-    secondaryImageUrl: "/products/tshirts/VEY-TSH-TXR-001__back__beige.webp",
+    imageUrl: "/products/tshirts/veyro-tee-12-primary.webp",
     galleryImages: [
       "/products/tshirts/VEY-TSH-TXR-001__detail__beige.webp",
     ],
@@ -650,9 +592,7 @@ const tshirts: Product[] = [
     price: 1299,
     originalPrice: 1499,
     discount: "13% OFF",
-    imageUrl: "/products/tshirts/VEY-TSH-TXR-002__front__coffee-brown.webp",
-    secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-TXR-002__back__coffee-brown.webp",
+    imageUrl: "/products/tshirts/veyro-tee-13-primary.webp",
     sizes: TEE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -698,9 +638,7 @@ const tshirts: Product[] = [
     material: "100% Slub Cotton, 280gsm",
     price: 1799,
     badge: "LIMITED",
-    imageUrl: "/products/tshirts/VEY-TSH-TXR-003__front__charcoal.webp",
-    secondaryImageUrl:
-      "/products/tshirts/VEY-TSH-TXR-003__back__charcoal.webp",
+    imageUrl: "/products/tshirts/veyro-tee-14-primary.webp",
     galleryImages: [
       "/products/tshirts/VEY-TSH-TXR-003__lifestyle__charcoal.webp",
     ],
@@ -764,9 +702,7 @@ const footwear: Product[] = [
     material: "Premium Synthetic Leather Upper, Vulcanized Rubber Outsole",
     price: 2699,
     badge: "BESTSELLER",
-    imageUrl: "/products/footwear/VEY-FTW-MIN-001__side__white.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-MIN-001__angle__white.webp",
+    imageUrl: "/products/shoes/veyro-shoe-01-primary.webp",
     galleryImages: [
       "/products/footwear/VEY-FTW-MIN-001__lifestyle__white.webp",
     ],
@@ -808,9 +744,7 @@ const footwear: Product[] = [
     colorHex: "#111111",
     material: "Premium Synthetic Leather Upper, Rubber Cupsole",
     price: 2799,
-    imageUrl: "/products/footwear/VEY-FTW-MIN-002__side__black.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-MIN-002__angle__black.webp",
+    imageUrl: "/products/shoes/veyro-shoe-02-primary.webp",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -850,9 +784,7 @@ const footwear: Product[] = [
     material: "Leather + Suede Upper, Rubber Cupsole",
     price: 2499,
     badge: "NEW",
-    imageUrl: "/products/footwear/VEY-FTW-MIN-003__side__light-grey.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-MIN-003__angle__light-grey.webp",
+    imageUrl: "/products/shoes/veyro-shoe-03-primary.webp",
     sizes: SHOE_SIZES,
     isNewArrival: true,
     inStock: true,
@@ -900,9 +832,8 @@ const footwear: Product[] = [
     price: 3199,
     badge: "NEW",
     imageUrl:
-      "/products/footwear/VEY-FTW-RET-001__side__off-white-green.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-RET-001__angle__off-white-green.webp",
+      "/products/shoes/veyro-shoe-04-primary.webp",
+    secondaryImageUrl: "/products/shoes/veyro-shoe-04-hover.webp",
     galleryImages: [
       "/products/footwear/VEY-FTW-RET-001__lifestyle__off-white-green.webp",
     ],
@@ -959,9 +890,7 @@ const footwear: Product[] = [
     price: 2799,
     originalPrice: 3299,
     discount: "15% OFF",
-    imageUrl: "/products/footwear/VEY-FTW-RET-002__side__navy-gum.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-RET-002__angle__navy-gum.webp",
+    imageUrl: "/products/shoes/veyro-shoe-05-primary.webp",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -1006,9 +935,8 @@ const footwear: Product[] = [
     material: "Suede Upper, Vulcanized Rubber Outsole",
     price: 3299,
     imageUrl:
-      "/products/footwear/VEY-FTW-RET-003__side__grey-burgundy.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-RET-003__angle__grey-burgundy.webp",
+      "/products/shoes/veyro-shoe-06-primary.webp",
+    secondaryImageUrl: "/products/shoes/veyro-shoe-06-hover.webp",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -1056,9 +984,8 @@ const footwear: Product[] = [
     price: 3699,
     badge: "TRENDING",
     imageUrl:
-      "/products/footwear/VEY-FTW-CHK-001__side__black-white.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-CHK-001__angle__black-white.webp",
+      "/products/shoes/veyro-shoe-07-primary.webp",
+    secondaryImageUrl: "/products/shoes/veyro-shoe-07-hover.webp",
     galleryImages: [
       "/products/footwear/VEY-FTW-CHK-001__lifestyle__black-white.webp",
     ],
@@ -1109,9 +1036,7 @@ const footwear: Product[] = [
     colorHex: "#C4B9A8",
     material: "Suede + Mesh Upper, Chunky EVA Outsole",
     price: 3499,
-    imageUrl: "/products/footwear/VEY-FTW-CHK-002__side__sand.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-CHK-002__angle__sand.webp",
+    imageUrl: "/products/shoes/veyro-shoe-08-primary.webp",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -1159,9 +1084,7 @@ const footwear: Product[] = [
     discount: "12% OFF",
     badge: "LIMITED",
     imageUrl:
-      "/products/footwear/VEY-FTW-CHK-003__side__dark-olive.webp",
-    secondaryImageUrl:
-      "/products/footwear/VEY-FTW-CHK-003__angle__dark-olive.webp",
+      "/products/shoes/veyro-shoe-09-primary.webp",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -1193,6 +1116,45 @@ const footwear: Product[] = [
       "vey-ftw-chk-002",
       "vey-ftw-ret-003",
       "vey-tsh-ovr-003",
+    ],
+  },
+  {
+    id: "vey-ftw-std-001",
+    sku: "VEY-FTW-STD-001",
+    slug: "studio-everyday-low-top-clay",
+    name: "Studio Everyday Low-Top",
+    category: "Footwear",
+    subcategory: "Shoes",
+    subcategoryTag: "Minimal",
+    colorName: "Clay Warm Grey",
+    colorHex: "#B5AEA4",
+    material: "Nubuck & Synthetic Leather Upper, Cushioned EVA Midsole",
+    price: 2899,
+    originalPrice: 3299,
+    discount: "12% OFF",
+    imageUrl: "/products/shoes/veyro-shoe-10-primary.webp",
+    sizes: SHOE_SIZES,
+    isNewArrival: true,
+    inStock: true,
+    shortDescription:
+      "A versatile low-top in soft warm clay grey. Engineered for daily rotation with subtle nubuck paneling.",
+    longDescription:
+      "The Studio Everyday Low-Top is designed to seamlessly slot into any neutral wardrobe. Combining soft clay tones with structured synthetic leather and subtle nubuck paneling, it delivers understated luxury for everyday wear.",
+    features: [
+      "Warm clay grey tone — neutral, effortlessly versatile",
+      "Nubuck & leather upper — premium tactile finish",
+      "Ergonomic footbed — all-day walking comfort",
+      "Padded collar and tongue — blister-free wear",
+    ],
+    care: SHOE_CARE,
+    sizeGuide: "True to size — order your regular UK size",
+    collections: ["Essentials"],
+    tags: ["minimal", "low-top", "clay", "grey", "everyday", "sneakers"],
+    relatedProducts: [
+      "vey-ftw-min-001",
+      "vey-ftw-min-003",
+      "vey-ftw-ret-001",
+      "vey-tsh-rlx-001",
     ],
   },
 ];

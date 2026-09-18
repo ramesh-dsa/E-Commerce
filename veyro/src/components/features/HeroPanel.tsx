@@ -35,25 +35,6 @@ export function HeroPanel({ panel }: { panel: HeroPanelData }) {
       {/* Subtle bottom gradient overlay for high contrast text readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
 
-      {/* Panel 3 (Footwear): Top Centered Editorial Badge & Script Title */}
-      {panel.layoutStyle === "panel-footwear" && (
-        <div className="absolute top-8 sm:top-9 left-0 right-0 flex flex-col items-center text-center z-10 px-6 pointer-events-none">
-          {panel.tag && (
-            <span className="bg-black/65 backdrop-blur-xs text-[#fcd017] text-[11px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-[2px] mb-2 shadow-sm">
-              {panel.tag}
-            </span>
-          )}
-          {panel.scriptTitle && (
-            <span className="font-script text-[40px] sm:text-[46px] lg:text-[48px] text-white tracking-normal font-normal drop-shadow-md leading-none mt-1">
-              {panel.scriptTitle}
-            </span>
-          )}
-          <span className="text-white text-[13px] sm:text-[14px] font-black tracking-[0.34em] uppercase mt-1.5 drop-shadow-sm">
-            {panel.title}
-          </span>
-        </div>
-      )}
-
       {/* Bottom Content Area - 32-42px bottom, 28-44px left/right */}
       <div className="absolute bottom-7 sm:bottom-8 lg:bottom-9 left-6 sm:left-8 lg:left-9 xl:left-11 right-6 sm:right-8 lg:right-9 xl:right-11 z-10">
         {/* Panel 1 (Clothing): Left Bold Heading + Right Yellow CTA Card */}
@@ -113,12 +94,29 @@ export function HeroPanel({ panel }: { panel: HeroPanelData }) {
           </div>
         )}
 
-        {/* Panel 3 (Footwear): Centered Bottom Copy */}
-        {panel.layoutStyle === "panel-footwear" && panel.subtitle && (
-          <div className="text-center">
-            <p className="text-[13.5px] sm:text-[15px] text-neutral-200 font-medium tracking-wide drop-shadow-sm">
-              {panel.subtitle}
-            </p>
+        {/* Panel 3 (Footwear/Editorial): Centered Bottom Copy with Badge & Script */}
+        {panel.layoutStyle === "panel-footwear" && (
+          <div className="flex flex-col items-center text-center w-full">
+            {panel.tag && (
+              <span className="bg-black/65 backdrop-blur-xs text-[#fcd017] text-[11px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-[2px] mb-2 shadow-sm">
+                {panel.tag}
+              </span>
+            )}
+            {panel.scriptTitle && (
+              <span className="font-script text-[40px] sm:text-[46px] lg:text-[48px] text-white tracking-normal font-normal drop-shadow-md leading-none mt-1">
+                {panel.scriptTitle}
+              </span>
+            )}
+            {panel.title && (
+              <span className="text-white text-[13px] sm:text-[14px] font-black tracking-[0.34em] uppercase mt-1.5 drop-shadow-sm">
+                {panel.title}
+              </span>
+            )}
+            {panel.subtitle && (
+              <p className="text-[13.5px] sm:text-[15px] text-neutral-200 font-medium tracking-wide drop-shadow-sm mt-2">
+                {panel.subtitle}
+              </p>
+            )}
           </div>
         )}
       </div>

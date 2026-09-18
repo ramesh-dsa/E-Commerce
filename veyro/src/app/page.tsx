@@ -1,4 +1,4 @@
-import { AnnouncementBar, Navbar, Footer } from "@/components/layout";
+import { Navbar, Footer } from "@/components/layout";
 import {
   Hero,
   PromoBanner,
@@ -12,9 +12,6 @@ import {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-veyro-black overflow-x-hidden">
-      {/* Top Promotional Announcement Bar with Marquee */}
-      <AnnouncementBar />
-
       {/* Main Header / Navigation */}
       <Navbar />
 
