@@ -107,8 +107,8 @@ export function ProductCard({
           />
         </button>
 
-        {/* Quick Sizes Strip on Desktop Hover */}
-        {product.sizes && product.sizes.length > 0 && (
+        {/* Quick Sizes Strip on Desktop Hover (Only for Featured) */}
+        {isFeatured && product.sizes && product.sizes.length > 0 && (
           <div className="absolute inset-x-0 bottom-0 z-10 hidden sm:flex translate-y-full flex-col bg-white/95 px-3 py-2 backdrop-blur-xs transition-transform duration-300 ease-out group-hover:translate-y-0 border-t border-[#f0f0ed]">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-veyro-muted">

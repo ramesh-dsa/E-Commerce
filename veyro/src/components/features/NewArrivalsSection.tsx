@@ -23,7 +23,7 @@ export function NewArrivalsSection() {
     if (activeTab === "TEXTURED")
       return p.subcategoryTag === "Textured" || p.subcategoryTag === "Graphic";
     return true;
-  }).slice(0, 8);
+  }).slice(0, 5);
 
   return (
     <section className="w-full py-14 sm:py-20 bg-white">

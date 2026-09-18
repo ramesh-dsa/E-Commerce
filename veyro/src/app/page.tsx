@@ -11,7 +11,7 @@ import {
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-white text-veyro-black overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-white text-veyro-black overflow-clip">
       {/* Main Header / Navigation */}
       <Navbar />
 
