@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 export function ProductCard({
   product,
   isWishlisted = false,
+  isFeatured = false,
   onWishlistToggle,
   className = "",
 }: ProductCardProps) {
@@ -43,7 +44,7 @@ export function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#f4f2ee] rounded-[2px] transition-shadow duration-300 group-hover:shadow-md">
+      <div className={`relative w-full overflow-hidden bg-[#f4f2ee] rounded-[2px] transition-shadow duration-300 group-hover:shadow-md ${isFeatured ? 'h-full aspect-auto' : 'aspect-[3/4]'}`}>
         <Link
           href={`#`}
           className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
@@ -53,7 +54,7 @@ export function ProductCard({
             src={product.imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
             unoptimized
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
@@ -68,7 +69,7 @@ export function ProductCard({
               src={product.secondaryImageUrl}
               alt={`${product.name} alternate view`}
               fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
               unoptimized
               className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
             />
@@ -143,13 +144,13 @@ export function ProductCard({
           )}
         </div>
 
-        <h3 className="mt-0.5 text-xs sm:text-sm font-medium text-veyro-black leading-snug line-clamp-1 group-hover:text-veyro-muted transition-colors">
+        <h3 className={`mt-0.5 font-medium text-veyro-black leading-snug line-clamp-1 group-hover:text-veyro-muted transition-colors ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
           <Link href={`#`}>{product.name}</Link>
         </h3>
 
         {/* Pricing Hierarchy */}
         <div className="mt-1 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-          <span className="text-xs sm:text-sm font-semibold text-veyro-black">
+          <span className={`font-semibold text-veyro-black ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
             {formatPrice(product.price)}
           </span>
 

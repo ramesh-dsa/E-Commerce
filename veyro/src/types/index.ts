@@ -67,6 +67,7 @@ export interface Product {
 export interface ProductCardProps {
   product: Product;
   isWishlisted?: boolean;
+  isFeatured?: boolean;
   onWishlistToggle?: (productId: string) => void;
   className?: string;
 }

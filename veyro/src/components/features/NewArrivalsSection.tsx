@@ -38,7 +38,7 @@ export function NewArrivalsSection() {
         />
 
         {/* Filter Category Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
+        <div className="flex items-center gap-6 overflow-x-auto pb-2 mb-10 border-b border-[#eae6df] scrollbar-none">
           {tabs.map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -46,23 +46,33 @@ export function NewArrivalsSection() {
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-xs font-semibold tracking-wider uppercase transition-all duration-150 rounded-[2px] cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? "bg-veyro-black text-white shadow-xs"
-                    : "bg-[#f4f2ee] text-[#555555] hover:bg-[#eae6df] hover:text-veyro-black"
+                className={`relative pb-3 text-xs font-bold tracking-widest uppercase transition-colors duration-300 cursor-pointer whitespace-nowrap ${
+                  isActive ? "text-veyro-black" : "text-veyro-muted hover:text-veyro-black"
                 }`}
               >
                 {tab === "ALL" ? "All New Drops" : tab}
+                {/* Animated Underline */}
+                {isActive && (
+                  <span className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-veyro-black" />
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Responsive Product Grid: 2 cols on mobile, 3 on tablet, 4 on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        {/* Editorial Asymmetrical Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          {filteredProducts.map((product, index) => {
+            const isFeatured = index === 0;
+            return (
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+                isFeatured={isFeatured}
+                className={isFeatured ? "col-span-2 row-span-2" : ""}
+              />
+            );
+          })}
         </div>
       </Container>
     </section>
