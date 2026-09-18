@@ -26,10 +26,10 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white transition-all border-b border-[#f0f0ed]/70">
+    <>
       <AnnouncementBar />
-
-      {/* 100% Full-width Navbar with 48-56px desktop horizontal padding */}
+      <header className="sticky top-0 z-30 w-full bg-white transition-all border-b border-[#f0f0ed]/70">
+        {/* 100% Full-width Navbar with 48-56px desktop horizontal padding */}
       <div className="flex h-[74px] sm:h-[78px] lg:h-[82px] w-full items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-14">
         {/* Left: Brand Wordmark & Main Nav Links */}
         <div className="flex items-center">
@@ -241,6 +241,7 @@ export function Navbar() {
           </div>
         </div>
       )}
-    </header>
+      </header>
+    </>
   );
 }
