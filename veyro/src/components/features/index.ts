@@ -5,7 +5,6 @@ export * from "./TshirtPromoBanner";
 export * from "./NewArrivalsSection";
 export * from "./BrandPillarsSection";
 export * from "./TshirtsSection";
-export * from "./EditorialBanner";
 export * from "./FootwearSection";
 export * from "./SneakerPromoBanner";
 export * from "./PromoFlipBanner";

@@ -5,7 +5,6 @@ import {
   NewArrivalsSection,
   BrandPillarsSection,
   TshirtsSection,
-  EditorialBanner,
   FootwearSection,
 } from "@/components/features";
 
@@ -32,10 +31,7 @@ export default function Home() {
         {/* 3. T-Shirts Archive Showcase with Fit Filters */}
         <TshirtsSection />
 
-        {/* 4. Split Editorial Lookbook Banner */}
-        <EditorialBanner />
-
-        {/* 5. Footwear / Sneakers Lineup with Style Filters */}
+        {/* 4. Footwear / Sneakers Lineup with Style Filters */}
         <FootwearSection />
       </main>
 

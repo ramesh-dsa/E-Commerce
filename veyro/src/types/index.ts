@@ -68,6 +68,8 @@ export interface ProductCardProps {
   product: Product;
   isWishlisted?: boolean;
   isFeatured?: boolean;
+  theme?: "light" | "dark";
+  aspectRatio?: string;
   onWishlistToggle?: (productId: string) => void;
   className?: string;
 }

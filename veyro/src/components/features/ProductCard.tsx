@@ -12,6 +12,8 @@ export function ProductCard({
   product,
   isWishlisted = false,
   isFeatured = false,
+  theme = "light",
+  aspectRatio = "aspect-[3/4]",
   onWishlistToggle,
   className = "",
 }: ProductCardProps) {
@@ -44,7 +46,7 @@ export function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container */}
-      <div className={`relative w-full overflow-hidden bg-[#f4f2ee] rounded-[2px] transition-shadow duration-300 group-hover:shadow-md ${isFeatured ? 'h-full aspect-auto' : 'aspect-[3/4]'}`}>
+      <div className={`relative w-full overflow-hidden rounded-[2px] transition-shadow duration-300 group-hover:shadow-md ${theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-[#f4f2ee]'} ${isFeatured ? 'h-full aspect-auto' : aspectRatio}`}>
         <Link
           href={`#`}
           className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
@@ -132,7 +134,7 @@ export function ProductCard({
       {/* Product Details */}
       <div className="pt-2.5 pb-1 flex flex-col flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider text-veyro-muted">
+          <span className={`text-[10px] sm:text-[11px] font-medium uppercase tracking-wider ${theme === 'dark' ? 'text-[#a3a3a3]' : 'text-veyro-muted'}`}>
             {product.subcategoryTag || product.category}
           </span>
           {product.colorHex && (
@@ -144,18 +146,18 @@ export function ProductCard({
           )}
         </div>
 
-        <h3 className={`mt-0.5 font-medium text-veyro-black leading-snug line-clamp-1 group-hover:text-veyro-muted transition-colors ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
+        <h3 className={`mt-0.5 font-medium leading-snug line-clamp-1 transition-colors ${theme === 'dark' ? 'text-white group-hover:text-[#a3a3a3]' : 'text-veyro-black group-hover:text-veyro-muted'} ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
           <Link href={`#`}>{product.name}</Link>
         </h3>
 
         {/* Pricing Hierarchy */}
         <div className="mt-1 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-          <span className={`font-semibold text-veyro-black ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
+          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-veyro-black'} ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
             {formatPrice(product.price)}
           </span>
 
           {product.originalPrice && product.originalPrice > product.price && (
-            <span className="text-[11px] sm:text-xs text-veyro-muted line-through">
+            <span className={`text-[11px] sm:text-xs line-through ${theme === 'dark' ? 'text-[#888]' : 'text-veyro-muted'}`}>
               {formatPrice(product.originalPrice)}
             </span>
           )}
