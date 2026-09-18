@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   SearchIcon,
@@ -24,6 +24,49 @@ export function Navbar() {
     { label: "SHOES", href: "#" },
     { label: "COLLECTIONS", href: "#" },
   ];
+
+  const searchPhrases = [
+    "Search for products...",
+    "Search for t-shirts...",
+    "Search for shoes...",
+    "Search for oversized tees...",
+  ];
+
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const typeSpeed = 80;
+    const deleteSpeed = 40;
+    const pauseTime = 2000;
+
+    const currentPhrase = searchPhrases[currentPhraseIndex];
+    let timer: NodeJS.Timeout;
+
+    if (isDeleting) {
+      if (currentText.length > 0) {
+        timer = setTimeout(() => {
+          setCurrentText(currentPhrase.substring(0, currentText.length - 1));
+        }, deleteSpeed);
+      } else {
+        setIsDeleting(false);
+        setCurrentPhraseIndex((prev) => (prev + 1) % searchPhrases.length);
+      }
+    } else {
+      if (currentText.length < currentPhrase.length) {
+        timer = setTimeout(() => {
+          setCurrentText(currentPhrase.substring(0, currentText.length + 1));
+        }, typeSpeed);
+      } else {
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, pauseTime);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentPhraseIndex]);
 
   return (
     <>
@@ -91,7 +134,7 @@ export function Navbar() {
             </span>
             <input
               type="text"
-              placeholder="Search for products..."
+              placeholder={currentText || " "}
               className="h-[44px] xl:h-[46px] w-full rounded-full bg-[#f0f0ee] pl-11 pr-5 text-[13px] font-normal text-[#111111] placeholder:text-[#999999] focus:bg-white focus:outline-none focus:ring-1 focus:ring-black/20 border-0 transition-all"
             />
           </div>
@@ -148,7 +191,7 @@ export function Navbar() {
             <input
               type="text"
               autoFocus
-              placeholder="Search for clothing, footwear..."
+              placeholder={currentText || " "}
               className="h-11 w-full rounded-full bg-white pl-11 pr-10 text-xs text-[#111111] placeholder:text-[#999999] focus:outline-none border border-neutral-300 shadow-xs"
             />
             <button

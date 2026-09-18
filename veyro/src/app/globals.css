@@ -37,6 +37,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* Script calligraphy font class linking to Google Font variable */
@@ -120,23 +122,9 @@ body {
   animation-play-state: paused;
 }
 
-/* Custom scrollbar for modern subtle aesthetic */
+/* Hide scrollbar globally for immersive aesthetic */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f8f8f6;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d4d4d0;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #b0b0ab;
+  display: none;
 }
 
 /* Selection style */
