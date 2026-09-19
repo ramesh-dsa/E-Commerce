@@ -1024,49 +1024,7 @@ const footwear: Product[] = [
     ],
   },
 
-  {
-    id: "vey-ftw-chk-002",
-    sku: "VEY-FTW-CHK-002",
-    slug: "dune-chunky-sneaker-sand",
-    name: "Dune Chunky Sneaker",
-    category: "Footwear",
-    subcategory: "Shoes",
-    subcategoryTag: "Chunky",
-    colorName: "Sand",
-    colorHex: "#C4B9A8",
-    material: "Suede + Mesh Upper, Chunky EVA Outsole",
-    price: 3499,
-    imageUrl: "/products/shoes/veyro-shoe-08-primary.webp",
-    sizes: SHOE_SIZES,
-    isNewArrival: false,
-    inStock: true,
-    shortDescription:
-      "Tonal sand from upper to sole. Monochrome chunky done warm — premium suede meets platform comfort.",
-    longDescription:
-      "The Dune Chunky takes the platform silhouette into warm-neutral territory. The entire shoe — upper, sole, laces — lives in the same sandy tonal family, creating a monochromatic look that feels cohesive and premium. Suede and mesh panels add material variety without breaking the colour story. The chunky EVA sole provides all-day cushioning while the warm palette makes this the most wearable chunky sneaker in the collection.",
-    features: [
-      "Tonal monochrome design — entire shoe in sand palette",
-      "Suede + mesh upper — tactile warmth, breathable construction",
-      "Chunky EVA outsole — lightweight cushioning, elevated profile",
-      "Tonal lacing — seamless colour integration",
-      "Padded collar and tongue — plush comfort",
-    ],
-    care: [
-      "Brush suede panels with soft brush",
-      "Spot clean mesh with mild soap solution",
-      "Apply suede protector spray",
-      "Air dry naturally — avoid direct heat",
-    ],
-    sizeGuide: "True to size — order your regular UK size",
-    collections: ["Weekend Edit"],
-    tags: ["chunky", "sand", "monochrome", "suede", "warm-neutral", "platform"],
-    relatedProducts: [
-      "vey-ftw-chk-001",
-      "vey-ftw-chk-003",
-      "vey-ftw-ret-002",
-      "vey-tsh-txr-001",
-    ],
-  },
+
 
   {
     id: "vey-ftw-chk-003",

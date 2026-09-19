@@ -77,7 +77,7 @@ export function Footer() {
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="w-full bg-transparent border-b border-[#333333] px-0 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:border-white transition-colors rounded-none"
+                  className="w-full bg-transparent border-b border-[#333333] px-0 py-3 text-sm text-white placeholder-[#999999] focus:outline-none focus:border-white transition-colors rounded-none"
                   required
                 />
               </div>
@@ -96,7 +96,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-14 border-b border-[#1a1a1a]">
           {/* Col 1: Shop */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#666666] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#999999] mb-4">
               Shop
             </h4>
             <ul className="space-y-2.5 text-sm text-[#aaaaaa]">
@@ -115,7 +115,7 @@ export function Footer() {
 
           {/* Col 2: Brand Ethos */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#666666] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#999999] mb-4">
               About
             </h4>
             <ul className="space-y-2.5 text-sm text-[#aaaaaa]">
@@ -134,7 +134,7 @@ export function Footer() {
 
           {/* Col 3: Customer Care */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#666666] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#999999] mb-4">
               Support
             </h4>
             <ul className="space-y-2.5 text-sm text-[#aaaaaa]">
@@ -153,7 +153,7 @@ export function Footer() {
 
           {/* Col 4: Store Info */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#666666] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#999999] mb-4">
               Contact
             </h4>
             <div className="text-xs text-[#888888] space-y-2 leading-relaxed">
@@ -166,7 +166,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Legal & Copyright Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#666666]">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#999999]">
           <p>© {currentYear} VEYRO APPAREL. ALL RIGHTS RESERVED.</p>
           <div className="flex items-center gap-6">
             <Link href="#" className="hover:text-white transition-colors">

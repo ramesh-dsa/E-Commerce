@@ -9,19 +9,19 @@ const pillars = [
     id: "01",
     title: "240+ GSM HEAVYWEIGHT",
     desc: "100% long-staple Indian combed cotton. Architectural drape that retains shape wash after wash. Engineered to feel substantial on the body.",
-    imageUrl: "/images/pillars/bg_heavyweight_1789752687341.jpg",
+    imageUrl: "/images/pillars/bg_heavyweight_1789752687341.webp",
   },
   {
     id: "02",
     title: "CRAFTED IN TIRUPUR",
     desc: "Direct partnerships with India's most respected artisanal garment mills. Every stitch is placed with precision by master craftsmen.",
-    imageUrl: "/images/pillars/bg_crafted_1789752703669.jpg",
+    imageUrl: "/images/pillars/bg_crafted_1789752703669.webp",
   },
   {
     id: "03",
     title: "ZERO MIDDLEMEN",
     desc: "Pure direct-to-consumer model. We bypass traditional retail markups to bring you premium luxury-grade fabrics at honest, accessible prices.",
-    imageUrl: "/images/pillars/bg_markup_1789752717214.jpg",
+    imageUrl: "/images/pillars/bg_markup_1789752717214.webp",
   },
 ];
 
@@ -33,7 +33,7 @@ export function BrandPillarsSection() {
       <div className="w-full py-24 sm:py-40 flex items-center justify-center border-b border-[#333]">
         <Container>
           <div className="max-w-3xl mx-auto text-center">
-            <span className="text-xs font-mono tracking-widest text-[#666] mb-8 block uppercase">
+            <span className="text-xs font-mono tracking-widest text-[#999] mb-8 block uppercase">
               [ 001 ] The Standard
             </span>
             <h2 className="text-5xl sm:text-7xl lg:text-[6rem] font-bold tracking-tighter uppercase leading-[0.9]">

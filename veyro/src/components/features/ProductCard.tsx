@@ -56,8 +56,8 @@ export function ProductCard({
             src={product.imageUrl}
             alt={product.name}
             fill
+            quality={90}
             sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
-            unoptimized
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
             className={`object-cover object-center transition-all duration-500 ease-out group-hover:scale-105 ${
@@ -71,8 +71,8 @@ export function ProductCard({
               src={product.secondaryImageUrl}
               alt={`${product.name} alternate view`}
               fill
+              quality={90}
               sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
-              unoptimized
               className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
             />
           )}

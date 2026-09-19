@@ -38,13 +38,15 @@ export function NewArrivalsSection() {
         />
 
         {/* Filter Category Tabs */}
-        <div className="flex items-center gap-6 overflow-x-auto pb-2 mb-10 border-b border-[#eae6df] scrollbar-none">
+        <div role="tablist" className="flex items-center gap-6 overflow-x-auto pb-2 mb-10 border-b border-[#eae6df] scrollbar-none">
           {tabs.map((tab) => {
             const isActive = activeTab === tab;
             return (
               <button
                 key={tab}
                 type="button"
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => setActiveTab(tab)}
                 className={`relative pb-3 text-xs font-bold tracking-widest uppercase transition-colors duration-300 cursor-pointer whitespace-nowrap ${
                   isActive ? "text-veyro-black" : "text-veyro-muted hover:text-veyro-black"

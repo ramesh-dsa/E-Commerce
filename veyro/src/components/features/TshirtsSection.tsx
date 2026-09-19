@@ -31,13 +31,15 @@ export function TshirtsSection() {
         />
 
         {/* Editorial Fit Filters */}
-        <div className="flex flex-wrap items-center gap-y-3 mb-12">
+        <div role="tablist" className="flex flex-wrap items-center gap-y-3 mb-12">
           {fits.map((fit, index) => {
             const isActive = selectedFit === fit;
             return (
               <React.Fragment key={fit}>
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => setSelectedFit(fit)}
                   className={`text-[13px] sm:text-[14px] font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap ${
                     isActive

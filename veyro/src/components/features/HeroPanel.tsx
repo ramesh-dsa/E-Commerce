@@ -18,7 +18,7 @@ export interface HeroPanelData {
   layoutStyle: "panel-clothing" | "panel-outerwear" | "panel-footwear";
 }
 
-export function HeroPanel({ panel }: { panel: HeroPanelData }) {
+export const HeroPanel = React.memo(function HeroPanel({ panel, tabIndex }: { panel: HeroPanelData; tabIndex?: number }) {
   return (
     <div className="group relative h-[600px] sm:h-[650px] lg:h-[720px] xl:h-[780px] w-full overflow-hidden bg-[#111111] select-none">
       {/* Background Campaign Image - Object cover spanning full panel */}
@@ -27,8 +27,8 @@ export function HeroPanel({ panel }: { panel: HeroPanelData }) {
         alt={panel.alt}
         fill
         priority
-        sizes="(max-width: 768px) 100vw, 33vw"
-        unoptimized
+        quality={95}
+        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
       />
 
@@ -124,9 +124,10 @@ export function HeroPanel({ panel }: { panel: HeroPanelData }) {
       {/* Clickable Full Panel Link Overlay */}
       <Link
         href={panel.href}
+        tabIndex={tabIndex}
         className="absolute inset-0 z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fcd017]"
         aria-label={`Explore ${panel.title || "collection"}`}
       />
     </div>
   );
-}
+});

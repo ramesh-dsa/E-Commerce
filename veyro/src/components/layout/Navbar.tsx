@@ -13,6 +13,13 @@ import {
 import { Logo } from "@/components/ui/Logo";
 import { AnnouncementBar } from "./AnnouncementBar";
 
+const searchPhrases = [
+  "Search for products...",
+  "Search for t-shirts...",
+  "Search for shoes...",
+  "Search for oversized tees...",
+];
+
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -25,12 +32,6 @@ export function Navbar() {
     { label: "COLLECTIONS", href: "#" },
   ];
 
-  const searchPhrases = [
-    "Search for products...",
-    "Search for t-shirts...",
-    "Search for shoes...",
-    "Search for oversized tees...",
-  ];
 
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
@@ -50,8 +51,10 @@ export function Navbar() {
           setCurrentText(currentPhrase.substring(0, currentText.length - 1));
         }, deleteSpeed);
       } else {
-        setIsDeleting(false);
-        setCurrentPhraseIndex((prev) => (prev + 1) % searchPhrases.length);
+        timer = setTimeout(() => {
+          setIsDeleting(false);
+          setCurrentPhraseIndex((prev) => (prev + 1) % searchPhrases.length);
+        }, deleteSpeed);
       }
     } else {
       if (currentText.length < currentPhrase.length) {
@@ -66,7 +69,7 @@ export function Navbar() {
     }
 
     return () => clearTimeout(timer);
-  }, [currentText, isDeleting, currentPhraseIndex]);
+  }, [currentText, isDeleting, currentPhraseIndex, searchPhrases]);
 
   return (
     <>
@@ -134,6 +137,7 @@ export function Navbar() {
             </span>
             <input
               type="text"
+              aria-label="Search products"
               placeholder={currentText || " "}
               className="h-[44px] xl:h-[46px] w-full rounded-full bg-[#f0f0ee] pl-11 pr-5 text-[13px] font-normal text-[#111111] placeholder:text-[#999999] focus:bg-white focus:outline-none focus:ring-1 focus:ring-black/20 border-0 transition-all"
             />

@@ -6,7 +6,7 @@
   --color-veyro-yellow-dark: #e5bc05;
   --color-veyro-black: #111111;
   --color-veyro-charcoal: #1f1f1f;
-  --color-veyro-muted: #666666;
+  --color-veyro-muted: #999999;
   --color-veyro-subtle: #8e8e8e;
   --color-veyro-border: #e8e8e5;
   --color-veyro-border-light: #f0f0ed;
@@ -102,20 +102,27 @@ body {
   text-transform: uppercase;
 }
 
-/* Marquee continuous scroll animation */
+/* ─── Announcement Marquee — Single-track infinite scroll ───────────────────────
+   HOW IT WORKS:
+   - The track contains 2 identical halves of content.
+   - We animate from translateX(0) to translateX(-50%).
+   - Because we use element padding instead of flex `gap`, the total width
+     is a perfect multiple of the items, so -50% aligns flawlessly.
+──────────────────────────────────────────────────────────────────────────── */
 @keyframes marquee-scroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 24s linear infinite;
+  will-change: transform;
+  animation: marquee-scroll 40s linear infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
 }
 
 .animate-marquee:hover {

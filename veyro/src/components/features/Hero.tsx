@@ -3,61 +3,61 @@
 import React, { useState, useEffect, useRef } from "react";
 import { HeroPanel, HeroPanelData } from "./HeroPanel";
 
-export function Hero() {
-  const panels: HeroPanelData[] = [
-    {
-      id: "footwear",
-      image: "/hero/panel-footwear.jpg",
-      alt: "Clean slate men's retro low-top sneakers",
-      href: "#",
-      tag: "NEW LAUNCH",
-      scriptTitle: "clean slate",
-      title: "SNEAKERS",
-      subtitle: "Retro-inspired. Designed for now.",
-      layoutStyle: "panel-footwear",
-    },
-    {
-      id: "graphic-tee",
-      image: "/hero/panel-graphic-tee.jpg",
-      alt: "Oversized graphic tee - Good Days Ahead",
-      href: "#",
-      titleLines: ["GRAPHIC", "TEES"],
-      ctaText: "BUY 3 AT",
-      ctaPrice: "₹1199",
-      layoutStyle: "panel-clothing",
-    },
-    {
-      id: "oversized-tees",
-      image: "/hero/panel-oversized-tees.jpg",
-      alt: "Oversized tees collection",
-      href: "#",
-      title: "OVERSIZED FIT",
-      subtitle: "Maximum Comfort. Effortless Style.",
-      layoutStyle: "panel-outerwear",
-    },
-    {
-      id: "linen-shirt",
-      image: "/hero/panel-linen-shirt.jpg",
-      alt: "Teal linen shirt",
-      href: "#",
-      tag: "SUMMER ESSENTIAL",
-      scriptTitle: "breeze easy",
-      title: "LINEN SHIRTS",
-      subtitle: "Lightweight and breathable.",
-      layoutStyle: "panel-footwear",
-    },
-    {
-      id: "classic-fit",
-      image: "/hero/panel-classic-fit.jpg",
-      alt: "Classic fit t-shirts",
-      href: "#",
-      titleLines: ["CLASSIC", "FIT TEES"],
-      ctaText: "BUY 3 AT",
-      ctaPrice: "₹1199",
-      layoutStyle: "panel-clothing",
-    },
-  ];
+const panels: HeroPanelData[] = [
+  {
+    id: "footwear",
+    image: "/hero/panel-footwear.webp",
+    alt: "Clean slate men's retro low-top sneakers",
+    href: "#",
+    tag: "NEW LAUNCH",
+    scriptTitle: "clean slate",
+    title: "SNEAKERS",
+    subtitle: "Retro-inspired. Designed for now.",
+    layoutStyle: "panel-footwear",
+  },
+  {
+    id: "graphic-tee",
+    image: "/hero/panel-graphic-tee.webp",
+    alt: "Oversized graphic tee - Good Days Ahead",
+    href: "#",
+    titleLines: ["GRAPHIC", "TEES"],
+    ctaText: "BUY 3 AT",
+    ctaPrice: "₹1199",
+    layoutStyle: "panel-clothing",
+  },
+  {
+    id: "oversized-tees",
+    image: "/hero/panel-oversized-tees.webp",
+    alt: "Oversized tees collection",
+    href: "#",
+    title: "OVERSIZED FIT",
+    subtitle: "Maximum Comfort. Effortless Style.",
+    layoutStyle: "panel-outerwear",
+  },
+  {
+    id: "linen-shirt",
+    image: "/hero/panel-linen-shirt.webp",
+    alt: "Teal linen shirt",
+    href: "#",
+    tag: "SUMMER ESSENTIAL",
+    scriptTitle: "breeze easy",
+    title: "LINEN SHIRTS",
+    subtitle: "Lightweight and breathable.",
+    layoutStyle: "panel-footwear",
+  },
+  {
+    id: "classic-fit",
+    image: "/hero/panel-classic-fit-highres.webp",
+    alt: "Classic fit t-shirts",
+    href: "#",
+    titleLines: ["CLASSIC", "FIT TEES"],
+    ctaText: "BUY 3 AT",
+    ctaPrice: "₹1199",
+    layoutStyle: "panel-clothing",
+  },
+];
 
+export function Hero() {
   const [startIndex, setStartIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -114,7 +114,7 @@ export function Hero() {
           {panels.map((panel, index) => {
             // Calculate relative position based on startIndex
             // Example: if startIndex is 0, index 0 is diff=0 (slot 1), index 6 is diff=6 (exiting left)
-            let diff = (index - startIndex + N) % N;
+            const diff = (index - startIndex + N) % N;
 
             // We treat the highest index (N-1) as the exiting panel on the left (-1 slot)
             const isExiting = diff === N - 1;
@@ -146,7 +146,7 @@ export function Hero() {
                 aria-hidden={diff > 2 && !isExiting}
               >
                 {/* HeroPanel automatically takes up full width/height of this wrapper */}
-                <HeroPanel panel={panel} />
+                <HeroPanel panel={panel} tabIndex={(diff > 2 && !isExiting) ? -1 : 0} />
               </div>
             );
           })}
@@ -164,12 +164,16 @@ export function Hero() {
                 setStartIndex(index);
                 setTimeout(() => setIsTransitioning(false), 700);
               }}
-              className={`transition-all duration-200 rounded-full cursor-pointer ${
-                startIndex === index
-                  ? "w-5 h-2 bg-[#111111]"
-                  : "w-2 h-2 bg-[#d1d1d1] hover:bg-[#999999]"
-              }`}
-            />
+              className="p-2 cursor-pointer group focus-visible:outline-none"
+            >
+              <div
+                className={`transition-all duration-200 rounded-full mx-auto ${
+                  startIndex === index
+                    ? "w-5 h-2 bg-[#111111]"
+                    : "w-2 h-2 bg-[#d1d1d1] group-hover:bg-[#999999]"
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>

@@ -6,24 +6,35 @@ import Image from "next/image";
 import { Zap, ShieldCheck, Diamond } from "lucide-react";
 
 export function PromoFlipBanner() {
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
+    if (isPaused) return;
     const interval = setInterval(() => {
       setIsFlipped((prev) => !prev);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused]);
 
   return (
     <section
       aria-label="Promotional Offers"
       className="w-full pt-8 pb-6 sm:pb-8 overflow-x-clip select-none"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
     >
       <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.15)] relative" style={{ perspective: "2000px" }}>
         
         {/* Toggle Indicator */}
-        <div className="absolute -top-8 right-0 flex items-center gap-3 z-10 cursor-pointer group" onClick={() => setIsFlipped(!isFlipped)}>
+        <button 
+          role="switch"
+          aria-checked={isFlipped}
+          className="absolute -top-8 right-0 flex items-center gap-3 z-10 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black focus-visible:ring-offset-2 rounded-sm px-1" 
+          onClick={() => setIsFlipped(!isFlipped)}
+        >
           <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${!isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
             T-Shirts
           </span>
@@ -33,7 +44,7 @@ export function PromoFlipBanner() {
           <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
             Sneakers
           </span>
-        </div>
+        </button>
 
         {/* 3D Flip Container */}
         <div 
@@ -46,11 +57,13 @@ export function PromoFlipBanner() {
           
           {/* FRONT FACE: T-SHIRT BANNER */}
           <div 
-            className="col-start-1 row-start-1 w-full h-full pointer-events-auto"
+            className={`col-start-1 row-start-1 w-full h-full ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`}
             style={{ backfaceVisibility: "hidden" }}
+            aria-hidden={isFlipped}
           >
             <Link
               href="#"
+              tabIndex={isFlipped ? -1 : 0}
               className="group relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 hover:scale-[1.005]"
             >
               {/* LEFT SECTION (BLACK) */}
@@ -164,6 +177,7 @@ export function PromoFlipBanner() {
                   src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
                   alt="Premium Classic Fit T-Shirt" 
                   fill
+                  priority
                   sizes="(max-width: 768px) 100vw, 320px"
                   className="object-contain object-center scale-[1.25] rotate-[-5deg] brightness-105 contrast-125"
                 />
@@ -179,9 +193,11 @@ export function PromoFlipBanner() {
               transform: "rotateX(180deg)",
               pointerEvents: isFlipped ? "auto" : "none"
             }}
+            aria-hidden={!isFlipped}
           >
             <Link
               href="/category/footwear"
+              tabIndex={!isFlipped ? -1 : 0}
               className="group relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 hover:scale-[1.005]"
             >
               {/* LEFT SECTION (BLACK) */}
@@ -289,15 +305,30 @@ export function PromoFlipBanner() {
                 </div>
               </div>
 
-              {/* The Floating Sneaker (OUTSIDE MASK) */}
-              <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20 drop-shadow-2xl">
-                <Image 
-                  src="/products/shoes/premium_floating_sneaker.webp" 
-                  alt="Premium Sneaker" 
-                  fill
-                  sizes="(max-width: 768px) 100vw, 320px"
-                  className="object-contain object-center scale-[1.35] -rotate-12 brightness-105 contrast-125"
-                />
+              {/* The Floating Sneaker Composition (OUTSIDE MASK) */}
+              <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
+                
+                {/* Background Accent (Blurred & Desaturated) */}
+                <div className="absolute inset-0 translate-x-[15%] -translate-y-[2%] scale-[0.65] rotate-[5deg] opacity-70 z-0 blur-[3px]">
+                  <Image
+                    src="/products/shoes/premium_floating_sneaker_v4.webp"
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, 320px"
+                    className="object-contain object-center saturate-50 contrast-75 brightness-90"
+                  />
+                </div>
+
+                {/* Foreground Crisp Sneaker */}
+                <div className="absolute inset-0 z-10 drop-shadow-2xl">
+                  <Image
+                    src="/products/shoes/premium_floating_sneaker_v4.webp"
+                    alt="Veyro Premium Collection - Chunky White and Yellow Sneaker" 
+                    fill
+                    sizes="(max-width: 768px) 100vw, 320px"
+                    className="object-contain object-center scale-105 rotate-[-5deg] brightness-105 contrast-110"
+                  />
+                </div>
               </div>
             </Link>
           </div>
