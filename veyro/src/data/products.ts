@@ -703,6 +703,7 @@ const footwear: Product[] = [
     price: 2699,
     badge: "BESTSELLER",
     imageUrl: "/products/shoes/veyro-shoe-01-primary.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-min-001-macro.jpg",
     galleryImages: [
       "/products/footwear/VEY-FTW-MIN-001__lifestyle__white.webp",
     ],
@@ -745,6 +746,7 @@ const footwear: Product[] = [
     material: "Premium Synthetic Leather Upper, Rubber Cupsole",
     price: 2799,
     imageUrl: "/products/shoes/veyro-shoe-02-primary.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-min-002-macro.jpg",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -785,6 +787,7 @@ const footwear: Product[] = [
     price: 2499,
     badge: "NEW",
     imageUrl: "/products/shoes/veyro-shoe-03-primary.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-min-003-macro.jpg",
     sizes: SHOE_SIZES,
     isNewArrival: true,
     inStock: true,
@@ -833,7 +836,7 @@ const footwear: Product[] = [
     badge: "NEW",
     imageUrl:
       "/products/shoes/veyro-shoe-04-primary.webp",
-    secondaryImageUrl: "/products/shoes/veyro-shoe-04-hover.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-ret-001-macro.jpg",
     galleryImages: [
       "/products/footwear/VEY-FTW-RET-001__lifestyle__off-white-green.webp",
     ],
@@ -891,6 +894,7 @@ const footwear: Product[] = [
     originalPrice: 3299,
     discount: "15% OFF",
     imageUrl: "/products/shoes/veyro-shoe-05-primary.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-ret-002-macro.jpg",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -936,7 +940,7 @@ const footwear: Product[] = [
     price: 3299,
     imageUrl:
       "/products/shoes/veyro-shoe-06-primary.webp",
-    secondaryImageUrl: "/products/shoes/veyro-shoe-06-hover.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-ret-003-macro.jpg",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -985,7 +989,7 @@ const footwear: Product[] = [
     badge: "TRENDING",
     imageUrl:
       "/products/shoes/veyro-shoe-07-primary.webp",
-    secondaryImageUrl: "/products/shoes/veyro-shoe-07-hover.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-chk-001-macro.jpg",
     galleryImages: [
       "/products/footwear/VEY-FTW-CHK-001__lifestyle__black-white.webp",
     ],
@@ -1043,6 +1047,7 @@ const footwear: Product[] = [
     badge: "LIMITED",
     imageUrl:
       "/products/shoes/veyro-shoe-09-primary.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-chk-003-macro.jpg",
     sizes: SHOE_SIZES,
     isNewArrival: false,
     inStock: true,
@@ -1091,6 +1096,7 @@ const footwear: Product[] = [
     originalPrice: 3299,
     discount: "12% OFF",
     imageUrl: "/products/shoes/veyro-shoe-10-primary.webp",
+    secondaryImageUrl: "/products/shoes/vey-ftw-std-001-macro.jpg",
     sizes: SHOE_SIZES,
     isNewArrival: true,
     inStock: true,

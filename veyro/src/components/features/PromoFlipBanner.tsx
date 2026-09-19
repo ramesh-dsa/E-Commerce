@@ -57,14 +57,14 @@ export function PromoFlipBanner() {
           
           {/* FRONT FACE: T-SHIRT BANNER */}
           <div 
-            className={`col-start-1 row-start-1 w-full h-full ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`}
+            className={`group col-start-1 row-start-1 w-full h-full ${isFlipped ? "pointer-events-none" : "pointer-events-auto"}`}
             style={{ backfaceVisibility: "hidden" }}
             aria-hidden={isFlipped}
           >
             <Link
               href="#"
               tabIndex={isFlipped ? -1 : 0}
-              className="group relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 hover:scale-[1.005]"
+              className="relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 group-hover:scale-[1.005]"
             >
               {/* LEFT SECTION (BLACK) */}
               <div
@@ -171,23 +171,24 @@ export function PromoFlipBanner() {
                 </div>
               </div>
 
-              {/* The Floating T-Shirt (OUTSIDE MASK) */}
-              <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-[60%] w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-6 z-20 drop-shadow-2xl">
-                <Image 
-                  src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
-                  alt="Premium Classic Fit T-Shirt" 
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 320px"
-                  className="object-contain object-center scale-[1.25] rotate-[-5deg] brightness-105 contrast-125"
-                />
-              </div>
             </Link>
+
+            {/* The Floating T-Shirt (OUTSIDE MASK & LINK) */}
+            <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-[60%] w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-6 z-20 drop-shadow-2xl">
+              <Image 
+                src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
+                alt="Premium Classic Fit T-Shirt" 
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 320px"
+                className="object-contain object-center scale-[1.25] rotate-[-5deg] brightness-105 contrast-125"
+              />
+            </div>
           </div>
 
           {/* BACK FACE: SNEAKER BANNER */}
           <div 
-            className="col-start-1 row-start-1 w-full h-full"
+            className="group col-start-1 row-start-1 w-full h-full"
             style={{ 
               backfaceVisibility: "hidden",
               transform: "rotateX(180deg)",
@@ -198,7 +199,7 @@ export function PromoFlipBanner() {
             <Link
               href="/category/footwear"
               tabIndex={!isFlipped ? -1 : 0}
-              className="group relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 hover:scale-[1.005]"
+              className="relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 group-hover:scale-[1.005]"
             >
               {/* LEFT SECTION (BLACK) */}
               <div
@@ -281,11 +282,7 @@ export function PromoFlipBanner() {
                   maskPosition: "100% 0",
                 }}
               >
-                {/* Background Graphic Elements for Yellow Side */}
-                <div className="absolute right-0 top-0 bottom-0 w-[50%] pointer-events-none opacity-20">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border-4 border-black border-dashed opacity-30" />
-                  <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-white rounded-full mix-blend-overlay opacity-60" />
-                </div>
+                {/* Background Graphic Elements removed */}
 
                 <div className="relative z-10 w-full flex flex-col justify-center">
                   <span className="text-xs sm:text-sm font-black tracking-[0.2em] uppercase mb-2 opacity-90 pl-1">
@@ -305,32 +302,22 @@ export function PromoFlipBanner() {
                 </div>
               </div>
 
-              {/* The Floating Sneaker Composition (OUTSIDE MASK) */}
-              <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
-                
-                {/* Background Accent (Blurred & Desaturated) */}
-                <div className="absolute inset-0 translate-x-[15%] -translate-y-[2%] scale-[0.65] rotate-[5deg] opacity-70 z-0 blur-[3px]">
-                  <Image
-                    src="/products/shoes/premium_floating_sneaker_v4.webp"
-                    alt=""
-                    fill
-                    sizes="(max-width: 768px) 100vw, 320px"
-                    className="object-contain object-center saturate-50 contrast-75 brightness-90"
-                  />
-                </div>
-
-                {/* Foreground Crisp Sneaker */}
-                <div className="absolute inset-0 z-10 drop-shadow-2xl">
-                  <Image
-                    src="/products/shoes/premium_floating_sneaker_v4.webp"
-                    alt="Veyro Premium Collection - Chunky White and Yellow Sneaker" 
-                    fill
-                    sizes="(max-width: 768px) 100vw, 320px"
-                    className="object-contain object-center scale-105 rotate-[-5deg] brightness-105 contrast-110"
-                  />
-                </div>
-              </div>
             </Link>
+
+            {/* The Floating Sneaker Composition (OUTSIDE MASK & LINK) */}
+            <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
+
+              {/* Foreground Crisp Sneaker */}
+              <div className="absolute inset-0 z-10 drop-shadow-2xl">
+                <Image
+                  src="/products/shoes/premium_floating_sneaker_v4.webp"
+                  alt="Veyro Premium Collection - Chunky White and Yellow Sneaker" 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 320px"
+                  className="object-contain object-center scale-105 rotate-[-5deg] brightness-105 contrast-110"
+                />
+              </div>
+            </div>
           </div>
           
         </div>
