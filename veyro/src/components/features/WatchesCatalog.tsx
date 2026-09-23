@@ -47,6 +47,7 @@ export function WatchesCatalog() {
 
   // ── Filter & View States ───────────────────────────────────────────────────
   const [filters, setFilters] = useState<WatchFilterState>({
+    brands: [],
     collections: [],
     movements: [],
     genders: [],
@@ -72,6 +73,7 @@ export function WatchesCatalog() {
   // ── Dynamic Item Counts for All Filter Criteria ────────────────────────────
   const itemCounts = useMemo(() => {
     const counts = {
+      brands: {} as Record<string, number>,
       collections: {} as Record<string, number>,
       movements: {} as Record<string, number>,
       genders: {} as Record<string, number>,
@@ -84,6 +86,10 @@ export function WatchesCatalog() {
     };
 
     watchProducts.forEach((p) => {
+      counts.brands["VEYRO HOROLOGY"] = (counts.brands["VEYRO HOROLOGY"] || 0) + 1;
+      if (p.badge === "LIMITED" || p.badge === "BESTSELLER") counts.brands["ARCHIVAL VAULT"] = (counts.brands["ARCHIVAL VAULT"] || 0) + 1;
+      if (p.badge) counts.brands["ATELIER SPECIALTY"] = (counts.brands["ATELIER SPECIALTY"] || 0) + 1;
+
       if (p.subcategoryTag) {
         counts.collections[p.subcategoryTag] = (counts.collections[p.subcategoryTag] || 0) + 1;
       }
@@ -131,6 +137,15 @@ export function WatchesCatalog() {
   }, []);
 
   // ── Filter Toggle Handlers ────────────────────────────────────────────────
+  const handleToggleBrand = (brand: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      brands: (prev.brands || []).includes(brand)
+        ? (prev.brands || []).filter((b) => b !== brand)
+        : [...(prev.brands || []), brand],
+    }));
+  };
+
   const handleToggleCollection = (collection: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -212,6 +227,7 @@ export function WatchesCatalog() {
 
   const handleClearAll = () => {
     setFilters({
+      brands: [],
       collections: [],
       movements: [],
       genders: [],
@@ -228,6 +244,7 @@ export function WatchesCatalog() {
   // Calculate active filter count
   const activeFilterCount = useMemo(() => {
     let count = 0;
+    if (filters.brands && filters.brands.length > 0) count += filters.brands.length;
     count += filters.collections.length;
     count += filters.movements.length;
     count += filters.genders.length;
@@ -244,6 +261,17 @@ export function WatchesCatalog() {
   const filteredProducts = useMemo(() => {
     return watchProducts
       .filter((product) => {
+        // 0. Brand filter
+        if (filters.brands && filters.brands.length > 0) {
+          const matchesBrand = filters.brands.some((b) => {
+            if (b === "VEYRO HOROLOGY") return true;
+            if (b === "ARCHIVAL VAULT" && (product.badge === "LIMITED" || product.badge === "BESTSELLER")) return true;
+            if (b === "ATELIER SPECIALTY" && product.badge) return true;
+            return false;
+          });
+          if (!matchesBrand) return false;
+        }
+
         // 1. Collection filter
         if (filters.collections.length > 0) {
           if (!product.subcategoryTag || !filters.collections.includes(product.subcategoryTag)) {
@@ -386,7 +414,7 @@ export function WatchesCatalog() {
             </button>
 
             {/* Breadcrumbs matching Image 3 */}
-            <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.08em] text-[#111111]">
+            <nav aria-label="Breadcrumbs" className="font-luxury flex items-center gap-1.5 text-[11.5px] font-medium uppercase tracking-[0.08em] text-[#111111]">
               <Link href="/" className="hover:text-[#555555] transition-colors">
                 HOME
               </Link>
@@ -619,6 +647,7 @@ export function WatchesCatalog() {
           {/* Vertical Sidebar Filter (Desktop sticky + Mobile slide-over) */}
           <WatchFilterSidebar
             filters={filters}
+            onToggleBrand={handleToggleBrand}
             onToggleCollection={handleToggleCollection}
             onToggleMovement={handleToggleMovement}
             onToggleGender={handleToggleGender}
@@ -782,12 +811,12 @@ export function WatchesCatalog() {
                         {/* Metadata Stage (Helios Center-Aligned Luxury Format) */}
                         <div className="pt-3.5 pb-2 flex flex-col items-center text-center flex-grow">
                           {/* Line 1: Maker / Brand Line */}
-                          <span className="text-[11.5px] font-black uppercase tracking-[0.14em] text-[#111111]">
+                          <span className="font-luxury text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#111111]">
                             {product.subcategoryTag ? `${product.subcategoryTag.toUpperCase()} ARCHIVE` : "VEYRO HOROLOGY"}
                           </span>
 
                           {/* Line 2: Gender | Model Name */}
-                          <h3 className="text-[11px] font-medium uppercase tracking-[0.06em] text-[#666666] mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
+                          <h3 className="font-luxury text-[11px] font-normal uppercase tracking-[0.06em] text-[#666666] mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
                             <Link href={`/product/${product.slug}`}>
                               {product.gender || "UNISEX"} | {product.name.replace(/^VEYRO\s+/i, "")}
                             </Link>
@@ -795,7 +824,7 @@ export function WatchesCatalog() {
 
                           {/* Line 3: Pricing Block */}
                           <div className="mt-1.5 flex items-baseline justify-center gap-2">
-                            <span className="text-[14px] sm:text-[15px] font-black text-[#111111] font-mono">
+                            <span className="text-[13.5px] sm:text-[14px] font-bold text-[#111111] font-mono">
                               {formatPrice(product.price)}
                             </span>
                             {product.originalPrice && product.originalPrice > product.price && (
@@ -814,9 +843,9 @@ export function WatchesCatalog() {
                           <button
                             type="button"
                             onClick={(e) => handleQuickAdd(product, e)}
-                            className={`mt-2.5 w-full py-1.5 px-3 rounded-[2px] text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 ${
+                            className={`font-luxury mt-2.5 w-full py-1.5 px-3 rounded-[2px] text-[11px] font-medium uppercase tracking-[0.08em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 ${
                               addedProductId === product.id
-                                ? "bg-[#fcd017] text-[#111111] font-black shadow-xs"
+                                ? "bg-[#fcd017] text-[#111111] font-bold shadow-xs"
                                 : "bg-transparent text-[#111111] border border-[#e5e5e3] hover:bg-[#111111] hover:text-white hover:border-[#111111] group-hover:border-[#111111]"
                             }`}
                           >

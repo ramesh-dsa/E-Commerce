@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 
 export interface WatchFilterState {
+  brands?: string[];
   collections: string[];
   movements: string[];
   genders: string[];
@@ -17,6 +18,7 @@ export interface WatchFilterState {
 
 export interface WatchFilterSidebarProps {
   filters: WatchFilterState;
+  onToggleBrand?: (brand: string) => void;
   onToggleCollection: (collection: string) => void;
   onToggleMovement: (movement: string) => void;
   onToggleGender: (gender: string) => void;
@@ -30,6 +32,7 @@ export interface WatchFilterSidebarProps {
   activeFilterCount: number;
   totalFilteredCount: number;
   itemCounts?: {
+    brands?: Record<string, number>;
     collections?: Record<string, number>;
     movements?: Record<string, number>;
     genders?: Record<string, number>;
@@ -43,6 +46,12 @@ export interface WatchFilterSidebarProps {
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
 }
+
+export const WATCH_BRANDS = [
+  { id: "VEYRO HOROLOGY", label: "VEYRO HOROLOGY" },
+  { id: "ARCHIVAL VAULT", label: "ARCHIVAL VAULT" },
+  { id: "ATELIER SPECIALTY", label: "ATELIER SPECIALTY" },
+];
 
 export const WATCH_COLLECTIONS = [
   { id: "Chronograph", label: "CHRONOGRAPH" },
@@ -160,10 +169,10 @@ function FilterCheckbox({
           aria-checked={checked}
         />
         <span
-          className={`text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors truncate ${
+          className={`font-luxury text-[11px] sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors truncate ${
             checked
-              ? "font-bold text-[#111111]"
-              : "font-medium text-[#444444] group-hover:text-black"
+              ? "font-medium text-[#111111]"
+              : "font-normal text-[#444444] group-hover:text-black"
           }`}
         >
           {label}
@@ -178,7 +187,7 @@ function FilterCheckbox({
   );
 }
 
-// ── Accordion Section with Left Chevron (Helios Style) ─────────────────────────
+// ── Accordion Section with Left Chevron (Image 2 Elegant Style) ────────────────
 function AccordionSection({
   title,
   isOpen,
@@ -191,29 +200,29 @@ function AccordionSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-b border-[#f0f0ed] py-2.5">
+    <div className="py-1">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="w-full flex items-center gap-2 py-1 text-left cursor-pointer group transition-colors"
+        className="w-full flex items-center gap-2.5 py-1.5 text-left cursor-pointer group transition-colors"
       >
-        {/* Left-Aligned Chevron (rotates 180° when expanded) */}
+        {/* Left-Aligned Chevron (rotates 180° when expanded, clean thin stroke) */}
         <ChevronDown
           size={13}
-          strokeWidth={2.5}
+          strokeWidth={1.8}
           className={`text-[#111111] transition-transform duration-200 motion-reduce:transition-none shrink-0 ${
             isOpen ? "rotate-180" : ""
           }`}
           aria-hidden="true"
         />
-        <span className="text-[11.5px] font-black uppercase tracking-[0.12em] text-[#111111] group-hover:text-[#555555] transition-colors">
+        <span className="font-luxury text-[12px] font-medium uppercase tracking-[0.08em] text-[#111111] group-hover:text-[#555555] transition-colors">
           {title}
         </span>
       </button>
 
       {isOpen && (
-        <div className="pt-2 pb-1 pl-5 flex flex-col gap-0.5">
+        <div className="pt-1.5 pb-2 pl-5 flex flex-col gap-0.5">
           {children}
         </div>
       )}
@@ -223,6 +232,7 @@ function AccordionSection({
 
 export function WatchFilterSidebar({
   filters,
+  onToggleBrand,
   onToggleCollection,
   onToggleMovement,
   onToggleGender,
@@ -239,17 +249,18 @@ export function WatchFilterSidebar({
   isMobileOpen = false,
   onCloseMobile,
 }: WatchFilterSidebarProps) {
-  // Accordion open/collapse states matching Helios reference order
+  // Accordion open/collapse states matching Image 2 reference order
   const [openSections, setOpenSections] = useState({
-    collection: true,
-    movement: true,
-    gender: true,
-    price: true,
+    brands: false,
+    collection: false,
+    movement: false,
+    gender: false,
+    price: false,
     discount: false,
     caseShape: false,
     dialColor: false,
     dialType: false,
-    strap: true,
+    strap: false,
   });
 
   const toggleSection = (section: keyof typeof openSections) => {
@@ -261,9 +272,9 @@ export function WatchFilterSidebar({
 
   const filterContent = (
     <div className="flex flex-col text-[#111111] select-none">
-      {/* ── HEADER ROW: FILTERS (Left) & CLEAR ALL (Right) ──────────── */}
-      <div className="flex items-center justify-between pb-3 mb-1 border-b border-[#111111]">
-        <h2 className="text-[13px] font-black uppercase tracking-[0.14em] text-[#111111]">
+      {/* ── HEADER ROW: FILTERS (Left) & CLEAR ALL (Right) — Zero Underline ──── */}
+      <div className="flex items-center justify-between pb-3 mb-1">
+        <h2 className="font-luxury text-[13.5px] font-medium uppercase tracking-[0.08em] text-[#111111]">
           FILTERS
           {activeFilterCount > 0 && (
             <span className="ml-1.5 text-[11px] font-mono font-normal text-[#8e8e8e]">
@@ -276,10 +287,10 @@ export function WatchFilterSidebar({
           type="button"
           onClick={activeFilterCount > 0 ? onClearAll : undefined}
           disabled={activeFilterCount === 0}
-          className={`text-[11px] font-bold uppercase tracking-wider transition-colors ${
+          className={`font-luxury text-[11px] font-medium uppercase tracking-[0.06em] transition-colors ${
             activeFilterCount > 0
               ? "text-[#111111] hover:underline cursor-pointer"
-              : "text-[#b0b0b0] cursor-default"
+              : "text-[#c2c2c2] cursor-default"
           }`}
           aria-label="Clear all applied filters"
         >
@@ -287,7 +298,25 @@ export function WatchFilterSidebar({
         </button>
       </div>
 
-      {/* ── 1. COLLECTION ───────────────────────────────────────────── */}
+      {/* ── 1. BRANDS (Image 2 First Item) ─────────────────────────── */}
+      <AccordionSection
+        title="BRANDS"
+        isOpen={openSections.brands}
+        onToggle={() => toggleSection("brands")}
+      >
+        {WATCH_BRANDS.map((b) => (
+          <FilterCheckbox
+            key={b.id}
+            id={`brand-${b.id}`}
+            label={b.label}
+            checked={(filters.brands || []).includes(b.id)}
+            onChange={() => onToggleBrand?.(b.id)}
+            count={itemCounts?.brands?.[b.id] ?? totalFilteredCount}
+          />
+        ))}
+      </AccordionSection>
+
+      {/* ── 2. COLLECTION ───────────────────────────────────────────── */}
       <AccordionSection
         title="COLLECTION"
         isOpen={openSections.collection}
@@ -305,7 +334,7 @@ export function WatchFilterSidebar({
         ))}
       </AccordionSection>
 
-      {/* ── 2. MOVEMENT ─────────────────────────────────────────────── */}
+      {/* ── 3. MOVEMENT ─────────────────────────────────────────────── */}
       <AccordionSection
         title="MOVEMENT"
         isOpen={openSections.movement}
@@ -323,7 +352,7 @@ export function WatchFilterSidebar({
         ))}
       </AccordionSection>
 
-      {/* ── 3. GENDER ───────────────────────────────────────────────── */}
+      {/* ── 4. GENDER ───────────────────────────────────────────────── */}
       <AccordionSection
         title="GENDER"
         isOpen={openSections.gender}
@@ -341,7 +370,7 @@ export function WatchFilterSidebar({
         ))}
       </AccordionSection>
 
-      {/* ── 4. PRICE ────────────────────────────────────────────────── */}
+      {/* ── 5. PRICE ────────────────────────────────────────────────── */}
       <AccordionSection
         title="PRICE"
         isOpen={openSections.price}
@@ -377,10 +406,10 @@ export function WatchFilterSidebar({
                     className="sr-only"
                   />
                   <span
-                    className={`text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
+                    className={`font-luxury text-[11px] sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
                       isSelected
-                        ? "font-bold text-[#111111]"
-                        : "font-medium text-[#444444] group-hover:text-black"
+                        ? "font-medium text-[#111111]"
+                        : "font-normal text-[#444444] group-hover:text-black"
                     }`}
                   >
                     {pr.label}
@@ -397,7 +426,7 @@ export function WatchFilterSidebar({
         </div>
       </AccordionSection>
 
-      {/* ── 5. DISCOUNT ─────────────────────────────────────────────── */}
+      {/* ── 6. DISCOUNT ─────────────────────────────────────────────── */}
       <AccordionSection
         title="DISCOUNT"
         isOpen={openSections.discount}
@@ -415,7 +444,7 @@ export function WatchFilterSidebar({
         ))}
       </AccordionSection>
 
-      {/* ── 6. CASE SHAPE / DIAMETER ─────────────────────────────────── */}
+      {/* ── 7. CASE SHAPE / DIAMETER ─────────────────────────────────── */}
       <AccordionSection
         title="CASE SHAPE"
         isOpen={openSections.caseShape}
@@ -433,7 +462,7 @@ export function WatchFilterSidebar({
         ))}
       </AccordionSection>
 
-      {/* ── 7. DIAL COLOR ───────────────────────────────────────────── */}
+      {/* ── 8. DIAL COLOR ───────────────────────────────────────────── */}
       <AccordionSection
         title="DIAL COLOR"
         isOpen={openSections.dialColor}
@@ -450,7 +479,7 @@ export function WatchFilterSidebar({
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={`h-[14px] w-[14px] rounded-full border transition-all ${
+                    className={`h-[13px] w-[13px] rounded-full border transition-all ${
                       isChecked
                         ? "border-[#111111] ring-2 ring-[#fcd017] scale-110"
                         : "border-[#d0d0cc] group-hover:border-[#111111]"
@@ -467,10 +496,10 @@ export function WatchFilterSidebar({
                     aria-checked={isChecked}
                   />
                   <span
-                    className={`text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
+                    className={`font-luxury text-[11px] sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
                       isChecked
-                        ? "font-bold text-[#111111]"
-                        : "font-medium text-[#444444] group-hover:text-black"
+                        ? "font-medium text-[#111111]"
+                        : "font-normal text-[#444444] group-hover:text-black"
                     }`}
                   >
                     {col.label}
@@ -487,7 +516,7 @@ export function WatchFilterSidebar({
         </div>
       </AccordionSection>
 
-      {/* ── 8. DIAL TYPE ────────────────────────────────────────────── */}
+      {/* ── 9. DIAL TYPE ────────────────────────────────────────────── */}
       <AccordionSection
         title="DIAL TYPE"
         isOpen={openSections.dialType}
@@ -505,7 +534,7 @@ export function WatchFilterSidebar({
         ))}
       </AccordionSection>
 
-      {/* ── 9. STRAP MATERIAL ───────────────────────────────────────── */}
+      {/* ── 10. STRAP MATERIAL ──────────────────────────────────────── */}
       <AccordionSection
         title="STRAP MATERIAL"
         isOpen={openSections.strap}
@@ -527,10 +556,10 @@ export function WatchFilterSidebar({
 
   return (
     <>
-      {/* ── DESKTOP STICKY SIDEBAR (Borderless, 230–250px wide, blends with page) ── */}
+      {/* ── DESKTOP STICKY SIDEBAR (Borderless, 220–240px wide, blends with page) ── */}
       <aside
         aria-label="Watches Category Filters"
-        className="hidden lg:block w-[230px] xl:w-[250px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain no-scrollbar pr-5"
+        className="hidden lg:block w-[220px] xl:w-[240px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain no-scrollbar pr-4"
       >
         {filterContent}
       </aside>
@@ -555,7 +584,7 @@ export function WatchFilterSidebar({
             {/* Drawer Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0f0ed]">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold uppercase tracking-[0.14em] text-[#111111]">
+                <span className="font-luxury text-sm font-medium uppercase tracking-[0.1em] text-[#111111]">
                   FILTERS
                 </span>
                 {activeFilterCount > 0 && (
