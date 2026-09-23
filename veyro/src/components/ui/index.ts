@@ -4,3 +4,7 @@ export * from "./Container";
 export * from "./SectionHeading";
 export * from "./Icons";
 export * from "./Logo";
+export * from "./SortDropdown";
+export * from "./TearTicket";
+export * from "./SpotlightBentoCard";
+export * from "./WishlistButton";

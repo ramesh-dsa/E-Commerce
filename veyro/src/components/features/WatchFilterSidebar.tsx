@@ -274,7 +274,7 @@ export function WatchFilterSidebar({
     collection: filters.collections.length,
     movement: filters.movements.length,
     gender: filters.genders.length,
-    price: filters.priceRange ? 1 : 0,
+    price: filters.priceRange && filters.priceRange !== "ALL" ? 1 : 0,
     discount: filters.discounts.length,
     caseShape: filters.caseSizes.length,
     dialColor: filters.colors.length,
@@ -327,14 +327,17 @@ export function WatchFilterSidebar({
           type="button"
           onClick={activeFilterCount > 0 ? onClearAll : undefined}
           disabled={activeFilterCount === 0}
-          className={`font-luxury text-[11px] font-medium uppercase tracking-[0.06em] transition-colors ${
+          className={`group relative font-luxury text-[11px] font-medium uppercase tracking-[0.06em] transition-colors ${
             activeFilterCount > 0
-              ? "text-[#111111] hover:underline cursor-pointer"
+              ? "text-[#111111] cursor-pointer"
               : "text-[#c2c2c2] cursor-default"
           }`}
           aria-label="Clear all applied filters"
         >
           CLEAR ALL
+          {activeFilterCount > 0 && (
+            <span className="absolute -bottom-0.5 left-0 w-full h-[1px] bg-[#111111] origin-right scale-x-0 transition-transform duration-300 ease-out group-hover:origin-left group-hover:scale-x-100" />
+          )}
         </button>
       </div>
 
@@ -434,12 +437,12 @@ export function WatchFilterSidebar({
                   <div
                     className={`h-[13px] w-[13px] rounded-full border flex items-center justify-center transition-all ${
                       isSelected
-                        ? "border-[#111111] bg-[#111111]"
+                        ? "border-[#111111] bg-white"
                         : "border-[#cfcfcf] bg-white group-hover:border-[#111111]"
                     }`}
                   >
                     {isSelected && (
-                      <span className="h-[4.5px] w-[4.5px] rounded-full bg-[#fcd017]" />
+                      <span className="h-[7px] w-[7px] rounded-full bg-[#111111]" />
                     )}
                   </div>
                   <input

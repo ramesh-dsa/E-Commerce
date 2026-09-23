@@ -1,0 +1,820 @@
+"use client";
+
+import React, { useState, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { products } from "@/data/products";
+import { Product } from "@/types";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
+import { CheckIcon } from "@/components/ui/Icons";
+import { Badge } from "@/components/ui/Badge";
+import { WishlistButton } from "@/components/ui/WishlistButton";
+import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
+import {
+  SlidersHorizontal,
+  Grid3X3,
+  Columns2,
+  X,
+  Info,
+  ChevronDown,
+  ArrowRight,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
+
+// Filter options
+type FitFilter = "ALL" | "Oversized" | "Graphic" | "Regular" | "Relaxed" | "Textured";
+type GsmFilter = "ALL" | "HEAVYWEIGHT" | "MIDWEIGHT" | "TEXTURED";
+type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
+
+const CLOTHING_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
+  { value: "featured", label: "Archival Featured" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "discount", label: "Biggest Savings" },
+];
+
+interface ColorOption {
+  label: string;
+  key: string;
+  hex: string;
+  matches: string[];
+}
+
+const COLOR_SWATCHES: ColorOption[] = [
+  { label: "All Colors", key: "ALL", hex: "transparent", matches: [] },
+  { label: "Black", key: "black", hex: "#111111", matches: ["black", "vintage black"] },
+  { label: "White / Off-White", key: "white", hex: "#F5F0EB", matches: ["white", "off-white", "bone"] },
+  { label: "Charcoal / Grey", key: "charcoal", hex: "#3A3A3A", matches: ["charcoal", "light grey", "grey marl"] },
+  { label: "Olive / Green", key: "olive", hex: "#5C6B4F", matches: ["olive"] },
+  { label: "Sand / Beige", key: "sand", hex: "#D6C7A1", matches: ["sand", "beige", "oatmeal"] },
+  { label: "Navy / Slate", key: "navy", hex: "#1E2A38", matches: ["navy", "slate blue"] },
+];
+
+const AVAILABLE_SIZES = ["S", "M", "L", "XL", "XXL"];
+
+export function ClothingCatalog() {
+  // ── Cart & Wishlist Context ───────────────────────────────────────────────
+  const { addToCart, openCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+
+  // ── Filter & View States ───────────────────────────────────────────────────
+  const [selectedFit, setSelectedFit] = useState<FitFilter>("ALL");
+  const [selectedGsm, setSelectedGsm] = useState<GsmFilter>("ALL");
+  const [selectedColor, setSelectedColor] = useState<string>("ALL");
+  const [selectedSize, setSelectedSize] = useState<string>("ALL");
+  const [sortBy, setSortBy] = useState<SortOption>("featured");
+  const [gridColumns, setGridColumns] = useState<2 | 4>(4);
+  const [addedProductId, setAddedProductId] = useState<string | null>(null);
+
+  // ── Modals & Drawers ───────────────────────────────────────────────────────
+  const [isFitGuideOpen, setIsFitGuideOpen] = useState(false);
+
+  // ── Base Clothing Products (14 SKUs) ───────────────────────────────────────
+  const clothingProducts = useMemo(() => {
+    return products.filter((p) => p.category === "Clothing");
+  }, []);
+
+  // ── Sneaker Vault Curated Pairings (Footwear) ──────────────────────────────
+  const footwearPairings = useMemo(() => {
+    return products.filter((p) => p.category === "Footwear").slice(0, 3);
+  }, []);
+
+  // ── Filter & Sort Logic ───────────────────────────────────────────────────
+  const filteredProducts = useMemo(() => {
+    return clothingProducts.filter((product) => {
+      // 1. Fit filter
+      if (selectedFit !== "ALL") {
+        if (selectedFit === "Graphic" && product.subcategoryTag !== "Graphic") return false;
+        if (selectedFit === "Oversized" && product.fit !== "Oversized" && product.subcategoryTag !== "Oversized") return false;
+        if (selectedFit === "Regular" && product.fit !== "Regular" && product.subcategoryTag !== "Regular") return false;
+        if (selectedFit === "Relaxed" && product.fit !== "Relaxed" && product.subcategoryTag !== "Relaxed") return false;
+        if (selectedFit === "Textured" && product.subcategoryTag !== "Textured") return false;
+      }
+
+      // 2. GSM / Fabric Weight Filter
+      if (selectedGsm !== "ALL") {
+        const mat = product.material.toLowerCase();
+        if (selectedGsm === "HEAVYWEIGHT" && !mat.includes("240gsm") && !mat.includes("260gsm")) return false;
+        if (selectedGsm === "MIDWEIGHT" && !mat.includes("180gsm") && !mat.includes("220gsm") && !mat.includes("190gsm")) return false;
+        if (selectedGsm === "TEXTURED" && !mat.includes("waffle") && !mat.includes("linen")) return false;
+      }
+
+      // 3. Color Filter
+      if (selectedColor !== "ALL") {
+        const swatch = COLOR_SWATCHES.find((s) => s.key === selectedColor);
+        if (swatch) {
+          const colorLower = product.colorName.toLowerCase();
+          const matches = swatch.matches.some((m) => colorLower.includes(m));
+          if (!matches) return false;
+        }
+      }
+
+      // 4. Size In-Stock Filter
+      if (selectedSize !== "ALL") {
+        if (!product.sizes.includes(selectedSize)) return false;
+      }
+
+      return true;
+    }).sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      if (sortBy === "discount") {
+        const discA = a.originalPrice ? (a.originalPrice - a.price) / a.originalPrice : 0;
+        const discB = b.originalPrice ? (b.originalPrice - b.price) / b.originalPrice : 0;
+        return discB - discA;
+      }
+      return 0; // "featured" maintains archival order
+    });
+  }, [clothingProducts, selectedFit, selectedGsm, selectedColor, selectedSize, sortBy]);
+
+
+  // ── Quick Add to Bag with Size ─────────────────────────────────────────────
+  const handleQuickAdd = (product: Product, size: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product, size, 1, false);
+    setAddedProductId(`${product.id}-${size}`);
+    setTimeout(() => {
+      setAddedProductId(null);
+    }, 1000);
+  };
+
+  // ── Active Filters Reset ───────────────────────────────────────────────────
+  const hasActiveFilters =
+    selectedFit !== "ALL" ||
+    selectedGsm !== "ALL" ||
+    selectedColor !== "ALL" ||
+    selectedSize !== "ALL" ||
+    sortBy !== "featured";
+
+  const clearAllFilters = () => {
+    setSelectedFit("ALL");
+    setSelectedGsm("ALL");
+    setSelectedColor("ALL");
+    setSelectedSize("ALL");
+    setSortBy("featured");
+  };
+
+  return (
+    <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
+      {/* ── 1. FULL-WIDTH GETHA ARCHIVE SALE HERO BANNER ──────────────── */}
+      <section className="w-full mb-2">
+        <div className="relative w-full overflow-hidden bg-[#111111] aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.4/1] lg:aspect-[2.5/1] min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]">
+          {/* 2K Super-Resolution Sharpened Streetwear Campaign Image */}
+          <Image
+            src="/images/clothing-archive-campaign.jpg"
+            alt="VEYRO Archive Sale - Up to 50% Off 240+ GSM Heavyweight Silhouettes"
+            fill
+            priority
+            quality={98}
+            className="object-cover object-[80%_top] sm:object-top md:object-top"
+            sizes="100vw"
+          />
+
+          {/* Smooth directional scrim strictly on the left — Model on the right is 100% unmasked, bright & crystal clear */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/70 to-transparent sm:bg-gradient-to-r sm:from-[#111111] sm:via-[#111111]/70 sm:via-35% sm:to-transparent pointer-events-none z-1" />
+
+          {/* High-Fashion Editorial Typography Stage (Neatly positioned in the sweet spot on left) */}
+          <div className="absolute inset-y-0 left-0 z-10 flex flex-col justify-center px-6 sm:px-10 lg:px-16 max-w-xl sm:max-w-2xl">
+            {/* Cursive Luxury Accent */}
+            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-[#fcd017] tracking-normal font-normal drop-shadow-md select-none -mb-1">
+              The Limited Drop
+            </span>
+
+            {/* Bold Architectural Headline */}
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-[-0.04em] uppercase text-white leading-[0.92] drop-shadow-md">
+              ARCHIVE SALE
+            </h1>
+
+            {/* High-Impact 50% Offer Lockup */}
+            <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <span className="inline-block px-3.5 py-1 bg-[#fcd017] text-[#111111] text-lg sm:text-2xl lg:text-3xl font-black tracking-tight uppercase rounded-[2px] shadow-lg">
+                UP TO 50% OFF
+              </span>
+              <span className="text-xs sm:text-sm font-black uppercase tracking-[0.12em] text-white/95 drop-shadow-sm">
+                240+ GSM HEAVYWEIGHT SILHOUETTES
+              </span>
+            </div>
+
+            {/* Crisp Editorial Subline */}
+            <p className="mt-3 text-xs sm:text-sm text-[#dddddd] font-normal tracking-wide drop-shadow-xs max-w-md">
+              Combed cotton jersey · Zero-sag ribbed collars · Boxy drop-shoulder
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2. LUXURY EDITORIAL FIT TABS & FILTER BAR ──────────────────────── */}
+      <section id="clothing-catalog-grid" className="w-full bg-white border-b border-[#e8e8e5] pt-6 pb-4 px-5 sm:px-8 lg:px-12 scroll-mt-20">
+        <div className="mx-auto max-w-[1536px] flex flex-col gap-4">
+          {/* Top Row: Clean Editorial Text Tabs (Zara / Represent Style) */}
+          <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar border-b border-[#f0f0ed] pb-3">
+            <div className="flex items-center gap-6 sm:gap-8 shrink-0">
+              {(["ALL", "Oversized", "Graphic", "Regular", "Relaxed", "Textured"] as FitFilter[]).map((fit) => {
+                const isSelected = selectedFit === fit;
+                const count = fit === "ALL" ? clothingProducts.length : clothingProducts.filter((p) => {
+                  if (fit === "Graphic") return p.subcategoryTag === "Graphic";
+                  if (fit === "Oversized") return p.fit === "Oversized" || p.subcategoryTag === "Oversized";
+                  if (fit === "Regular") return p.fit === "Regular" || p.subcategoryTag === "Regular";
+                  if (fit === "Relaxed") return p.fit === "Relaxed" || p.subcategoryTag === "Relaxed";
+                  if (fit === "Textured") return p.subcategoryTag === "Textured";
+                  return false;
+                }).length;
+
+                return (
+                  <button
+                    key={fit}
+                    type="button"
+                    onClick={() => setSelectedFit(fit)}
+                    className={`relative py-1 text-xs sm:text-[13px] font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer whitespace-nowrap ${
+                      isSelected
+                        ? "text-[#111111]"
+                        : "text-[#8e8e8e] hover:text-[#111111]"
+                    }`}
+                  >
+                    <span>{fit === "ALL" ? "All Silhouettes" : `${fit} Fit`} ({count})</span>
+                    {isSelected && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Desktop Grid Switcher & Count */}
+            <div className="hidden lg:flex items-center gap-4 shrink-0">
+              <span className="text-xs text-[#8e8e8e] font-mono">
+                {filteredProducts.length} Pieces
+              </span>
+              <div className="flex items-center border border-[#e8e8e5] rounded-xs p-0.5 bg-[#f8f8f6]">
+                <button
+                  type="button"
+                  onClick={() => setGridColumns(4)}
+                  aria-label="4-column grid view"
+                  className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
+                    gridColumns === 4 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
+                  }`}
+                >
+                  <Grid3X3 size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGridColumns(2)}
+                  aria-label="2-column editorial view"
+                  className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
+                    gridColumns === 2 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
+                  }`}
+                >
+                  <Columns2 size={15} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Secondary Filter Row: Fabric GSM + Color Swatches + Size Picker + Sort */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#f0f0ed]">
+            {/* GSM Fabric Weight Pills */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
+                FABRIC WEIGHT:
+              </span>
+              {(["ALL", "HEAVYWEIGHT", "MIDWEIGHT", "TEXTURED"] as GsmFilter[]).map((gsm) => (
+                <button
+                  key={gsm}
+                  type="button"
+                  onClick={() => setSelectedGsm(gsm)}
+                  className={`px-2.5 py-1 text-[11px] font-medium tracking-wider uppercase rounded-xs transition-colors cursor-pointer ${
+                    selectedGsm === gsm
+                      ? "bg-[#fcd017] text-[#111111] font-bold"
+                      : "bg-[#f8f8f6] text-[#666666] hover:bg-[#eeeeea]"
+                  }`}
+                >
+                  {gsm === "ALL" ? "All Weights" : gsm === "HEAVYWEIGHT" ? "240+ GSM" : gsm === "MIDWEIGHT" ? "180 GSM" : "Waffle/Linen"}
+                </button>
+              ))}
+            </div>
+
+            {/* Color Swatch Dots */}
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
+                COLOR:
+              </span>
+              <div className="flex items-center gap-1.5">
+                {COLOR_SWATCHES.map((swatch) => {
+                  const isSelected = selectedColor === swatch.key;
+                  return (
+                    <button
+                      key={swatch.key}
+                      type="button"
+                      title={swatch.label}
+                      onClick={() => setSelectedColor(swatch.key)}
+                      className={`relative flex items-center justify-center h-6 w-6 rounded-full transition-transform cursor-pointer ${
+                        isSelected ? "ring-2 ring-[#111111] ring-offset-2 scale-110" : "hover:scale-105"
+                      } ${swatch.key === 'ALL' ? 'border border-[#cccccc] text-[9px] font-bold uppercase bg-white' : 'border border-black/10'}`}
+                      style={{ backgroundColor: swatch.key === "ALL" ? undefined : swatch.hex }}
+                    >
+                      {swatch.key === "ALL" && "ALL"}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Size In-Stock Filter */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
+                IN-STOCK SIZE:
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedSize("ALL")}
+                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-xs transition-colors cursor-pointer ${
+                  selectedSize === "ALL" ? "bg-[#111111] text-white" : "bg-[#f4f2ee] text-[#555555]"
+                }`}
+              >
+                ALL
+              </button>
+              {AVAILABLE_SIZES.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => setSelectedSize(size)}
+                  className={`h-6 w-6 flex items-center justify-center text-[10px] font-bold uppercase rounded-xs transition-colors cursor-pointer ${
+                    selectedSize === size
+                      ? "bg-[#111111] text-white"
+                      : "bg-[#f4f2ee] text-[#555555] hover:bg-[#e8e8e5]"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+
+            {/* Sort Dropdown */}
+            <SortDropdown<SortOption>
+              value={sortBy}
+              onChange={setSortBy}
+              options={CLOTHING_SORT_OPTIONS}
+              className="ml-auto"
+            />
+          </div>
+
+          {/* Active Filter Chips & Reset All */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              <span className="text-[11px] text-[#8e8e8e] uppercase font-semibold">Active:</span>
+              {selectedFit !== "ALL" && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
+                  Fit: {selectedFit}
+                  <button type="button" onClick={() => setSelectedFit("ALL")} className="cursor-pointer hover:text-[#fcd017]">
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              {selectedGsm !== "ALL" && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
+                  GSM: {selectedGsm}
+                  <button type="button" onClick={() => setSelectedGsm("ALL")} className="cursor-pointer hover:text-[#fcd017]">
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              {selectedColor !== "ALL" && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
+                  Color: {selectedColor}
+                  <button type="button" onClick={() => setSelectedColor("ALL")} className="cursor-pointer hover:text-[#fcd017]">
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              {selectedSize !== "ALL" && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
+                  Size: {selectedSize}
+                  <button type="button" onClick={() => setSelectedSize("ALL")} className="cursor-pointer hover:text-[#fcd017]">
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={clearAllFilters}
+                className="text-[11px] font-bold text-[#c44d25] hover:underline uppercase tracking-wider ml-2 cursor-pointer"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── 4. PRODUCT GRID WITH EMBEDDED PROMO CARD ───────────────────────── */}
+      <main className="mx-auto max-w-[1536px] px-5 sm:px-8 lg:px-12 py-10">
+        {filteredProducts.length === 0 ? (
+          /* Empty State */
+          <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-xs border border-dashed border-[#dcdcd8]">
+            <span className="text-4xl mb-3">🔍</span>
+            <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
+              No Archival Pieces Found
+            </h3>
+            <p className="mt-2 text-sm text-[#777777] max-w-md">
+              We couldn&apos;t find any t-shirts matching your exact combination of fit, GSM, and color filters.
+            </p>
+            <button
+              type="button"
+              onClick={clearAllFilters}
+              className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-xs hover:bg-[#333333] transition-colors cursor-pointer"
+            >
+              Reset All Filters
+            </button>
+          </div>
+        ) : (
+          <div
+            className={`grid grid-flow-row-dense gap-x-5 gap-y-10 ${
+              gridColumns === 2
+                ? "grid-cols-1 sm:grid-cols-2"
+                : filteredProducts.length === 1
+                ? "grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 max-w-sm"
+                : filteredProducts.length === 2
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 max-w-3xl"
+                : filteredProducts.length === 3
+                ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-3"
+                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+            }`}
+          >
+            {filteredProducts.map((product, index) => {
+              const isWishlisted = isInWishlist(product.id);
+              const discountPercent =
+                product.originalPrice && product.originalPrice > product.price
+                  ? calculateDiscountPercentage(product.price, product.originalPrice)
+                  : null;
+
+              return (
+                <React.Fragment key={product.id}>
+                  {/* Embedded Luxury 3-Tees Bundle Pass Card at slot #3 (After 3 products) */}
+                  {index === 3 && (
+                    <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-[#0d0d10] text-white rounded-[2px] relative overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
+                      {/* High-Fashion Editorial Photography Background: 3 Models Trio */}
+                      <Image
+                        src="/images/bundle-pass-campaign.jpg"
+                        alt="VEYRO VIP 3-Tee Bundle Collection - 3 Heavyweight Silhouettes"
+                        fill
+                        quality={92}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw"
+                        className="object-cover object-[85%_center] transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+
+                      {/* Cinematic Scrim: deep moody wall on the left, clear view of models on the right */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/95 via-[#09090b]/75 sm:via-[#09090b]/35 to-transparent z-1" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/90 via-transparent to-black/25 z-1" />
+
+                      {/* Top Left Editorial Copy (Positioned in Negative Space) */}
+                      <div className="relative z-10 max-w-[260px] sm:max-w-[300px]">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xs bg-[#fcd017] text-[#111111] text-[10px] font-black uppercase tracking-widest mb-3 shadow-sm">
+                          <Zap size={12} className="fill-[#111111]" />
+                          VIP BUNDLE PASS
+                        </div>
+                        <span className="font-script text-2xl sm:text-3xl text-[#fcd017] block -mb-1 font-bold drop-shadow-xs">
+                          the trio curation
+                        </span>
+                        <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
+                          Buy Any 3 T-Shirts For ₹1,199
+                        </h3>
+                        <p className="mt-2.5 text-xs sm:text-sm text-neutral-300 leading-relaxed font-light drop-shadow-xs">
+                          Mix &amp; match any 3 silhouettes across Heavyweight Oversized, Graphic prints, and Classic fits. Savings applied automatically at checkout.
+                        </p>
+                      </div>
+
+                      {/* Bottom Pricing Row with Clear Highlight */}
+                      <div className="relative z-10 mt-6 pt-4 border-t border-white/15 flex items-end justify-between backdrop-blur-[2px] rounded-xs px-1">
+                        <div>
+                          <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">Regular Total</span>
+                          <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">₹2,397 – ₹3,597</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] text-[#fcd017] uppercase tracking-widest font-bold block font-mono">Pass Price</span>
+                          <span className="text-xl sm:text-3xl font-black text-[#fcd017] tracking-tight drop-shadow-sm">₹1,199 ONLY</span>
+                        </div>
+                      </div>
+
+                      {/* Subtle Ambient Glow */}
+                      <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#fcd017]/10 rounded-full blur-3xl pointer-events-none" />
+                    </article>
+                  )}
+
+                  {/* Standard Clothing Product Card */}
+                  <article className="group flex flex-col relative card-hover-lift rounded-lg">
+                    {/* Image Stage Container */}
+                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-lg bg-[#f4f2ee] transition-all duration-300 group-hover:shadow-xl">
+                      <Link
+                        href={`/product/${product.slug}`}
+                        className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
+                        aria-label={product.name}
+                      >
+                        {/* Primary Image */}
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          fill
+                          quality={90}
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
+                        />
+
+                        {/* Secondary Angle Photo on Hover */}
+                        {product.secondaryImageUrl && (
+                          <Image
+                            src={product.secondaryImageUrl}
+                            alt={`${product.name} alternate view`}
+                            fill
+                            quality={90}
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+                          />
+                        )}
+                      </Link>
+
+                      {/* Top Badges (Left) */}
+                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 pointer-events-none z-10">
+                        {product.badge && (
+                          <Badge
+                            variant={
+                              product.badge === "SALE"
+                                ? "sale"
+                                : product.badge === "NEW"
+                                ? "dark"
+                                : "default"
+                            }
+                          >
+                            {product.badge}
+                          </Badge>
+                        )}
+                        {/* GSM Fabric Badge */}
+                        {product.material.includes("240gsm") && (
+                          <span className="px-2 py-0.5 rounded-xs bg-[#111111]/85 backdrop-blur-xs text-[#fcd017] text-[9px] font-extrabold uppercase tracking-wider">
+                            240 GSM
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Wishlist Heart Button (Right) */}
+                      <WishlistButton product={product} isWishlisted={isWishlisted} />
+
+                    </div>
+
+                    {/* Product Details Block */}
+                    <div className="pt-3 pb-1 flex flex-col flex-1">
+                      {/* Meta tag & Color Swatch */}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#8e8e8e]">
+                          {product.subcategoryTag || product.category} · {product.fit}
+                        </span>
+                        {product.colorHex && (
+                          <span
+                            className="h-3 w-3 rounded-full border border-black/10 shrink-0"
+                            style={{ backgroundColor: product.colorHex }}
+                            title={product.colorName}
+                          />
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="mt-1 text-xs sm:text-sm font-semibold tracking-tight text-[#111111] group-hover:text-[#333333] line-clamp-1">
+                        <Link href={`/product/${product.slug}`} className="focus:outline-none">
+                          {product.name}
+                        </Link>
+                      </h4>
+
+                      {/* Material Spec */}
+                      <span className="text-[11px] text-[#8e8e8e] line-clamp-1 mt-0.5">
+                        {product.material.split(",")[0]}
+                      </span>
+
+                      {/* Price Strip */}
+                      <div className="mt-2 flex items-center gap-2">
+                        {product.originalPrice && product.originalPrice > product.price && (
+                          <>
+                            <span className="text-xs text-[#8e8e8e] line-through font-mono">
+                              {formatPrice(product.originalPrice)}
+                            </span>
+                          </>
+                        )}
+                        <span className="text-sm sm:text-[15px] font-bold text-[#111111] font-mono">
+                          {formatPrice(product.price)}
+                        </span>
+                        {product.originalPrice && product.originalPrice > product.price && discountPercent && (
+                          <span className="text-[10px] font-bold text-[#c44d25] font-mono">
+                            {discountPercent}% OFF
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                </React.Fragment>
+              );
+            })}
+          </div>
+        )}
+      </main>
+
+      {/* ── 5. "ENGINEERED WITH FOOTWEAR" CURATED PAIRINGS ─────────────────── */}
+      <section className="w-full bg-[#fafaf8] border-t border-[#e8e8e5] py-16 px-5 sm:px-8 lg:px-12 mt-12">
+        <div className="mx-auto max-w-[1536px]">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#fcd017] bg-[#111111] px-2.5 py-1 rounded-xs inline-block mb-2">
+                COMPLETE THE LOOK
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-[#111111]">
+                Engineered With Footwear Pairings
+              </h3>
+              <p className="mt-1 text-xs sm:text-sm text-[#777777]">
+                Archival sneakers designed to anchor the drape of heavyweight oversized t-shirts.
+              </p>
+            </div>
+            <Link
+              href="/#footwear"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-[#111111] hover:text-[#555555] transition-colors"
+            >
+              <span>Explore All 9 Footwear Silhouettes</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {footwearPairings.map((shoe) => (
+              <Link
+                key={shoe.id}
+                href={`/product/${shoe.slug}`}
+                className="group flex flex-col bg-white border border-[#e8e8e5] p-3 rounded-xs transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="relative w-full aspect-[4/3] bg-[#f4f2ee] rounded-xs overflow-hidden mb-3">
+                  <Image
+                    src={shoe.imageUrl}
+                    alt={shoe.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {shoe.badge && (
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-xs bg-[#111111] text-[#fcd017] text-[9px] font-extrabold uppercase">
+                      {shoe.badge}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-[#8e8e8e] uppercase">
+                    {shoe.subcategoryTag} Sneaker
+                  </span>
+                  <span className="text-xs font-bold text-[#111111]">
+                    {formatPrice(shoe.price)}
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-[#111111] group-hover:text-[#555555] transition-colors mt-0.5">
+                  {shoe.name}
+                </h4>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. INTERACTIVE FIT & SILHOUETTE GUIDE SLIDE-OVER MODAL ─────────── */}
+      {isFitGuideOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="fit-guide-title"
+            className="w-full max-w-2xl bg-white rounded-xs border border-[#e8e8e5] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e8e5] bg-[#fafaf8]">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8e8e8e] block">
+                  VEYRO BESPOKE SIZING ARCHIVE
+                </span>
+                <h3 id="fit-guide-title" className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#111111]">
+                  Silhouette &amp; Fit Visualizer
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsFitGuideOpen(false)}
+                className="p-1.5 text-[#555555] hover:text-[#111111] hover:bg-[#eeeeea] rounded-xs transition-colors cursor-pointer"
+                aria-label="Close fit guide"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="overflow-y-auto p-6 space-y-6">
+              {/* Fit Comparison Matrix */}
+              <div className="space-y-4">
+                {/* Oversized Fit */}
+                <div className="p-4 rounded-xs border border-[#111111] bg-[#fafaf8]">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
+                      1. The Oversized Silhouette (240 GSM)
+                    </h4>
+                    <span className="px-2 py-0.5 rounded-xs bg-[#111111] text-[#fcd017] text-[10px] font-bold uppercase">
+                      Signature Cut
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#666666] leading-relaxed mb-3">
+                    Engineered with extended drop shoulders, extra width through the chest, and a structured vertical fall that does not cling.
+                  </p>
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-medium text-[#444444]">
+                    <li className="bg-white p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Shoulder:</strong> +4.5cm Drop
+                    </li>
+                    <li className="bg-white p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Chest:</strong> Boxy / Relaxed
+                    </li>
+                    <li className="bg-white p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Sleeve:</strong> Reaches Elbow
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Regular Fit */}
+                <div className="p-4 rounded-xs border border-[#e8e8e5] bg-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
+                      2. The Daily Regular Cut (180 GSM)
+                    </h4>
+                    <span className="px-2 py-0.5 rounded-xs bg-[#f4f2ee] text-[#555555] text-[10px] font-bold uppercase">
+                      Classic Fit
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#666666] leading-relaxed mb-3">
+                    Clean, traditional proportions that sit perfectly on your natural shoulder seam. Great for tucking into trousers or layering under overshirts.
+                  </p>
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-medium text-[#444444]">
+                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Shoulder:</strong> Natural Seam
+                    </li>
+                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Chest:</strong> Tailored Straight
+                    </li>
+                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Sleeve:</strong> Mid-Bicep
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Relaxed Fit */}
+                <div className="p-4 rounded-xs border border-[#e8e8e5] bg-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
+                      3. The Relaxed Weekend Cut (220 GSM)
+                    </h4>
+                    <span className="px-2 py-0.5 rounded-xs bg-[#f4f2ee] text-[#555555] text-[10px] font-bold uppercase">
+                      Comfort Fit
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#666666] leading-relaxed mb-3">
+                    The midpoint between Regular and Oversized. Gives extra breathing room around the torso without extreme drop-shoulders.
+                  </p>
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-medium text-[#444444]">
+                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Shoulder:</strong> +1.5cm Soft Drop
+                    </li>
+                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Chest:</strong> Eased 2cm
+                    </li>
+                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                      <strong className="block text-[#111111]">Sleeve:</strong> Lower Bicep
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Sizing Recommendation Banner */}
+              <div className="p-3 bg-[#111111] text-white rounded-xs flex items-center gap-3">
+                <ShieldCheck size={24} className="text-[#fcd017] shrink-0" />
+                <p className="text-xs text-[#cccccc]">
+                  All VEYRO t-shirts are pre-shrunk via bio-wash. Order your true size for the intended silhouette, or size down one if you prefer a standard tailored fit.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-3 border-t border-[#e8e8e5] bg-[#fafaf8] flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsFitGuideOpen(false)}
+                className="px-5 py-2 bg-[#111111] hover:bg-[#333333] text-white text-xs font-bold uppercase tracking-wider rounded-xs transition-colors cursor-pointer"
+              >
+                Got It, Return to Archive
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

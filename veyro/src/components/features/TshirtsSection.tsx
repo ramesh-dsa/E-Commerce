@@ -20,14 +20,14 @@ export function TshirtsSection() {
   ).slice(0, 8);
 
   return (
-    <section className="w-full py-16 sm:py-24 bg-white border-t border-[#f0f0ed]">
+    <section id="clothing" className="w-full py-16 sm:py-24 bg-white border-t border-[#f0f0ed]">
       <Container>
         <SectionHeading
           eyebrow="CLOTHING ARCHIVE • 240+ GSM"
           title="THE T-SHIRT COLLECTION"
           subtitle="Heavyweight cotton, architectural drop-shoulders, and high-density ribbed collars."
           actionText="Shop All T-Shirts (15)"
-          actionHref="#"
+          actionHref="/clothing"
         />
 
         {/* Editorial Fit Filters */}

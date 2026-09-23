@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { products } from "@/data/products";
@@ -28,6 +28,8 @@ import {
   Watch as WatchIcon,
   Ruler,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ShoppingBag,
 } from "lucide-react";
 
@@ -38,6 +40,29 @@ const WATCH_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
   { value: "discount", label: "Biggest Savings" },
+];
+
+const CAROUSEL_BANNERS = [
+  {
+    id: 1,
+    src: "/images/watches-carousel/watch_banner_1_1790157500911.jpg",
+    alt: "High-end luxury editorial photography of a premium mechanical watch",
+  },
+  {
+    id: 2,
+    src: "/images/watches-carousel/watch_banner_2_1790157691736.jpg",
+    alt: "Elegant minimalist still life of a rose gold dress watch",
+  },
+  {
+    id: 3,
+    src: "/images/watches-carousel/watch_banner_3_1790157730134.jpg",
+    alt: "Close up macro shot of a sophisticated skeleton watch movement",
+  },
+  {
+    id: 4,
+    src: "/images/watches-carousel/watch_banner_4_1790157743393.jpg",
+    alt: "Sleek modern sports watch in stainless steel with a blue dial",
+  },
 ];
 
 export function WatchesCatalog() {
@@ -64,6 +89,17 @@ export function WatchesCatalog() {
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % CAROUSEL_BANNERS.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % CAROUSEL_BANNERS.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + CAROUSEL_BANNERS.length) % CAROUSEL_BANNERS.length);
 
   // ── Base Watch Products (8 SKUs) ──────────────────────────────────────────
   const watchProducts = useMemo(() => {
@@ -375,20 +411,60 @@ export function WatchesCatalog() {
 
   return (
     <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
-      {/* ── 1. FULL-WIDTH HOROLOGY EDITORIAL HERO BANNER ───────────────── */}
-      <section className="w-full mb-2">
+      {/* ── 1. FULL-WIDTH HOROLOGY EDITORIAL HERO CAROUSEL ───────────────── */}
+      <section className="w-full mb-2 relative group">
         <h1 className="sr-only">All Watches — Time Lives Different Here | VEYRO Horology Archive</h1>
         <div className="relative w-full overflow-hidden bg-[#e8e2d9] aspect-[3/1] min-h-[170px] sm:min-h-[240px] md:min-h-[320px] max-h-[640px]">
-          {/* User's High-Clarity Lossless WebP Editorial Campaign Banner Image (3K Native, Zero Quality Loss) */}
-          <Image
-            src="/images/watches-archive-campaign.webp"
-            alt="All Watches — Time Lives Different Here | VEYRO Horology Archive"
-            fill
-            priority
-            unoptimized
-            className="object-cover object-center"
-            sizes="100vw"
-          />
+          {CAROUSEL_BANNERS.map((banner, index) => (
+            <div
+              key={banner.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+            >
+              <Image
+                src={banner.src}
+                alt={banner.alt}
+                fill
+                priority={index === 0}
+                unoptimized
+                className="object-cover object-center"
+                sizes="100vw"
+              />
+            </div>
+          ))}
+          
+          <div className="absolute inset-0 bg-black/10 pointer-events-none z-10"></div>
+        </div>
+
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 hover:bg-white text-black rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm z-20 cursor-pointer"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 hover:bg-white text-black rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm z-20 cursor-pointer"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={20} />
+        </button>
+
+        {/* Indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          {CAROUSEL_BANNERS.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                index === currentSlide ? "bg-white w-6" : "bg-white/50 hover:bg-white/80 w-2"
+              }`}
+            />
+          ))}
         </div>
       </section>
 
@@ -413,231 +489,19 @@ export function WatchesCatalog() {
               )}
             </button>
 
-            {/* Breadcrumbs matching Image 3 */}
-            <nav aria-label="Breadcrumbs" className="font-luxury flex items-center gap-1.5 text-[11.5px] font-medium uppercase tracking-[0.08em] text-[#111111]">
-              <Link href="/" className="hover:text-[#555555] transition-colors">
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.03em]">
+              <Link href="/" className="text-[#888888] font-light hover:text-[#111111] transition-colors">
                 HOME
               </Link>
-              <span className="text-[#888888]">&gt;</span>
-              <span className="text-[#111111]">WATCHES</span>
+              <span className="text-[#888888] font-light text-[11px]">&gt;</span>
+              <span className="text-[#111111] font-normal">WATCHES</span>
             </nav>
-
-            <span className="hidden sm:inline-block text-[11px] font-mono uppercase tracking-wider text-[#8e8e8e]">
-              WATCHES &nbsp;ITEMS 1 – {filteredProducts.length} OF {watchProducts.length}
-            </span>
           </div>
 
-          {/* Right: Sizing Guide Button, Grid Switcher, Sort Dropdown */}
-          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-            {/* Watch Case Size Guide Button */}
-            <button
-              type="button"
-              onClick={() => setIsSizeGuideOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-neutral-700 hover:text-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#fcd017] transition-colors cursor-pointer"
-            >
-              <Ruler size={13} />
-              <span>Case Size Guide</span>
-            </button>
 
-            {/* Desktop Grid Switcher (3 or 4 cols next to sidebar) */}
-            <div className="hidden sm:flex items-center border border-[#e8e8e5] rounded-[2px] p-0.5 bg-[#f8f8f6]">
-              <button
-                type="button"
-                onClick={() => setGridColumns(4)}
-                aria-label="4-column boutique view"
-                className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                  gridColumns === 4 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
-                }`}
-              >
-                <Grid3X3 size={15} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setGridColumns(3)}
-                aria-label="3-column editorial view"
-                className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                  gridColumns === 3 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
-                }`}
-              >
-                <Columns2 size={15} />
-              </button>
-            </div>
 
-            {/* Sort Dropdown */}
-            <SortDropdown<SortOption>
-              value={sortBy}
-              onChange={setSortBy}
-              options={WATCH_SORT_OPTIONS}
-            />
-          </div>
 
-          {/* Active Filter Chips Row */}
-          {activeFilterCount > 0 && (
-            <div className="w-full flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#f0f0ed]">
-              <span className="text-[11px] text-[#8e8e8e] uppercase font-semibold mr-1">Active:</span>
-
-              {/* Collection Chips */}
-              {filters.collections.map((col) => (
-                <span
-                  key={col}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  {col}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleCollection(col)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              {/* Movement Chips */}
-              {filters.movements.map((mov) => (
-                <span
-                  key={mov}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  {mov}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleMovement(mov)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              {/* Gender Chips */}
-              {filters.genders.map((g) => (
-                <span
-                  key={g}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  {g}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleGender(g)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              {/* Price Range Chip */}
-              {filters.priceRange !== "ALL" && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold">
-                  {WATCH_PRICE_RANGES.find((p) => p.id === filters.priceRange)?.label}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectPriceRange("ALL")}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              )}
-
-              {/* Discount Chips */}
-              {filters.discounts.map((d) => (
-                <span
-                  key={d}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  {d}% &amp; Above
-                  <button
-                    type="button"
-                    onClick={() => handleToggleDiscount(d)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              {/* Case Size Chips */}
-              {filters.caseSizes.map((cs) => (
-                <span
-                  key={cs}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  Size: {cs}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleCaseSize(cs)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              {/* Color Chips */}
-              {filters.colors.map((colKey) => {
-                const colObj = WATCH_COLORS.find((c) => c.id === colKey);
-                return (
-                  <span
-                    key={colKey}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                  >
-                    {colObj?.label || colKey}
-                    <button
-                      type="button"
-                      onClick={() => handleToggleColor(colKey)}
-                      className="hover:text-[#fcd017] cursor-pointer"
-                    >
-                      <X size={11} />
-                    </button>
-                  </span>
-                );
-              })}
-
-              {/* Dial Type Chips */}
-              {filters.dialTypes.map((dt) => (
-                <span
-                  key={dt}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  {dt}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleDialType(dt)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              {/* Strap Chips */}
-              {filters.straps.map((strap) => (
-                <span
-                  key={strap}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] bg-[#111111] text-white text-[11px] font-semibold"
-                >
-                  {strap}
-                  <button
-                    type="button"
-                    onClick={() => handleToggleStrap(strap)}
-                    className="hover:text-[#fcd017] cursor-pointer"
-                  >
-                    <X size={11} />
-                  </button>
-                </span>
-              ))}
-
-              <button
-                type="button"
-                onClick={handleClearAll}
-                className="text-[11px] font-bold text-[#c44d25] hover:underline uppercase tracking-wider ml-1 cursor-pointer"
-              >
-                Clear All
-              </button>
-            </div>
-          )}
         </div>
       </section>
 
@@ -702,101 +566,31 @@ export function WatchesCatalog() {
 
                   return (
                     <React.Fragment key={product.id}>
-                      {/* Embedded Editorial Campaign Card at slot #2 (spans 2 cols) */}
-                      {index === 2 && (
-                        <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-[#0d0d10] text-white rounded-[2px] relative overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
-                          {/* Editorial Photography Background */}
-                          <Image
-                            src="/images/watches-archive-campaign.jpg"
-                            alt="VEYRO Horology Atelier - Architectural Watchmaking"
-                            fill
-                            quality={92}
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw"
-                            className="object-cover object-[70%_center] transition-transform duration-700 ease-out group-hover:scale-105"
-                          />
 
-                          {/* Cinematic Scrim */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/95 via-[#09090b]/75 sm:via-[#09090b]/35 to-transparent z-1" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/90 via-transparent to-black/25 z-1" />
-
-                          {/* Editorial Copy */}
-                          <div className="relative z-10 max-w-[280px] sm:max-w-[340px]">
-                            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-[2px] bg-[#fcd017] text-[#111111] text-[10px] font-black uppercase tracking-widest mb-3 shadow-sm">
-                              <Zap size={12} className="fill-[#111111]" />
-                              HOROLOGY PRIVILEGE
-                            </div>
-                            <span className="font-script text-2xl sm:text-3xl text-[#fcd017] block -mb-1 font-bold drop-shadow-xs">
-                              complimentary vault gift
-                            </span>
-                            <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
-                              Free Italian Leather Travel Roll
-                            </h3>
-                            <p className="mt-2.5 text-xs sm:text-sm text-neutral-300 leading-relaxed font-light drop-shadow-xs">
-                              Every VEYRO timepiece order ships with a bespoke single-watch travel roll in vegetable-tanned full-grain leather.
-                            </p>
-                          </div>
-
-                          {/* Bottom Row */}
-                          <div className="relative z-10 mt-6 pt-4 border-t border-white/15 flex items-end justify-between backdrop-blur-[2px] rounded-[2px] px-1">
-                            <div>
-                              <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">
-                                Travel Roll Value
-                              </span>
-                              <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">
-                                ₹2,499
-                              </span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-[10px] text-[#fcd017] uppercase tracking-widest font-bold block font-mono">
-                                Vault Privilege
-                              </span>
-                              <span className="text-xl sm:text-2xl font-black text-[#fcd017] tracking-tight drop-shadow-sm">
-                                INCLUDED WITH ORDER
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Subtle Ambient Glow */}
-                          <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#fcd017]/10 rounded-full blur-3xl pointer-events-none" />
-                        </article>
-                      )}
-
-                      {/* Standard Watch Card — Helios Center-Aligned Luxury Aesthetic with Smooth Hover Zoom */}
-                      <article className="group flex flex-col relative card-hover-lift rounded-[2px] bg-white transition-all duration-300">
+                      {/* Minimalist Watch Card */}
+                      <article className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer">
                         {/* Image Stage Container */}
-                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-[2px] bg-[#f8f8f6] transition-all duration-300">
+                        <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#f8f8f6]">
                           <Link
                             href={`/product/${product.slug}`}
                             className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
                             aria-label={product.name}
                           >
-                            {/* Primary Image with Smooth Luxury Zoom on Hover */}
+                            {/* Primary Image */}
                             <Image
                               src={product.imageUrl}
                               alt={product.name}
                               fill
                               quality={90}
                               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                              className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
+                              className="object-cover object-center"
                             />
-
-                            {/* Secondary Angle / Macro View on Hover */}
-                            {product.secondaryImageUrl && (
-                              <Image
-                                src={product.secondaryImageUrl}
-                                alt={`${product.name} macro dial view`}
-                                fill
-                                quality={90}
-                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
-                              />
-                            )}
                           </Link>
 
                           {/* Top Badges (Left) */}
                           <div className="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none z-10">
                             {discountPercent && (
-                              <span className="px-1.5 py-0.5 rounded-[1px] bg-[#d9381e] text-white text-[9px] font-black uppercase tracking-wider shadow-xs">
+                              <span className="px-1.5 py-0.5 bg-[#d9381e] text-white text-[9px] font-black uppercase tracking-wider">
                                 {discountPercent}% OFF
                               </span>
                             )}
@@ -808,7 +602,7 @@ export function WatchesCatalog() {
                           </div>
                         </div>
 
-                        {/* Metadata Stage (Helios Center-Aligned Luxury Format) */}
+                        {/* Metadata Stage */}
                         <div className="pt-3.5 pb-2 flex flex-col items-center text-center flex-grow">
                           {/* Line 1: Maker / Brand Line */}
                           <span className="font-luxury text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#111111]">
@@ -838,29 +632,6 @@ export function WatchesCatalog() {
                               </span>
                             )}
                           </div>
-
-                          {/* Line 4: Quick Action CTA (Helios style button with instant feedback) */}
-                          <button
-                            type="button"
-                            onClick={(e) => handleQuickAdd(product, e)}
-                            className={`font-luxury mt-2.5 w-full py-1.5 px-3 rounded-[2px] text-[11px] font-medium uppercase tracking-[0.08em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 ${
-                              addedProductId === product.id
-                                ? "bg-[#fcd017] text-[#111111] font-bold shadow-xs"
-                                : "bg-transparent text-[#111111] border border-[#e5e5e3] hover:bg-[#111111] hover:text-white hover:border-[#111111] group-hover:border-[#111111]"
-                            }`}
-                          >
-                            {addedProductId === product.id ? (
-                              <>
-                                <Check size={12} strokeWidth={3} />
-                                <span>ADDED TO BAG</span>
-                              </>
-                            ) : (
-                              <>
-                                <ShoppingBag size={12} />
-                                <span>QUICK ADD TO BAG</span>
-                              </>
-                            )}
-                          </button>
                         </div>
                       </article>
                     </React.Fragment>

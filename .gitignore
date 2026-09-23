@@ -1,0 +1,7 @@
+# Root gitignore
+node_modules/
+.agents/
+.kilo/
+*.mkv
+*.mp4
+.DS_Store

@@ -32,7 +32,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState("NEW ARRIVALS");
+  const [activeNav, setActiveNav] = useState("HOME");
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [signOutNotice, setSignOutNotice] = useState<string | null>(null);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
@@ -108,7 +108,7 @@ export function Navbar() {
 
   useEffect(() => {
     if (pathname === "/") {
-      setActiveNav("NEW ARRIVALS");
+      setActiveNav("HOME");
     } else if (pathname === "/clothing" || isClothingProduct) {
       setActiveNav("CLOTHING");
     } else if (pathname === "/shoes" || pathname === "/footwear" || isShoeProduct) {
@@ -122,9 +122,9 @@ export function Navbar() {
 
   const navLinks = [
     {
-      label: "NEW ARRIVALS",
+      label: "HOME",
       href: "/",
-      isActive: pathname === "/" && activeNav === "NEW ARRIVALS",
+      isActive: pathname === "/" && activeNav === "HOME",
     },
     {
       label: "CLOTHING",

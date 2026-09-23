@@ -26,7 +26,7 @@ export function NewArrivalsSection() {
   }).slice(0, 5);
 
   return (
-    <section className="w-full py-14 sm:py-20 bg-white">
+    <section id="new-arrivals" className="w-full py-14 sm:py-20 bg-white">
       <Container>
         {/* Section Header */}
         <SectionHeading
@@ -34,7 +34,7 @@ export function NewArrivalsSection() {
           title="LATEST ARRIVALS"
           subtitle="Engineered fits, heavyweight drapes, and vulcanized sneakers built for daily rotation."
           actionText="View All New Drops"
-          actionHref="#"
+          actionHref="/clothing"
         />
 
         {/* Filter Category Tabs */}

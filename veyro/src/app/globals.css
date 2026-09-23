@@ -494,3 +494,56 @@ footer input:-webkit-autofill:active,
   }
 }
 
+
+/* ─── Ticket Notches for Promo Banners ──────────────────────────────────── */
+/* Desktop: left section (notches on right edge) */
+.ticket-mask-left {
+  -webkit-mask-image: radial-gradient(circle 16px at 100% 0%, transparent 16px, black 16.5px),
+                      radial-gradient(circle 16px at 100% 100%, transparent 16px, black 16.5px);
+  -webkit-mask-size: 100% 50%, 100% 50%;
+  -webkit-mask-position: top, bottom;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: radial-gradient(circle 16px at 100% 0%, transparent 16px, black 16.5px),
+              radial-gradient(circle 16px at 100% 100%, transparent 16px, black 16.5px);
+  mask-size: 100% 50%, 100% 50%;
+  mask-position: top, bottom;
+  mask-repeat: no-repeat;
+}
+
+/* Desktop: right section (notches on left edge) */
+.ticket-mask-right {
+  -webkit-mask-image: radial-gradient(circle 16px at 0% 0%, transparent 16px, black 16.5px),
+                      radial-gradient(circle 16px at 0% 100%, transparent 16px, black 16.5px);
+  -webkit-mask-size: 100% 50%, 100% 50%;
+  -webkit-mask-position: top, bottom;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: radial-gradient(circle 16px at 0% 0%, transparent 16px, black 16.5px),
+              radial-gradient(circle 16px at 0% 100%, transparent 16px, black 16.5px);
+  mask-size: 100% 50%, 100% 50%;
+  mask-position: top, bottom;
+  mask-repeat: no-repeat;
+}
+
+/* Mobile overrides */
+@media (max-width: 767px) {
+  .ticket-mask-left {
+    -webkit-mask-image: radial-gradient(circle 14px at 0% 100%, transparent 14px, black 14.5px),
+                        radial-gradient(circle 14px at 100% 100%, transparent 14px, black 14.5px);
+    -webkit-mask-size: 50% 100%, 50% 100%;
+    -webkit-mask-position: left, right;
+    mask-image: radial-gradient(circle 14px at 0% 100%, transparent 14px, black 14.5px),
+                radial-gradient(circle 14px at 100% 100%, transparent 14px, black 14.5px);
+    mask-size: 50% 100%, 50% 100%;
+    mask-position: left, right;
+  }
+  .ticket-mask-right {
+    -webkit-mask-image: radial-gradient(circle 14px at 0% 0%, transparent 14px, black 14.5px),
+                        radial-gradient(circle 14px at 100% 0%, transparent 14px, black 14.5px);
+    -webkit-mask-size: 50% 100%, 50% 100%;
+    -webkit-mask-position: left, right;
+    mask-image: radial-gradient(circle 14px at 0% 0%, transparent 14px, black 14.5px),
+                radial-gradient(circle 14px at 100% 0%, transparent 14px, black 14.5px);
+    mask-size: 50% 100%, 50% 100%;
+    mask-position: left, right;
+  }
+}

@@ -20,37 +20,42 @@ export function PromoFlipBanner() {
   return (
     <section
       aria-label="Promotional Offers"
-      className="w-full pt-8 pb-6 sm:pb-8 overflow-x-clip select-none"
+      className="w-full pt-6 pb-6 sm:pb-8 overflow-x-clip select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}
       onBlurCapture={() => setIsPaused(false)}
     >
-      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.15)] relative" style={{ perspective: "2000px" }}>
-        
-        {/* Toggle Indicator */}
+      {/* Aligned Header Row with Context & Switch */}
+      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto mb-3 flex items-center justify-between px-1">
+        <span className="text-[10px] sm:text-[11px] font-mono tracking-widest text-[#888] uppercase">
+          EXCLUSIVE OFFERS
+        </span>
         <button 
           role="switch"
           aria-checked={isFlipped}
-          className="absolute -top-8 right-0 flex items-center gap-3 z-10 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black focus-visible:ring-offset-2 rounded-sm px-1" 
+          className="flex items-center gap-2.5 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-sm px-1 py-0.5" 
           onClick={() => setIsFlipped(!isFlipped)}
         >
           <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${!isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
             T-Shirts
           </span>
-          <div className="relative w-10 h-5 bg-neutral-200 rounded-full overflow-hidden flex items-center p-1">
-            <div className={`w-3.5 h-3.5 bg-veyro-black rounded-full shadow-md transform transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isFlipped ? "translate-x-4.5" : "translate-x-0"}`} />
+          <div className="relative w-9 h-[18px] bg-neutral-200 rounded-full overflow-hidden flex items-center p-0.5">
+            <div className={`w-3 h-3 bg-veyro-black rounded-full shadow-xs transform transition-transform duration-300 ease-out ${isFlipped ? "translate-x-4" : "translate-x-0"}`} />
           </div>
           <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
             Sneakers
           </span>
         </button>
+      </div>
 
+      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto relative" style={{ perspective: "2000px" }}>
         {/* 3D Flip Container */}
         <div 
-          className="relative w-full grid transition-transform duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+          className="relative w-full grid transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
           style={{ 
             transformStyle: "preserve-3d",
+            willChange: "transform",
             transform: isFlipped ? "rotateX(180deg)" : "rotateX(0deg)"
           }}
         >
@@ -61,11 +66,12 @@ export function PromoFlipBanner() {
             style={{ backfaceVisibility: "hidden" }}
             aria-hidden={isFlipped}
           >
-            <Link
-              href="#"
-              tabIndex={isFlipped ? -1 : 0}
-              className="relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 group-hover:scale-[1.005]"
-            >
+            <div className="w-full h-full drop-shadow-[0_12px_24px_rgba(0,0,0,0.15)]">
+              <Link
+                href="/clothing"
+                tabIndex={isFlipped ? -1 : 0}
+                className="relative flex flex-col md:flex-row w-full h-full rounded-md overflow-hidden transition-transform duration-300 group-hover:scale-[1.005]"
+              >
               {/* LEFT SECTION (BLACK) */}
               <div
                 className="relative flex-[1.2] bg-[#111111] text-white px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-[#222222]"
@@ -100,7 +106,7 @@ export function PromoFlipBanner() {
                   </div>
 
                   <p className="text-xs sm:text-sm font-light tracking-[0.4em] text-neutral-400 uppercase mb-4">
-                    CLASSIC FIT TEES
+                    CLASSIC FIT T-SHIRTS
                   </p>
 
                   {/* Bottom Icons */}
@@ -150,7 +156,7 @@ export function PromoFlipBanner() {
                 {/* Background Graphic Elements for Yellow Side */}
                 <div className="absolute right-0 top-0 bottom-0 w-[50%] pointer-events-none opacity-20">
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border-4 border-black border-dashed opacity-30" />
-                  <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-white rounded-full mix-blend-overlay opacity-60" />
+                  <div className="absolute top-1/2 right-0 -translate-y-1/2 w-64 h-64 bg-white/25 rounded-full opacity-60" />
                 </div>
 
                 <div className="relative z-10 w-full flex flex-col justify-center">
@@ -170,8 +176,8 @@ export function PromoFlipBanner() {
                   </span>
                 </div>
               </div>
-
-            </Link>
+              </Link>
+            </div>
 
             {/* The Floating T-Shirt (OUTSIDE MASK & LINK) */}
             <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-[60%] w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-6 z-20 drop-shadow-2xl">
@@ -179,9 +185,8 @@ export function PromoFlipBanner() {
                 src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
                 alt="Premium Classic Fit T-Shirt" 
                 fill
-                priority
                 sizes="(max-width: 768px) 100vw, 320px"
-                className="object-contain object-center scale-[1.25] rotate-[-5deg] brightness-105 contrast-125"
+                className="object-contain object-center scale-[1.25] rotate-[-5deg]"
               />
             </div>
           </div>
@@ -196,11 +201,12 @@ export function PromoFlipBanner() {
             }}
             aria-hidden={!isFlipped}
           >
-            <Link
-              href="/category/footwear"
-              tabIndex={!isFlipped ? -1 : 0}
-              className="relative flex flex-col md:flex-row w-full h-full transition-transform duration-300 group-hover:scale-[1.005]"
-            >
+            <div className="w-full h-full drop-shadow-[0_12px_24px_rgba(0,0,0,0.15)]">
+              <Link
+                href="/shoes"
+                tabIndex={!isFlipped ? -1 : 0}
+                className="relative flex flex-col md:flex-row w-full h-full rounded-md overflow-hidden transition-transform duration-300 group-hover:scale-[1.005]"
+              >
               {/* LEFT SECTION (BLACK) */}
               <div
                 className="relative flex-[1.2] bg-[#111111] text-white px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-[#222222]"
@@ -301,8 +307,8 @@ export function PromoFlipBanner() {
                   </span>
                 </div>
               </div>
-
-            </Link>
+              </Link>
+            </div>
 
             {/* The Floating Sneaker Composition (OUTSIDE MASK & LINK) */}
             <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
@@ -314,7 +320,7 @@ export function PromoFlipBanner() {
                   alt="Veyro Premium Collection - Chunky White and Yellow Sneaker" 
                   fill
                   sizes="(max-width: 768px) 100vw, 320px"
-                  className="object-contain object-center scale-105 rotate-[-5deg] brightness-105 contrast-110"
+                  className="object-contain object-center scale-105 rotate-[-5deg]"
                 />
               </div>
             </div>

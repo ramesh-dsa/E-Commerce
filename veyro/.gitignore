@@ -40,3 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 venv/
+
+# media & temp docs
+*.mkv
+*.mp4
+walkthrough.md

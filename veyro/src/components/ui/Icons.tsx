@@ -54,6 +54,32 @@ export function ShoppingBagIcon({
   );
 }
 
+export function ShoppingCartIcon({
+  size = 20,
+  className = "",
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <circle cx="8" cy="20.5" r="1.5" />
+      <circle cx="17.5" cy="20.5" r="1.5" />
+      <path d="M1.5 2.5h3.2l2.5 11.2a2.5 2.5 0 0 0 2.5 2.1h10" />
+      <path d="M5.8 6.5h16.7l-1.8 6.5H7.1" />
+    </svg>
+  );
+}
+
 export function UserIcon({ size = 20, className = "", ...props }: IconProps) {
   return (
     <svg

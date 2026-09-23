@@ -15,6 +15,16 @@ export interface Product {
   subcategoryTag: string;
   /** Garment fit (T-shirts only): "Oversized" | "Regular" | "Relaxed" */
   fit?: string;
+  /** Watch movement type: "Automatic" | "Quartz" | "Solar" | "Digital" */
+  movement?: "Automatic" | "Quartz" | "Solar" | "Digital";
+  /** Watch strap material e.g. "Full-Grain Leather", "Milanese Mesh Steel" */
+  strapMaterial?: string;
+  /** Watch case diameter e.g. "38mm", "40mm", "42mm" */
+  caseDiameter?: string;
+  /** Watch gender classification */
+  gender?: "Men" | "Women" | "Unisex";
+  /** Water resistance rating e.g. "50M / 5ATM", "200M / 20ATM" */
+  waterResistance?: string;
   /** Display color name, e.g. "Black" */
   colorName: string;
   /** Color hex value for swatches, e.g. "#111111" */
@@ -34,7 +44,7 @@ export interface Product {
   /** Additional PDP gallery images */
   galleryImages?: string[];
   /** Merchandising badge */
-  badge?: "NEW" | "SALE" | "BESTSELLER" | "LIMITED" | "TRENDING";
+  badge?: "NEW" | "SALE" | "BESTSELLER" | "LIMITED" | "TRENDING" | "PREMIUM" | "EXCLUSIVE" | "NEW ARRIVAL";
   /** Available sizes */
   sizes: string[];
   /** Whether this product appears in New Arrivals */
@@ -62,6 +72,43 @@ export interface Product {
   colors?: string[];
   rating?: number;
   reviewsCount?: number;
+}
+
+// ── CUSTOMER REVIEW TYPES ───────────────────────────────────────────────────
+
+export type ReviewFit = "Runs Small" | "True to Size" | "Runs Large";
+
+export interface Review {
+  id: string;
+  productId: string;
+  author: string;
+  rating: number; // 1 to 5
+  title: string;
+  content: string;
+  date: string; // ISO date format e.g. "2026-08-14"
+  verified: boolean;
+  fit: ReviewFit;
+  sizePurchased?: string;
+  helpfulCount: number;
+  unhelpfulCount: number;
+}
+
+export interface ReviewStats {
+  averageRating: number;
+  totalCount: number;
+  distribution: {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+  };
+  recommendationPercentage: number;
+  fitBreakdown: {
+    runsSmall: number;
+    trueToSize: number;
+    runsLarge: number;
+  };
 }
 
 export interface ProductCardProps {
@@ -109,4 +156,53 @@ export interface SectionHeadingProps {
   actionHref?: string;
   align?: "left" | "center";
   className?: string;
+}
+
+// ── ORDER MANAGEMENT TYPES ───────────────────────────────────────────────────
+
+export type OrderStatus = "Confirmed" | "Packed" | "Shipped" | "Out for Delivery" | "Delivered";
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  productSlug: string;
+  imageUrl: string;
+  colorName: string;
+  selectedSize: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface OrderTimeline {
+  status: OrderStatus;
+  timestamp: string;
+  description: string;
+}
+
+export interface OrderAddress {
+  name: string;
+  phone: string;
+  address: string;
+  pincode: string;
+}
+
+export interface OrderRecord {
+  id: string;
+  date: string;
+  total: number;
+  subtotal: number;
+  bundleDiscount: number;
+  couponDiscount: number;
+  couponCode: string | null;
+  shippingCost: number;
+  itemsCount: number;
+  items: OrderItem[];
+  status: OrderStatus;
+  estimatedDelivery: string;
+  timeline: OrderTimeline[];
+  shippingAddress: OrderAddress;
+  paymentMethod: string;
+  /** @deprecated Legacy compat — use items[] instead */
+  itemNames: string[];
 }
