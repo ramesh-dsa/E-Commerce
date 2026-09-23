@@ -59,7 +59,7 @@ export function WatchesCatalog() {
   });
 
   const [sortBy, setSortBy] = useState<SortOption>("featured");
-  const [gridColumns, setGridColumns] = useState<2 | 3>(3);
+  const [gridColumns, setGridColumns] = useState<3 | 4>(4);
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
@@ -411,24 +411,24 @@ export function WatchesCatalog() {
               <span>Case Size Guide</span>
             </button>
 
-            {/* Desktop Grid Switcher (2 or 3 cols next to sidebar) */}
+            {/* Desktop Grid Switcher (3 or 4 cols next to sidebar) */}
             <div className="hidden sm:flex items-center border border-[#e8e8e5] rounded-[2px] p-0.5 bg-[#f8f8f6]">
               <button
                 type="button"
-                onClick={() => setGridColumns(3)}
-                aria-label="3-column grid view"
+                onClick={() => setGridColumns(4)}
+                aria-label="4-column boutique view"
                 className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                  gridColumns === 3 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
+                  gridColumns === 4 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
                 }`}
               >
                 <Grid3X3 size={15} />
               </button>
               <button
                 type="button"
-                onClick={() => setGridColumns(2)}
-                aria-label="2-column editorial view"
+                onClick={() => setGridColumns(3)}
+                aria-label="3-column editorial view"
                 className={`p-1.5 rounded-[2px] transition-colors cursor-pointer ${
-                  gridColumns === 2 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
+                  gridColumns === 3 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
                 }`}
               >
                 <Columns2 size={15} />
@@ -658,10 +658,10 @@ export function WatchesCatalog() {
               </div>
             ) : (
               <div
-                className={`grid gap-x-5 gap-y-10 ${
-                  gridColumns === 2
-                    ? "grid-cols-1 sm:grid-cols-2"
-                    : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                className={`grid gap-x-4 sm:gap-x-6 gap-y-10 ${
+                  gridColumns === 4
+                    ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                    : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
                 }`}
               >
                 {filteredProducts.map((product, index) => {
@@ -673,9 +673,9 @@ export function WatchesCatalog() {
 
                   return (
                     <React.Fragment key={product.id}>
-                      {/* Embedded Editorial Campaign Card at slot #2 */}
+                      {/* Embedded Editorial Campaign Card at slot #2 (spans 2 cols) */}
                       {index === 2 && (
-                        <article className="col-span-1 sm:col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-[#0d0d10] text-white rounded-[2px] relative overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
+                        <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-[#0d0d10] text-white rounded-[2px] relative overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
                           {/* Editorial Photography Background */}
                           <Image
                             src="/images/watches-archive-campaign.jpg"
@@ -732,23 +732,23 @@ export function WatchesCatalog() {
                         </article>
                       )}
 
-                      {/* Standard Watch Card — With Universal card-hover-lift (Option A) */}
-                      <article className="group flex flex-col relative card-hover-lift rounded-lg">
+                      {/* Standard Watch Card — Helios Center-Aligned Luxury Aesthetic with Smooth Hover Zoom */}
+                      <article className="group flex flex-col relative card-hover-lift rounded-[2px] bg-white transition-all duration-300">
                         {/* Image Stage Container */}
-                        <div className="relative w-full aspect-[3/4] overflow-hidden rounded-lg bg-[#f4f2ee] transition-all duration-300 group-hover:shadow-xl">
+                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-[2px] bg-[#f8f8f6] transition-all duration-300">
                           <Link
                             href={`/product/${product.slug}`}
                             className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
                             aria-label={product.name}
                           >
-                            {/* Primary Image */}
+                            {/* Primary Image with Smooth Luxury Zoom on Hover */}
                             <Image
                               src={product.imageUrl}
                               alt={product.name}
                               fill
                               quality={90}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                              className="object-cover object-center transition-all duration-500 ease-out group-hover:scale-105"
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
                             />
 
                             {/* Secondary Angle / Macro View on Hover */}
@@ -758,106 +758,80 @@ export function WatchesCatalog() {
                                 alt={`${product.name} macro dial view`}
                                 fill
                                 quality={90}
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                 className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
                               />
                             )}
                           </Link>
 
                           {/* Top Badges (Left) */}
-                          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 pointer-events-none z-10">
-                            {product.badge && (
-                              <Badge
-                                variant={
-                                  product.badge === "SALE"
-                                    ? "sale"
-                                    : product.badge === "NEW"
-                                    ? "dark"
-                                    : "default"
-                                }
-                              >
-                                {product.badge}
-                              </Badge>
-                            )}
-                            <span className="px-2 py-0.5 rounded-[2px] bg-[#111111]/85 backdrop-blur-xs text-[#fcd017] text-[9px] font-extrabold uppercase tracking-wider">
-                              {product.movement}
-                            </span>
-                          </div>
-
-                          {/* Wishlist Heart Button (Right) */}
-                          <WishlistButton product={product} isWishlisted={isWishlisted} />
-
-                          {/* ⚡ QUICK-ADD / SPEC STRIP (Hover Slide-Up Drawer) */}
-                          <div className="absolute inset-x-0 bottom-0 z-10 hidden sm:flex translate-y-full flex-col bg-white/95 px-3 py-2.5 backdrop-blur-sm transition-transform duration-300 ease-out group-hover:translate-y-0 border-t border-[#f0f0ed] shadow-lg">
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8e8e8e]">
-                                Case: {product.caseDiameter} · {product.waterResistance}
-                              </span>
-                              <span className="text-[9.5px] font-semibold text-[#111111] uppercase">
-                                In Stock
-                              </span>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={(e) => handleQuickAdd(product, e)}
-                              className={`w-full h-8 flex items-center justify-center gap-1.5 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                                addedProductId === product.id
-                                  ? "bg-[#fcd017] text-[#111111] font-black"
-                                  : "bg-[#111111] text-white hover:bg-[#333333]"
-                              }`}
-                            >
-                              {addedProductId === product.id ? (
-                                <>
-                                  <Check size={13} strokeWidth={3} />
-                                  <span>Added to Bag</span>
-                                </>
-                              ) : (
-                                <>
-                                  <ShoppingBag size={13} />
-                                  <span>Quick Add to Bag</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Metadata Stage */}
-                        <div className="pt-3.5 flex flex-col flex-grow">
-                          {/* Subcategory & Diameter */}
-                          <div className="flex items-center justify-between text-[11px] font-medium text-[#8e8e8e] uppercase tracking-wider mb-1">
-                            <span>{product.subcategoryTag} Timepiece</span>
-                            <span>{product.caseDiameter}</span>
-                          </div>
-
-                          {/* Product Name */}
-                          <h3 className="text-sm font-bold tracking-tight text-[#111111] group-hover:text-[#555555] transition-colors leading-snug line-clamp-1">
-                            <Link href={`/product/${product.slug}`}>
-                              {product.name}
-                            </Link>
-                          </h3>
-
-                          {/* Strap Spec */}
-                          <p className="text-[11px] text-[#777777] truncate mt-0.5">
-                            {product.strapMaterial} · {product.waterResistance}
-                          </p>
-
-                          {/* Pricing Block */}
-                          <div className="mt-2.5 pt-2 border-t border-[#f0f0ed] flex items-baseline gap-2">
-                            {product.originalPrice && product.originalPrice > product.price && (
-                              <span className="text-xs text-[#8e8e8e] line-through font-mono">
-                                {formatPrice(product.originalPrice)}
-                              </span>
-                            )}
-                            <span className="text-sm sm:text-base font-black text-[#111111] font-mono">
-                              {formatPrice(product.price)}
-                            </span>
+                          <div className="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none z-10">
                             {discountPercent && (
-                              <span className="text-[10.5px] font-extrabold text-[#c44d25] font-mono ml-auto">
+                              <span className="px-1.5 py-0.5 rounded-[1px] bg-[#d9381e] text-white text-[9px] font-black uppercase tracking-wider shadow-xs">
                                 {discountPercent}% OFF
                               </span>
                             )}
                           </div>
+
+                          {/* Wishlist Heart Button (Right) */}
+                          <div className="absolute top-2 right-2 z-10 transition-opacity duration-200">
+                            <WishlistButton product={product} isWishlisted={isWishlisted} />
+                          </div>
+                        </div>
+
+                        {/* Metadata Stage (Helios Center-Aligned Luxury Format) */}
+                        <div className="pt-3.5 pb-2 flex flex-col items-center text-center flex-grow">
+                          {/* Line 1: Maker / Brand Line */}
+                          <span className="text-[11.5px] font-black uppercase tracking-[0.14em] text-[#111111]">
+                            {product.subcategoryTag ? `${product.subcategoryTag.toUpperCase()} ARCHIVE` : "VEYRO HOROLOGY"}
+                          </span>
+
+                          {/* Line 2: Gender | Model Name */}
+                          <h3 className="text-[11px] font-medium uppercase tracking-[0.06em] text-[#666666] mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
+                            <Link href={`/product/${product.slug}`}>
+                              {product.gender || "UNISEX"} | {product.name.replace(/^VEYRO\s+/i, "")}
+                            </Link>
+                          </h3>
+
+                          {/* Line 3: Pricing Block */}
+                          <div className="mt-1.5 flex items-baseline justify-center gap-2">
+                            <span className="text-[14px] sm:text-[15px] font-black text-[#111111] font-mono">
+                              {formatPrice(product.price)}
+                            </span>
+                            {product.originalPrice && product.originalPrice > product.price && (
+                              <span className="text-xs text-[#999999] line-through font-mono">
+                                {formatPrice(product.originalPrice)}
+                              </span>
+                            )}
+                            {discountPercent && (
+                              <span className="text-[11px] font-bold text-[#d9381e] font-mono">
+                                ({discountPercent}% OFF)
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Line 4: Quick Action CTA (Helios style button with instant feedback) */}
+                          <button
+                            type="button"
+                            onClick={(e) => handleQuickAdd(product, e)}
+                            className={`mt-2.5 w-full py-1.5 px-3 rounded-[2px] text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 ${
+                              addedProductId === product.id
+                                ? "bg-[#fcd017] text-[#111111] font-black shadow-xs"
+                                : "bg-transparent text-[#111111] border border-[#e5e5e3] hover:bg-[#111111] hover:text-white hover:border-[#111111] group-hover:border-[#111111]"
+                            }`}
+                          >
+                            {addedProductId === product.id ? (
+                              <>
+                                <Check size={12} strokeWidth={3} />
+                                <span>ADDED TO BAG</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingBag size={12} />
+                                <span>QUICK ADD TO BAG</span>
+                              </>
+                            )}
+                          </button>
                         </div>
                       </article>
                     </React.Fragment>

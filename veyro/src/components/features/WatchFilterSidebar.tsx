@@ -45,77 +45,75 @@ export interface WatchFilterSidebarProps {
 }
 
 export const WATCH_COLLECTIONS = [
-  { id: "Chronograph", label: "Chronograph" },
-  { id: "Automatic", label: "Automatic" },
-  { id: "Field Watch", label: "Field Watch" },
-  { id: "Diver", label: "Diver" },
-  { id: "Minimalist", label: "Minimalist" },
+  { id: "Chronograph", label: "CHRONOGRAPH" },
+  { id: "Automatic", label: "AUTOMATIC" },
+  { id: "Field Watch", label: "FIELD WATCH" },
+  { id: "Diver", label: "DIVER" },
+  { id: "Minimalist", label: "MINIMALIST" },
 ];
 
 export const WATCH_MOVEMENTS = [
-  { id: "Automatic", label: "Automatic Mechanical", hint: "Self-winding calibre" },
-  { id: "Quartz", label: "Meca-Quartz / Hybrid", hint: "High-precision split" },
-  { id: "Solar", label: "Solar Photovoltaic", hint: "Light-powered reserve" },
+  { id: "Automatic", label: "AUTOMATIC" },
+  { id: "Quartz", label: "QUARTZ" },
+  { id: "Solar", label: "SOLAR" },
 ];
 
 export const WATCH_GENDERS = [
-  { id: "Men", label: "Men" },
-  { id: "Unisex", label: "Unisex" },
+  { id: "Men", label: "MEN" },
+  { id: "Unisex", label: "UNISEX" },
 ];
 
 export const WATCH_PRICE_RANGES = [
-  { id: "ALL", label: "All Prices" },
-  { id: "UNDER_5K", label: "Under ₹5,000" },
+  { id: "ALL", label: "ALL PRICES" },
+  { id: "UNDER_5K", label: "UNDER ₹5,000" },
   { id: "5K_TO_8K", label: "₹5,000 – ₹7,999" },
-  { id: "ABOVE_8K", label: "₹8,000 & Above" },
+  { id: "ABOVE_8K", label: "₹8,000 & ABOVE" },
 ];
 
 export const WATCH_DISCOUNTS = [
-  { id: "15", label: "15% & Above" },
-  { id: "20", label: "20% & Above" },
-  { id: "25", label: "25% & Above" },
+  { id: "15", label: "15% & ABOVE" },
+  { id: "20", label: "20% & ABOVE" },
+  { id: "25", label: "25% & ABOVE" },
 ];
 
 export const WATCH_CASE_SIZES = [
-  { id: "38mm", label: "38mm" },
-  { id: "40mm", label: "40mm" },
-  { id: "42mm", label: "42mm" },
+  { id: "38mm", label: "38MM" },
+  { id: "40mm", label: "40MM" },
+  { id: "42mm", label: "42MM" },
 ];
 
 export const WATCH_COLORS = [
-  { id: "black", label: "Matte Black", hex: "#1a1a1a" },
-  { id: "silver", label: "Brushed Steel / Silver", hex: "#d8d8d8" },
-  { id: "gold", label: "Champagne / Gold", hex: "#c2b280" },
-  { id: "navy", label: "Deep Navy", hex: "#1a2938" },
-  { id: "green", label: "Emerald Green", hex: "#1b4d3e" },
-  { id: "titanium", label: "Olive / Titanium", hex: "#525b44" },
+  { id: "black", label: "MATTE BLACK", hex: "#1a1a1a" },
+  { id: "silver", label: "BRUSHED STEEL / SILVER", hex: "#d8d8d8" },
+  { id: "gold", label: "CHAMPAGNE / GOLD", hex: "#c2b280" },
+  { id: "navy", label: "DEEP NAVY", hex: "#1a2938" },
+  { id: "green", label: "EMERALD GREEN", hex: "#1b4d3e" },
+  { id: "titanium", label: "OLIVE / TITANIUM", hex: "#525b44" },
 ];
 
 export const WATCH_DIAL_TYPES = [
-  { id: "Minimalist", label: "Minimalist" },
-  { id: "Chronograph", label: "Chronograph" },
-  { id: "Field", label: "Field" },
+  { id: "Minimalist", label: "MINIMALIST" },
+  { id: "Chronograph", label: "CHRONOGRAPH" },
+  { id: "Field", label: "FIELD" },
 ];
 
 export const WATCH_STRAPS = [
-  { id: "Full-Grain Leather", label: "Italian Full-Grain Leather" },
-  { id: "Milanese Mesh Steel", label: "Milanese Mesh / Steel" },
-  { id: "Silicone", label: "FKM Fluororubber / Silicone" },
-  { id: "NATO Canvas", label: "Ballistic Cordura NATO" },
+  { id: "Full-Grain Leather", label: "ITALIAN FULL-GRAIN LEATHER" },
+  { id: "Milanese Mesh Steel", label: "MILANESE MESH / STEEL" },
+  { id: "Silicone", label: "FKM SILICONE" },
+  { id: "NATO Canvas", label: "BALLISTIC CORDURA NATO" },
 ];
 
-// ── Minimalist Checkbox Control ─────────────────────────────────────────────
+// ── Minimalist Helios-Style Checkbox Control ──────────────────────────────────
 function FilterCheckbox({
   id,
   label,
-  sublabel,
   checked,
   onChange,
   count,
 }: {
   id: string;
   label: string;
-  sublabel?: string;
   checked: boolean;
   onChange: () => void;
   count?: number;
@@ -123,14 +121,14 @@ function FilterCheckbox({
   return (
     <label
       htmlFor={`cb-${id}`}
-      className="flex items-start justify-between gap-2.5 py-1.5 cursor-pointer group select-none"
+      className="flex items-center justify-between gap-2.5 py-1.5 cursor-pointer group select-none transition-colors"
     >
-      <div className="flex items-start gap-2.5 min-w-0">
+      <div className="flex items-center gap-2.5 min-w-0">
         <div
-          className={`mt-0.5 h-[14px] w-[14px] shrink-0 rounded-[2px] border transition-all duration-150 flex items-center justify-center ${
+          className={`h-[13px] w-[13px] shrink-0 rounded-[1.5px] border transition-all duration-150 flex items-center justify-center ${
             checked
-              ? "bg-[#111111] border-[#111111] ring-1 ring-[#fcd017]"
-              : "border-[#bbbbbb] bg-white group-hover:border-[#111111]"
+              ? "bg-[#111111] border-[#111111]"
+              : "border-[#cfcfcf] bg-white group-hover:border-[#111111]"
           }`}
           aria-hidden="true"
         >
@@ -161,25 +159,18 @@ function FilterCheckbox({
           className="sr-only"
           aria-checked={checked}
         />
-        <div className="flex flex-col">
-          <span
-            className={`text-[12.5px] leading-tight transition-colors ${
-              checked
-                ? "font-bold text-[#111111]"
-                : "font-normal text-[#333333] group-hover:text-[#111111]"
-            }`}
-          >
-            {label}
-          </span>
-          {sublabel && (
-            <span className="text-[10px] text-[#8e8e8e] font-mono leading-none mt-0.5">
-              {sublabel}
-            </span>
-          )}
-        </div>
+        <span
+          className={`text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors truncate ${
+            checked
+              ? "font-bold text-[#111111]"
+              : "font-medium text-[#444444] group-hover:text-black"
+          }`}
+        >
+          {label}
+        </span>
       </div>
       {count !== undefined && (
-        <span className="text-[11px] font-mono text-[#8e8e8e] shrink-0 pt-0.5">
+        <span className="text-[10.5px] font-mono text-[#8e8e8e] shrink-0">
           ({count})
         </span>
       )}
@@ -187,7 +178,7 @@ function FilterCheckbox({
   );
 }
 
-// ── Accordion Section with Left Chevron ─────────────────────────────────────
+// ── Accordion Section with Left Chevron (Helios Style) ─────────────────────────
 function AccordionSection({
   title,
   isOpen,
@@ -205,23 +196,27 @@ function AccordionSection({
         type="button"
         onClick={onToggle}
         aria-expanded={isOpen}
-        className="w-full flex items-center gap-2.5 py-1 text-left cursor-pointer group transition-colors"
+        className="w-full flex items-center gap-2 py-1 text-left cursor-pointer group transition-colors"
       >
         {/* Left-Aligned Chevron (rotates 180° when expanded) */}
         <ChevronDown
-          size={14}
+          size={13}
           strokeWidth={2.5}
           className={`text-[#111111] transition-transform duration-200 motion-reduce:transition-none shrink-0 ${
             isOpen ? "rotate-180" : ""
           }`}
           aria-hidden="true"
         />
-        <span className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#111111] group-hover:text-[#555555] transition-colors">
+        <span className="text-[11.5px] font-black uppercase tracking-[0.12em] text-[#111111] group-hover:text-[#555555] transition-colors">
           {title}
         </span>
       </button>
 
-      {isOpen && <div className="pt-2.5 pb-1 pl-6 flex flex-col gap-0.5">{children}</div>}
+      {isOpen && (
+        <div className="pt-2 pb-1 pl-5 flex flex-col gap-0.5">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
@@ -244,7 +239,7 @@ export function WatchFilterSidebar({
   isMobileOpen = false,
   onCloseMobile,
 }: WatchFilterSidebarProps) {
-  // Accordion open/collapse states matching the exact order from spec
+  // Accordion open/collapse states matching Helios reference order
   const [openSections, setOpenSections] = useState({
     collection: true,
     movement: true,
@@ -252,7 +247,7 @@ export function WatchFilterSidebar({
     price: true,
     discount: false,
     caseShape: false,
-    dialColor: true,
+    dialColor: false,
     dialType: false,
     strap: true,
   });
@@ -277,15 +272,19 @@ export function WatchFilterSidebar({
           )}
         </h2>
 
-        {activeFilterCount > 0 && (
-          <button
-            type="button"
-            onClick={onClearAll}
-            className="text-[11px] font-bold text-[#8e8e8e] hover:text-[#111111] hover:underline uppercase tracking-wider transition-colors cursor-pointer"
-          >
-            CLEAR ALL
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={activeFilterCount > 0 ? onClearAll : undefined}
+          disabled={activeFilterCount === 0}
+          className={`text-[11px] font-bold uppercase tracking-wider transition-colors ${
+            activeFilterCount > 0
+              ? "text-[#111111] hover:underline cursor-pointer"
+              : "text-[#b0b0b0] cursor-default"
+          }`}
+          aria-label="Clear all applied filters"
+        >
+          CLEAR ALL
+        </button>
       </div>
 
       {/* ── 1. COLLECTION ───────────────────────────────────────────── */}
@@ -317,7 +316,6 @@ export function WatchFilterSidebar({
             key={m.id}
             id={`mov-${m.id}`}
             label={m.label}
-            sublabel={m.hint}
             checked={filters.movements.includes(m.id)}
             onChange={() => onToggleMovement(m.id)}
             count={itemCounts?.movements?.[m.id]}
@@ -360,10 +358,10 @@ export function WatchFilterSidebar({
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className={`h-[14px] w-[14px] rounded-full border flex items-center justify-center transition-all ${
+                    className={`h-[13px] w-[13px] rounded-full border flex items-center justify-center transition-all ${
                       isSelected
-                        ? "border-[#111111] bg-[#111111] ring-1 ring-[#fcd017]"
-                        : "border-[#bbbbbb] bg-white group-hover:border-[#111111]"
+                        ? "border-[#111111] bg-[#111111]"
+                        : "border-[#cfcfcf] bg-white group-hover:border-[#111111]"
                     }`}
                   >
                     {isSelected && (
@@ -379,17 +377,17 @@ export function WatchFilterSidebar({
                     className="sr-only"
                   />
                   <span
-                    className={`text-[12.5px] leading-tight transition-colors ${
+                    className={`text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
                       isSelected
                         ? "font-bold text-[#111111]"
-                        : "font-normal text-[#333333] group-hover:text-[#111111]"
+                        : "font-medium text-[#444444] group-hover:text-black"
                     }`}
                   >
                     {pr.label}
                   </span>
                 </div>
                 {itemCounts?.priceRanges?.[pr.id] !== undefined && (
-                  <span className="text-[11px] font-mono text-[#8e8e8e]">
+                  <span className="text-[10.5px] font-mono text-[#8e8e8e]">
                     ({itemCounts.priceRanges[pr.id]})
                   </span>
                 )}
@@ -452,7 +450,7 @@ export function WatchFilterSidebar({
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={`h-[15px] w-[15px] rounded-full border transition-all ${
+                    className={`h-[14px] w-[14px] rounded-full border transition-all ${
                       isChecked
                         ? "border-[#111111] ring-2 ring-[#fcd017] scale-110"
                         : "border-[#d0d0cc] group-hover:border-[#111111]"
@@ -469,17 +467,17 @@ export function WatchFilterSidebar({
                     aria-checked={isChecked}
                   />
                   <span
-                    className={`text-[12.5px] leading-tight transition-colors ${
+                    className={`text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
                       isChecked
                         ? "font-bold text-[#111111]"
-                        : "font-normal text-[#333333] group-hover:text-[#111111]"
+                        : "font-medium text-[#444444] group-hover:text-black"
                     }`}
                   >
                     {col.label}
                   </span>
                 </div>
                 {itemCounts?.colors?.[col.id] !== undefined && (
-                  <span className="text-[11px] font-mono text-[#8e8e8e]">
+                  <span className="text-[10.5px] font-mono text-[#8e8e8e]">
                     ({itemCounts.colors[col.id]})
                   </span>
                 )}
@@ -529,10 +527,10 @@ export function WatchFilterSidebar({
 
   return (
     <>
-      {/* ── DESKTOP STICKY SIDEBAR (Borderless, 240–260px wide, blends with page) ── */}
+      {/* ── DESKTOP STICKY SIDEBAR (Borderless, 230–250px wide, blends with page) ── */}
       <aside
         aria-label="Watches Category Filters"
-        className="hidden lg:block w-[240px] xl:w-[260px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain no-scrollbar pr-4"
+        className="hidden lg:block w-[230px] xl:w-[250px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain no-scrollbar pr-5"
       >
         {filterContent}
       </aside>
