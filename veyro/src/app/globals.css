@@ -136,6 +136,27 @@ body {
   display: none;
 }
 
+/* Luxury Sidebar Discrete Thin Scrollbar */
+.luxury-sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d1cf transparent;
+}
+.luxury-sidebar-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 3px;
+}
+.luxury-sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.luxury-sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d1cf;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+.luxury-sidebar-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #888888;
+}
+
 /* Selection style */
 ::selection {
   background-color: #111111;

@@ -192,11 +192,13 @@ function AccordionSection({
   title,
   isOpen,
   onToggle,
+  activeCount = 0,
   children,
 }: {
   title: string;
   isOpen: boolean;
   onToggle: () => void;
+  activeCount?: number;
   children: React.ReactNode;
 }) {
   return (
@@ -219,6 +221,11 @@ function AccordionSection({
         <span className="font-luxury text-[12px] font-medium uppercase tracking-[0.08em] text-[#111111] group-hover:text-[#555555] transition-colors">
           {title}
         </span>
+        {activeCount > 0 && (
+          <span className="ml-auto text-[10px] font-mono font-medium text-[#111111] bg-[#f0f0ed] px-1.5 py-0.5 rounded-[2px]">
+            {activeCount}
+          </span>
+        )}
       </button>
 
       {isOpen && (
@@ -229,6 +236,18 @@ function AccordionSection({
     </div>
   );
 }
+
+type SectionKey =
+  | "brands"
+  | "collection"
+  | "movement"
+  | "gender"
+  | "price"
+  | "discount"
+  | "caseShape"
+  | "dialColor"
+  | "dialType"
+  | "strap";
 
 export function WatchFilterSidebar({
   filters,
@@ -249,25 +268,46 @@ export function WatchFilterSidebar({
   isMobileOpen = false,
   onCloseMobile,
 }: WatchFilterSidebarProps) {
-  // Accordion open/collapse states matching Image 2 reference order
-  const [openSections, setOpenSections] = useState({
-    brands: false,
-    collection: false,
-    movement: false,
-    gender: false,
-    price: false,
-    discount: false,
-    caseShape: false,
-    dialColor: false,
-    dialType: false,
-    strap: false,
-  });
+  // Count active selections per section to protect them during auto-collapse
+  const activeCounts: Record<SectionKey, number> = {
+    brands: filters.brands?.length || 0,
+    collection: filters.collections.length,
+    movement: filters.movements.length,
+    gender: filters.genders.length,
+    price: filters.priceRange ? 1 : 0,
+    discount: filters.discounts.length,
+    caseShape: filters.caseSizes.length,
+    dialColor: filters.colors.length,
+    dialType: filters.dialTypes.length,
+    strap: filters.straps.length,
+  };
 
-  const toggleSection = (section: keyof typeof openSections) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
+  // Max 3 Open Accordions Queue (Auto-Collapse / Smart Mutex)
+  const MAX_OPEN = 3;
+  const [openSections, setOpenSections] = useState<SectionKey[]>([
+    "brands",
+    "collection",
+    "price",
+  ]);
+
+  const toggleSection = (section: SectionKey) => {
+    setOpenSections((prev) => {
+      if (prev.includes(section)) {
+        // User clicked an open section -> close it
+        return prev.filter((s) => s !== section);
+      }
+
+      // User clicked to open a section
+      if (prev.length < MAX_OPEN) {
+        return [...prev, section];
+      }
+
+      // 3 already open: Evict oldest section without active filters first (smart retention)
+      const evictCandidate =
+        prev.find((s) => (activeCounts[s] || 0) === 0) || prev[0];
+
+      return [...prev.filter((s) => s !== evictCandidate), section];
+    });
   };
 
   const filterContent = (
@@ -301,8 +341,9 @@ export function WatchFilterSidebar({
       {/* ── 1. BRANDS (Image 2 First Item) ─────────────────────────── */}
       <AccordionSection
         title="BRANDS"
-        isOpen={openSections.brands}
+        isOpen={openSections.includes("brands")}
         onToggle={() => toggleSection("brands")}
+        activeCount={activeCounts.brands}
       >
         {WATCH_BRANDS.map((b) => (
           <FilterCheckbox
@@ -319,8 +360,9 @@ export function WatchFilterSidebar({
       {/* ── 2. COLLECTION ───────────────────────────────────────────── */}
       <AccordionSection
         title="COLLECTION"
-        isOpen={openSections.collection}
+        isOpen={openSections.includes("collection")}
         onToggle={() => toggleSection("collection")}
+        activeCount={activeCounts.collection}
       >
         {WATCH_COLLECTIONS.map((c) => (
           <FilterCheckbox
@@ -337,8 +379,9 @@ export function WatchFilterSidebar({
       {/* ── 3. MOVEMENT ─────────────────────────────────────────────── */}
       <AccordionSection
         title="MOVEMENT"
-        isOpen={openSections.movement}
+        isOpen={openSections.includes("movement")}
         onToggle={() => toggleSection("movement")}
+        activeCount={activeCounts.movement}
       >
         {WATCH_MOVEMENTS.map((m) => (
           <FilterCheckbox
@@ -355,8 +398,9 @@ export function WatchFilterSidebar({
       {/* ── 4. GENDER ───────────────────────────────────────────────── */}
       <AccordionSection
         title="GENDER"
-        isOpen={openSections.gender}
+        isOpen={openSections.includes("gender")}
         onToggle={() => toggleSection("gender")}
+        activeCount={activeCounts.gender}
       >
         {WATCH_GENDERS.map((g) => (
           <FilterCheckbox
@@ -373,8 +417,9 @@ export function WatchFilterSidebar({
       {/* ── 5. PRICE ────────────────────────────────────────────────── */}
       <AccordionSection
         title="PRICE"
-        isOpen={openSections.price}
+        isOpen={openSections.includes("price")}
         onToggle={() => toggleSection("price")}
+        activeCount={activeCounts.price}
       >
         <div className="flex flex-col gap-1.5">
           {WATCH_PRICE_RANGES.map((pr) => {
@@ -429,8 +474,9 @@ export function WatchFilterSidebar({
       {/* ── 6. DISCOUNT ─────────────────────────────────────────────── */}
       <AccordionSection
         title="DISCOUNT"
-        isOpen={openSections.discount}
+        isOpen={openSections.includes("discount")}
         onToggle={() => toggleSection("discount")}
+        activeCount={activeCounts.discount}
       >
         {WATCH_DISCOUNTS.map((d) => (
           <FilterCheckbox
@@ -447,8 +493,9 @@ export function WatchFilterSidebar({
       {/* ── 7. CASE SHAPE / DIAMETER ─────────────────────────────────── */}
       <AccordionSection
         title="CASE SHAPE"
-        isOpen={openSections.caseShape}
+        isOpen={openSections.includes("caseShape")}
         onToggle={() => toggleSection("caseShape")}
+        activeCount={activeCounts.caseShape}
       >
         {WATCH_CASE_SIZES.map((cs) => (
           <FilterCheckbox
@@ -465,8 +512,9 @@ export function WatchFilterSidebar({
       {/* ── 8. DIAL COLOR ───────────────────────────────────────────── */}
       <AccordionSection
         title="DIAL COLOR"
-        isOpen={openSections.dialColor}
+        isOpen={openSections.includes("dialColor")}
         onToggle={() => toggleSection("dialColor")}
+        activeCount={activeCounts.dialColor}
       >
         <div className="flex flex-col gap-1.5">
           {WATCH_COLORS.map((col) => {
@@ -519,8 +567,9 @@ export function WatchFilterSidebar({
       {/* ── 9. DIAL TYPE ────────────────────────────────────────────── */}
       <AccordionSection
         title="DIAL TYPE"
-        isOpen={openSections.dialType}
+        isOpen={openSections.includes("dialType")}
         onToggle={() => toggleSection("dialType")}
+        activeCount={activeCounts.dialType}
       >
         {WATCH_DIAL_TYPES.map((dt) => (
           <FilterCheckbox
@@ -537,8 +586,9 @@ export function WatchFilterSidebar({
       {/* ── 10. STRAP MATERIAL ──────────────────────────────────────── */}
       <AccordionSection
         title="STRAP MATERIAL"
-        isOpen={openSections.strap}
+        isOpen={openSections.includes("strap")}
         onToggle={() => toggleSection("strap")}
+        activeCount={activeCounts.strap}
       >
         {WATCH_STRAPS.map((strap) => (
           <FilterCheckbox
@@ -559,7 +609,7 @@ export function WatchFilterSidebar({
       {/* ── DESKTOP STICKY SIDEBAR (Borderless, 220–240px wide, blends with page) ── */}
       <aside
         aria-label="Watches Category Filters"
-        className="hidden lg:block w-[220px] xl:w-[240px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain no-scrollbar pr-4"
+        className="hidden lg:block w-[220px] xl:w-[240px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain luxury-sidebar-scrollbar pr-3"
       >
         {filterContent}
       </aside>
