@@ -42,7 +42,12 @@ export function FootwearSection() {
   const footwear = products.filter((p) => {
     if (p.category !== "Footwear") return false;
     if (activeFilter === "ALL") return true;
-    return p.name.toUpperCase().includes(activeFilter);
+    const filterUpper = activeFilter.toUpperCase();
+    return (
+      p.subcategoryTag?.toUpperCase() === filterUpper ||
+      p.tags?.some((t) => t.toUpperCase() === filterUpper) ||
+      p.name.toUpperCase().includes(filterUpper)
+    );
   });
 
   const footwearRef = useRef(footwear);
