@@ -491,9 +491,9 @@ export function Navbar() {
               {user ? (
                 <div className="space-y-1">
                   {/* User Profile Summary */}
-                  <div className="p-3 bg-veyro-surface border border-veyro-border rounded-[2px] flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-[2px] bg-veyro-black text-white text-[11px] font-mono font-bold flex items-center justify-center">
+                  <div className="p-3 bg-neutral-50 border border-neutral-200/80 rounded-lg flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-veyro-black text-white text-xs font-bold flex items-center justify-center shrink-0">
                         {user.name.slice(0, 1).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -507,7 +507,7 @@ export function Navbar() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 hover:text-black cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <Package size={18} className="text-veyro-black" />
@@ -522,7 +522,7 @@ export function Navbar() {
                   <Link
                     href="/account/addresses"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 hover:text-black cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <LucideUser size={18} className="text-veyro-black" />
@@ -535,7 +535,7 @@ export function Navbar() {
                   <Link
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <HeartIcon size={18} />
@@ -555,7 +555,7 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       handleSignOut();
                     }}
-                    className="flex items-center gap-3 w-full text-xs font-semibold text-neutral-600 hover:text-red-600 py-2 cursor-pointer pt-2.5 border-t border-neutral-200"
+                    className="flex items-center gap-3 w-full text-xs font-semibold text-neutral-600 hover:text-red-600 py-2.5 cursor-pointer pt-3 border-t border-neutral-150 mt-1"
                   >
                     <LogOut size={15} />
                     <span>Sign Out</span>
@@ -566,7 +566,7 @@ export function Navbar() {
                   <Link
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <HeartIcon size={19} />
@@ -585,7 +585,7 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       openAccountModal();
                     }}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <UserIcon size={19} />
@@ -595,10 +595,6 @@ export function Navbar() {
                   </button>
                 </>
               )}
-
-              <div className="mt-4 p-3 bg-veyro-yellow/20 border border-veyro-yellow rounded-[2px] text-xs font-medium text-veyro-black">
-                Enjoy Free Shipping on orders above ₹999
-              </div>
             </div>
           </div>
         </div>
