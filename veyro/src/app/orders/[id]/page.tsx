@@ -390,7 +390,7 @@ export default function OrderDetailPage() {
                 transition={{ duration: 0.3 }}
                 className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-black/[0.04] transition-all"
               >
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
                   <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                     <Package size={14} /> ORDER STATUS
                   </h2>
@@ -404,6 +404,73 @@ export default function OrderDetailPage() {
                   </span>
                 </div>
 
+                {/* Mobile Vertical Timeline */}
+                <div className="sm:hidden space-y-4 pt-1 pb-1" role="list" aria-label="Order tracking timeline">
+                  {TIMELINE_STEPS.map((step, idx) => {
+                    const isCompleted = idx <= currentStepIndex;
+                    const isCurrent = idx === currentStepIndex;
+                    const isLast = idx === TIMELINE_STEPS.length - 1;
+                    const timelineEntry = order.timeline?.find((t) => t.status === step);
+
+                    return (
+                      <div key={step} className="flex items-start gap-3.5 relative">
+                        {/* Connecting Line */}
+                        {!isLast && (
+                          <div
+                            className={`absolute left-[13px] top-[26px] bottom-[-18px] w-[2px] transition-colors duration-500 ${
+                              idx < currentStepIndex ? "bg-[#111111]" : "bg-neutral-200"
+                            }`}
+                          />
+                        )}
+
+                        {/* Step Node Icon */}
+                        <div
+                          className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                            isCompleted
+                              ? "bg-[#111111] text-white shadow-xs"
+                              : "bg-neutral-100 text-neutral-400 border border-neutral-200"
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <CheckCircle2 size={14} className="stroke-[2.5]" />
+                          ) : (
+                            <div className="w-2 h-2 rounded-full bg-neutral-300" />
+                          )}
+                        </div>
+
+                        {/* Step Details */}
+                        <div className="flex-1 min-w-0 pt-0.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <span
+                              className={`text-xs font-bold uppercase tracking-wider ${
+                                isCompleted ? "text-[#111111]" : "text-neutral-400"
+                              }`}
+                            >
+                              {step}
+                            </span>
+                            {isCurrent && (
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                Current
+                              </span>
+                            )}
+                          </div>
+                          {timelineEntry?.timestamp && (
+                            <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                              {timelineEntry.timestamp}
+                            </p>
+                          )}
+                          {timelineEntry?.description && isCurrent && (
+                            <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
+                              {timelineEntry.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop Horizontal Timeline */}
                 <div className="hidden sm:block relative mt-8 mb-12 px-8 sm:px-16" role="list" aria-label="Order tracking timeline">
                   {/* Progress Bar Track */}
                   <div className="relative h-2 bg-neutral-100 rounded-full w-full overflow-hidden">
