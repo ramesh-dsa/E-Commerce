@@ -59,6 +59,7 @@ export function FootwearSection() {
 
   // Update cached geometry metrics (run only when active/resized, never during per-frame scroll)
   const updateMetrics = useCallback(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     if (!trackRef.current || !viewportRef.current || !containerRef.current) return;
     const vWidth = viewportRef.current.clientWidth;
     const tWidth = trackRef.current.scrollWidth;
@@ -85,6 +86,7 @@ export function FootwearSection() {
 
   // Frame-locked hardware-accelerated update function (100% GPU compositor thread)
   const applyFrameTransforms = useCallback((currentScrollY: number) => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     if (!trackRef.current || !containerRef.current) return;
 
     const scrollDistance = currentScrollY - containerMetricsRef.current.top;
@@ -198,6 +200,7 @@ export function FootwearSection() {
 
   // Magnetic snap to the closest card center
   const snapToClosestCard = useCallback(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     if (isSnappingRef.current) return;
     if (!containerRef.current) return;
 
@@ -261,6 +264,7 @@ export function FootwearSection() {
   // Lean snap scheduler — called ONCE when scrolling transitions to stopped (never on every frame)
   const scheduleSnap = useCallback(
     (currentScrollY: number) => {
+      if (typeof window !== "undefined" && window.innerWidth < 1024) return;
       if (isSnappingRef.current) return;
       if (prefersReducedMotionRef.current) return;
 
@@ -276,6 +280,7 @@ export function FootwearSection() {
 
   // Click on any card to smoothly center it
   const scrollToProduct = useCallback((productId: string) => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     const centerInTrack = cardCentersRef.current.get(productId);
     if (centerInTrack === undefined) return;
     const viewportCenter = cachedMetricsRef.current.viewportWidth / 2;
@@ -311,6 +316,7 @@ export function FootwearSection() {
   // Access Lenis instance and listen to scroll events
   const lenis = useLenis((lenisInstance) => {
     lenisRef.current = lenisInstance;
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     if (!isInViewRef.current) return;
 
     // Direct, buttery-smooth scroll lock — pure compositor-thread DOM mutation
@@ -366,6 +372,7 @@ export function FootwearSection() {
 
     const handleResize = () => {
       if (!isInViewRef.current) return;
+      if (typeof window !== "undefined" && window.innerWidth < 1024) return;
       updateMetrics();
       const scrollY = lenisRef.current ? lenisRef.current.scroll : window.scrollY;
       applyFrameTransforms(scrollY);
@@ -375,6 +382,7 @@ export function FootwearSection() {
 
     const resizeObserver = new ResizeObserver(() => {
       if (!isInViewRef.current) return;
+      if (typeof window !== "undefined" && window.innerWidth < 1024) return;
       updateMetrics();
       const scrollY = lenisRef.current ? lenisRef.current.scroll : window.scrollY;
       applyFrameTransforms(scrollY);
@@ -395,6 +403,7 @@ export function FootwearSection() {
 
     let nativeScrollTimer: NodeJS.Timeout | null = null;
     const handleNativeScroll = () => {
+      if (typeof window !== "undefined" && window.innerWidth < 1024) return;
       if (!isInViewRef.current) return;
       applyFrameTransforms(window.scrollY);
       // Simple debounce for native fallback
@@ -438,15 +447,15 @@ export function FootwearSection() {
   }, [cancelSnap]);
 
   return (
-    // Outer container
+    // Outer container: natural height on mobile (no 400vh scroll lock), 400vh on desktop for 3D coverflow
     <section 
       id="footwear"
       ref={containerRef} 
-      className="relative w-full h-[400vh] bg-black text-white"
+      className="relative w-full h-auto lg:h-[400vh] bg-black text-white"
     >
-      {/* Sticky Inner Container with Cinematic Studio Background */}
+      {/* Inner Container: natural height on mobile, sticky 100vh on desktop */}
       <div 
-        className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden pt-20 pb-10 bg-cover bg-center bg-no-repeat"
+        className="relative lg:sticky top-0 h-auto lg:h-screen w-full flex flex-col justify-center overflow-hidden py-10 sm:py-14 lg:py-0 lg:pt-20 lg:pb-10 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url("/images/sneaker_vault_3d_bg.jpg")' }}
       >
         {/* Heavy dark gradient overlay to ensure the background looks incredibly deep and text stays legible */}
@@ -454,34 +463,34 @@ export function FootwearSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-black/60 z-0 pointer-events-none" />
 
         {/* Content Wrapper */}
-        <div className="relative z-10 flex flex-col lg:flex-row items-center w-full h-full max-w-[1600px] mx-auto px-6 lg:px-12">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center w-full h-full max-w-[1600px] mx-auto px-5 sm:px-6 lg:px-12">
           
           {/* Left Static Text (Takes up ~25% on desktop to give maximum space to the carousel) */}
-          <div className="w-full lg:w-[25%] shrink-0 flex flex-col justify-center pr-4 xl:pr-8 z-20 mb-8 lg:mb-0">
-            <p className="text-[#a3a3a3] text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase mb-1">
+          <div className="w-full lg:w-[25%] shrink-0 flex flex-col justify-center pr-0 lg:pr-4 xl:pr-8 z-20 mb-4 sm:mb-6 lg:mb-0">
+            <p className="text-[#a3a3a3] text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase mb-1">
               FOOTWEAR ARCHIVE
             </p>
-            <span className="font-script text-3xl sm:text-4xl text-[#fcd017] tracking-normal block mb-1 font-normal select-none">
+            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-[#fcd017] tracking-normal block mb-1 font-normal select-none">
               the sneaker vault
             </span>
-            <h2 className="text-4xl sm:text-5xl xl:text-6xl font-bold tracking-tight mb-4 leading-[1.05]">
+            <h2 className="text-3xl sm:text-4xl xl:text-6xl font-bold tracking-tight mb-2 sm:mb-4 leading-[1.05]">
               VULCANIZED<br className="hidden lg:block"/> SILHOUETTES
             </h2>
-            <p className="text-[#a3a3a3] text-sm leading-relaxed max-w-xs mb-6">
+            <p className="text-[#a3a3a3] text-xs sm:text-sm leading-relaxed max-w-sm lg:max-w-xs mb-4 sm:mb-6">
               Engineered for all-day comfort. Retro runners and modern vulcanized silhouettes built for Indian streetscapes.
             </p>
 
             {/* Direct CTA to full Footwear Catalog */}
             <Link
               href="/shoes"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#fcd017] hover:bg-white text-black font-extrabold text-[11px] uppercase tracking-[0.15em] rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(252,208,23,0.3)] hover:shadow-[0_8px_25px_rgba(255,255,255,0.4)] group/btn mb-8 w-fit"
+              className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-[#fcd017] hover:bg-white text-black font-extrabold text-[10px] sm:text-[11px] uppercase tracking-[0.15em] rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(252,208,23,0.3)] hover:shadow-[0_8px_25px_rgba(255,255,255,0.4)] group/btn mb-4 sm:mb-8 w-fit"
             >
               <span>Explore Sneaker Vault (9)</span>
               <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
             </Link>
 
             {/* Interactive Brutalist Filters */}
-            <div role="tablist" className="flex flex-wrap gap-6 text-[10px] font-bold tracking-[0.2em] uppercase text-[#999]">
+            <div role="tablist" className="flex items-center gap-5 sm:gap-6 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#999] overflow-x-auto scrollbar-none pb-1">
               {["ALL", "MINIMAL", "RETRO", "CHUNKY"].map((filter) => (
                 <button 
                   key={filter}
@@ -489,7 +498,7 @@ export function FootwearSection() {
                   role="tab"
                   aria-selected={activeFilter === filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`hover:text-white transition-colors duration-300 ${activeFilter === filter ? "text-white" : ""}`}
+                  className={`hover:text-white transition-colors duration-300 shrink-0 ${activeFilter === filter ? "text-white" : ""}`}
                 >
                   {filter}
                 </button>
@@ -497,10 +506,26 @@ export function FootwearSection() {
             </div>
           </div>
 
-          {/* Right Sliding Track Area (Takes up ~75% on desktop for massive 3D effect) */}
+          {/* Mobile-Only Native Touch Rail with full card visibility & 120 FPS hardware acceleration */}
+          <div className="w-full lg:hidden overflow-x-auto scrollbar-none snap-x snap-mandatory flex gap-4 sm:gap-5 items-stretch px-1 py-3 mt-4">
+            {footwear.map((product) => (
+              <div 
+                key={product.id}
+                className="w-[220px] sm:w-[260px] shrink-0 snap-start flex flex-col select-none"
+              >
+                <ProductCard 
+                  product={product} 
+                  theme="dark"
+                  aspectRatio="aspect-[3/4]"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Right Sliding Track Area (Desktop only - 3D coverflow effect) */}
           <div 
             ref={viewportRef}
-            className="w-full lg:w-[75%] h-full relative flex flex-col justify-center"
+            className="hidden lg:flex w-full lg:w-[75%] h-full relative flex-col justify-center"
           >
             {/* 
               CSS Masking: Symmetrical fade out on both edges to enhance the 3D coverflow effect.
@@ -588,8 +613,8 @@ export function FootwearSection() {
 
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 pointer-events-none">
+        {/* Scroll Indicator - Desktop Only */}
+        <div className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 opacity-50 pointer-events-none">
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">
             Scroll to explore
           </span>
