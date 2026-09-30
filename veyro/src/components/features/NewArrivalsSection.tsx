@@ -38,7 +38,7 @@ export function NewArrivalsSection() {
         />
 
         {/* Filter Category Tabs */}
-        <div role="tablist" className="flex items-center gap-6 overflow-x-auto pb-2 mb-10 border-b border-[#eae6df] scrollbar-none">
+        <div role="tablist" className="flex items-center gap-4 sm:gap-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 mb-8 sm:mb-10 border-b border-[#eae6df] scrollbar-none">
           {tabs.map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -48,11 +48,18 @@ export function NewArrivalsSection() {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveTab(tab)}
-                className={`relative pb-3 text-xs font-bold tracking-widest uppercase transition-colors duration-300 cursor-pointer whitespace-nowrap ${
+                className={`relative pb-3 text-[11px] sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase transition-colors duration-300 cursor-pointer whitespace-nowrap shrink-0 ${
                   isActive ? "text-veyro-black" : "text-veyro-muted hover:text-veyro-black"
                 }`}
               >
-                {tab === "ALL" ? "All New Drops" : tab}
+                {tab === "ALL" ? (
+                  <>
+                    <span className="sm:hidden">All Drops</span>
+                    <span className="hidden sm:inline">All New Drops</span>
+                  </>
+                ) : (
+                  tab
+                )}
                 {/* Animated Underline */}
                 {isActive && (
                   <span className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-veyro-black" />
