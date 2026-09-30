@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { ProductCard } from "@/components/features/ProductCard";
 import { products } from "@/data/products";
@@ -11,6 +11,13 @@ export function FootwearSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const mobileRailRef = useRef<HTMLDivElement>(null);
+
+  const scrollRail = (direction: "left" | "right") => {
+    if (!mobileRailRef.current) return;
+    const scrollAmount = direction === "left" ? -240 : 240;
+    mobileRailRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
 
   // Use a Map for refs so filtering doesn't cause stale indices
   const cardsRef = useRef(new Map<string, HTMLDivElement>());
@@ -494,25 +501,50 @@ export function FootwearSection() {
               <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
             </Link>
 
-            {/* Interactive Brutalist Filters */}
-            <div role="tablist" className="flex items-center gap-5 sm:gap-6 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#999] overflow-x-auto scrollbar-none pb-1">
-              {["ALL", "MINIMAL", "RETRO", "CHUNKY"].map((filter) => (
-                <button 
-                  key={filter}
+            {/* Interactive Brutalist Filters & Mobile Carousel Controls */}
+            <div className="flex items-center justify-between gap-3 w-full">
+              <div role="tablist" className="flex items-center gap-5 sm:gap-6 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#999] overflow-x-auto scrollbar-none pb-1">
+                {["ALL", "MINIMAL", "RETRO", "CHUNKY"].map((filter) => (
+                  <button 
+                    key={filter}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeFilter === filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`hover:text-white transition-colors duration-300 shrink-0 ${activeFilter === filter ? "text-white" : ""}`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+
+              {/* Mobile Carousel Navigation Arrows */}
+              <div className="flex lg:hidden items-center gap-2 shrink-0">
+                <button
                   type="button"
-                  role="tab"
-                  aria-selected={activeFilter === filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`hover:text-white transition-colors duration-300 shrink-0 ${activeFilter === filter ? "text-white" : ""}`}
+                  onClick={() => scrollRail("left")}
+                  aria-label="Previous sneakers"
+                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 active:scale-90 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-xs"
                 >
-                  {filter}
+                  <ChevronLeft size={16} />
                 </button>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => scrollRail("right")}
+                  aria-label="Next sneakers"
+                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 active:scale-90 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-xs"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Mobile-Only Native Touch Rail with full card visibility & 120 FPS hardware acceleration */}
-          <div className="w-full lg:hidden overflow-x-auto scrollbar-none snap-x snap-mandatory flex gap-4 sm:gap-5 items-stretch px-1 py-3 mt-4">
+          <div 
+            ref={mobileRailRef}
+            className="w-full lg:hidden overflow-x-auto scrollbar-none snap-x snap-mandatory flex gap-4 sm:gap-5 items-stretch px-1 py-3 mt-4 scroll-smooth"
+          >
             {footwear.map((product) => (
               <div 
                 key={product.id}
