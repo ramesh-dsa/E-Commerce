@@ -406,10 +406,11 @@ export function Navbar() {
           </div>
         </div>
       )}
+      </header>
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
+        <div className="lg:hidden fixed inset-0 z-[100] flex">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
@@ -417,7 +418,7 @@ export function Navbar() {
           />
 
           {/* Drawer Menu */}
-          <div className="relative flex w-4/5 max-w-sm flex-col bg-white p-6 shadow-xl z-10 justify-between">
+          <div className="relative flex w-4/5 max-w-sm flex-col bg-white p-6 shadow-xl z-10 justify-between min-h-full overflow-y-auto">
             <div>
               {/* Header */}
               <div className="flex items-center justify-between pb-5 border-b border-neutral-200">
@@ -614,7 +615,6 @@ export function Navbar() {
           <span>{signOutNotice}</span>
         </div>
       )}
-      </header>
     </>
   );
 }
