@@ -180,14 +180,14 @@ export function PromoFlipBanner() {
             </div>
 
             {/* The Floating T-Shirt (OUTSIDE MASK & LINK) */}
-            <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-[60%] w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-6 z-20 drop-shadow-2xl">
+            <div className="absolute right-[1%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-[60%] w-[44%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-6 z-20 drop-shadow-2xl">
               <Image 
                 src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
                 alt="Premium Classic Fit T-Shirt" 
                 fill
                 quality={80}
                 sizes="(max-width: 640px) 260px, 320px"
-                className="object-contain object-center scale-[1.25] rotate-[-5deg]"
+                className="object-contain object-center scale-100 sm:scale-105 md:scale-[1.25] rotate-[-5deg]"
               />
             </div>
           </div>
@@ -312,7 +312,7 @@ export function PromoFlipBanner() {
             </div>
 
             {/* The Floating Sneaker Composition (OUTSIDE MASK & LINK) */}
-            <div className="absolute right-[-2%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[60%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
+            <div className="absolute right-[1%] sm:right-[-4%] md:right-[2%] top-1/2 -translate-y-1/2 w-[44%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
 
               {/* Foreground Crisp Sneaker */}
               <div className="absolute inset-0 z-10 drop-shadow-2xl">
@@ -322,7 +322,7 @@ export function PromoFlipBanner() {
                   fill
                   quality={80}
                   sizes="(max-width: 640px) 260px, 320px"
-                  className="object-contain object-center scale-105 rotate-[-5deg]"
+                  className="object-contain object-center scale-100 sm:scale-105 md:scale-105 rotate-[-5deg]"
                 />
               </div>
             </div>
