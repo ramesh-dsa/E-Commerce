@@ -142,7 +142,7 @@ export function Footer() {
                     setIsJoined(true);
                   }
                 }}
-                className="flex flex-col sm:flex-row gap-4 w-full items-end"
+                className="flex flex-col sm:flex-row gap-4 w-full items-center sm:items-end"
               >
                 <div className="flex-1 w-full">
                   <input
@@ -158,7 +158,7 @@ export function Footer() {
                 </div>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase hover:bg-[#e0e0e0] transition-colors cursor-pointer shrink-0 rounded-[1px]"
+                  className="self-center sm:self-auto inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase hover:bg-[#e0e0e0] transition-colors cursor-pointer shrink-0 rounded-[1px]"
                 >
                   <span>Request Pass</span>
                   <ArrowRightIcon size={14} />
