@@ -1082,7 +1082,7 @@ export default function CheckoutPage() {
                       7-Day Doorstep Pickup & Returns
                     </span>
                     <span className="text-[11px] text-neutral-500">
-                      Hassle-free exchange or instant refund policy.
+                      Hassle-free returns or instant refund policy.
                     </span>
                   </div>
                 </div>

@@ -284,11 +284,7 @@ export function WatchFilterSidebar({
 
   // Max 3 Open Accordions Queue (Auto-Collapse / Smart Mutex)
   const MAX_OPEN = 3;
-  const [openSections, setOpenSections] = useState<SectionKey[]>([
-    "brands",
-    "collection",
-    "price",
-  ]);
+  const [openSections, setOpenSections] = useState<SectionKey[]>([]);
 
   const toggleSection = (section: SectionKey) => {
     setOpenSections((prev) => {

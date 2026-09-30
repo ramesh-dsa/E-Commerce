@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { FootwearCatalog } from "@/components/features";
+import { FootwearCatalog } from "@/components/features/FootwearCatalog";
 
 export const metadata: Metadata = {
   title: "The Sneaker Vault — Vulcanized Silhouettes & Retro Runners | VEYRO",

@@ -160,7 +160,7 @@ export interface SectionHeadingProps {
 
 // ── ORDER MANAGEMENT TYPES ───────────────────────────────────────────────────
 
-export type OrderStatus = "Confirmed" | "Packed" | "Shipped" | "Out for Delivery" | "Delivered";
+export type OrderStatus = "Confirmed" | "Packed" | "Shipped" | "Out for Delivery" | "Delivered" | "Cancelled" | "Return Requested" | "Returned";
 
 export interface OrderItem {
   productId: string;
@@ -203,6 +203,7 @@ export interface OrderRecord {
   timeline: OrderTimeline[];
   shippingAddress: OrderAddress;
   paymentMethod: string;
+  deliveredDate?: string; // ISO format date string to track return window
   /** @deprecated Legacy compat — use items[] instead */
   itemNames: string[];
 }

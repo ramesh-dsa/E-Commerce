@@ -440,17 +440,17 @@ export function WatchesCatalog() {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 hover:bg-white text-black rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm z-20 cursor-pointer"
+          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-white/75 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:scale-110 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 z-20 cursor-pointer bg-transparent focus-visible:outline-none"
           aria-label="Previous slide"
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={36} strokeWidth={1.8} />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/80 hover:bg-white text-black rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm z-20 cursor-pointer"
+          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-white/75 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:scale-110 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 z-20 cursor-pointer bg-transparent focus-visible:outline-none"
           aria-label="Next slide"
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={36} strokeWidth={1.8} />
         </button>
 
         {/* Indicators */}
@@ -490,12 +490,12 @@ export function WatchesCatalog() {
             </button>
 
             {/* Breadcrumbs */}
-            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.03em]">
-              <Link href="/" className="text-[#888888] font-light hover:text-[#111111] transition-colors">
+            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em]">
+              <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
                 HOME
               </Link>
-              <span className="text-[#888888] font-light text-[11px]">&gt;</span>
-              <span className="text-[#111111] font-normal">WATCHES</span>
+              <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
+              <span className="text-[#111111] font-bold">WATCHES</span>
             </nav>
           </div>
 
@@ -534,7 +534,15 @@ export function WatchesCatalog() {
             {filteredProducts.length === 0 ? (
               /* Empty State */
               <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
-                <WatchIcon size={42} className="text-[#8e8e8e] mb-3" />
+                <div className="relative w-28 h-28 mb-5 rounded-full overflow-hidden shadow-md border-2 border-white transform transition-transform hover:rotate-180 duration-1000 ease-in-out">
+                  <Image 
+                    src="/images/watches-carousel/empty-state-icon.jpg" 
+                    alt="Watch Mechanism" 
+                    fill 
+                    unoptimized
+                    className="object-cover" 
+                  />
+                </div>
                 <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
                   No Archival Timepieces Found
                 </h3>
@@ -568,9 +576,9 @@ export function WatchesCatalog() {
                     <React.Fragment key={product.id}>
 
                       {/* Minimalist Watch Card */}
-                      <article className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer">
+                      <article className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-xl">
                         {/* Image Stage Container */}
-                        <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#f8f8f6]">
+                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-xl bg-[#f8f8f6] transition-all duration-300 group-hover:shadow-xl">
                           <Link
                             href={`/product/${product.slug}`}
                             className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
@@ -581,23 +589,23 @@ export function WatchesCatalog() {
                               src={product.imageUrl}
                               alt={product.name}
                               fill
-                              quality={90}
+                              quality={80}
                               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                              className="object-cover object-center"
+                              className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                             />
                           </Link>
 
                           {/* Top Badges (Left) */}
-                          <div className="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none z-10">
+                          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 pointer-events-none z-10">
                             {discountPercent && (
-                              <span className="px-1.5 py-0.5 bg-[#d9381e] text-white text-[9px] font-black uppercase tracking-wider">
+                              <span className="px-1.5 py-0.5 bg-[#d9381e] text-white text-[9px] font-black uppercase tracking-wider rounded-[2px]">
                                 {discountPercent}% OFF
                               </span>
                             )}
                           </div>
 
                           {/* Wishlist Heart Button (Right) */}
-                          <div className="absolute top-2 right-2 z-10 transition-opacity duration-200">
+                          <div className="absolute top-2.5 right-2.5 z-10 transition-opacity duration-200">
                             <WishlistButton product={product} isWishlisted={isWishlisted} />
                           </div>
                         </div>
@@ -660,10 +668,15 @@ export function WatchesCatalog() {
             </div>
             <Link
               href="/shoes"
-              className="mt-4 sm:mt-0 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#111111] hover:underline"
+              className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] rounded-xs"
             >
-              <span>Explore Footwear Catalog (9)</span>
-              <ArrowRight size={14} />
+              <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-[#111111] after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+                Explore Footwear Catalog (9)
+              </span>
+              <ArrowRight
+                size={14}
+                className="stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-1.5 motion-reduce:transform-none"
+              />
             </Link>
           </div>
 

@@ -281,11 +281,6 @@ export function Navbar() {
                       <span className="text-xs font-bold text-neutral-900 truncate">
                         {user.name}
                       </span>
-                      {user.isVIP && (
-                        <span className="text-[10px] font-semibold text-amber-900 bg-amber-100/70 border border-amber-300/50 px-1.5 py-0.5 rounded tracking-wide">
-                          VIP
-                        </span>
-                      )}
                     </div>
                     <p className="text-[11px] text-neutral-500 truncate mt-0.5">
                       {user.email}
@@ -505,11 +500,6 @@ export function Navbar() {
                         <div className="text-[10px] text-veyro-muted font-mono truncate">{user.email}</div>
                       </div>
                     </div>
-                    {user.isVIP && (
-                      <span className="bg-veyro-yellow text-veyro-black text-[9px] font-black px-1.5 py-0.5 rounded-[2px] uppercase shrink-0">
-                        VIP
-                      </span>
-                    )}
                   </div>
 
                   {/* 1. My Orders */}

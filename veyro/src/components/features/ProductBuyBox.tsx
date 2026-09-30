@@ -434,7 +434,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         <div className="flex flex-col items-center border-x border-veyro-border-light px-2">
           <RotateCcw size={16} className="text-veyro-black mb-1 stroke-[1.75]" />
           <span className="text-[10px] font-bold uppercase tracking-wider text-veyro-black">
-            {isWatch ? "Authenticity Guaranteed" : isFootwear ? "Size Exchange" : "7-Day Returns"}
+            {isWatch ? "Authenticity Guaranteed" : "7-Day Returns"}
           </span>
           <span className="text-[10px] text-veyro-muted">
             {isWatch ? "Swiss Movement / 1-Year Warranty" : isFootwear ? "Free doorstep swap" : "Doorstep pickup"}
@@ -641,7 +641,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                 <strong>Complimentary Express Delivery:</strong> All orders above ₹999 qualify for free express shipping. Prepaid orders dispatch within 24 business hours from our central fulfillment hub.
               </p>
               <p>
-                <strong>Hassle-Free 7-Day Returns:</strong> If the fit or feel doesn&apos;t meet your standards, request a doorstep pickup or size exchange within 7 days of delivery.
+                <strong>Hassle-Free 7-Day Returns:</strong> If the fit or feel doesn&apos;t meet your standards, request a doorstep pickup within 7 days of delivery.
               </p>
             </div>
           )}
@@ -839,7 +839,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                   <div className="p-3 bg-veyro-surface-alt border border-veyro-border rounded-[2px] flex items-center gap-2.5 text-xs text-veyro-black">
                     <ShieldCheck size={18} className="text-emerald-700 shrink-0" />
                     <span>
-                      <strong>Guaranteed Doorstep Fit:</strong> 7-day complimentary doorstep size exchange if you need a different size.
+                      <strong>Guaranteed Doorstep Fit:</strong> 7-day complimentary doorstep returns if you need a different size.
                     </span>
                   </div>
                 </div>

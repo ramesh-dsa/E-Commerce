@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import type { OrderRecord } from "@/types";
+import type { OrderRecord, OrderStatus } from "@/types";
 
 export interface UserProfile {
   name: string;
@@ -30,18 +30,20 @@ interface UserContextType {
   demoLogin: () => void;
   logout: () => void;
   addOrder: (order: OrderRecord) => void;
+  cancelOrder: (orderId: string, reason?: string) => void;
+  requestReturn: (orderId: string, itemIndices: number[], reason: string, details?: string) => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 const USER_STORAGE_KEY = "veyro_user_v1";
-const ORDERS_STORAGE_KEY = "veyro_orders_v2";
+const ORDERS_STORAGE_KEY = "veyro_orders_v4";
 
 const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
   {
     id: "VEY-2026-84920",
-    date: "Today, 02:45 PM",
+    date: "14 Sep 2026, 02:45 PM",
     total: 3898,
     subtotal: 3898,
     bundleDiscount: 0,
@@ -131,6 +133,7 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
     ],
     itemNames: ["Ease Oversized Tee (Off-White / M)"],
     status: "Delivered",
+    deliveredDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago (eligible)
     estimatedDelivery: "Delivered on 16 Sep",
     timeline: [
       {
@@ -192,6 +195,7 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
     ],
     itemNames: ["Campus Retro Sneaker (Off-White + Green / UK 9)"],
     status: "Delivered",
+    deliveredDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), // 4 days ago (eligible for testing)
     estimatedDelivery: "Delivered on 10 Sep",
     timeline: [
       {
@@ -334,6 +338,78 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setOrders((prev) => [order, ...prev]);
   }, []);
 
+  const cancelOrder = useCallback((orderId: string, reason?: string) => {
+    setOrders((prev) =>
+      prev.map((order) => {
+        if (order.id !== orderId) return order;
+        const now = new Date();
+        const timestamp =
+          now.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }) +
+          ", " +
+          now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
+        return {
+          ...order,
+          status: "Cancelled" as OrderStatus,
+          estimatedDelivery: "Order Cancelled",
+          timeline: [
+            ...order.timeline,
+            {
+              status: "Cancelled" as OrderStatus,
+              timestamp,
+              description: reason
+                ? `Cancelled by customer: ${reason}`
+                : "Cancelled by customer",
+            },
+          ],
+        };
+      })
+    );
+  }, []);
+
+  const requestReturn = useCallback((orderId: string, itemIndices: number[], reason: string, details?: string) => {
+    setOrders((currentOrders) =>
+      currentOrders.map((order) => {
+        if (order.id !== orderId) return order;
+
+        const actionType = "Return Requested";
+        const now = new Date();
+        const timestamp =
+          now.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }) +
+          ", " +
+          now.toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
+
+        return {
+          ...order,
+          status: actionType as OrderStatus,
+          timeline: [
+            ...order.timeline,
+            {
+              status: actionType as OrderStatus,
+              timestamp,
+              description: `Return requested for ${itemIndices.length} item(s). Reason: ${reason}. ${details ? `Details: ${details}` : ""}`,
+            },
+          ],
+        };
+      })
+    );
+  }, []);
+
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
     setUser((prev) => {
       if (!prev) return null;
@@ -364,6 +440,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         demoLogin,
         logout,
         addOrder,
+        cancelOrder,
+        requestReturn,
         updateProfile,
       }}
     >

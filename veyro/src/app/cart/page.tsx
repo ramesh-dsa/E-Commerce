@@ -471,7 +471,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <RotateCcw size={14} className="text-neutral-700 shrink-0" />
-                    <span>7-Day Free Doorstep Pickup & Exchanges</span>
+                    <span>7-Day Free Doorstep Pickup & Returns</span>
                   </div>
                 </div>
               </div>

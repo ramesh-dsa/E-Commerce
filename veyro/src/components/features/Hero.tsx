@@ -170,8 +170,8 @@ export function Hero() {
                 <HeroPanel
                   panel={panel}
                   tabIndex={(diff > 2 && !isExiting) ? -1 : 0}
-                  priority={index === 0 || index === 1}
-                  fetchPriority={index === 0 ? "high" : (index === 1 ? "auto" : "low")}
+                  priority={index === 0}
+                  fetchPriority={index === 0 ? "high" : "auto"}
                 />
               </div>
             );

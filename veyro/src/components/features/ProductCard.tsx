@@ -50,7 +50,7 @@ export function ProductCard({
             src={product.imageUrl}
             alt={product.name}
             fill
-            quality={90}
+            quality={80}
             sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
@@ -59,13 +59,14 @@ export function ProductCard({
             }`}
           />
 
-          {/* Secondary image on hover if provided */}
+          {/* Secondary image on hover if provided - lazy loaded in background */}
           {product.secondaryImageUrl && (
             <Image
               src={product.secondaryImageUrl}
               alt={`${product.name} alternate view`}
               fill
-              quality={90}
+              quality={80}
+              loading="lazy"
               sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
               className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
             />

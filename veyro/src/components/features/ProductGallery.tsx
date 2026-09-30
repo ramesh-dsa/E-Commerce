@@ -132,7 +132,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             alt={`${product.name} — Editorial View ${activeIndex + 1}`}
             fill
             priority
-            quality={95}
+            quality={85}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 600px"
             className="object-cover object-center transition-transform duration-150 ease-out"
             onError={() => handleImageError(activeImage)}

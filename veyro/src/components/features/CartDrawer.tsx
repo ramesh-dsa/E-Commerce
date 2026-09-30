@@ -864,7 +864,7 @@ export function CartDrawer() {
 
                 <div className="flex items-center justify-center gap-1.5 mt-3 text-[10px] text-neutral-500 font-medium">
                   <ShieldCheck size={13} className="text-emerald-600" />
-                  <span>256-Bit SSL Encrypted • 7-Day Hassle-Free Exchange</span>
+                  <span>256-Bit SSL Encrypted • 7-Day Hassle-Free Returns</span>
                 </div>
               </div>
             )}
@@ -1086,7 +1086,7 @@ export function CartDrawer() {
 
                 <div className="flex items-center justify-center gap-1.5 text-[10px] text-neutral-500 pt-1">
                   <Lock size={12} className="text-emerald-700" />
-                  <span>256-Bit Bank Encrypted Payment • Free Doorstep Exchanges</span>
+                  <span>256-Bit Bank Encrypted Payment • Free Doorstep Returns</span>
                 </div>
               </form>
             </div>

@@ -136,25 +136,149 @@ body {
   display: none;
 }
 
-/* Luxury Sidebar Discrete Thin Scrollbar */
+/* Luxury Sidebar Scrollbar — macOS-like fade-on-hover */
 .luxury-sidebar-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d1cf transparent;
+  scrollbar-color: transparent transparent;
+}
+.luxury-sidebar-scrollbar:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 }
 .luxury-sidebar-scrollbar::-webkit-scrollbar {
   display: block;
-  width: 3px;
+  width: 4px;
 }
 .luxury-sidebar-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .luxury-sidebar-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #d1d1cf;
+  background-color: transparent;
   border-radius: 9999px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.4s ease;
 }
 .luxury-sidebar-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: #888888;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+.luxury-sidebar-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Filter Section Collapse/Expand (CSS grid-rows trick) ──────────────── */
+.filter-section-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 220ms ease;
+  opacity: 0;
+}
+.filter-section-content[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.filter-section-content > .filter-section-inner {
+  overflow: hidden;
+}
+
+/* ─── Dual Range Price Slider — Styled Native Thumbs ────────────────────── */
+.price-range-input {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.price-range-input::-webkit-slider-runnable-track {
+  height: 100%;
+  background: transparent;
+  border: none;
+}
+.price-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #111111;
+  border: 2.5px solid white;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+  cursor: grab;
+  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 180ms ease;
+}
+.price-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+}
+.price-range-input::-webkit-slider-thumb:active {
+  transform: scale(0.92);
+  box-shadow: 0 0 0 5px rgba(255,212,0,0.25), 0 1px 6px rgba(0,0,0,0.18);
+  cursor: grabbing;
+}
+.price-range-input::-moz-range-track {
+  height: 100%;
+  background: transparent;
+  border: none;
+}
+.price-range-input::-moz-range-thumb {
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #111111;
+  border: 2.5px solid white;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+  cursor: grab;
+}
+.price-range-input::-moz-range-thumb:active {
+  box-shadow: 0 0 0 5px rgba(255,212,0,0.25), 0 1px 6px rgba(0,0,0,0.18);
+  cursor: grabbing;
+}
+
+/* ─── Checkbox Pop ──────────────────────────────────────────────────────── */
+@keyframes checkbox-spring {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.25); }
+  65%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* ─── Size/Color Button Tactile Press ───────────────────────────────────── */
+.filter-btn-press {
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 180ms ease,
+              border-color 180ms ease,
+              box-shadow 180ms ease;
+}
+.filter-btn-press:active {
+  transform: scale(0.94);
+}
+
+/* ─── Color Swatch Selection Ring ───────────────────────────────────────── */
+@keyframes swatch-select {
+  0%   { box-shadow: 0 0 0 0px #111111; }
+  50%  { box-shadow: 0 0 0 5px rgba(17,17,17,0.15); }
+  100% { box-shadow: 0 0 0 0px transparent; }
+}
+.swatch-pop {
+  animation: swatch-select 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-section-content {
+    transition: none !important;
+  }
+  .filter-btn-press:active {
+    transform: none !important;
+  }
+  .swatch-pop {
+    animation: none !important;
+  }
 }
 
 /* Selection style */

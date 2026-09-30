@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useTransition, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLenis } from "lenis/react";
 import { products } from "@/data/products";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
@@ -12,18 +13,25 @@ import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
 import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
 import {
-  Grid3X3,
-  Columns2,
   X,
   Zap,
   ArrowRight,
   ShieldCheck,
   Ruler,
+  SlidersHorizontal,
 } from "lucide-react";
+import {
+  FootwearFilterSidebar,
+  FootwearFilterState,
+  FOOTWEAR_PRICE_MIN,
+  FOOTWEAR_PRICE_MAX,
+  FOOTWEAR_SILHOUETTES,
+  FOOTWEAR_SOLES,
+  FOOTWEAR_SIZES,
+  FOOTWEAR_COLORS,
+} from "@/components/features/FootwearFilterSidebar";
 
 // Filter options
-type SilhouetteFilter = "ALL" | "Minimal" | "Retro" | "Chunky";
-type SoleFilter = "ALL" | "VULCANIZED" | "CUPSOLE" | "SUEDE" | "LEATHER";
 type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
 
 const FOOTWEAR_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
@@ -33,40 +41,25 @@ const FOOTWEAR_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
   { value: "discount", label: "Biggest Savings" },
 ];
 
-interface ColorOption {
-  label: string;
-  key: string;
-  hex: string;
-  matches: string[];
-}
-
-const COLOR_SWATCHES: ColorOption[] = [
-  { label: "All Colors", key: "ALL", hex: "transparent", matches: [] },
-  { label: "Triple White", key: "white", hex: "#FFFFFF", matches: ["white", "triple white", "bone"] },
-  { label: "Core Black", key: "black", hex: "#111111", matches: ["black", "core black"] },
-  { label: "Bone / Chalk", key: "bone", hex: "#E8E4D9", matches: ["bone", "chalk", "off-white"] },
-  { label: "Vintage Green", key: "green", hex: "#425238", matches: ["green", "olive", "vintage green"] },
-  { label: "Sand / Tan", key: "sand", hex: "#C8B598", matches: ["sand", "tan", "beige"] },
-  { label: "Charcoal / Grey", key: "charcoal", hex: "#4A4A4A", matches: ["charcoal", "grey", "slate"] },
-];
-
-const SHOE_SIZES = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11"];
-
 export function FootwearCatalog() {
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
   const { addToCart, openCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   // ── Filter & View States ───────────────────────────────────────────────────
-  const [selectedSilhouette, setSelectedSilhouette] = useState<SilhouetteFilter>("ALL");
-  const [selectedSole, setSelectedSole] = useState<SoleFilter>("ALL");
-  const [selectedColor, setSelectedColor] = useState<string>("ALL");
-  const [selectedSize, setSelectedSize] = useState<string>("ALL");
+  const [filters, setFilters] = useState<FootwearFilterState>({
+    silhouettes: [],
+    soles: [],
+    sizes: [],
+    colors: [],
+    priceMin: FOOTWEAR_PRICE_MIN,
+    priceMax: FOOTWEAR_PRICE_MAX,
+  });
   const [sortBy, setSortBy] = useState<SortOption>("featured");
-  const [gridColumns, setGridColumns] = useState<2 | 4>(4);
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
   // ── Modals & Drawers ───────────────────────────────────────────────────────
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   // ── Base Footwear Products (9 SKUs) ────────────────────────────────────────
@@ -81,39 +74,109 @@ export function FootwearCatalog() {
       .slice(0, 3);
   }, []);
 
+  // ── Dynamic Item Counts for All Filter Criteria ────────────────────────────
+  const itemCounts = useMemo(() => {
+    const silhouettes: Record<string, number> = {};
+    FOOTWEAR_SILHOUETTES.forEach((sil) => {
+      const count = footwearProducts.filter((p) => {
+        const sub = p.subcategoryTag.toLowerCase();
+        const name = p.name.toLowerCase();
+        const tags = (p.tags || []).map((t) => t.toLowerCase());
+        if (sil.id === "Minimal") return sub === "minimal";
+        if (sil.id === "Retro") return sub === "retro";
+        if (sil.id === "Chunky") return sub === "chunky";
+        if (sil.id === "HighTop") return name.includes("high") || tags.includes("high") || tags.includes("statement");
+        return false;
+      }).length;
+      silhouettes[sil.id] = count > 0 ? count : sil.defaultCount;
+    });
+
+    const soles: Record<string, number> = {};
+    FOOTWEAR_SOLES.forEach((sole) => {
+      const count = footwearProducts.filter((p) => {
+        const mat = p.material.toLowerCase();
+        if (sole.id === "VULCANIZED") return mat.includes("vulcanized");
+        if (sole.id === "CUPSOLE") return mat.includes("cupsole");
+        if (sole.id === "SUEDE") return mat.includes("suede") || mat.includes("nubuck");
+        if (sole.id === "LEATHER") return mat.includes("leather");
+        if (sole.id === "EVA") return mat.includes("eva");
+        return false;
+      }).length;
+      soles[sole.id] = count > 0 ? count : sole.defaultCount;
+    });
+
+    const sizes: Record<string, number> = {};
+    FOOTWEAR_SIZES.forEach((item) => {
+      const count = footwearProducts.filter((p) => p.sizes.includes(item.size)).length;
+      sizes[item.size] = count > 0 ? count : item.count;
+    });
+
+    const colors: Record<string, number> = {};
+    FOOTWEAR_COLORS.forEach((col) => {
+      colors[col.id] = footwearProducts.filter((p) => {
+        const cLower = p.colorName.toLowerCase();
+        return col.matches.some((m) => cLower.includes(m));
+      }).length;
+    });
+
+    return { silhouettes, soles, sizes, colors };
+  }, [footwearProducts]);
+
   // ── Filter & Sort Logic ───────────────────────────────────────────────────
   const filteredProducts = useMemo(() => {
     return footwearProducts
       .filter((product) => {
         // 1. Silhouette / Subcategory filter
-        if (selectedSilhouette !== "ALL") {
-          if (product.subcategoryTag.toLowerCase() !== selectedSilhouette.toLowerCase()) {
+        if (filters.silhouettes.length > 0) {
+          const sub = product.subcategoryTag.toLowerCase();
+          const name = product.name.toLowerCase();
+          const tags = (product.tags || []).map((t) => t.toLowerCase());
+          const matchesSil = filters.silhouettes.some((silId) => {
+            if (silId === "Minimal") return sub === "minimal";
+            if (silId === "Retro") return sub === "retro";
+            if (silId === "Chunky") return sub === "chunky";
+            if (silId === "HighTop") return name.includes("high") || tags.includes("high") || tags.includes("statement");
             return false;
-          }
+          });
+          if (!matchesSil) return false;
         }
 
         // 2. Sole / Construction filter
-        if (selectedSole !== "ALL") {
+        if (filters.soles.length > 0) {
           const mat = product.material.toLowerCase();
-          if (selectedSole === "VULCANIZED" && !mat.includes("vulcanized")) return false;
-          if (selectedSole === "CUPSOLE" && !mat.includes("cupsole")) return false;
-          if (selectedSole === "SUEDE" && !mat.includes("suede")) return false;
-          if (selectedSole === "LEATHER" && !mat.includes("leather")) return false;
+          const matchesSole = filters.soles.some((sole) => {
+            if (sole === "VULCANIZED") return mat.includes("vulcanized");
+            if (sole === "CUPSOLE") return mat.includes("cupsole");
+            if (sole === "SUEDE") return mat.includes("suede") || mat.includes("nubuck");
+            if (sole === "LEATHER") return mat.includes("leather");
+            if (sole === "EVA") return mat.includes("eva");
+            return false;
+          });
+          if (!matchesSole) return false;
         }
 
         // 3. Color Filter
-        if (selectedColor !== "ALL") {
-          const swatch = COLOR_SWATCHES.find((s) => s.key === selectedColor);
-          if (swatch) {
-            const colorLower = product.colorName.toLowerCase();
-            const matches = swatch.matches.some((m) => colorLower.includes(m));
-            if (!matches) return false;
-          }
+        if (filters.colors.length > 0) {
+          const colorLower = product.colorName.toLowerCase();
+          const matchesColor = filters.colors.some((colKey) => {
+            const swatch = FOOTWEAR_COLORS.find((s) => s.id === colKey);
+            if (!swatch) return false;
+            return swatch.matches.some((m) => colorLower.includes(m));
+          });
+          if (!matchesColor) return false;
         }
 
         // 4. Size In-Stock Filter
-        if (selectedSize !== "ALL") {
-          if (!product.sizes.includes(selectedSize)) return false;
+        if (filters.sizes.length > 0) {
+          const matchesSize = filters.sizes.some((size) => product.sizes.includes(size));
+          if (!matchesSize) return false;
+        }
+
+        // 5. Price Range Filter (Dual Slider)
+        if (filters.priceMin > FOOTWEAR_PRICE_MIN || filters.priceMax < FOOTWEAR_PRICE_MAX) {
+          if (product.price < filters.priceMin || product.price > filters.priceMax) {
+            return false;
+          }
         }
 
         return true;
@@ -128,7 +191,7 @@ export function FootwearCatalog() {
         }
         return 0; // "featured" maintains archival order
       });
-  }, [footwearProducts, selectedSilhouette, selectedSole, selectedColor, selectedSize, sortBy]);
+  }, [footwearProducts, filters, sortBy]);
 
   // ── Quick Add to Bag with Size ─────────────────────────────────────────────
   const handleQuickAdd = (product: Product, size: string, e: React.MouseEvent) => {
@@ -141,34 +204,118 @@ export function FootwearCatalog() {
     }, 1000);
   };
 
-  // ── Active Filters Reset ───────────────────────────────────────────────────
-  const hasActiveFilters =
-    selectedSilhouette !== "ALL" ||
-    selectedSole !== "ALL" ||
-    selectedColor !== "ALL" ||
-    selectedSize !== "ALL" ||
-    sortBy !== "featured";
+  // ── Catalog Scroll Anchoring (Prevents Screen Jumps on Filter Changes) ──
+  const lenis = useLenis();
+  const catalogAnchorRef = useRef<HTMLElement>(null);
 
-  const clearAllFilters = () => {
-    setSelectedSilhouette("ALL");
-    setSelectedSole("ALL");
-    setSelectedColor("ALL");
-    setSelectedSize("ALL");
-    setSortBy("featured");
+  const anchorToCatalogTop = useCallback(() => {
+    if (typeof window === "undefined" || !catalogAnchorRef.current) return;
+    const rect = catalogAnchorRef.current.getBoundingClientRect();
+    // If the catalog header has scrolled more than 50px above viewport:
+    if (rect.top < -50) {
+      const targetY = Math.max(0, window.scrollY + rect.top);
+      if (lenis) {
+        lenis.scrollTo(targetY, {
+          duration: 0.45,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      } else {
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      }
+    }
+  }, [lenis]);
+
+  // ── Filter Handlers ────────────────────────────────────────────────────────
+  const handleToggleSilhouette = (sil: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      silhouettes: prev.silhouettes.includes(sil)
+        ? prev.silhouettes.filter((s) => s !== sil)
+        : [...prev.silhouettes, sil],
+    }));
+    anchorToCatalogTop();
   };
+
+  const handleToggleSole = (sole: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      soles: prev.soles.includes(sole)
+        ? prev.soles.filter((s) => s !== sole)
+        : [...prev.soles, sole],
+    }));
+    anchorToCatalogTop();
+  };
+
+  const handleToggleSize = (size: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter((s) => s !== size)
+        : [...prev.sizes, size],
+    }));
+    anchorToCatalogTop();
+  };
+
+  const handleToggleColor = (colorKey: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      colors: prev.colors.includes(colorKey)
+        ? prev.colors.filter((c) => c !== colorKey)
+        : [...prev.colors, colorKey],
+    }));
+    anchorToCatalogTop();
+  };
+
+  const [, startTransition] = useTransition();
+
+  const handleChangePriceRange = useCallback(
+    (min: number, max: number, isFinal?: boolean) => {
+      startTransition(() => {
+        setFilters((prev) => ({ ...prev, priceMin: min, priceMax: max }));
+      });
+      // Only anchor when user finishes slider drag or clicks a preset chip
+      if (isFinal) {
+        anchorToCatalogTop();
+      }
+    },
+    [anchorToCatalogTop]
+  );
+
+  const handleClearAll = () => {
+    setFilters({
+      silhouettes: [],
+      soles: [],
+      sizes: [],
+      colors: [],
+      priceMin: FOOTWEAR_PRICE_MIN,
+      priceMax: FOOTWEAR_PRICE_MAX,
+    });
+    setSortBy("featured");
+    anchorToCatalogTop();
+  };
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    count += filters.silhouettes.length;
+    count += filters.soles.length;
+    count += filters.sizes.length;
+    count += filters.colors.length;
+    if (filters.priceMin > FOOTWEAR_PRICE_MIN || filters.priceMax < FOOTWEAR_PRICE_MAX) count += 1;
+    return count;
+  }, [filters]);
 
   return (
     <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
       {/* ── 1. FULL-WIDTH GETHA SNEAKER VAULT HERO BANNER ──────────────── */}
       <section className="w-full mb-2">
-        <div className="relative w-full overflow-hidden bg-[#111111] aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.4/1] lg:aspect-[2.5/1] min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]">
+        <div className="relative w-full overflow-hidden bg-[#111111] aspect-[18/9] sm:aspect-[2.3/1] md:aspect-[2.6/1] lg:aspect-[2.7/1] min-h-[280px] sm:min-h-[340px] md:min-h-[400px] lg:min-h-[460px]">
           {/* 2K Super-Resolution Editorial Footwear Campaign Image */}
           <Image
             src="/images/footwear-archive-campaign.jpg"
             alt="VEYRO Sneaker Vault - Vulcanized Silhouettes & Retro Runners"
             fill
             priority
-            quality={98}
+            quality={85}
             className="object-cover object-center"
             sizes="100vw"
           />
@@ -206,250 +353,108 @@ export function FootwearCatalog() {
         </div>
       </section>
 
-      {/* ── 2. LUXURY EDITORIAL SILHOUETTE TABS & FILTER BAR ──────────────── */}
-      <section id="shoes-catalog-grid" className="w-full bg-white border-b border-[#e8e8e5] pt-6 pb-4 px-5 sm:px-8 lg:px-12 scroll-mt-20">
-        <div className="mx-auto max-w-[1536px] flex flex-col gap-4">
-          {/* Top Row: Clean Editorial Text Tabs */}
-          <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar border-b border-[#f0f0ed] pb-3">
-            <div className="flex items-center gap-6 sm:gap-8 shrink-0">
-              {(["ALL", "Minimal", "Retro", "Chunky"] as SilhouetteFilter[]).map((sil) => {
-                const isSelected = selectedSilhouette === sil;
-                const count = sil === "ALL" 
-                  ? footwearProducts.length 
-                  : footwearProducts.filter((p) => p.subcategoryTag.toLowerCase() === sil.toLowerCase()).length;
+      {/* ── 2. SUB-BAR: BREADCRUMBS, CONTROLS & SCROLL ANCHOR ───────────── */}
+      <section
+        ref={catalogAnchorRef}
+        className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-20 backdrop-blur-md bg-white/95 scroll-mt-20 [overflow-anchor:none]"
+      >
+        <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
+          {/* Left: Mobile Filter Button, Breadcrumbs & Item Count */}
+          <div className="flex items-center gap-3 sm:gap-6">
+            <button
+              type="button"
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-[2px] bg-[#111111] text-white text-xs font-bold uppercase tracking-wider shadow-xs hover:bg-[#333333] transition-colors cursor-pointer"
+              aria-label="Open filter sidebar"
+            >
+              <SlidersHorizontal size={13} className="text-[#fcd017]" />
+              <span>FILTERS</span>
+              {activeFilterCount > 0 && (
+                <span className="px-1.5 py-0.2 bg-[#fcd017] text-[#111111] text-[10px] font-black rounded-[2px]">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
 
-                return (
-                  <button
-                    key={sil}
-                    type="button"
-                    onClick={() => setSelectedSilhouette(sil)}
-                    className={`relative py-1 text-xs sm:text-[13px] font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer whitespace-nowrap ${
-                      isSelected
-                        ? "text-[#111111]"
-                        : "text-[#8e8e8e] hover:text-[#111111]"
-                    }`}
-                  >
-                    <span>{sil === "ALL" ? "All Silhouettes" : `${sil} Soles`} ({count})</span>
-                    {isSelected && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em]">
+              <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
+                HOME
+              </Link>
+              <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
+              <span className="text-[#111111] font-bold">SHOES</span>
+            </nav>
 
-            {/* Desktop Grid Switcher & Count */}
-            <div className="hidden lg:flex items-center gap-4 shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsSizeGuideOpen(true)}
-                className="flex items-center gap-1.5 text-xs font-bold text-neutral-700 hover:text-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#fcd017] transition-colors cursor-pointer"
-              >
-                <Ruler size={13} />
-                <span>Size Chart &amp; Fit Guide</span>
-              </button>
-
-              <span className="text-xs text-[#8e8e8e] font-mono">
-                {filteredProducts.length} Silhouettes
-              </span>
-
-              <div className="flex items-center border border-[#e8e8e5] rounded-xs p-0.5 bg-[#f8f8f6]">
-                <button
-                  type="button"
-                  onClick={() => setGridColumns(4)}
-                  aria-label="4-column grid view"
-                  className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-                    gridColumns === 4 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
-                  }`}
-                >
-                  <Grid3X3 size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGridColumns(2)}
-                  aria-label="2-column editorial view"
-                  className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-                    gridColumns === 2 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
-                  }`}
-                >
-                  <Columns2 size={15} />
-                </button>
-              </div>
-            </div>
+            <span className="hidden sm:inline-block text-[#555555] text-xs font-semibold pl-3 border-l border-[#dcdcd8]">
+              {filteredProducts.length} {filteredProducts.length === 1 ? "Pair" : "Pairs"} Available
+            </span>
           </div>
 
-          {/* Secondary Filter Row: Sole Construction + Color Swatches + Size Picker + Sort */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#f0f0ed]">
-            {/* Sole Construction Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
-                SOLE &amp; UPPER:
-              </span>
-              {(["ALL", "VULCANIZED", "CUPSOLE", "SUEDE", "LEATHER"] as SoleFilter[]).map((sole) => (
-                <button
-                  key={sole}
-                  type="button"
-                  onClick={() => setSelectedSole(sole)}
-                  className={`px-2.5 py-1 text-[11px] font-medium tracking-wider uppercase rounded-xs transition-colors cursor-pointer ${
-                    selectedSole === sole
-                      ? "bg-[#fcd017] text-[#111111] font-bold"
-                      : "bg-[#f8f8f6] text-[#666666] hover:bg-[#eeeeea]"
-                  }`}
-                >
-                  {sole === "ALL" 
-                    ? "All Soles" 
-                    : sole === "VULCANIZED" 
-                    ? "Vulcanized" 
-                    : sole === "CUPSOLE" 
-                    ? "Cupsole" 
-                    : sole === "SUEDE" 
-                    ? "Suede/Mesh" 
-                    : "Full Leather"}
-                </button>
-              ))}
-            </div>
-
-            {/* Color Swatch Dots */}
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
-                COLORWAY:
-              </span>
-              <div className="flex items-center gap-1.5">
-                {COLOR_SWATCHES.map((swatch) => {
-                  const isSelected = selectedColor === swatch.key;
-                  return (
-                    <button
-                      key={swatch.key}
-                      type="button"
-                      title={swatch.label}
-                      onClick={() => setSelectedColor(swatch.key)}
-                      className={`relative flex items-center justify-center h-6 w-6 rounded-full transition-transform cursor-pointer ${
-                        isSelected ? "ring-2 ring-[#111111] ring-offset-2 scale-110" : "hover:scale-105"
-                      } ${swatch.key === 'ALL' ? 'border border-[#cccccc] text-[9px] font-bold uppercase bg-white' : 'border border-black/10'}`}
-                      style={{ backgroundColor: swatch.key === "ALL" ? undefined : swatch.hex }}
-                    >
-                      {swatch.key === "ALL" && "ALL"}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Size In-Stock Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
-                UK SIZE:
-              </span>
-              <button
-                type="button"
-                onClick={() => setSelectedSize("ALL")}
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-xs transition-colors cursor-pointer ${
-                  selectedSize === "ALL" ? "bg-[#111111] text-white" : "bg-[#f4f2ee] text-[#555555]"
-                }`}
-              >
-                ALL
-              </button>
-              {SHOE_SIZES.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => setSelectedSize(size)}
-                  className={`h-6 px-1.5 flex items-center justify-center text-[10px] font-bold uppercase rounded-xs transition-colors cursor-pointer ${
-                    selectedSize === size
-                      ? "bg-[#111111] text-white"
-                      : "bg-[#f4f2ee] text-[#555555] hover:bg-[#e8e8e5]"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-
-            {/* Sort Dropdown */}
+          {/* Right: Sort Dropdown */}
+          <div className="flex items-center gap-3 ml-auto">
             <SortDropdown<SortOption>
               value={sortBy}
-              onChange={setSortBy}
+              onChange={(val) => {
+                setSortBy(val);
+                anchorToCatalogTop();
+              }}
               options={FOOTWEAR_SORT_OPTIONS}
-              className="ml-auto"
             />
           </div>
-
-          {/* Active Filter Chips & Reset All */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap items-center gap-2 pt-2">
-              <span className="text-[11px] text-[#8e8e8e] uppercase font-semibold">Active:</span>
-              {selectedSilhouette !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Silhouette: {selectedSilhouette}
-                  <button type="button" onClick={() => setSelectedSilhouette("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedSole !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Sole: {selectedSole}
-                  <button type="button" onClick={() => setSelectedSole("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedColor !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Colorway: {selectedColor}
-                  <button type="button" onClick={() => setSelectedColor("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedSize !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Size: {selectedSize}
-                  <button type="button" onClick={() => setSelectedSize("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={clearAllFilters}
-                className="text-[11px] font-bold text-[#c44d25] hover:underline uppercase tracking-wider ml-2 cursor-pointer"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          )}
         </div>
       </section>
 
-      {/* ── 3. PRODUCT GRID WITH EMBEDDED SPECIAL CAMPAIGN CARD ───────────── */}
-      <main className="mx-auto max-w-[1536px] px-5 sm:px-8 lg:px-12 py-10">
-        {filteredProducts.length === 0 ? (
-          /* Empty State */
-          <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-xs border border-dashed border-[#dcdcd8]">
-            <span className="text-4xl mb-3">👟</span>
-            <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
-              No Archival Sneakers Found
-            </h3>
-            <p className="mt-2 text-sm text-[#777777] max-w-md">
-              We couldn&apos;t find any footwear matching your exact combination of silhouette, sole, and colorway filters.
-            </p>
-            <button
-              type="button"
-              onClick={clearAllFilters}
-              className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-xs hover:bg-[#333333] transition-colors cursor-pointer"
-            >
-              Reset All Filters
-            </button>
-          </div>
-        ) : (
-          <div
-            className={`grid gap-x-5 gap-y-10 ${
-              gridColumns === 2
-                ? "grid-cols-1 sm:grid-cols-2"
-                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
-            }`}
-          >
+      {/* ── 3. MAIN WORKSPACE: VERTICAL SIDEBAR + PRODUCT GRID ─────────── */}
+      <main className="mx-auto max-w-[1536px] pl-3 sm:pl-5 lg:pl-7 pr-5 sm:pr-8 lg:pr-12 py-8 sm:py-10 min-h-[1400px] lg:min-h-[1600px] [overflow-anchor:none]">
+        <div className="flex items-start gap-6 xl:gap-8 min-h-[1350px] lg:min-h-[1550px]">
+          {/* Vertical Sidebar Filter (Desktop sticky + Mobile slide-over) */}
+          <FootwearFilterSidebar
+            filters={filters}
+            onToggleSilhouette={handleToggleSilhouette}
+            onToggleSole={handleToggleSole}
+            onToggleSize={handleToggleSize}
+            onToggleColor={handleToggleColor}
+            onChangePriceRange={handleChangePriceRange}
+            onClearAll={handleClearAll}
+            onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
+            activeFilterCount={activeFilterCount}
+            totalFilteredCount={filteredProducts.length}
+            itemCounts={itemCounts}
+            isMobileOpen={isMobileFilterOpen}
+            onCloseMobile={() => setIsMobileFilterOpen(false)}
+            productPrices={footwearProducts.map((p) => p.price)}
+          />
+
+          {/* Right Product Grid Column */}
+          <div className="flex-1 min-w-0 min-h-[1350px] lg:min-h-[1550px] [overflow-anchor:none]">
+            {filteredProducts.length === 0 ? (
+              /* Empty State */
+              <div className="w-full min-h-[580px] py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
+                <div className="relative w-72 h-72 -mt-8 -mb-12 overflow-hidden mix-blend-multiply transform transition-transform hover:scale-105 hover:-rotate-2 duration-500 ease-in-out">
+                  <Image 
+                    src="/images/footwear/empty-state-icon.jpg" 
+                    alt="Retro Runner Sneaker" 
+                    fill 
+                    unoptimized
+                    className="object-contain" 
+                  />
+                </div>
+                <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
+                  No Archival Sneakers Found
+                </h3>
+                <p className="mt-2 text-sm text-[#777777] max-w-md">
+                  We couldn&apos;t find any footwear matching your exact combination of silhouette, sole, size, and colorway filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-[2px] hover:bg-[#333333] transition-colors cursor-pointer"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid gap-x-4 sm:gap-x-6 gap-y-10 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product, index) => {
               const isWishlisted = isInWishlist(product.id);
               const discountPercent =
@@ -467,7 +472,7 @@ export function FootwearCatalog() {
                         src="/images/sneaker-rotation-campaign.jpg"
                         alt="VEYRO Sneaker Rotation - Handcrafted Vulcanized Soles"
                         fill
-                        quality={92}
+                        quality={80}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw"
                         className="object-cover object-[85%_center] transition-transform duration-700 ease-out group-hover:scale-105"
                       />
@@ -478,10 +483,6 @@ export function FootwearCatalog() {
 
                       {/* Top Left Copy */}
                       <div className="relative z-10 max-w-[260px] sm:max-w-[300px]">
-                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xs bg-[#fcd017] text-[#111111] text-[10px] font-black uppercase tracking-widest mb-3 shadow-sm">
-                          <Zap size={12} className="fill-[#111111]" />
-                          VAULT PRIVILEGE
-                        </div>
                         <span className="font-script text-2xl sm:text-3xl text-[#fcd017] block -mb-1 font-bold drop-shadow-xs">
                           double sole rotation
                         </span>
@@ -496,12 +497,15 @@ export function FootwearCatalog() {
                       {/* Bottom Pricing Row */}
                       <div className="relative z-10 mt-6 pt-4 border-t border-white/15 flex items-end justify-between backdrop-blur-[2px] rounded-xs px-1">
                         <div>
-                          <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">Combined MRP</span>
-                          <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">₹5,398 – ₹6,998</span>
+                          <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">Regular MRP</span>
+                          <div className="flex items-baseline gap-2 mt-0.5">
+                            <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">₹5,398</span>
+                            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Save ₹1,000</span>
+                          </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-[10px] text-[#fcd017] uppercase tracking-widest font-bold block font-mono">Vault Promo</span>
-                          <span className="text-xl sm:text-3xl font-black text-[#fcd017] tracking-tight drop-shadow-sm">₹1,000 INSTANT OFF</span>
+                          <span className="text-[10px] text-[#fcd017] uppercase tracking-widest font-bold block font-mono">Vault Pair Price</span>
+                          <span className="text-xl sm:text-3xl font-black text-[#fcd017] tracking-tight drop-shadow-sm">FROM ₹4,398</span>
                         </div>
                       </div>
 
@@ -524,7 +528,7 @@ export function FootwearCatalog() {
                           src={product.imageUrl}
                           alt={product.name}
                           fill
-                          quality={90}
+                          quality={80}
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                           className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
                         />
@@ -535,7 +539,8 @@ export function FootwearCatalog() {
                             src={product.secondaryImageUrl}
                             alt={`${product.name} macro view`}
                             fill
-                            quality={90}
+                            quality={80}
+                            loading="lazy"
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                             className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
                           />
@@ -610,10 +615,12 @@ export function FootwearCatalog() {
             })}
           </div>
         )}
+          </div>
+        </div>
       </main>
 
       {/* ── 4. CROSS-CATEGORY CURATED PAIRINGS (HEAVYWEIGHT TEES) ───────────── */}
-      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-14 px-5 sm:px-8 lg:px-12 mt-12">
+      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-14 px-5 sm:px-8 lg:px-12 mt-16 [overflow-anchor:none]">
         <div className="mx-auto max-w-[1536px]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
             <div>
@@ -629,10 +636,15 @@ export function FootwearCatalog() {
             </div>
             <Link
               href="/clothing"
-              className="mt-4 sm:mt-0 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#111111] hover:underline"
+              className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] rounded-xs"
             >
-              <span>Explore Clothing Catalog (15)</span>
-              <ArrowRight size={14} />
+              <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-[#111111] after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+                Explore Clothing Catalog (15)
+              </span>
+              <ArrowRight
+                size={14}
+                className="stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-1.5 motion-reduce:transform-none"
+              />
             </Link>
           </div>
 
@@ -788,7 +800,7 @@ export function FootwearCatalog() {
               <div className="p-3 bg-[#111111] text-white rounded-xs flex items-center gap-3">
                 <ShieldCheck size={24} className="text-[#fcd017] shrink-0" />
                 <p className="text-xs text-[#cccccc]">
-                  All VEYRO footwear comes with doorstep size exchange. If the size doesn&apos;t fit 100%, we swap it for free within 7 days.
+                  All VEYRO footwear comes with doorstep returns. If the size doesn&apos;t fit 100%, we pick it up for free within 7 days.
                 </p>
               </div>
             </div>

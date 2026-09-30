@@ -40,7 +40,7 @@ export const HeroPanel = React.memo(function HeroPanel({
         fill
         priority={priority}
         fetchPriority={fetchPriority}
-        quality={90}
+        quality={80}
         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
       />

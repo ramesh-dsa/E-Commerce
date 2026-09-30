@@ -4,697 +4,442 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useUser } from "@/context/UserContext";
 import { Container } from "@/components/ui/Container";
-import {
-  User as UserIcon,
-  Mail,
-  Phone,
-  MapPin,
-  Check,
-  ShieldCheck,
-  ArrowRight,
-  Truck,
+import { 
+  User, 
+  MapPin, 
+  CheckCircle2, 
+  Truck, 
+  Star, 
+  RefreshCcw, 
+  Package, 
+  LogOut, 
   ChevronRight,
-  Copy,
-  CheckCheck,
-  Edit3,
-  X,
-  Package,
-  LogOut,
-  Sparkles,
+  Pencil,
+  Home
 } from "lucide-react";
 
-export default function MyProfilePage() {
-  const { user, openAccountModal, orders, updateProfile, logout } = useUser();
+export default function AccountPage() {
+  const { user, demoLogin, logout, updateProfile } = useUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // ── FORM STATE ─────────────────────────────────────────────────────────────
-  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    addressLine1: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
 
-  // Personal form values
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  // Address form values
-  const [line1, setLine1] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [pincode, setPincode] = useState("");
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
-  // Feedback states
-  const [copied, setCopied] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Synchronize local form inputs when user context loads or updates
   useEffect(() => {
     if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-      setPhone(user.phone || "");
-
-      if (user.address) {
-        setLine1(user.address.line1 || "");
-        setCity(user.address.city || "");
-        setState(user.address.state || "");
-        setPincode(user.address.pincode || "");
-      }
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        addressLine1: user.address?.line1 || "",
+        city: user.address?.city || "",
+        state: user.address?.state || "",
+        pincode: user.address?.pincode || "",
+      });
     }
-  }, [user]);
+  }, [user, isEditing]);
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    setTimeout(() => {
-      setToastMessage((current) => (current === message ? null : current));
-    }, 3000);
+  if (!isHydrated) {
+    return <div className="min-h-screen bg-[#FAFAFA]" />;
+  }
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfile({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: {
+        line1: formData.addressLine1,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+      },
+    });
+    setIsEditing(false);
+    setIsSuccess(true);
+    setTimeout(() => setIsSuccess(false), 3000);
   };
 
-  // ── GUEST GATE ─────────────────────────────────────────────────────────────
   if (!user) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4 bg-neutral-50/70">
-        <div className="text-center max-w-md mx-auto bg-white border border-neutral-200 rounded-2xl p-8 shadow-sm">
-          <div className="w-14 h-14 bg-neutral-100 text-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <UserIcon size={24} />
-          </div>
-          <h1 className="text-xl font-bold text-neutral-900 mb-2">
-            Sign In to View Your Profile
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center">
+        <div className="max-w-sm w-full text-center px-6">
+          <h1 className="text-3xl font-bold text-[#111111] mb-3">
+            My Account
           </h1>
-          <p className="text-xs text-neutral-500 leading-relaxed mb-6 max-w-xs mx-auto">
-            Please sign in to manage your profile details, contact information, and default delivery address.
+          <p className="text-[15px] text-[#666666] mb-10">
+            Sign in to manage your profile and preferences.
           </p>
           <button
-            type="button"
-            onClick={openAccountModal}
-            className="inline-flex items-center justify-center gap-2 w-full bg-neutral-900 text-white px-6 py-3 text-xs font-semibold rounded-lg hover:bg-black transition-colors cursor-pointer"
+            onClick={demoLogin}
+            className="w-full h-12 bg-[#111111] text-white text-[14px] font-medium rounded-lg hover:bg-[#333333] transition-colors"
           >
-            <span>Sign In to Your Account</span>
-            <ArrowRight size={14} />
+            Sign In
           </button>
-          <div className="flex items-center justify-center gap-1.5 mt-4 text-[11px] text-neutral-400">
-            <ShieldCheck size={13} className="text-neutral-500" />
-            <span>Secure 256-Bit SSL Encrypted Profile</span>
-          </div>
         </div>
       </div>
     );
   }
 
-  // Fallback defaults for user address
-  const activeAddress = user.address || {
-    line1: "42, Richmond Road, Indiranagar",
-    city: "Bengaluru",
-    state: "Karnataka",
-    pincode: "560038",
-  };
-
-  const formattedAddressString = `${activeAddress.line1}, ${activeAddress.city}, ${activeAddress.state} - ${activeAddress.pincode}`;
-
-  const handleCopyAddress = () => {
-    navigator.clipboard.writeText(`${user.name}, ${user.phone}\n${formattedAddressString}`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // ── SAVE HANDLERS ──────────────────────────────────────────────────────────
-  const handleSavePersonal = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-
-    updateProfile({
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-    });
-
-    setIsEditingPersonal(false);
-    showToast("Profile details updated successfully");
-  };
-
-  const handleCancelPersonal = () => {
-    setName(user.name || "");
-    setEmail(user.email || "");
-    setPhone(user.phone || "");
-    setIsEditingPersonal(false);
-  };
-
-  const handleSaveAddress = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!line1.trim() || !city.trim() || !pincode.trim()) return;
-
-    updateProfile({
-      address: {
-        line1: line1.trim(),
-        city: city.trim(),
-        state: state.trim(),
-        pincode: pincode.trim(),
-      },
-    });
-
-    setIsEditingAddress(false);
-    showToast("Delivery address updated successfully");
-  };
-
-  const handleCancelAddress = () => {
-    setLine1(activeAddress.line1 || "");
-    setCity(activeAddress.city || "");
-    setState(activeAddress.state || "");
-    setPincode(activeAddress.pincode || "");
-    setIsEditingAddress(false);
-  };
-
-  const activeOrdersCount = orders.filter((o) => o.status !== "Delivered").length;
-
-  // Initials for avatar
-  const initials = user.name
-    ? user.name
-        .split(" ")
-        .map((part) => part[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
-    : "U";
-
   return (
-    <div className="bg-neutral-50/70 min-h-screen pb-20">
-      {/* Top Banner / Breadcrumbs */}
-      <div className="border-b border-neutral-200/80 bg-white">
-        <Container>
-          <div className="py-3.5 flex items-center justify-between text-xs text-neutral-500">
-            <div className="flex items-center gap-2 text-xs">
-              <Link href="/" className="hover:text-neutral-900 transition-colors">
-                Home
-              </Link>
-              <ChevronRight size={12} className="text-neutral-400" />
-              <Link href="/orders" className="hover:text-neutral-900 transition-colors">
-                My Account
-              </Link>
-              <ChevronRight size={12} className="text-neutral-400" />
-              <span className="text-neutral-900 font-semibold">
-                My Profile
-              </span>
-            </div>
-
-            {activeOrdersCount > 0 && (
-              <Link
-                href="/orders"
-                className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900 hover:text-black transition-colors"
-              >
-                <Truck size={14} className="text-neutral-700" />
-                <span>{activeOrdersCount} Active Order{activeOrdersCount > 1 ? "s" : ""}</span>
-                <ArrowRight size={11} className="text-neutral-400" />
-              </Link>
-            )}
-          </div>
-        </Container>
-      </div>
-
-      <Container className="pt-8 sm:pt-10">
-        {/* Header */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2.5 mb-1.5">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
-                  My Profile
-                </h1>
-              </div>
-              <p className="text-xs sm:text-sm text-neutral-500">
-                Manage your personal info, contact details, and default delivery address.
-              </p>
-            </div>
-
-            {/* Quick Switch to Orders */}
-            <Link
-              href="/orders"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-700 hover:text-neutral-950 bg-white border border-neutral-200/80 px-3.5 py-2 rounded-lg hover:border-neutral-300 transition-colors shadow-2xs self-start sm:self-auto"
-            >
-              <Package size={14} />
-              <span>Order History</span>
-            </Link>
-          </div>
+    <div className="min-h-screen bg-[#FAFAFA] pb-32">
+      <Container className="pt-8 md:pt-10 max-w-6xl">
+        
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[13px] text-[#666666] mb-8">
+          <Link href="/" className="hover:text-[#111111] transition-colors">Home</Link>
+          <ChevronRight size={14} className="opacity-60" />
+          <span className="hover:text-[#111111] cursor-pointer">My Account</span>
+          <ChevronRight size={14} className="opacity-60" />
+          <span className="text-[#111111] font-semibold">My Profile</span>
         </div>
 
-        {/* Global Toast Notification */}
-        {toastMessage && (
-          <div className="max-w-4xl mx-auto mb-6">
-            <div className="bg-neutral-900 text-white px-4 py-3 rounded-lg text-xs font-medium flex items-center justify-between shadow-md">
-              <div className="flex items-center gap-2">
-                <CheckCheck size={16} className="text-emerald-400" />
-                <span>{toastMessage}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setToastMessage(null)}
-                className="text-neutral-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <X size={14} />
-              </button>
-            </div>
+        {/* Success Alert */}
+        {isSuccess && (
+          <div className="mb-8 p-3 bg-green-50 border border-green-100 text-green-700 text-[13px] font-medium rounded-lg flex items-center gap-2">
+            <CheckCircle2 size={16} />
+            Profile updated successfully.
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Column: Personal Info + Delivery Address */}
-          <div className="lg:col-span-7 space-y-6">
-
-            {/* ── CARD 1: PERSONAL INFORMATION ── */}
-            <div className="bg-white border border-neutral-200/90 rounded-xl p-6 sm:p-7 shadow-xs">
-              <div className="flex items-center justify-between pb-4 mb-5 border-b border-neutral-100">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-800 flex items-center justify-center">
-                    <UserIcon size={16} />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-bold text-neutral-900">
-                      Personal Information
-                    </h2>
-                    <p className="text-[11px] text-neutral-500">
-                      Your identity and contact credentials
-                    </p>
-                  </div>
-                </div>
-
-                {!isEditingPersonal ? (
-                  <button
-                    type="button"
-                    onClick={() => setIsEditingPersonal(true)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-700 hover:text-neutral-950 px-3 py-1.5 rounded-md hover:bg-neutral-100 border border-neutral-200 transition-colors cursor-pointer"
-                  >
-                    <Edit3 size={13} />
-                    <span>Edit</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleCancelPersonal}
-                    className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-800 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
-                  >
-                    <X size={13} />
-                    <span>Cancel</span>
-                  </button>
-                )}
-              </div>
-
-              {!isEditingPersonal ? (
-                /* View Mode */
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
-                      Full Name
-                    </span>
-                    <p className="text-sm font-semibold text-neutral-900">
-                      {user.name || "—"}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
-                      Email Address
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold text-neutral-900 truncate">
-                        {user.email || "—"}
-                      </p>
-                      <span className="inline-flex items-center text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded shrink-0">
-                        Verified
-                      </span>
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+          
+          {/* LEFT CONTENT */}
+          <div className="w-full lg:w-[65%]">
+            <div className="mb-12">
+              <h1 className="text-[32px] font-bold text-[#111111] mb-1 tracking-tight">
+                My Profile
+              </h1>
+              <p className="text-[14px] text-[#666666]">
+                Manage your personal information, contact details, and default delivery address.
+              </p>
+            </div>
+            
+            {isEditing ? (
+              <form onSubmit={handleSave} className="space-y-12">
+                {/* Edit Form: Personal Info */}
+                <section>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-[#FFF4C2] flex items-center justify-center text-[#111111]">
+                      <User size={20} strokeWidth={1.5} />
                     </div>
-                  </div>
-
-                  <div className="space-y-1 sm:col-span-2 pt-1 border-t border-neutral-50">
-                    <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
-                      Phone Number
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <Phone size={13} className="text-neutral-400" />
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {user.phone || "+91 98765 43210"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Edit Mode */
-                <form onSubmit={handleSavePersonal} className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="profile-name"
-                      className="block text-xs font-semibold text-neutral-700 mb-1"
-                    >
-                      Full Name
-                    </label>
-                    <input
-                      id="profile-name"
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Santhosh Kumar"
-                      className="w-full text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label
-                        htmlFor="profile-email"
-                        className="block text-xs font-semibold text-neutral-700 mb-1"
-                      >
-                        Email Address
-                      </label>
+                      <h2 className="text-[18px] font-bold text-[#111111]">Personal Information</h2>
+                      <p className="text-[13px] text-[#666666]">Your identity and contact details</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">Full Name</label>
                       <input
-                        id="profile-email"
+                        required
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">Email Address</label>
+                      <input
+                        required
                         type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="yourname@domain.com"
-                        className="w-full text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
                       />
                     </div>
-
-                    <div>
-                      <label
-                        htmlFor="profile-phone"
-                        className="block text-xs font-semibold text-neutral-700 mb-1"
-                      >
-                        Phone Number
-                      </label>
+                    <div className="space-y-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">Phone Number</label>
                       <input
-                        id="profile-phone"
                         type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+91 98765 43210"
-                        className="w-full text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
                       />
                     </div>
                   </div>
+                </section>
+                
+                {/* Edit Form: Delivery Address */}
+                <section>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-[#FFF4C2] flex items-center justify-center text-[#111111]">
+                      <MapPin size={20} strokeWidth={1.5} />
+                    </div>
+                    <div>
+                      <h2 className="text-[18px] font-bold text-[#111111]">Saved Delivery Address</h2>
+                      <p className="text-[13px] text-[#666666]">Default shipping destination for a faster checkout</p>
+                    </div>
+                  </div>
 
-                  <div className="flex items-center gap-2 pt-2">
-                    <button
-                      type="submit"
-                      className="bg-neutral-900 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-black transition-colors cursor-pointer"
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancelPersonal}
-                      className="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer"
-                    >
-                      Cancel
-                    </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2 sm:col-span-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">Address Line 1</label>
+                      <input
+                        required
+                        type="text"
+                        value={formData.addressLine1}
+                        onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">City</label>
+                      <input
+                        required
+                        type="text"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">State</label>
+                      <input
+                        required
+                        type="text"
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <label className="text-[11px] uppercase tracking-wider font-semibold text-[#888888]">Pincode</label>
+                      <input
+                        required
+                        type="text"
+                        value={formData.pincode}
+                        onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                        className="w-full h-11 px-3 bg-white border border-[#EAEAEA] rounded-lg text-[14px] focus:border-[#111111] outline-none"
+                      />
+                    </div>
                   </div>
-                </form>
-              )}
-            </div>
+                </section>
 
-            {/* ── CARD 2: SAVED DELIVERY ADDRESS ── */}
-            <div className="bg-white border border-neutral-200/90 rounded-xl p-6 sm:p-7 shadow-xs">
-              <div className="flex items-center justify-between pb-4 mb-5 border-b border-neutral-100">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-800 flex items-center justify-center">
-                    <MapPin size={16} />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-bold text-neutral-900">
-                      Saved Delivery Address
-                    </h2>
-                    <p className="text-[11px] text-neutral-500">
-                      Default shipping destination for 1-click checkout
-                    </p>
-                  </div>
+                <div className="flex gap-4 pt-2">
+                  <button
+                    type="submit"
+                    className="h-10 px-6 bg-[#111111] text-white text-[13px] font-medium rounded-lg hover:bg-[#333333] transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="h-10 px-6 bg-white border border-[#EAEAEA] text-[#111111] text-[13px] font-medium rounded-lg hover:bg-[#F9F9F9] transition-colors"
+                  >
+                    Cancel
+                  </button>
                 </div>
+              </form>
+            ) : (
+              <div className="space-y-12">
+                {/* View: Personal Info */}
+                <section>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-[#FFF4C2] flex items-center justify-center text-[#111111]">
+                        <User size={20} strokeWidth={1.5} />
+                      </div>
+                      <div>
+                        <h2 className="text-[18px] font-bold text-[#111111]">Personal Information</h2>
+                        <p className="text-[13px] text-[#666666]">Your identity and contact details</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center gap-1.5 text-[13px] font-semibold text-[#111111] hover:text-[#666666] transition-colors"
+                    >
+                      <Pencil size={14} />
+                      Edit
+                    </button>
+                  </div>
+                  
+                  <div className="border-t border-b border-[#F0F0F0]">
+                    <div className="py-4 border-b border-[#F0F0F0]">
+                      <span className="block text-[10px] uppercase tracking-wider font-bold text-[#888888] mb-1">Full Name</span>
+                      <span className="text-[15px] font-medium text-[#111111]">{user.name}</span>
+                    </div>
+                    <div className="py-4 border-b border-[#F0F0F0] flex items-center justify-between">
+                      <div>
+                        <span className="block text-[10px] uppercase tracking-wider font-bold text-[#888888] mb-1">Email Address</span>
+                        <span className="text-[15px] font-medium text-[#111111]">{user.email}</span>
+                      </div>
+                      <div className="bg-[#EBF7EF] text-[#228646] px-2.5 py-1 rounded flex items-center gap-1.5 text-[11px] font-bold">
+                        <CheckCircle2 size={12} strokeWidth={2.5} />
+                        Verified
+                      </div>
+                    </div>
+                    <div className="py-4">
+                      <span className="block text-[10px] uppercase tracking-wider font-bold text-[#888888] mb-1">Phone Number</span>
+                      <span className="text-[15px] font-medium text-[#111111]">{user.phone || "—"}</span>
+                    </div>
+                  </div>
+                </section>
 
-                {!isEditingAddress ? (
-                  <button
-                    type="button"
-                    onClick={() => setIsEditingAddress(true)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-700 hover:text-neutral-950 px-3 py-1.5 rounded-md hover:bg-neutral-100 border border-neutral-200 transition-colors cursor-pointer"
-                  >
-                    <Edit3 size={13} />
-                    <span>Edit</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleCancelAddress}
-                    className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-800 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
-                  >
-                    <X size={13} />
-                    <span>Cancel</span>
-                  </button>
-                )}
+                {/* View: Address Info */}
+                <section>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-[#FFF4C2] flex items-center justify-center text-[#111111]">
+                        <MapPin size={20} strokeWidth={1.5} />
+                      </div>
+                      <div>
+                        <h2 className="text-[18px] font-bold text-[#111111]">Saved Delivery Address</h2>
+                        <p className="text-[13px] text-[#666666]">Default shipping destination for a faster checkout</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center gap-1.5 text-[13px] font-semibold text-[#111111] hover:text-[#666666] transition-colors"
+                    >
+                      <Pencil size={14} />
+                      Edit
+                    </button>
+                  </div>
+
+                  {user.address && user.address.line1 ? (
+                    <div className="bg-[#FFF9D6] border border-[#F3EBB2] rounded-xl p-5">
+                      <div className="inline-flex items-center gap-1.5 bg-[#FFD400] text-[#111111] px-2.5 py-1 rounded text-[10px] uppercase font-bold tracking-wider mb-4">
+                        <Home size={12} strokeWidth={2.5} />
+                        Default Address
+                      </div>
+                      <div className="text-[15px] text-[#111111] leading-[1.6]">
+                        <p className="font-bold text-[15px] mb-1">{user.name}</p>
+                        <p>{user.address.line1}</p>
+                        <p>{user.address.city}, {user.address.state} — {user.address.pincode}</p>
+                        <p>India</p>
+                        {user.phone && (
+                          <p className="mt-2">Phone: <span className="font-medium">{user.phone}</span></p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white border border-[#EAEAEA] rounded-xl p-6 text-center">
+                      <p className="text-[14px] text-[#666666] mb-4">No saved address.</p>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="text-[14px] font-medium text-[#111111] underline underline-offset-4"
+                      >
+                        Add Address
+                      </button>
+                    </div>
+                  )}
+                </section>
               </div>
-
-              {!isEditingAddress ? (
-                /* View Mode */
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-neutral-900 text-white px-2 py-0.5 rounded">
-                        <Check size={11} /> Default Address
-                      </span>
-                      <span className="text-[11px] text-neutral-500 font-medium px-2 py-0.5 bg-neutral-100 rounded">
-                        Home
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleCopyAddress}
-                      aria-label="Copy address text"
-                      className="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-900 px-2.5 py-1 rounded-md hover:bg-neutral-100 transition-colors cursor-pointer"
-                    >
-                      {copied ? (
-                        <>
-                          <CheckCheck size={13} className="text-emerald-600" />
-                          <span className="text-emerald-600 font-semibold text-xs">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={13} />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="p-4 rounded-lg bg-neutral-50/80 border border-neutral-200/70 space-y-1.5">
-                    <div className="text-xs font-bold text-neutral-900">
-                      {user.name}
-                    </div>
-                    <p className="text-xs text-neutral-600 leading-relaxed">
-                      {activeAddress.line1}
-                    </p>
-                    <p className="text-xs text-neutral-600">
-                      {activeAddress.city}, {activeAddress.state} —{" "}
-                      <span className="font-semibold text-neutral-900">
-                        {activeAddress.pincode}
-                      </span>
-                    </p>
-                    <p className="text-[11px] text-neutral-500 pt-1">
-                      Phone: <span className="text-neutral-800 font-medium">{user.phone || "+91 98765 43210"}</span>
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                /* Edit Mode */
-                <form onSubmit={handleSaveAddress} className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="addr-line1"
-                      className="block text-xs font-semibold text-neutral-700 mb-1"
-                    >
-                      Flat / House No. / Building / Street
-                    </label>
-                    <input
-                      id="addr-line1"
-                      type="text"
-                      required
-                      value={line1}
-                      onChange={(e) => setLine1(e.target.value)}
-                      placeholder="42, Richmond Road, Indiranagar"
-                      className="w-full text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label
-                        htmlFor="addr-city"
-                        className="block text-xs font-semibold text-neutral-700 mb-1"
-                      >
-                        City
-                      </label>
-                      <input
-                        id="addr-city"
-                        type="text"
-                        required
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Bengaluru"
-                        className="w-full text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="addr-state"
-                        className="block text-xs font-semibold text-neutral-700 mb-1"
-                      >
-                        State
-                      </label>
-                      <input
-                        id="addr-state"
-                        type="text"
-                        required
-                        value={state}
-                        onChange={(e) => setState(e.target.value)}
-                        placeholder="Karnataka"
-                        className="w-full text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="addr-pincode"
-                      className="block text-xs font-semibold text-neutral-700 mb-1"
-                    >
-                      Postal Code / PIN Code
-                    </label>
-                    <input
-                      id="addr-pincode"
-                      type="text"
-                      required
-                      value={pincode}
-                      onChange={(e) => setPincode(e.target.value)}
-                      placeholder="560038"
-                      className="w-full sm:w-1/2 text-xs sm:text-sm px-3 py-2 border border-neutral-300 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black bg-white"
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2">
-                    <button
-                      type="submit"
-                      className="bg-neutral-900 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-black transition-colors cursor-pointer"
-                    >
-                      Save Address
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancelAddress}
-                      className="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
+            )}
           </div>
 
-          {/* Right Sidebar: Profile Snapshot & Perks */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Account Card */}
-            <div className="bg-white border border-neutral-200/90 rounded-xl p-6 shadow-xs">
-              <div className="flex flex-col items-center text-center pb-6 border-b border-neutral-100">
-                <div className="w-16 h-16 rounded-full bg-neutral-900 text-white font-bold text-xl flex items-center justify-center shadow-md mb-3 ring-4 ring-neutral-50">
-                  {initials}
+          {/* RIGHT CONTENT (Sidebar) */}
+          <div className="w-full lg:w-[35%] lg:pl-12 lg:border-l border-[#F0F0F0]">
+            
+            <div className="flex justify-end mb-8">
+              <Link 
+                href="/orders" 
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAEAEA] rounded-lg text-[13px] font-medium text-[#111111] hover:bg-[#F9F9F9] transition-colors"
+              >
+                <Package size={16} strokeWidth={1.5} />
+                Order History
+              </Link>
+            </div>
+
+            {/* Identity Profile */}
+            <div className="flex flex-col items-start mb-10">
+              <div className="w-20 h-20 bg-[#111111] rounded-full flex items-center justify-center mb-4">
+                <span className="text-[28px] font-bold text-white tracking-widest">
+                  {user.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
+                </span>
+              </div>
+              <h3 className="text-[20px] font-bold text-[#111111] mb-1">{user.name}</h3>
+              <p className="text-[14px] text-[#666666] mb-4">{user.email}</p>
+              <div className="bg-[#F0F0F0] text-[#444444] text-[11px] font-semibold px-3.5 py-1.5 rounded-full">
+                Member Since {user.memberSince || "Sep 2026"}
+              </div>
+            </div>
+
+            {/* Benefits */}
+            <div className="mb-10 pt-8 border-t border-[#F0F0F0]">
+              <h4 className="text-[14px] font-bold text-[#111111] mb-6">Your Benefits</h4>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="mt-0.5">
+                    <Truck size={22} strokeWidth={1.5} className="text-[#111111]" />
+                  </div>
+                  <div>
+                    <h5 className="text-[14px] font-bold text-[#111111] mb-0.5">Free Express Delivery</h5>
+                    <p className="text-[12px] text-[#666666]">Complimentary 48-hour priority dispatch.</p>
+                  </div>
                 </div>
-                <div className="text-base font-bold text-neutral-900">
-                  {user.name}
+                
+                <div className="flex items-start gap-4">
+                  <div className="mt-0.5">
+                    <Star size={22} strokeWidth={1.5} className="text-[#111111]" />
+                  </div>
+                  <div>
+                    <h5 className="text-[14px] font-bold text-[#111111] mb-0.5">Early Access to Drops</h5>
+                    <p className="text-[12px] text-[#666666]">Be the first to shop new collections.</p>
+                  </div>
                 </div>
-                <div className="text-xs text-neutral-500 mt-0.5">
-                  {user.email}
-                </div>
-                <div className="inline-block mt-3 bg-neutral-100/80 px-3 py-1 rounded-full border border-neutral-200/60">
-                  <span className="text-[10px] font-semibold text-neutral-500 tracking-wide uppercase">
-                    Member since {user.memberSince || "Sep 2026"}
-                  </span>
+
+                <div className="flex items-start gap-4">
+                  <div className="mt-0.5">
+                    <RefreshCcw size={22} strokeWidth={1.5} className="text-[#111111]" />
+                  </div>
+                  <div>
+                    <h5 className="text-[14px] font-bold text-[#111111] mb-0.5">Easy Returns</h5>
+                    <p className="text-[12px] text-[#666666]">7-day pickup guarantee with instant refunds.</p>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              {/* VIP Perks */}
-              <div className="pt-4 space-y-3.5">
-                <div className="text-xs font-bold text-neutral-900">
-                  Member Privileges
-                </div>
-
-                <div className="space-y-3 text-xs">
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-6 h-6 rounded-md bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
-                      <Truck size={13} />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-neutral-900">Free Express Delivery</p>
-                      <p className="text-[11px] text-neutral-500 mt-0.5">Complimentary 48-hour priority dispatch.</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-6 h-6 rounded-md bg-neutral-100 text-neutral-800 flex items-center justify-center shrink-0 mt-0.5">
-                      <Sparkles size={13} />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-neutral-900">VIP Early Drops</p>
-                      <p className="text-[11px] text-neutral-500 mt-0.5">Private early links before general releases.</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-6 h-6 rounded-md bg-neutral-100 text-neutral-800 flex items-center justify-center shrink-0 mt-0.5">
-                      <ShieldCheck size={13} />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-neutral-900">Hassle-Free Returns</p>
-                      <p className="text-[11px] text-neutral-500 mt-0.5">7-day pickup guarantee with instant refunds.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="mt-6 pt-4 border-t border-neutral-100 space-y-2">
-                <Link
+            {/* Actions */}
+            <div className="pt-2 border-t border-[#F0F0F0]">
+              <h4 className="text-[14px] font-bold text-[#111111] mb-4 mt-6">Account Actions</h4>
+              <div className="flex flex-col border-t border-[#F0F0F0]">
+                <Link 
                   href="/orders"
-                  className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-neutral-800 bg-neutral-50 hover:bg-neutral-100 rounded-lg transition-colors"
+                  className="flex items-center justify-between py-4 border-b border-[#F0F0F0] group"
                 >
-                  <div className="flex items-center gap-2">
-                    <Package size={14} className="text-neutral-600" />
-                    <span>View All Orders</span>
+                  <div className="flex items-center gap-3">
+                    <Package size={20} strokeWidth={1.5} className="text-[#111111]" />
+                    <span className="text-[14px] font-bold text-[#111111]">View Order History</span>
                   </div>
-                  <span className="text-[11px] text-neutral-400">→</span>
+                  <ChevronRight size={16} className="text-[#999999] group-hover:text-[#111111] transition-colors" />
                 </Link>
-
+                
                 <button
-                  type="button"
                   onClick={logout}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-xs font-semibold text-neutral-600 hover:text-red-600 hover:bg-red-50/70 rounded-lg transition-colors cursor-pointer"
+                  className="flex items-center justify-between py-4 border-b border-[#F0F0F0] group"
                 >
-                  <LogOut size={14} />
-                  <span>Sign Out of Account</span>
+                  <div className="flex items-center gap-3">
+                    <LogOut size={20} strokeWidth={1.5} className="text-[#111111]" />
+                    <span className="text-[14px] font-bold text-[#111111]">Sign Out</span>
+                  </div>
+                  <ChevronRight size={16} className="text-[#999999] group-hover:text-[#111111] transition-colors" />
                 </button>
               </div>
             </div>
-
-            {/* Security Guarantee Card */}
-            <div className="border border-neutral-200/80 bg-white rounded-xl p-4 shadow-2xs flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <ShieldCheck size={18} />
-              </div>
-              <div className="text-xs">
-                <span className="font-semibold text-neutral-900 block">
-                  Encrypted & Secure
-                </span>
-                <span className="text-neutral-500 text-[11px]">
-                  Your credentials and addresses are stored securely on your local device.
-                </span>
-              </div>
-            </div>
+            
           </div>
+
         </div>
       </Container>
     </div>

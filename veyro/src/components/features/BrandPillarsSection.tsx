@@ -180,6 +180,8 @@ export function BrandPillarsSection() {
                 src={pillar.imageUrl}
                 alt={pillar.title}
                 fill
+                quality={80}
+                sizes="100vw"
                 className="object-cover"
               />
               {/* Heavy Cinematic Gradient Overlay for contrast */}

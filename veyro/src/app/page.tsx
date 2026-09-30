@@ -1,11 +1,9 @@
-import {
-  Hero,
-  PromoFlipBanner,
-  NewArrivalsSection,
-  BrandPillarsSection,
-  TshirtsSection,
-  FootwearSection,
-} from "@/components/features";
+import { Hero } from "@/components/features/Hero";
+import { PromoFlipBanner } from "@/components/features/PromoFlipBanner";
+import { NewArrivalsSection } from "@/components/features/NewArrivalsSection";
+import { BrandPillarsSection } from "@/components/features/BrandPillarsSection";
+import { TshirtsSection } from "@/components/features/TshirtsSection";
+import { FootwearSection } from "@/components/features/FootwearSection";
 
 export default function Home() {
   return (

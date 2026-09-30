@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { WatchesCatalog } from "@/components/features";
+import { WatchesCatalog } from "@/components/features/WatchesCatalog";
 
 export const metadata: Metadata = {
   title: "The Horology Archive — Architectural Timepieces & Chronographs | VEYRO",

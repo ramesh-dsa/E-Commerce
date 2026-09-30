@@ -8,71 +8,50 @@ import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
-import { CheckIcon } from "@/components/ui/Icons";
 import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
-import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
+import {
+  ClothingFilterSidebar,
+  ClothingFilterState,
+  CLOTHING_FITS,
+  CLOTHING_GSM_WEIGHTS,
+  CLOTHING_AVAILABLE_SIZES,
+  CLOTHING_COLORS,
+  CLOTHING_PRICE_RANGES,
+  CLOTHING_CURATIONS,
+} from "./ClothingFilterSidebar";
 import {
   SlidersHorizontal,
-  Grid3X3,
-  Columns2,
-  X,
-  Info,
-  ChevronDown,
   ArrowRight,
+  ChevronRight,
   ShieldCheck,
   Zap,
+  X,
 } from "lucide-react";
 
 // Filter options
-type FitFilter = "ALL" | "Oversized" | "Graphic" | "Regular" | "Relaxed" | "Textured";
-type GsmFilter = "ALL" | "HEAVYWEIGHT" | "MIDWEIGHT" | "TEXTURED";
 type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
-
-const CLOTHING_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
-  { value: "featured", label: "Archival Featured" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "discount", label: "Biggest Savings" },
-];
-
-interface ColorOption {
-  label: string;
-  key: string;
-  hex: string;
-  matches: string[];
-}
-
-const COLOR_SWATCHES: ColorOption[] = [
-  { label: "All Colors", key: "ALL", hex: "transparent", matches: [] },
-  { label: "Black", key: "black", hex: "#111111", matches: ["black", "vintage black"] },
-  { label: "White / Off-White", key: "white", hex: "#F5F0EB", matches: ["white", "off-white", "bone"] },
-  { label: "Charcoal / Grey", key: "charcoal", hex: "#3A3A3A", matches: ["charcoal", "light grey", "grey marl"] },
-  { label: "Olive / Green", key: "olive", hex: "#5C6B4F", matches: ["olive"] },
-  { label: "Sand / Beige", key: "sand", hex: "#D6C7A1", matches: ["sand", "beige", "oatmeal"] },
-  { label: "Navy / Slate", key: "navy", hex: "#1E2A38", matches: ["navy", "slate blue"] },
-];
-
-const AVAILABLE_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 export function ClothingCatalog() {
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
-  const { addToCart, openCart } = useCart();
-  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
+  const { isInWishlist } = useWishlist();
 
   // ── Filter & View States ───────────────────────────────────────────────────
-  const [selectedFit, setSelectedFit] = useState<FitFilter>("ALL");
-  const [selectedGsm, setSelectedGsm] = useState<GsmFilter>("ALL");
-  const [selectedColor, setSelectedColor] = useState<string>("ALL");
-  const [selectedSize, setSelectedSize] = useState<string>("ALL");
+  const [filters, setFilters] = useState<ClothingFilterState>({
+    fits: [],
+    gsmWeights: [],
+    sizes: [],
+    colors: [],
+    priceRange: "ALL",
+    curations: [],
+  });
   const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [gridColumns, setGridColumns] = useState<2 | 4>(4);
-  const [addedProductId, setAddedProductId] = useState<string | null>(null);
-
-  // ── Modals & Drawers ───────────────────────────────────────────────────────
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isFitGuideOpen, setIsFitGuideOpen] = useState(false);
 
-  // ── Base Clothing Products (14 SKUs) ───────────────────────────────────────
+  // ── Base Clothing Products (15 SKUs) ───────────────────────────────────────
   const clothingProducts = useMemo(() => {
     return products.filter((p) => p.category === "Clothing");
   }, []);
@@ -82,81 +61,215 @@ export function ClothingCatalog() {
     return products.filter((p) => p.category === "Footwear").slice(0, 3);
   }, []);
 
-  // ── Filter & Sort Logic ───────────────────────────────────────────────────
-  const filteredProducts = useMemo(() => {
-    return clothingProducts.filter((product) => {
-      // 1. Fit filter
-      if (selectedFit !== "ALL") {
-        if (selectedFit === "Graphic" && product.subcategoryTag !== "Graphic") return false;
-        if (selectedFit === "Oversized" && product.fit !== "Oversized" && product.subcategoryTag !== "Oversized") return false;
-        if (selectedFit === "Regular" && product.fit !== "Regular" && product.subcategoryTag !== "Regular") return false;
-        if (selectedFit === "Relaxed" && product.fit !== "Relaxed" && product.subcategoryTag !== "Relaxed") return false;
-        if (selectedFit === "Textured" && product.subcategoryTag !== "Textured") return false;
-      }
-
-      // 2. GSM / Fabric Weight Filter
-      if (selectedGsm !== "ALL") {
-        const mat = product.material.toLowerCase();
-        if (selectedGsm === "HEAVYWEIGHT" && !mat.includes("240gsm") && !mat.includes("260gsm")) return false;
-        if (selectedGsm === "MIDWEIGHT" && !mat.includes("180gsm") && !mat.includes("220gsm") && !mat.includes("190gsm")) return false;
-        if (selectedGsm === "TEXTURED" && !mat.includes("waffle") && !mat.includes("linen")) return false;
-      }
-
-      // 3. Color Filter
-      if (selectedColor !== "ALL") {
-        const swatch = COLOR_SWATCHES.find((s) => s.key === selectedColor);
-        if (swatch) {
-          const colorLower = product.colorName.toLowerCase();
-          const matches = swatch.matches.some((m) => colorLower.includes(m));
-          if (!matches) return false;
-        }
-      }
-
-      // 4. Size In-Stock Filter
-      if (selectedSize !== "ALL") {
-        if (!product.sizes.includes(selectedSize)) return false;
-      }
-
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === "price-asc") return a.price - b.price;
-      if (sortBy === "price-desc") return b.price - a.price;
-      if (sortBy === "discount") {
-        const discA = a.originalPrice ? (a.originalPrice - a.price) / a.originalPrice : 0;
-        const discB = b.originalPrice ? (b.originalPrice - b.price) / b.originalPrice : 0;
-        return discB - discA;
-      }
-      return 0; // "featured" maintains archival order
-    });
-  }, [clothingProducts, selectedFit, selectedGsm, selectedColor, selectedSize, sortBy]);
-
-
-  // ── Quick Add to Bag with Size ─────────────────────────────────────────────
-  const handleQuickAdd = (product: Product, size: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(product, size, 1, false);
-    setAddedProductId(`${product.id}-${size}`);
-    setTimeout(() => {
-      setAddedProductId(null);
-    }, 1000);
+  // ── Filter Toggle Handlers ─────────────────────────────────────────────────
+  const handleToggleFit = (fit: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      fits: prev.fits.includes(fit)
+        ? prev.fits.filter((f) => f !== fit)
+        : [...prev.fits, fit],
+    }));
   };
 
-  // ── Active Filters Reset ───────────────────────────────────────────────────
-  const hasActiveFilters =
-    selectedFit !== "ALL" ||
-    selectedGsm !== "ALL" ||
-    selectedColor !== "ALL" ||
-    selectedSize !== "ALL" ||
-    sortBy !== "featured";
+  const handleToggleGsm = (gsm: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      gsmWeights: prev.gsmWeights.includes(gsm)
+        ? prev.gsmWeights.filter((g) => g !== gsm)
+        : [...prev.gsmWeights, gsm],
+    }));
+  };
 
-  const clearAllFilters = () => {
-    setSelectedFit("ALL");
-    setSelectedGsm("ALL");
-    setSelectedColor("ALL");
-    setSelectedSize("ALL");
+  const handleToggleSize = (size: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter((s) => s !== size)
+        : [...prev.sizes, size],
+    }));
+  };
+
+  const handleToggleColor = (colorKey: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      colors: prev.colors.includes(colorKey)
+        ? prev.colors.filter((c) => c !== colorKey)
+        : [...prev.colors, colorKey],
+    }));
+  };
+
+  const handleSelectPriceRange = (range: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      priceRange: range,
+    }));
+  };
+
+  const handleToggleCuration = (curation: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      curations: prev.curations.includes(curation)
+        ? prev.curations.filter((c) => c !== curation)
+        : [...prev.curations, curation],
+    }));
+  };
+
+  const handleClearAll = () => {
+    setFilters({
+      fits: [],
+      gsmWeights: [],
+      sizes: [],
+      colors: [],
+      priceRange: "ALL",
+      curations: [],
+    });
     setSortBy("featured");
   };
+
+  const activeFilterCount = useMemo(() => {
+    return (
+      filters.fits.length +
+      filters.gsmWeights.length +
+      filters.sizes.length +
+      filters.colors.length +
+      (filters.priceRange && filters.priceRange !== "ALL" ? 1 : 0) +
+      filters.curations.length
+    );
+  }, [filters]);
+
+  // ── Dynamic Item Counts for Sidebar Badges ─────────────────────────────────
+  const itemCounts = useMemo(() => {
+    const fits: Record<string, number> = {};
+    CLOTHING_FITS.forEach((f) => {
+      fits[f.id] = clothingProducts.filter((p) => {
+        if (f.id === "Graphic") return p.subcategoryTag === "Graphic";
+        if (f.id === "Oversized") return p.fit === "Oversized" || p.subcategoryTag === "Oversized";
+        if (f.id === "Regular") return p.fit === "Regular" || p.subcategoryTag === "Regular";
+        if (f.id === "Relaxed") return p.fit === "Relaxed" || p.subcategoryTag === "Relaxed";
+        if (f.id === "Textured") return p.subcategoryTag === "Textured";
+        return false;
+      }).length;
+    });
+
+    const gsmWeights: Record<string, number> = {};
+    CLOTHING_GSM_WEIGHTS.forEach((g) => {
+      gsmWeights[g.id] = clothingProducts.filter((p) => {
+        const mat = p.material.toLowerCase();
+        if (g.id === "HEAVYWEIGHT") return mat.includes("240gsm") || mat.includes("260gsm");
+        if (g.id === "MIDWEIGHT") return mat.includes("180gsm") || mat.includes("220gsm") || mat.includes("190gsm");
+        if (g.id === "TEXTURED") return mat.includes("waffle") || mat.includes("linen");
+        return false;
+      }).length;
+    });
+
+    const sizes: Record<string, number> = {};
+    CLOTHING_AVAILABLE_SIZES.forEach((s) => {
+      sizes[s] = clothingProducts.filter((p) => p.sizes.includes(s)).length;
+    });
+
+    const colors: Record<string, number> = {};
+    CLOTHING_COLORS.forEach((col) => {
+      colors[col.id] = clothingProducts.filter((p) => {
+        const cLower = p.colorName.toLowerCase();
+        return col.matches.some((m) => cLower.includes(m));
+      }).length;
+    });
+
+    const priceRanges: Record<string, number> = {
+      ALL: clothingProducts.length,
+      UNDER_1000: clothingProducts.filter((p) => p.price < 1000).length,
+      "1000_TO_1299": clothingProducts.filter((p) => p.price >= 1000 && p.price <= 1299).length,
+      ABOVE_1300: clothingProducts.filter((p) => p.price >= 1300).length,
+    };
+
+    const curations: Record<string, number> = {
+      VIP_BUNDLE: clothingProducts.length,
+      SALE: clothingProducts.filter((p) => p.badge === "SALE" || (p.originalPrice && p.originalPrice > p.price)).length,
+      BESTSELLER: clothingProducts.filter((p) => p.badge === "BESTSELLER").length,
+      NEW: clothingProducts.filter((p) => p.isNewArrival || p.badge === "NEW").length,
+    };
+
+    return { fits, gsmWeights, sizes, colors, priceRanges, curations };
+  }, [clothingProducts]);
+
+  // ── Filter & Sort Logic ───────────────────────────────────────────────────
+  const filteredProducts = useMemo(() => {
+    return clothingProducts
+      .filter((product) => {
+        // 1. Fit filter
+        if (filters.fits.length > 0) {
+          const matchesFit = filters.fits.some((fit) => {
+            if (fit === "Graphic") return product.subcategoryTag === "Graphic";
+            if (fit === "Oversized") return product.fit === "Oversized" || product.subcategoryTag === "Oversized";
+            if (fit === "Regular") return product.fit === "Regular" || product.subcategoryTag === "Regular";
+            if (fit === "Relaxed") return product.fit === "Relaxed" || product.subcategoryTag === "Relaxed";
+            if (fit === "Textured") return product.subcategoryTag === "Textured";
+            return false;
+          });
+          if (!matchesFit) return false;
+        }
+
+        // 2. GSM / Fabric Weight Filter
+        if (filters.gsmWeights.length > 0) {
+          const mat = product.material.toLowerCase();
+          const matchesGsm = filters.gsmWeights.some((gsm) => {
+            if (gsm === "HEAVYWEIGHT") return mat.includes("240gsm") || mat.includes("260gsm");
+            if (gsm === "MIDWEIGHT") return mat.includes("180gsm") || mat.includes("220gsm") || mat.includes("190gsm");
+            if (gsm === "TEXTURED") return mat.includes("waffle") || mat.includes("linen");
+            return false;
+          });
+          if (!matchesGsm) return false;
+        }
+
+        // 3. Color Filter
+        if (filters.colors.length > 0) {
+          const colorLower = product.colorName.toLowerCase();
+          const matchesColor = filters.colors.some((colKey) => {
+            const swatch = CLOTHING_COLORS.find((s) => s.id === colKey);
+            if (!swatch) return false;
+            return swatch.matches.some((m) => colorLower.includes(m));
+          });
+          if (!matchesColor) return false;
+        }
+
+        // 4. Size In-Stock Filter
+        if (filters.sizes.length > 0) {
+          const matchesSize = filters.sizes.some((size) => product.sizes.includes(size));
+          if (!matchesSize) return false;
+        }
+
+        // 5. Price Range Filter
+        if (filters.priceRange && filters.priceRange !== "ALL") {
+          if (filters.priceRange === "UNDER_1000" && product.price >= 1000) return false;
+          if (filters.priceRange === "1000_TO_1299" && (product.price < 1000 || product.price > 1299)) return false;
+          if (filters.priceRange === "ABOVE_1300" && product.price < 1300) return false;
+        }
+
+        // 6. Curations Filter
+        if (filters.curations.length > 0) {
+          const matchesCuration = filters.curations.some((c) => {
+            if (c === "VIP_BUNDLE") return true;
+            if (c === "SALE") return product.badge === "SALE" || (product.originalPrice && product.originalPrice > product.price);
+            if (c === "BESTSELLER") return product.badge === "BESTSELLER";
+            if (c === "NEW") return product.isNewArrival || product.badge === "NEW";
+            return false;
+          });
+          if (!matchesCuration) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === "price-asc") return a.price - b.price;
+        if (sortBy === "price-desc") return b.price - a.price;
+        if (sortBy === "discount") {
+          const discA = a.originalPrice ? (a.originalPrice - a.price) / a.originalPrice : 0;
+          const discB = b.originalPrice ? (b.originalPrice - b.price) / b.originalPrice : 0;
+          return discB - discA;
+        }
+        return 0; // "featured" maintains archival order
+      });
+  }, [clothingProducts, filters, sortBy]);
 
   return (
     <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
@@ -169,7 +282,7 @@ export function ClothingCatalog() {
             alt="VEYRO Archive Sale - Up to 50% Off 240+ GSM Heavyweight Silhouettes"
             fill
             priority
-            quality={98}
+            quality={85}
             className="object-cover object-[80%_top] sm:object-top md:object-top"
             sizes="100vw"
           />
@@ -207,243 +320,87 @@ export function ClothingCatalog() {
         </div>
       </section>
 
-      {/* ── 2. LUXURY EDITORIAL FIT TABS & FILTER BAR ──────────────────────── */}
-      <section id="clothing-catalog-grid" className="w-full bg-white border-b border-[#e8e8e5] pt-6 pb-4 px-5 sm:px-8 lg:px-12 scroll-mt-20">
-        <div className="mx-auto max-w-[1536px] flex flex-col gap-4">
-          {/* Top Row: Clean Editorial Text Tabs (Zara / Represent Style) */}
-          <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar border-b border-[#f0f0ed] pb-3">
-            <div className="flex items-center gap-6 sm:gap-8 shrink-0">
-              {(["ALL", "Oversized", "Graphic", "Regular", "Relaxed", "Textured"] as FitFilter[]).map((fit) => {
-                const isSelected = selectedFit === fit;
-                const count = fit === "ALL" ? clothingProducts.length : clothingProducts.filter((p) => {
-                  if (fit === "Graphic") return p.subcategoryTag === "Graphic";
-                  if (fit === "Oversized") return p.fit === "Oversized" || p.subcategoryTag === "Oversized";
-                  if (fit === "Regular") return p.fit === "Regular" || p.subcategoryTag === "Regular";
-                  if (fit === "Relaxed") return p.fit === "Relaxed" || p.subcategoryTag === "Relaxed";
-                  if (fit === "Textured") return p.subcategoryTag === "Textured";
-                  return false;
-                }).length;
+      {/* ── 2. SUB-BAR: BREADCRUMBS & MOBILE FILTER ──────────────────────── */}
+      <section className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-20 backdrop-blur-md bg-white/95">
+        <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
+          {/* Left: Mobile Filter Button & Breadcrumbs */}
+          <div className="flex items-center gap-3 sm:gap-6">
+            <button
+              type="button"
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-[2px] bg-[#111111] text-white text-xs font-bold uppercase tracking-wider shadow-xs hover:bg-[#333333] transition-colors cursor-pointer"
+              aria-label="Open filter sidebar"
+            >
+              <SlidersHorizontal size={13} className="text-[#fcd017]" />
+              <span>FILTERS</span>
+              {activeFilterCount > 0 && (
+                <span className="px-1.5 py-0.2 bg-[#fcd017] text-[#111111] text-[10px] font-black rounded-[2px]">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
 
-                return (
-                  <button
-                    key={fit}
-                    type="button"
-                    onClick={() => setSelectedFit(fit)}
-                    className={`relative py-1 text-xs sm:text-[13px] font-bold uppercase tracking-[0.08em] transition-colors cursor-pointer whitespace-nowrap ${
-                      isSelected
-                        ? "text-[#111111]"
-                        : "text-[#8e8e8e] hover:text-[#111111]"
-                    }`}
-                  >
-                    <span>{fit === "ALL" ? "All Silhouettes" : `${fit} Fit`} ({count})</span>
-                    {isSelected && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#111111]" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Desktop Grid Switcher & Count */}
-            <div className="hidden lg:flex items-center gap-4 shrink-0">
-              <span className="text-xs text-[#8e8e8e] font-mono">
-                {filteredProducts.length} Pieces
-              </span>
-              <div className="flex items-center border border-[#e8e8e5] rounded-xs p-0.5 bg-[#f8f8f6]">
-                <button
-                  type="button"
-                  onClick={() => setGridColumns(4)}
-                  aria-label="4-column grid view"
-                  className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-                    gridColumns === 4 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
-                  }`}
-                >
-                  <Grid3X3 size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGridColumns(2)}
-                  aria-label="2-column editorial view"
-                  className={`p-1.5 rounded-xs transition-colors cursor-pointer ${
-                    gridColumns === 2 ? "bg-[#111111] text-white" : "text-[#777777] hover:text-[#111111]"
-                  }`}
-                >
-                  <Columns2 size={15} />
-                </button>
-              </div>
-            </div>
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em]">
+              <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
+                HOME
+              </Link>
+              <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
+              <span className="text-[#111111] font-bold">CLOTHING</span>
+            </nav>
           </div>
-
-          {/* Secondary Filter Row: Fabric GSM + Color Swatches + Size Picker + Sort */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-[#f0f0ed]">
-            {/* GSM Fabric Weight Pills */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
-                FABRIC WEIGHT:
-              </span>
-              {(["ALL", "HEAVYWEIGHT", "MIDWEIGHT", "TEXTURED"] as GsmFilter[]).map((gsm) => (
-                <button
-                  key={gsm}
-                  type="button"
-                  onClick={() => setSelectedGsm(gsm)}
-                  className={`px-2.5 py-1 text-[11px] font-medium tracking-wider uppercase rounded-xs transition-colors cursor-pointer ${
-                    selectedGsm === gsm
-                      ? "bg-[#fcd017] text-[#111111] font-bold"
-                      : "bg-[#f8f8f6] text-[#666666] hover:bg-[#eeeeea]"
-                  }`}
-                >
-                  {gsm === "ALL" ? "All Weights" : gsm === "HEAVYWEIGHT" ? "240+ GSM" : gsm === "MIDWEIGHT" ? "180 GSM" : "Waffle/Linen"}
-                </button>
-              ))}
-            </div>
-
-            {/* Color Swatch Dots */}
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
-                COLOR:
-              </span>
-              <div className="flex items-center gap-1.5">
-                {COLOR_SWATCHES.map((swatch) => {
-                  const isSelected = selectedColor === swatch.key;
-                  return (
-                    <button
-                      key={swatch.key}
-                      type="button"
-                      title={swatch.label}
-                      onClick={() => setSelectedColor(swatch.key)}
-                      className={`relative flex items-center justify-center h-6 w-6 rounded-full transition-transform cursor-pointer ${
-                        isSelected ? "ring-2 ring-[#111111] ring-offset-2 scale-110" : "hover:scale-105"
-                      } ${swatch.key === 'ALL' ? 'border border-[#cccccc] text-[9px] font-bold uppercase bg-white' : 'border border-black/10'}`}
-                      style={{ backgroundColor: swatch.key === "ALL" ? undefined : swatch.hex }}
-                    >
-                      {swatch.key === "ALL" && "ALL"}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Size In-Stock Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8e8e8e] mr-1">
-                IN-STOCK SIZE:
-              </span>
-              <button
-                type="button"
-                onClick={() => setSelectedSize("ALL")}
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-xs transition-colors cursor-pointer ${
-                  selectedSize === "ALL" ? "bg-[#111111] text-white" : "bg-[#f4f2ee] text-[#555555]"
-                }`}
-              >
-                ALL
-              </button>
-              {AVAILABLE_SIZES.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => setSelectedSize(size)}
-                  className={`h-6 w-6 flex items-center justify-center text-[10px] font-bold uppercase rounded-xs transition-colors cursor-pointer ${
-                    selectedSize === size
-                      ? "bg-[#111111] text-white"
-                      : "bg-[#f4f2ee] text-[#555555] hover:bg-[#e8e8e5]"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-
-            {/* Sort Dropdown */}
-            <SortDropdown<SortOption>
-              value={sortBy}
-              onChange={setSortBy}
-              options={CLOTHING_SORT_OPTIONS}
-              className="ml-auto"
-            />
-          </div>
-
-          {/* Active Filter Chips & Reset All */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap items-center gap-2 pt-2">
-              <span className="text-[11px] text-[#8e8e8e] uppercase font-semibold">Active:</span>
-              {selectedFit !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Fit: {selectedFit}
-                  <button type="button" onClick={() => setSelectedFit("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedGsm !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  GSM: {selectedGsm}
-                  <button type="button" onClick={() => setSelectedGsm("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedColor !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Color: {selectedColor}
-                  <button type="button" onClick={() => setSelectedColor("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedSize !== "ALL" && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xs bg-[#111111] text-white text-[11px] font-semibold">
-                  Size: {selectedSize}
-                  <button type="button" onClick={() => setSelectedSize("ALL")} className="cursor-pointer hover:text-[#fcd017]">
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={clearAllFilters}
-                className="text-[11px] font-bold text-[#c44d25] hover:underline uppercase tracking-wider ml-2 cursor-pointer"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          )}
         </div>
       </section>
 
-      {/* ── 4. PRODUCT GRID WITH EMBEDDED PROMO CARD ───────────────────────── */}
-      <main className="mx-auto max-w-[1536px] px-5 sm:px-8 lg:px-12 py-10">
-        {filteredProducts.length === 0 ? (
-          /* Empty State */
-          <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-xs border border-dashed border-[#dcdcd8]">
-            <span className="text-4xl mb-3">🔍</span>
-            <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
-              No Archival Pieces Found
-            </h3>
-            <p className="mt-2 text-sm text-[#777777] max-w-md">
-              We couldn&apos;t find any t-shirts matching your exact combination of fit, GSM, and color filters.
-            </p>
-            <button
-              type="button"
-              onClick={clearAllFilters}
-              className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-xs hover:bg-[#333333] transition-colors cursor-pointer"
-            >
-              Reset All Filters
-            </button>
-          </div>
-        ) : (
-          <div
-            className={`grid grid-flow-row-dense gap-x-5 gap-y-10 ${
-              gridColumns === 2
-                ? "grid-cols-1 sm:grid-cols-2"
-                : filteredProducts.length === 1
-                ? "grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 max-w-sm"
-                : filteredProducts.length === 2
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 max-w-3xl"
-                : filteredProducts.length === 3
-                ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-3"
-                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
-            }`}
-          >
+      {/* ── 3. MAIN WORKSPACE: VERTICAL SIDEBAR + PRODUCT GRID ─────────── */}
+      <main className="mx-auto max-w-[1536px] px-5 sm:px-8 lg:px-12 py-8 sm:py-10">
+        <div className="flex items-start gap-8 xl:gap-10">
+          {/* Vertical Sidebar Filter (Desktop sticky + Mobile slide-over) */}
+          <ClothingFilterSidebar
+            filters={filters}
+            onToggleFit={handleToggleFit}
+            onToggleGsm={handleToggleGsm}
+            onToggleSize={handleToggleSize}
+            onToggleColor={handleToggleColor}
+            onSelectPriceRange={handleSelectPriceRange}
+            onToggleCuration={handleToggleCuration}
+            onClearAll={handleClearAll}
+            activeFilterCount={activeFilterCount}
+            totalFilteredCount={filteredProducts.length}
+            itemCounts={itemCounts}
+            isMobileOpen={isMobileFilterOpen}
+            onCloseMobile={() => setIsMobileFilterOpen(false)}
+          />
+
+          {/* Right Product Grid Column */}
+          <div className="flex-1 min-w-0">
+
+            {filteredProducts.length === 0 ? (
+              /* Empty State */
+              <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
+                <span className="text-4xl mb-3">🔍</span>
+                <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
+                  No Archival Pieces Found
+                </h3>
+                <p className="mt-2 text-sm text-[#777777] max-w-md">
+                  We couldn&apos;t find any t-shirts matching your exact combination of fit, GSM, size, and color filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-[2px] hover:bg-[#333333] transition-colors cursor-pointer"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            ) : (
+              <div
+                className={`grid gap-x-4 sm:gap-x-6 gap-y-10 ${
+                  gridColumns === 4
+                    ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                    : "grid-cols-1 sm:grid-cols-2"
+                }`}
+              >
             {filteredProducts.map((product, index) => {
               const isWishlisted = isInWishlist(product.id);
               const discountPercent =
@@ -453,15 +410,15 @@ export function ClothingCatalog() {
 
               return (
                 <React.Fragment key={product.id}>
-                  {/* Embedded Luxury 3-Tees Bundle Pass Card at slot #3 (After 3 products) */}
-                  {index === 3 && (
+                  {/* Embedded Luxury 3-Tees Bundle Pass Card at slot #4 (After full 4-col first row) */}
+                  {index === 4 && (
                     <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-[#0d0d10] text-white rounded-[2px] relative overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
                       {/* High-Fashion Editorial Photography Background: 3 Models Trio */}
                       <Image
                         src="/images/bundle-pass-campaign.jpg"
                         alt="VEYRO VIP 3-Tee Bundle Collection - 3 Heavyweight Silhouettes"
                         fill
-                        quality={92}
+                        quality={80}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw"
                         className="object-cover object-[85%_center] transition-transform duration-700 ease-out group-hover:scale-105"
                       />
@@ -472,10 +429,6 @@ export function ClothingCatalog() {
 
                       {/* Top Left Editorial Copy (Positioned in Negative Space) */}
                       <div className="relative z-10 max-w-[260px] sm:max-w-[300px]">
-                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xs bg-[#fcd017] text-[#111111] text-[10px] font-black uppercase tracking-widest mb-3 shadow-sm">
-                          <Zap size={12} className="fill-[#111111]" />
-                          VIP BUNDLE PASS
-                        </div>
                         <span className="font-script text-2xl sm:text-3xl text-[#fcd017] block -mb-1 font-bold drop-shadow-xs">
                           the trio curation
                         </span>
@@ -490,8 +443,11 @@ export function ClothingCatalog() {
                       {/* Bottom Pricing Row with Clear Highlight */}
                       <div className="relative z-10 mt-6 pt-4 border-t border-white/15 flex items-end justify-between backdrop-blur-[2px] rounded-xs px-1">
                         <div>
-                          <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">Regular Total</span>
-                          <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">₹2,397 – ₹3,597</span>
+                          <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">Regular MRP</span>
+                          <div className="flex items-baseline gap-2 mt-0.5">
+                            <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">₹2,397</span>
+                            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Save 50%</span>
+                          </div>
                         </div>
                         <div className="text-right">
                           <span className="text-[10px] text-[#fcd017] uppercase tracking-widest font-bold block font-mono">Pass Price</span>
@@ -518,7 +474,7 @@ export function ClothingCatalog() {
                           src={product.imageUrl}
                           alt={product.name}
                           fill
-                          quality={90}
+                          quality={80}
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                           className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
                         />
@@ -529,7 +485,8 @@ export function ClothingCatalog() {
                             src={product.secondaryImageUrl}
                             alt={`${product.name} alternate view`}
                             fill
-                            quality={90}
+                            quality={80}
+                            loading="lazy"
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                             className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
                           />
@@ -615,8 +572,10 @@ export function ClothingCatalog() {
                 </React.Fragment>
               );
             })}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </main>
 
       {/* ── 5. "ENGINEERED WITH FOOTWEAR" CURATED PAIRINGS ─────────────────── */}
@@ -680,6 +639,7 @@ export function ClothingCatalog() {
           </div>
         </div>
       </section>
+
 
       {/* ── 6. INTERACTIVE FIT & SILHOUETTE GUIDE SLIDE-OVER MODAL ─────────── */}
       {isFitGuideOpen && (

@@ -114,7 +114,8 @@ export function AccountModal() {
             src="/hero/panel-classic-fit-highres.webp"
             alt="VEYRO High Fashion Editorial"
             fill
-            quality={92}
+            quality={80}
+            sizes="(max-width: 768px) 100vw, 44vw"
             className="object-cover object-center scale-105 filter brightness-90 contrast-110"
           />
 

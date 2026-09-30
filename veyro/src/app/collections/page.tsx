@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { CollectionsCatalog } from "@/components/features";
+import { CollectionsCatalog } from "@/components/features/CollectionsCatalog";
 
 export const metadata: Metadata = {
   title: "Collections & Curated Drops — Heavyweight T-Shirts & Sneakers | VEYRO",

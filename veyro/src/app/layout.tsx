@@ -6,7 +6,11 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { UserProvider } from "@/context/UserContext";
 import { ReviewsProvider } from "@/context/ReviewsContext";
-import { AccountModal } from "@/components/features";
+import dynamic from "next/dynamic";
+
+const AccountModal = dynamic(
+  () => import("@/components/features/AccountModal").then((mod) => mod.AccountModal)
+);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

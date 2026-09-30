@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { ProductCard } from "@/components/features/ProductCard";
@@ -358,6 +357,7 @@ export function FootwearSection() {
 
   // Recalculate metrics when filter changes or on window/container resize
   useEffect(() => {
+    if (!isInViewRef.current) return;
     currentClosestIdRef.current = "";
     updateMetrics();
 
@@ -365,6 +365,7 @@ export function FootwearSection() {
     applyFrameTransforms(currentScrollY);
 
     const handleResize = () => {
+      if (!isInViewRef.current) return;
       updateMetrics();
       const scrollY = lenisRef.current ? lenisRef.current.scroll : window.scrollY;
       applyFrameTransforms(scrollY);
@@ -373,6 +374,7 @@ export function FootwearSection() {
     window.addEventListener("resize", handleResize);
 
     const resizeObserver = new ResizeObserver(() => {
+      if (!isInViewRef.current) return;
       updateMetrics();
       const scrollY = lenisRef.current ? lenisRef.current.scroll : window.scrollY;
       applyFrameTransforms(scrollY);
@@ -444,18 +446,9 @@ export function FootwearSection() {
     >
       {/* Sticky Inner Container with Cinematic Studio Background */}
       <div 
-        className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden pt-20 pb-10"
+        className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden pt-20 pb-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url("/images/sneaker_vault_3d_bg.jpg")' }}
       >
-        {/* Background Image — via Next.js Image for optimization, lazy loading, and WebP conversion */}
-        <Image
-          src="/images/sneaker_vault_3d_bg.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover object-center -z-10"
-          aria-hidden="true"
-          priority={false}
-        />
         {/* Heavy dark gradient overlay to ensure the background looks incredibly deep and text stays legible */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-black/60 z-0 pointer-events-none" />

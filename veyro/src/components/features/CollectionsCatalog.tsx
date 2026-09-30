@@ -228,7 +228,7 @@ export function CollectionsCatalog() {
                     alt={col.title}
                     fill
                     priority={isHeroWide}
-                    quality={94}
+                    quality={80}
                     sizes={
                       isHeroWide
                         ? "(max-width: 1024px) 100vw, 65vw"

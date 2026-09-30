@@ -185,7 +185,8 @@ export function PromoFlipBanner() {
                 src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
                 alt="Premium Classic Fit T-Shirt" 
                 fill
-                sizes="(max-width: 768px) 100vw, 320px"
+                quality={80}
+                sizes="(max-width: 640px) 260px, 320px"
                 className="object-contain object-center scale-[1.25] rotate-[-5deg]"
               />
             </div>
@@ -319,7 +320,8 @@ export function PromoFlipBanner() {
                   src="/products/shoes/premium_floating_sneaker_v4.webp"
                   alt="Veyro Premium Collection - Chunky White and Yellow Sneaker" 
                   fill
-                  sizes="(max-width: 768px) 100vw, 320px"
+                  quality={80}
+                  sizes="(max-width: 640px) 260px, 320px"
                   className="object-contain object-center scale-105 rotate-[-5deg]"
                 />
               </div>
