@@ -31,7 +31,7 @@ export function TshirtsSection() {
         />
 
         {/* Editorial Fit Filters */}
-        <div role="tablist" className="flex flex-wrap items-center gap-y-3 mb-12">
+        <div role="tablist" className="flex items-center sm:flex-wrap overflow-x-auto sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 mb-8 sm:mb-12 scrollbar-none">
           {fits.map((fit, index) => {
             const isActive = selectedFit === fit;
             return (
@@ -41,7 +41,7 @@ export function TshirtsSection() {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setSelectedFit(fit)}
-                  className={`text-[13px] sm:text-[14px] font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap ${
+                  className={`text-[12px] sm:text-[14px] font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 ${
                     isActive
                       ? "text-veyro-black border-b-2 border-veyro-black pb-1"
                       : "text-veyro-muted hover:text-veyro-black pb-1 border-b-2 border-transparent"
@@ -50,7 +50,7 @@ export function TshirtsSection() {
                   {fit === "ALL" ? "All Silhouettes" : `${fit} Fit`}
                 </button>
                 {index < fits.length - 1 && (
-                  <span className="text-veyro-muted/30 mx-3 sm:mx-5 font-light text-lg pb-1 pointer-events-none">/</span>
+                  <span className="text-veyro-muted/30 mx-2.5 sm:mx-5 font-light text-base sm:text-lg pb-1 pointer-events-none shrink-0">/</span>
                 )}
               </React.Fragment>
             );
