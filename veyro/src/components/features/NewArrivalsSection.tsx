@@ -78,7 +78,7 @@ export function NewArrivalsSection() {
                 key={product.id} 
                 product={product} 
                 isFeatured={isFeatured}
-                className={isFeatured ? "col-span-2 row-span-2" : ""}
+                className={isFeatured ? "col-span-2 md:row-span-2" : ""}
               />
             );
           })}

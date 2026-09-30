@@ -79,7 +79,7 @@ export function TshirtsSection() {
             return (
               <div 
                 key={product.id} 
-                className={isFirst ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}
+                className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
               >
                 <ProductCard 
                   product={product} 
