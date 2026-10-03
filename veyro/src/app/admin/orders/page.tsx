@@ -525,7 +525,7 @@ export default function AdminOrdersPage() {
               }`}
             >
               <CalendarDays size={14} className={isTillDateMode ? "text-[#fde047]" : "text-neutral-500"} />
-              <span>Ethu Varai (Till Date)</span>
+              <span>All Time (Till Date)</span>
             </button>
 
             <button

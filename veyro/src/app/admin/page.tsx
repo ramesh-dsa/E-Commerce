@@ -6142,7 +6142,7 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* ── PROMINENT DUAL MODE SWITCHER: ETHU VARAI (TILL DATE) vs DAY-WISE BREAKDOWN ── */}
+      {/* ── PROMINENT DUAL MODE SWITCHER: ALL TIME (TILL DATE) vs DAY-WISE BREAKDOWN ── */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-white rounded-2xl border border-neutral-200/80 shadow-xs">
         <div className="flex items-center gap-2">
           <div className="flex items-center p-1 bg-neutral-100 rounded-xl border border-neutral-200">
@@ -6155,7 +6155,7 @@ export default function AdminDashboard() {
               }`}
             >
               <CalendarDays size={14} className={dateFilter.type === "all" ? "text-[#fde047]" : "text-neutral-500"} />
-              <span>Ethu Varai (Till Date)</span>
+              <span>All Time (Till Date)</span>
             </button>
 
             <button
