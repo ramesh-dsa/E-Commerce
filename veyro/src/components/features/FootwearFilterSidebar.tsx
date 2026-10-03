@@ -724,6 +724,20 @@ export function FootwearFilterSidebar({
     );
   };
 
+  // Lock background website scrolling when mobile filter drawer is open
+  useEffect(() => {
+    if (isMobileOpen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalDocOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalDocOverflow;
+      };
+    }
+  }, [isMobileOpen]);
+
   // Active color selection for label display
   const activeColorNames = FOOTWEAR_COLORS.filter((c) => filters.colors.includes(c.id)).map((c) => c.name);
 
@@ -946,7 +960,7 @@ export function FootwearFilterSidebar({
       {isMobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div
-            className="fixed inset-0 bg-black/45 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/45 backdrop-blur-xs transition-opacity animate-in fade-in duration-200 overscroll-contain touch-none"
             onClick={onCloseMobile}
             aria-hidden="true"
           />
@@ -954,9 +968,9 @@ export function FootwearFilterSidebar({
             role="dialog"
             aria-modal="true"
             aria-label="Filter Footwear"
-            className="relative flex w-full max-w-xs flex-col bg-white text-[#111111] shadow-2xl z-10 animate-drawer-in h-full overflow-hidden ml-auto"
+            className="relative flex w-full max-w-xs flex-col bg-white text-[#111111] shadow-2xl z-10 animate-drawer-in h-[100dvh] max-h-[100dvh] overflow-hidden ml-auto overscroll-contain"
           >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#EAEAE8]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#EAEAE8] shrink-0">
               <div className="flex items-center gap-2">
                 <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Filters</span>
                 {activeFilterCount > 0 && (
@@ -967,8 +981,8 @@ export function FootwearFilterSidebar({
                 <X size={20} strokeWidth={1.5} />
               </button>
             </div>
-            <div className="overflow-y-auto px-5 py-4 flex-1 luxury-sidebar-scrollbar">{filterContent}</div>
-            <div className="p-4 border-t border-[#EAEAE8] bg-[#FAFAF8] flex items-center gap-3">
+            <div className="overflow-y-auto px-5 py-4 flex-1 min-h-0 overscroll-contain luxury-sidebar-scrollbar">{filterContent}</div>
+            <div className="p-4 border-t border-[#EAEAE8] bg-[#FAFAF8] flex items-center gap-3 shrink-0">
               {activeFilterCount > 0 && (
                 <button type="button" onClick={onClearAll} className="filter-btn-press px-4 py-2.5 border border-[#111111] text-[11px] font-semibold uppercase tracking-wider text-[#111111] hover:bg-[#F5F5F3] rounded-[4px] cursor-pointer">
                   Clear
