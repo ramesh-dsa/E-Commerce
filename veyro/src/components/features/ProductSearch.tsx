@@ -190,6 +190,16 @@ export function ProductSearch({
       );
     } else if (e.key === "Enter") {
       e.preventDefault();
+      if (isMobile) {
+        if (filteredProducts.length > 0) {
+          router.push(`/product/${filteredProducts[0].slug}`);
+          handleCloseMobile();
+        } else if (query.trim()) {
+          router.push(`/clothing`);
+          handleCloseMobile();
+        }
+        return;
+      }
       if (selectedIndex >= 0 && filteredProducts[selectedIndex]) {
         const selected = filteredProducts[selectedIndex];
         router.push(`/product/${selected.slug}`);
@@ -205,6 +215,10 @@ export function ProductSearch({
         onClose?.();
       }
     } else if (e.key === "Escape") {
+      if (isMobile) {
+        handleCloseMobile();
+        return;
+      }
       setIsOpen(false);
       inputRef.current?.blur();
     }
@@ -223,6 +237,261 @@ export function ProductSearch({
     inputRef.current?.focus();
   };
 
+  const handleCloseMobile = () => {
+    setQuery("");
+    setIsOpen(false);
+    onClose?.();
+  };
+
+  // Dedicated Full-Screen Mobile Search Modal (< 768px)
+  if (isMobile) {
+    const topCategory = filteredProducts[0]?.category?.toLowerCase();
+    const categoryHref =
+      topCategory === "footwear"
+        ? "/shoes"
+        : topCategory === "watches"
+        ? "/watches"
+        : "/clothing";
+    const categoryLabel =
+      topCategory === "footwear"
+        ? "View All Footwear Catalog"
+        : topCategory === "watches"
+        ? "View All Watches Catalog"
+        : "View All Clothing Catalog";
+
+    return (
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search Catalog"
+        className="fixed inset-0 z-[120] bg-white flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden overscroll-contain animate-in fade-in duration-200"
+      >
+        {/* Pinned Top Search Bar */}
+        <div className="shrink-0 px-4 py-3 border-b border-[#f0f0ed] bg-white flex items-center gap-3">
+          <div className="flex-1 relative flex items-center">
+            <span className="absolute left-3.5 text-neutral-400 pointer-events-none">
+              <SearchIcon size={18} />
+            </span>
+            <input
+              ref={inputRef}
+              type="text"
+              role="searchbox"
+              value={query}
+              autoFocus
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setIsOpen(true);
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Search products..."
+              aria-label="Search products"
+              className="h-11 w-full rounded-full bg-[#f4f4f2] pl-10 pr-9 text-sm font-medium text-[#111111] placeholder:text-neutral-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#fcd017] border border-transparent transition-all"
+            />
+            {query.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClear}
+                aria-label="Clear search query"
+                className="absolute right-3 p-1 rounded-full text-neutral-400 hover:text-black hover:bg-neutral-200/60 transition-all cursor-pointer"
+              >
+                <CloseIcon size={14} />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handleCloseMobile}
+            aria-label="Cancel search"
+            className="text-[14px] font-semibold text-neutral-700 hover:text-black cursor-pointer shrink-0 py-1 pl-1"
+          >
+            Cancel
+          </button>
+        </div>
+
+        {/* Scrollable Results & Discovery Body */}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 min-h-0 luxury-sidebar-scrollbar">
+          {/* Empty Query: Trending searches & Category quick links */}
+          {!query.trim() && (
+            <div className="py-2">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-400 mb-3">
+                <TrendingUp size={13} className="text-neutral-700" />
+                <span>Trending Searches</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {TRENDING_KEYWORDS.map((kw) => (
+                  <button
+                    key={kw}
+                    type="button"
+                    onClick={() => handleSelectKeyword(kw)}
+                    className="px-3.5 py-2 rounded-full bg-neutral-100 hover:bg-[#fcd017] hover:text-black text-neutral-800 text-[12.5px] font-medium transition-all cursor-pointer active:scale-95 shadow-2xs"
+                  >
+                    {kw}
+                  </button>
+                ))}
+              </div>
+
+              <div className="text-[11px] font-bold tracking-wider uppercase text-neutral-400 mt-7 mb-3">
+                Browse Collections
+              </div>
+              <div className="space-y-2">
+                <Link
+                  href="/clothing"
+                  onClick={handleCloseMobile}
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-[#fafaf8] border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                >
+                  <div>
+                    <div className="text-[13px] font-bold text-neutral-900">Clothing &amp; Tees</div>
+                    <div className="text-[11px] text-neutral-500 mt-0.5">15 Oversized &amp; Graphic drops</div>
+                  </div>
+                  <ArrowUpRight size={16} className="text-neutral-400" />
+                </Link>
+
+                <Link
+                  href="/shoes"
+                  onClick={handleCloseMobile}
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-[#fafaf8] border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                >
+                  <div>
+                    <div className="text-[13px] font-bold text-neutral-900">Footwear &amp; Sneakers</div>
+                    <div className="text-[11px] text-neutral-500 mt-0.5">9 Retro &amp; Minimal silhouettes</div>
+                  </div>
+                  <ArrowUpRight size={16} className="text-neutral-400" />
+                </Link>
+
+                <Link
+                  href="/watches"
+                  onClick={handleCloseMobile}
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-[#fafaf8] border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                >
+                  <div>
+                    <div className="text-[13px] font-bold text-neutral-900">Timepieces &amp; Horology</div>
+                    <div className="text-[11px] text-neutral-500 mt-0.5">12 Precision automatics</div>
+                  </div>
+                  <ArrowUpRight size={16} className="text-neutral-400" />
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Active Query with Matching Results */}
+          {query.trim() && filteredProducts.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-100">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500">
+                  <Sparkles size={12} className="text-[#e2b70d]" />
+                  <span>Matching Catalog Products</span>
+                </div>
+                <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide">
+                  {filteredProducts.length} Found
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                {filteredProducts.map((product) => (
+                  <Link
+                    key={product.id}
+                    href={`/product/${product.slug}`}
+                    onClick={handleCloseMobile}
+                    className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/60 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative w-14 h-16 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-neutral-200">
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          fill
+                          sizes="56px"
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700">
+                            {product.subcategoryTag || product.subcategory}
+                          </span>
+                          {product.badge && (
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#fcd017] text-black">
+                              {product.badge}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[13.5px] font-bold text-neutral-900 truncate mt-1">
+                          {product.name}
+                        </div>
+                        <div className="flex items-center gap-2 text-[12px] mt-0.5">
+                          {product.originalPrice && product.originalPrice > product.price && (
+                            <span className="line-through text-neutral-400 font-mono text-[11px]">
+                              {formatPrice(product.originalPrice)}
+                            </span>
+                          )}
+                          <span className="font-mono font-bold text-neutral-900">
+                            {formatPrice(product.price)}
+                          </span>
+                          <span className="text-neutral-300 text-[10px]">·</span>
+                          <span className="text-neutral-500 text-[11px] truncate">
+                            {product.colorName}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="shrink-0 p-1.5 rounded-full bg-neutral-100 text-neutral-500">
+                      <ArrowUpRight size={15} />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Dynamic Category Navigation Jump */}
+              <div className="mt-4 pt-3 border-t border-neutral-100">
+                <Link
+                  href={categoryHref}
+                  onClick={handleCloseMobile}
+                  className="flex items-center justify-between p-3 rounded-xl bg-[#f8f8f6] hover:bg-[#f0f0ee] transition-colors text-neutral-900 font-bold text-xs uppercase tracking-wider cursor-pointer"
+                >
+                  <span>{categoryLabel}</span>
+                  <ArrowUpRight size={15} />
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Active Query with No Matches */}
+          {query.trim() && filteredProducts.length === 0 && (
+            <div className="py-12 px-4 text-center">
+              <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-3 text-neutral-400">
+                <SearchIcon size={22} />
+              </div>
+              <div className="text-[15px] font-bold text-neutral-900">
+                No products found for &ldquo;{query}&rdquo;
+              </div>
+              <p className="text-[13px] text-neutral-500 mt-1.5 max-w-xs mx-auto">
+                Try searching with general keywords like oversized, retro, graphic, or sneakers.
+              </p>
+              <div className="mt-6 pt-4 border-t border-neutral-100">
+                <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block mb-3">
+                  Popular Suggestions
+                </span>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {["Oversized", "Graphic", "Retro", "Sneakers", "Black", "240 GSM"].map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => handleSelectKeyword(tag)}
+                      className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#fcd017] hover:text-black text-neutral-700 text-xs font-medium transition-colors cursor-pointer"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // DESKTOP VIEW (100% Unchanged)
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       {/* Search Input Bar */}
@@ -269,11 +538,7 @@ export function ProductSearch({
       {isOpen && (
         <div
           id="search-results-dropdown"
-          className={
-            isMobile
-              ? "mt-3 w-full bg-white rounded-2xl border border-black/10 shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150"
-              : "absolute top-full right-0 mt-2.5 w-[420px] lg:w-[460px] xl:w-[480px] bg-white/98 backdrop-blur-xl border border-black/10 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.18)] z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
-          }
+          className="absolute top-full right-0 mt-2.5 w-[420px] lg:w-[460px] xl:w-[480px] bg-white/98 backdrop-blur-xl border border-black/10 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.18)] z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
         >
           {/* Header Bar */}
           <div className="px-4 py-2.5 bg-neutral-50/80 border-b border-neutral-100 flex items-center justify-between">

@@ -74,11 +74,12 @@ export function Navbar() {
   useEffect(() => {
     setIsProfileDropdownOpen(false);
     setMobileMenuOpen(false);
+    setMobileSearchOpen(false);
   }, [pathname]);
 
-  // Lock background website scrolling when mobile drawer is open
+  // Lock background website scrolling when mobile drawer or mobile search is open
   useEffect(() => {
-    if (mobileMenuOpen) {
+    if (mobileMenuOpen || mobileSearchOpen) {
       const originalBodyOverflow = document.body.style.overflow;
       const originalDocOverflow = document.documentElement.style.overflow;
       document.body.style.overflow = "hidden";
@@ -88,7 +89,7 @@ export function Navbar() {
         document.documentElement.style.overflow = originalDocOverflow;
       };
     }
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, mobileSearchOpen]);
 
   const handleSignOut = () => {
     setIsProfileDropdownOpen(false);
@@ -254,7 +255,7 @@ export function Navbar() {
           <button
             type="button"
             aria-label="Search"
-            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+            onClick={() => setMobileSearchOpen(true)}
             className="flex md:hidden p-1.5 text-[#111111] hover:text-[#555555] transition-colors cursor-pointer"
           >
             <SearchIcon size={21} />
@@ -398,28 +399,13 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Search Dropdown Bar */}
+      {/* Full-Screen Mobile Search Modal (< 768px) */}
       {mobileSearchOpen && (
-        <div className="md:hidden border-t border-[#f0f0ed] bg-[#fafafa] px-4 py-3 transition-all">
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <ProductSearch
-                autoFocus
-                isMobile
-                onClose={() => setMobileSearchOpen(false)}
-                inputClassName="bg-white border-neutral-300"
-              />
-            </div>
-            <button
-              type="button"
-              aria-label="Close search"
-              onClick={() => setMobileSearchOpen(false)}
-              className="p-2 text-neutral-500 hover:text-black cursor-pointer shrink-0"
-            >
-              <CloseIcon size={20} />
-            </button>
-          </div>
-        </div>
+        <ProductSearch
+          isMobile
+          autoFocus
+          onClose={() => setMobileSearchOpen(false)}
+        />
       )}
       </header>
 
