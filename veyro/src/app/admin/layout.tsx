@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdmin } from "@/context/AdminContext";
 import {
-  LayoutDashboard,
+  Home,
   Package,
   PlusCircle,
   ShoppingCart,
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin", label: "Dashboard", icon: Home, exact: true },
   { href: "/admin/products", label: "Products", icon: Package, exact: false },
   { href: "/admin/products/add", label: "Add Product", icon: PlusCircle, exact: true },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart, exact: true },
@@ -86,15 +86,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         data-lenis-prevent
       >
         {/* Logo */}
-        <div className="p-5 border-b border-white/10 flex items-center justify-between flex-shrink-0">
-          <div>
-            <div className="text-xl font-bold tracking-wider">VEYRO</div>
-            <div className="text-[11px] text-veyro-yellow font-semibold tracking-widest mt-0.5">
-              ADMIN PANEL
-            </div>
-          </div>
+        <div className="pt-7 pb-6 px-5 border-b border-white/[0.08] relative flex flex-col items-center justify-center flex-shrink-0 text-center">
+          <Link href="/admin" className="group flex flex-col items-center justify-center">
+            <span className="text-xl sm:text-2xl font-serif tracking-[0.28em] text-white font-normal uppercase leading-none group-hover:text-amber-200 transition-colors">
+              VEYRO
+            </span>
+            <span className="text-[10px] tracking-[0.42em] text-neutral-300 font-sans font-medium uppercase mt-1.5 leading-none">
+              WATCHES
+            </span>
+          </Link>
           <button
-            className="lg:hidden p-1 text-veyro-muted hover:text-white"
+            className="lg:hidden absolute right-4 top-7 p-1 text-neutral-400 hover:text-white cursor-pointer"
             onClick={() => setMobileOpen(false)}
             aria-label="Close sidebar"
           >
@@ -103,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Nav links */}
-        <nav className="flex-1 min-h-0 p-3 space-y-1 overflow-y-auto admin-scroll-container">
+        <nav className="flex-1 min-h-0 p-3.5 space-y-2 overflow-y-auto admin-scroll-container">
           {NAV_ITEMS.map((item) => {
             const active = checkActive(item);
             return (
@@ -111,39 +113,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-                  transition-colors duration-150
-                  ${active
-                    ? "bg-veyro-charcoal text-veyro-yellow"
-                    : "text-veyro-muted hover:text-white hover:bg-white/5"
-                  }`}
+                className={`group flex items-center gap-3 px-4 py-3 rounded-[14px] text-sm font-semibold transition-all duration-200 ${
+                  active
+                    ? "bg-[#fde047] text-black shadow-[0_0_24px_rgba(253,224,71,0.42)] font-bold scale-[1.01]"
+                    : "text-neutral-400 hover:text-white hover:bg-white/[0.06] font-medium"
+                }`}
                 aria-current={active ? "page" : undefined}
               >
-                <item.icon size={18} />
-                {item.label}
+                <item.icon
+                  size={19}
+                  strokeWidth={active ? 2.4 : 2}
+                  className={active ? "text-black shrink-0" : "text-neutral-400 group-hover:text-white shrink-0 transition-colors"}
+                />
+                <span className={active ? "text-black tracking-tight" : "tracking-tight"}>
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </nav>
 
         {/* Footer actions */}
-        <div className="p-3 border-t border-white/10 space-y-1 flex-shrink-0">
+        <div className="p-3.5 border-t border-white/[0.08] space-y-1.5 flex-shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2 text-xs text-veyro-muted hover:text-white transition-colors"
+            className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] rounded-xl transition-all"
           >
             <ArrowLeft size={15} />
-            Back to Store
+            <span>Back to Store</span>
           </Link>
           <button
             onClick={() => {
               adminLogout();
               router.push("/admin/login");
             }}
-            className="flex items-center gap-3 px-3 py-2 text-xs text-veyro-muted hover:text-white transition-colors w-full text-left"
+            className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all w-full text-left cursor-pointer"
           >
             <LogOut size={15} />
-            Logout
+            <span>Logout</span>
           </button>
         </div>
       </aside>
@@ -151,15 +158,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 h-full max-h-screen overflow-hidden">
         {/* Mobile header */}
-        <header className="lg:hidden flex items-center gap-3 p-4 bg-white border-b border-veyro-border flex-shrink-0">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="p-1 text-veyro-black"
-            aria-label="Open navigation menu"
-          >
-            <Menu size={22} />
-          </button>
-          <span className="font-bold tracking-wider text-sm">VEYRO ADMIN</span>
+        <header className="lg:hidden flex items-center justify-between p-4 bg-[#0d0d0d] text-white border-b border-white/[0.08] flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="p-1 text-white hover:text-amber-300 cursor-pointer"
+              aria-label="Open navigation menu"
+            >
+              <Menu size={22} />
+            </button>
+            <div className="flex flex-col">
+              <span className="font-serif tracking-[0.25em] text-sm text-white font-normal uppercase leading-none">
+                VEYRO
+              </span>
+              <span className="text-[8px] tracking-[0.35em] text-neutral-300 font-sans uppercase leading-none mt-0.5">
+                WATCHES
+              </span>
+            </div>
+          </div>
         </header>
 
         {/* Page content with independent scrolling */}
