@@ -11,7 +11,6 @@ import { useWishlist } from "@/context/WishlistContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
-import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
 import {
   X,
   Zap,
@@ -31,15 +30,7 @@ import {
   FOOTWEAR_COLORS,
 } from "@/components/features/FootwearFilterSidebar";
 
-// Filter options
-type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
 
-const FOOTWEAR_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
-  { value: "featured", label: "Archival Featured" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "discount", label: "Biggest Savings" },
-];
 
 export function FootwearCatalog() {
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
@@ -55,7 +46,6 @@ export function FootwearCatalog() {
     priceMin: FOOTWEAR_PRICE_MIN,
     priceMax: FOOTWEAR_PRICE_MAX,
   });
-  const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
   // ── Modals & Drawers ───────────────────────────────────────────────────────
@@ -180,18 +170,8 @@ export function FootwearCatalog() {
         }
 
         return true;
-      })
-      .sort((a, b) => {
-        if (sortBy === "price-asc") return a.price - b.price;
-        if (sortBy === "price-desc") return b.price - a.price;
-        if (sortBy === "discount") {
-          const discA = a.originalPrice ? (a.originalPrice - a.price) / a.originalPrice : 0;
-          const discB = b.originalPrice ? (b.originalPrice - b.price) / b.originalPrice : 0;
-          return discB - discA;
-        }
-        return 0; // "featured" maintains archival order
       });
-  }, [footwearProducts, filters, sortBy]);
+  }, [footwearProducts, filters]);
 
   // ── Quick Add to Bag with Size ─────────────────────────────────────────────
   const handleQuickAdd = (product: Product, size: string, e: React.MouseEvent) => {
@@ -290,7 +270,6 @@ export function FootwearCatalog() {
       priceMin: FOOTWEAR_PRICE_MIN,
       priceMax: FOOTWEAR_PRICE_MAX,
     });
-    setSortBy("featured");
     anchorToCatalogTop();
   };
 
@@ -358,7 +337,7 @@ export function FootwearCatalog() {
         ref={catalogAnchorRef}
         className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-20 backdrop-blur-md bg-white/95 scroll-mt-20 [overflow-anchor:none]"
       >
-        <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
+        <div className="mx-auto max-w-[1536px] flex items-center justify-between gap-3">
           {/* Left: Mobile Filter Button, Breadcrumbs & Item Count */}
           <div className="flex items-center gap-3 sm:gap-6">
             <button
@@ -388,18 +367,6 @@ export function FootwearCatalog() {
             <span className="hidden sm:inline-block text-[#555555] text-xs font-semibold pl-3 border-l border-[#dcdcd8]">
               {filteredProducts.length} {filteredProducts.length === 1 ? "Pair" : "Pairs"} Available
             </span>
-          </div>
-
-          {/* Right: Sort Dropdown */}
-          <div className="flex items-center gap-3 ml-auto">
-            <SortDropdown<SortOption>
-              value={sortBy}
-              onChange={(val) => {
-                setSortBy(val);
-                anchorToCatalogTop();
-              }}
-              options={FOOTWEAR_SORT_OPTIONS}
-            />
           </div>
         </div>
       </section>
