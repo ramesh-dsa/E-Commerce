@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Layers, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Layers, ShieldCheck, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { SpotlightBentoCard } from "@/components/ui/SpotlightBentoCard";
 
@@ -218,91 +218,65 @@ export function CollectionsCatalog() {
             const isTallSneaker = col.id === "sneaker-vault" && activeCategory === "all";
 
             return (
-              <SpotlightBentoCard
+              <Link
                 key={col.id}
-                spotlightColor="rgba(255, 255, 255, 0.04)"
-                enableTilt={true}
-                className={`${gridSpan} min-h-[440px] sm:min-h-[480px] lg:min-h-[520px] flex flex-col justify-between shadow-2xl transition-shadow duration-500 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)]`}
+                href={col.href}
+                className={`${gridSpan} group block focus-visible:outline-none rounded-xl sm:rounded-2xl`}
               >
-                {/* Background High-Res Image Stage */}
-                <div className="absolute inset-0 z-0 overflow-hidden">
-                  <Image
-                    src={col.image}
-                    alt={col.title}
-                    fill
-                    priority={isHeroWide}
-                    quality={80}
-                    sizes={
-                      isHeroWide
-                        ? "(max-width: 1024px) 100vw, 65vw"
-                        : "(max-width: 768px) 100vw, 50vw"
-                    }
-                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-108"
-                  />
-                  {/* Cinematic Editorial Scrims */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/95 via-[#09090b]/60 to-black/35 z-1" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/80 via-transparent to-black/30 z-1" />
-                </div>
-
-                {/* Top Row: Vol Number, Category Tag & Count (3D Layer Z: 28px) */}
-                <div
-                  className="relative z-10 p-6 sm:p-8 flex items-start justify-between gap-3 transition-transform duration-300"
-                  style={{ transform: "translateZ(28px)" }}
+                <SpotlightBentoCard
+                  spotlightColor="rgba(255, 255, 255, 0.05)"
+                  enableTilt={true}
+                  className="w-full h-full min-h-[350px] sm:min-h-[460px] lg:min-h-[500px] flex flex-col justify-between shadow-[0_12px_36px_rgba(0,0,0,0.18)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl border border-white/10"
                 >
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase text-neutral-400 font-bold">
-                      {col.volNumber}
+                  {/* Background High-Res Image Stage */}
+                  <div className="absolute inset-0 z-0 overflow-hidden">
+                    <Image
+                      src={col.image}
+                      alt={col.title}
+                      fill
+                      priority={isHeroWide}
+                      quality={85}
+                      sizes={
+                        isHeroWide
+                          ? "(max-width: 1024px) 100vw, 65vw"
+                          : "(max-width: 768px) 100vw, 50vw"
+                      }
+                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-108"
+                    />
+                    {/* Refined, Lighter Editorial Scrim (Preserves vibrant colors and texture) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 z-1" />
+                  </div>
+
+                  {/* Top Row: Pure Editorial Typography (No tech pill, no glowing dot) */}
+                  <div
+                    className="relative z-10 p-5 sm:p-7 flex items-center justify-between w-full transition-transform duration-300"
+                    style={{ transform: "translateZ(28px)" }}
+                  >
+                    <div className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-white/90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+                      <span>{col.volNumber.split("//")[0].trim()}</span>
+                      <span className="text-white/40 font-light">—</span>
+                      <span className="text-white/75">{col.itemCount}</span>
+                    </div>
+
+                    <span className="w-8 h-8 rounded-full border border-white/25 bg-black/25 backdrop-blur-xs flex items-center justify-center text-white transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white group-hover:scale-105 shadow-sm">
+                      <ArrowUpRight size={15} />
                     </span>
-                    <span className="inline-block px-3 py-1 bg-[#fcd017] text-[#111111] text-[10px] font-black uppercase tracking-widest rounded-xs shadow-sm w-fit">
+                  </div>
+
+                  {/* Bottom Editorial Content */}
+                  <div className="relative z-10 p-5 sm:p-7 space-y-2">
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#fcd017] block">
                       {col.tag}
                     </span>
-                  </div>
-
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-200 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-xs border border-white/15 shadow-sm">
-                    {col.itemCount}
-                  </span>
-                </div>
-
-                {/* Bottom Editorial Content */}
-                <div className="relative z-10 p-6 sm:p-8 space-y-3.5">
-                  {/* Cursive Luxury Accent & Architectural Title (3D Layer Z: 36px) */}
-                  <div
-                    className="transition-transform duration-300"
-                    style={{ transform: "translateZ(36px)" }}
-                  >
-                    <span className="font-script text-2xl sm:text-3xl text-[#fcd017] block font-bold drop-shadow-md -mb-0.5">
-                      {col.scriptAccent}
-                    </span>
-                    <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white leading-[1.05] drop-shadow-md">
+                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-sm">
                       {col.title}
                     </h2>
+                    <p className="hidden sm:block text-xs sm:text-sm text-neutral-300 leading-relaxed font-light mt-2 line-clamp-2 max-w-xl">
+                      {col.description}
+                    </p>
                   </div>
-
-                  <p
-                    className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-light line-clamp-2 max-w-xl transition-transform duration-300"
-                    style={{ transform: "translateZ(32px)" }}
-                  >
-                    {col.description}
-                  </p>
-
-                  {/* High-Contrast Interactive CTA Button (3D Layer Z: 46px) */}
-                  <div
-                    className="pt-2 transition-transform duration-300"
-                    style={{ transform: "translateZ(46px)" }}
-                  >
-                    <Link
-                      href={col.href}
-                      className="inline-flex items-center gap-2.5 px-6 py-3 bg-white text-[#111111] hover:bg-neutral-100 hover:shadow-[0_0_25px_rgba(255,255,255,0.35)] active:scale-95 text-xs font-black uppercase tracking-widest rounded-xs transition-all duration-200 group/btn cursor-pointer"
-                    >
-                      <span>{col.ctaText}</span>
-                      <ArrowRight
-                        size={15}
-                        className="transition-transform duration-200 group-hover/btn:translate-x-2"
-                      />
-                    </Link>
-                  </div>
-                </div>
-              </SpotlightBentoCard>
+                </SpotlightBentoCard>
+              </Link>
             );
           })}
         </div>

@@ -76,7 +76,7 @@ export function SpotlightBentoCard({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`group relative overflow-hidden rounded-[2px] border border-white/10 bg-[#0d0d10] text-white select-none ${className}`}
+      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-[#0d0d10] text-white select-none ${className}`}
       style={{
         transformStyle: "preserve-3d",
         willChange: "transform",
@@ -95,7 +95,7 @@ export function SpotlightBentoCard({
 
       {/* 2. Delicate Silver Border Accent */}
       <div
-        className="pointer-events-none absolute inset-0 z-20 rounded-[2px] transition-opacity duration-300"
+        className="pointer-events-none absolute inset-0 z-20 rounded-xl sm:rounded-2xl transition-opacity duration-300"
         style={{
           opacity: "var(--spotlight-opacity, 0)",
           boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.14)",
