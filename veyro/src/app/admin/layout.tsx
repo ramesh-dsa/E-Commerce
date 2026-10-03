@@ -97,12 +97,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         {/* Logo */}
         <div className="pt-7 pb-6 px-5 border-b border-white/[0.08] relative flex flex-col items-center justify-center flex-shrink-0 text-center">
-          <Link href="/admin" className="group flex flex-col items-center justify-center">
+          <Link href="/admin" className="group flex flex-col items-center justify-center py-1">
             <span className="text-xl sm:text-2xl font-serif tracking-[0.28em] text-white font-normal uppercase leading-none group-hover:text-amber-200 transition-colors">
               VEYRO
-            </span>
-            <span className="text-[10px] tracking-[0.42em] text-neutral-300 font-sans font-medium uppercase mt-1.5 leading-none">
-              WATCHES
             </span>
           </Link>
           <button
@@ -191,9 +188,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex flex-col">
               <span className="font-serif tracking-[0.25em] text-sm text-white font-normal uppercase leading-none">
                 VEYRO
-              </span>
-              <span className="text-[8px] tracking-[0.35em] text-neutral-300 font-sans uppercase leading-none mt-0.5">
-                WATCHES
               </span>
             </div>
           </div>

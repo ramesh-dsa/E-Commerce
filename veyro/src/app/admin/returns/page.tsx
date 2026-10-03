@@ -370,7 +370,7 @@ export default function AdminReturnsPage() {
         <body>
           <div class="header">
             <div>
-              <div class="brand">VEYRO WATCHES</div>
+              <div class="brand">VEYRO</div>
               <div style="font-size: 12px; color: #666; margin-top: 4px;">OFFICIAL REVERSE PICKUP AUTHORIZATION</div>
             </div>
             <div>
