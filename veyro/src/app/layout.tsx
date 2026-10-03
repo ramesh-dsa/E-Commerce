@@ -53,17 +53,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} ${montserrat.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} ${montserrat.variable} max-w-full overflow-x-clip overscroll-x-none`}
     >
-      <body className="min-h-screen bg-white text-veyro-black antialiased">
+      <body className="min-h-screen bg-white text-veyro-black antialiased max-w-full overflow-x-clip overscroll-x-none">
         <CartProvider>
           <WishlistProvider>
             <UserProvider>
               <ReviewsProvider>
                 <SmoothScrolling>
-                  <div className="min-h-screen flex flex-col bg-white text-veyro-black">
+                  <div className="min-h-screen flex flex-col bg-white text-veyro-black max-w-full overflow-x-clip">
                     <Navbar />
-                    <main className="flex-1 w-full">
+                    <main className="flex-1 w-full max-w-full overflow-x-clip">
                       {children}
                     </main>
                     <Footer />

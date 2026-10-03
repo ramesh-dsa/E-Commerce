@@ -22,7 +22,7 @@ export function Container({
 
   return (
     <div
-      className={`mx-auto w-full px-4 sm:px-8 xl:px-10 ${maxWidthMap[maxWidth]} ${className}`}
+      className={`mx-auto w-full max-w-full overflow-x-clip px-4 sm:px-8 xl:px-10 ${maxWidthMap[maxWidth]} ${className}`}
       {...props}
     >
       {children}

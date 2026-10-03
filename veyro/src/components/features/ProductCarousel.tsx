@@ -43,7 +43,7 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
   if (!products || products.length === 0) return null;
 
   return (
-    <section className="mt-20 pt-14 border-t border-neutral-200">
+    <section className="w-full max-w-full overflow-x-clip mt-20 pt-14 border-t border-neutral-200">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111111]">
