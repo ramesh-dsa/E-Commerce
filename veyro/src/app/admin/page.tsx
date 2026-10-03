@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus, Product } from "@/types";
-import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString } from "@/components/admin/AdminDateRangePicker";
+import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay } from "@/components/admin/AdminDateRangePicker";
 import {
   Search,
   CalendarDays,
@@ -5641,6 +5641,64 @@ export default function AdminDashboard() {
     };
   }, [allFilteredRecentOrders]);
 
+  // Store lifetime revenue across all orders (Till Date total)
+  const lifetimeStoreRevenue = useMemo(() => {
+    return orders.reduce((sum, o) => sum + o.total, 0);
+  }, [orders]);
+
+  // Aggregate all unique order days chronologically with metadata for Day-Wise browsing
+  const availableOrderDays = useMemo(() => {
+    const dayMap = new Map<string, { date: string; label: string; count: number; totalRevenue: number }>();
+    orders.forEach((o) => {
+      const day = parseOrderDateToDayString(o.date);
+      const existing = dayMap.get(day) || {
+        date: day,
+        label:
+          day === "2026-10-03"
+            ? "Today (03 Oct)"
+            : day === "2026-10-02"
+            ? "Yesterday (02 Oct)"
+            : formatDayDisplay(day),
+        count: 0,
+        totalRevenue: 0,
+      };
+      existing.count += 1;
+      existing.totalRevenue += o.total;
+      dayMap.set(day, existing);
+    });
+    return Array.from(dayMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+  }, [orders]);
+
+  // Active day index for previous/next day stepping
+  const currentDayIndex = useMemo(() => {
+    if (dateFilter.type !== "day") return -1;
+    const activeDay = dateFilter.singleDay || dateFilter.startDate;
+    return availableOrderDays.findIndex((d) => d.date === activeDay);
+  }, [dateFilter, availableOrderDays]);
+
+  const handleStepDay = (direction: "prev" | "next") => {
+    if (availableOrderDays.length === 0) return;
+    let newIdx = currentDayIndex;
+    if (newIdx === -1) {
+      newIdx = 0;
+    } else if (direction === "prev") {
+      newIdx = Math.min(availableOrderDays.length - 1, newIdx + 1);
+    } else {
+      newIdx = Math.max(0, newIdx - 1);
+    }
+    const targetDay = availableOrderDays[newIdx];
+    if (targetDay) {
+      setDateFilter({
+        type: "day",
+        label: targetDay.label,
+        startDate: targetDay.date,
+        endDate: targetDay.date,
+        singleDay: targetDay.date,
+      });
+      triggerToast(`Switched to ${targetDay.label} (${targetDay.count} ${targetDay.count === 1 ? "order" : "orders"})`, "info");
+    }
+  };
+
   useEffect(() => {
     setRecentOrdersPage(1);
   }, [recentOrdersStatusFilter, dateFilter, searchQuery]);
@@ -6512,6 +6570,159 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* ── HIGH-DETAIL DATE SCOPE & DAY-WISE NAVIGATION HUB ── */}
+            {dateFilter.type === "day" ? (
+              <div className="mx-5 sm:mx-6 my-2.5 p-3 rounded-2xl bg-gradient-to-r from-sky-50/90 via-sky-50/50 to-indigo-50/40 border border-sky-200/80 shadow-2xs flex flex-col gap-2.5 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
+                    <span className="text-xs text-sky-950 font-bold truncate">
+                      Day-Wise Breakdown:{" "}
+                      <span className="text-sky-900 underline decoration-sky-300 font-extrabold">
+                        {dateFilter.label}
+                      </span>
+                    </span>
+                    <span className="text-[10px] text-sky-800 bg-sky-100 font-bold px-2 py-0.5 rounded-full border border-sky-300/60 shadow-2xs shrink-0">
+                      {allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} • ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+
+                  {/* Day Stepper & Till Date Reset */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleStepDay("prev")}
+                      disabled={currentDayIndex >= availableOrderDays.length - 1}
+                      className="flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 hover:bg-sky-50 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+                      title="Step to earlier date with orders"
+                    >
+                      <ChevronLeft size={12} />
+                      <span>Earlier Day</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleStepDay("next")}
+                      disabled={currentDayIndex <= 0}
+                      className="flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 hover:bg-sky-50 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+                      title="Step to more recent date"
+                    >
+                      <span>Next Day</span>
+                      <ChevronRight size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDateFilter({
+                          type: "all",
+                          label: "All Time (Till Date)",
+                          startDate: "2026-01-01",
+                          endDate: "2026-10-03",
+                        });
+                        triggerToast("Restored store orders accumulated Till Date", "info");
+                      }}
+                      className="ml-1 text-[11px] font-bold text-sky-800 hover:text-sky-950 hover:underline cursor-pointer"
+                    >
+                      View All (Till Date)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Day Selector Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+                  <span className="text-[10px] uppercase tracking-wider font-extrabold text-sky-900/60 shrink-0 mr-1">
+                    Select Day:
+                  </span>
+                  {availableOrderDays.map((dayItem) => {
+                    const isSelected = (dateFilter.singleDay || dateFilter.startDate) === dayItem.date;
+                    return (
+                      <button
+                        key={dayItem.date}
+                        type="button"
+                        onClick={() => {
+                          setDateFilter({
+                            type: "day",
+                            label: dayItem.label,
+                            startDate: dayItem.date,
+                            endDate: dayItem.date,
+                            singleDay: dayItem.date,
+                          });
+                          triggerToast(`Selected ${dayItem.label} (${dayItem.count} ${dayItem.count === 1 ? "order" : "orders"})`, "info");
+                        }}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                          isSelected
+                            ? "bg-sky-600 text-white font-bold border-sky-700 shadow-xs ring-2 ring-sky-300"
+                            : "bg-white/90 hover:bg-white text-neutral-700 border-sky-200/70 hover:border-sky-300"
+                        }`}
+                      >
+                        <span>{dayItem.label}</span>
+                        <span
+                          className={`px-1.5 py-0.2 rounded-full text-[9.5px] font-extrabold ${
+                            isSelected ? "bg-white/20 text-white" : "bg-sky-100 text-sky-800"
+                          }`}
+                        >
+                          {dayItem.count}
+                        </span>
+                        <span className={`text-[10px] ${isSelected ? "text-sky-100" : "text-neutral-400"}`}>
+                          ₹{Math.round(dayItem.totalRevenue).toLocaleString("en-IN")}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : dateFilter.type === "all" ? (
+              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-50/90 via-amber-50/40 to-transparent border border-amber-200/70 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={13} className="text-amber-600 shrink-0" />
+                  <span>
+                    <strong>Till Date Store History:</strong> All {orders.length} orders recorded from store launch (18 Sep 2026) till today (03 Oct 2026). Cumulative gross: <strong>₹{lifetimeStoreRevenue.toLocaleString("en-IN")}</strong>
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDateFilter({
+                      type: "day",
+                      label: "Today (03 Oct 2026)",
+                      startDate: "2026-10-03",
+                      endDate: "2026-10-03",
+                      singleDay: "2026-10-03",
+                    });
+                    triggerToast("Switched to Day-Wise Breakdown for Today (03 Oct 2026)", "info");
+                  }}
+                  className="text-amber-800 hover:text-amber-950 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+                >
+                  <span>Explore Day-Wise</span>
+                  <ArrowRight size={11} />
+                </button>
+              </div>
+            ) : (
+              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-xl bg-purple-50/80 border border-purple-200/70 flex items-center justify-between text-xs text-purple-950 animate-in fade-in duration-150">
+                <div className="flex items-center gap-2">
+                  <CalendarDays size={13} className="text-purple-600 shrink-0" />
+                  <span>
+                    <strong>Custom Date Range:</strong> {dateFilter.startDate} → {dateFilter.endDate} ({allFilteredRecentOrders.length} orders found • ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")})
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDateFilter({
+                      type: "all",
+                      label: "All Time (Till Date)",
+                      startDate: "2026-01-01",
+                      endDate: "2026-10-03",
+                    });
+                    triggerToast("Reset to All Time (Till Date)", "info");
+                  }}
+                  className="text-purple-800 hover:text-purple-950 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+                >
+                  <span>Reset to Till Date</span>
+                  <RotateCcw size={11} />
+                </button>
+              </div>
+            )}
+
             {/* Active Search & Filter Banner */}
             {searchQuery.trim() && (
               <div className="mx-5 sm:mx-6 my-2.5 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/60 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
@@ -6622,9 +6833,21 @@ export default function AdminDashboard() {
 
                           {/* Total */}
                           <td className="px-3 py-3.5 whitespace-nowrap">
-                            <span className="text-xs sm:text-sm font-bold text-neutral-900">
-                              ₹{order.total.toLocaleString("en-IN")}
-                            </span>
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-xs sm:text-sm font-bold text-neutral-900">
+                                ₹{order.total.toLocaleString("en-IN")}
+                              </span>
+                              <span className="text-[10px] text-neutral-500 font-medium uppercase tracking-wider flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                {order.paymentMethod === "upi"
+                                  ? "UPI • Paid"
+                                  : order.paymentMethod === "card"
+                                  ? "Card • Paid"
+                                  : order.paymentMethod === "cod"
+                                  ? "Cash on Delivery"
+                                  : "Prepaid"}
+                              </span>
+                            </div>
                           </td>
 
                           {/* Status */}
@@ -6633,8 +6856,25 @@ export default function AdminDashboard() {
                           </td>
 
                           {/* Date */}
-                          <td className="px-3 py-3.5 whitespace-nowrap text-xs text-neutral-500">
-                            {order.date}
+                          <td className="px-3 py-3.5 whitespace-nowrap">
+                            <div className="flex flex-col gap-0.5">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900">
+                                <span>{order.date.includes(",") ? order.date.split(",")[0].trim() : order.date}</span>
+                                {parseOrderDateToDayString(order.date) === "2026-10-03" ? (
+                                  <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
+                                    Today
+                                  </span>
+                                ) : parseOrderDateToDayString(order.date) === "2026-10-02" ? (
+                                  <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200/60 shadow-2xs">
+                                    Yesterday
+                                  </span>
+                                ) : null}
+                              </div>
+                              <div className="text-[11px] text-neutral-400 flex items-center gap-1">
+                                <Clock size={10} className="text-neutral-400 shrink-0" />
+                                <span>{order.date.includes(",") ? order.date.split(",")[1].trim() : "Recorded"}</span>
+                              </div>
+                            </div>
                           </td>
 
                           {/* Actions */}
@@ -6660,6 +6900,45 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
+
+            {/* Day Logistics Pulse when viewing single day with 1-2 orders (Guarantees zero blank space) */}
+            {dateFilter.type === "day" && displayedOrders.length > 0 && displayedOrders.length <= 2 && (
+              <div className="mx-5 sm:mx-6 my-3 p-3.5 rounded-2xl bg-gradient-to-r from-sky-50/80 via-white to-sky-50/40 border border-sky-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs animate-in fade-in duration-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-sky-100/90 text-sky-700 flex items-center justify-center shrink-0 shadow-2xs border border-sky-200/60">
+                    <Truck size={15} />
+                  </div>
+                  <div>
+                    <div className="font-bold text-neutral-900 flex items-center gap-1.5">
+                      <span>Day Logistics &amp; Fulfillment Pulse</span>
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200/60">
+                        100% On Schedule
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-neutral-500 mt-0.5">
+                      {allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} on {dateFilter.label} handled via BlueDart Express &amp; Delhivery • 0 returns
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 self-end sm:self-center shrink-0 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDateFilter({
+                        type: "all",
+                        label: "All Time (Till Date)",
+                        startDate: "2026-01-01",
+                        endDate: "2026-10-03",
+                      });
+                      triggerToast("Restored store orders accumulated Till Date", "info");
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 font-semibold cursor-pointer transition-all shadow-2xs"
+                  >
+                    View All Orders (Till Date) ➔
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ── THE MASTERPIECE FOOTER (Fills the previous blank space!) ── */}

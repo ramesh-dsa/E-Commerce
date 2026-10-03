@@ -45,7 +45,7 @@ export function parseOrderDateToDayString(dateStr: string): string {
   return "2026-10-03";
 }
 
-function formatDayDisplay(dayStr: string): string {
+export function formatDayDisplay(dayStr: string): string {
   try {
     const parts = dayStr.split("-");
     if (parts.length === 3) {
