@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdmin } from "@/context/AdminContext";
+import { useUser } from "@/context/UserContext";
 import {
   Home,
   Package,
   PlusCircle,
   ShoppingCart,
+  RotateCcw,
   ArrowLeft,
   LogOut,
   Menu,
@@ -20,13 +22,21 @@ const NAV_ITEMS = [
   { href: "/admin/products", label: "Products", icon: Package, exact: false },
   { href: "/admin/products/add", label: "Add Product", icon: PlusCircle, exact: true },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart, exact: true },
+  { href: "/admin/returns", label: "Returns", icon: RotateCcw, exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { isAdmin, isHydrated, adminLogout } = useAdmin();
+  const { orders } = useUser();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const pendingReturnsCount = useMemo(() => {
+    return (orders || []).filter(
+      (o) => o.returnRequest && o.returnRequest.status === "pending"
+    ).length;
+  }, [orders]);
 
   // Login page — no sidebar, just render children
   if (pathname === "/admin/login") {
@@ -128,6 +138,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className={active ? "text-black tracking-tight" : "tracking-tight"}>
                   {item.label}
                 </span>
+                {item.href === "/admin/returns" && pendingReturnsCount > 0 && (
+                  <span
+                    className={`ml-auto px-2 py-0.5 rounded-full text-[10.5px] font-extrabold ${
+                      active
+                        ? "bg-black text-[#fde047]"
+                        : "bg-amber-400 text-black shadow-xs"
+                    }`}
+                  >
+                    {pendingReturnsCount}
+                  </span>
+                )}
               </Link>
             );
           })}
