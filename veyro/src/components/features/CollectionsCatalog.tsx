@@ -18,6 +18,7 @@ interface CollectionItem {
   tag: string;
   itemCount: string;
   image: string;
+  imagePosition?: string;
   href: string;
   ctaText: string;
   bentoSpan: string; // Tailwind grid span classes
@@ -36,6 +37,7 @@ const COLLECTIONS: CollectionItem[] = [
     tag: "SIGNATURE DROP",
     itemCount: "12 Silhouettes",
     image: "/images/clothing-archive-campaign.jpg",
+    imagePosition: "object-[68%_center] sm:object-center",
     href: "/clothing?fit=Oversized",
     ctaText: "Shop Oversized Archive",
     bentoSpan: "col-span-12 lg:col-span-7",
@@ -241,7 +243,7 @@ export function CollectionsCatalog() {
                           ? "(max-width: 1024px) 100vw, 65vw"
                           : "(max-width: 768px) 100vw, 50vw"
                       }
-                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-108"
+                      className={`object-cover ${col.imagePosition || "object-center"} transition-transform duration-700 ease-out group-hover:scale-108`}
                     />
                     {/* Refined, Lighter Editorial Scrim (Preserves vibrant colors and texture) */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 z-1" />
