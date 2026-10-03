@@ -454,7 +454,7 @@ export function Navbar() {
             </div>
 
             {/* 2. Proportional Navigation Links */}
-            <nav className="flex-1 flex flex-col justify-center min-h-0 py-2 sm:py-3 divide-y divide-neutral-100 overflow-y-auto">
+            <nav className="flex-1 flex flex-col justify-start min-h-0 pt-4 sm:pt-5 pb-2 divide-y divide-neutral-100 overflow-y-auto">
               {navLinks.map((link) => {
                 const isActive = link.isActive;
                 return (
