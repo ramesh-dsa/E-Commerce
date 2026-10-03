@@ -70,10 +70,25 @@ export function Navbar() {
     };
   }, [isProfileDropdownOpen]);
 
-  // Auto-close dropdown on route change
+  // Auto-close dropdown & mobile menu on route change
   useEffect(() => {
     setIsProfileDropdownOpen(false);
+    setMobileMenuOpen(false);
   }, [pathname]);
+
+  // Lock background website scrolling when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalDocOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalDocOverflow;
+      };
+    }
+  }, [mobileMenuOpen]);
 
   const handleSignOut = () => {
     setIsProfileDropdownOpen(false);
@@ -413,87 +428,85 @@ export function Navbar() {
         <div className="lg:hidden fixed inset-0 z-[100] flex">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity overscroll-contain touch-none"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Drawer Menu */}
-          <div className="relative flex w-4/5 max-w-sm flex-col bg-white p-6 shadow-xl z-10 justify-between min-h-full overflow-y-auto">
-            <div>
-              {/* Header */}
-              <div className="flex items-center justify-between pb-5 border-b border-neutral-200">
-                <Link
-                  href="/"
-                  onClick={() => setMobileMenuOpen(false)}
-                  aria-label="VEYRO Home"
-                >
-                  <Logo height={26} />
-                </Link>
-                <button
-                  type="button"
-                  aria-label="Close menu"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-1.5 text-[#111111] hover:text-neutral-500 cursor-pointer"
-                >
-                  <CloseIcon size={22} />
-                </button>
-              </div>
-
-              {/* Navigation Links */}
-              <nav className="flex flex-col py-6 divide-y divide-neutral-100">
-                {navLinks.map((link) => {
-                  const isActive = link.isActive;
-                  return (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => {
-                        setActiveNav(link.label);
-                        if (typeof window !== "undefined") {
-                          sessionStorage.removeItem("veyro_is_back_nav");
-                          if (link.href === "/shoes" || link.href === "/footwear") {
-                            sessionStorage.removeItem("veyro_scroll_/shoes");
-                            sessionStorage.removeItem("veyro_scroll_/footwear");
-                          } else if (link.href === "/clothing") {
-                            sessionStorage.removeItem("veyro_scroll_/clothing");
-                          } else if (link.href === "/watches") {
-                            sessionStorage.removeItem("veyro_scroll_/watches");
-                          } else if (link.href === "/collections") {
-                            sessionStorage.removeItem("veyro_scroll_/collections");
-                          }
-                        }
-                        if (link.href === "/" && pathname === "/") {
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }
-                        setMobileMenuOpen(false);
-                      }}
-                      className="py-3.5 text-sm font-semibold tracking-wider uppercase text-[#111111] hover:text-neutral-500 transition-colors flex items-center justify-between"
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      <span className="relative">
-                        {link.label}
-                        {isActive && (
-                          <span
-                            aria-hidden="true"
-                            className="absolute -bottom-1 left-0 w-full h-[3px] bg-[#fcd017]"
-                          />
-                        )}
-                      </span>
-                      <span className="text-xs text-neutral-400">→</span>
-                    </Link>
-                  );
-                })}
-              </nav>
+          {/* Drawer Menu (Pinned 3-row layout fitting 100dvh viewport) */}
+          <div className="relative flex w-4/5 max-w-sm h-[100dvh] max-h-[100dvh] flex-col justify-between bg-white px-5 py-4 sm:p-6 shadow-xl z-10 overscroll-contain select-none">
+            {/* 1. Pinned Header */}
+            <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-neutral-200 shrink-0">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="VEYRO Home"
+              >
+                <Logo height={26} />
+              </Link>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1.5 text-[#111111] hover:text-neutral-500 cursor-pointer"
+              >
+                <CloseIcon size={22} />
+              </button>
             </div>
 
-            {/* Bottom Account & Wishlist Row */}
-            <div className="border-t border-neutral-200 pt-4 space-y-1">
+            {/* 2. Proportional Navigation Links */}
+            <nav className="flex-1 flex flex-col justify-center min-h-0 py-2 sm:py-3 divide-y divide-neutral-100 overflow-y-auto">
+              {navLinks.map((link) => {
+                const isActive = link.isActive;
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => {
+                      setActiveNav(link.label);
+                      if (typeof window !== "undefined") {
+                        sessionStorage.removeItem("veyro_is_back_nav");
+                        if (link.href === "/shoes" || link.href === "/footwear") {
+                          sessionStorage.removeItem("veyro_scroll_/shoes");
+                          sessionStorage.removeItem("veyro_scroll_/footwear");
+                        } else if (link.href === "/clothing") {
+                          sessionStorage.removeItem("veyro_scroll_/clothing");
+                        } else if (link.href === "/watches") {
+                          sessionStorage.removeItem("veyro_scroll_/watches");
+                        } else if (link.href === "/collections") {
+                          sessionStorage.removeItem("veyro_scroll_/collections");
+                        }
+                      }
+                      if (link.href === "/" && pathname === "/") {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                      setMobileMenuOpen(false);
+                    }}
+                    className="py-2.5 sm:py-3 text-sm font-semibold tracking-wider uppercase text-[#111111] hover:text-neutral-500 transition-colors flex items-center justify-between"
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    <span className="relative">
+                      {link.label}
+                      {isActive && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute -bottom-1 left-0 w-full h-[3px] bg-[#fcd017]"
+                        />
+                      )}
+                    </span>
+                    <span className="text-xs text-neutral-400">→</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* 3. Pinned Bottom Account & Wishlist Row */}
+            <div className="shrink-0 border-t border-neutral-200 pt-3 space-y-0.5">
               {user ? (
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {/* User Profile Summary */}
-                  <div className="p-3 bg-neutral-50 border border-neutral-200/80 rounded-lg flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-veyro-black text-white text-xs font-bold flex items-center justify-center shrink-0">
+                  <div className="p-2.5 bg-neutral-50 border border-neutral-200/80 rounded-lg flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-veyro-black text-white text-xs font-bold flex items-center justify-center shrink-0">
                         {user.name.slice(0, 1).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -507,10 +520,10 @@ export function Navbar() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 hover:text-black cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <Package size={18} className="text-veyro-black" />
+                      <Package size={17} className="text-veyro-black" />
                       <span>My Orders</span>
                     </div>
                     <span className="text-xs font-mono text-veyro-muted">
@@ -522,10 +535,10 @@ export function Navbar() {
                   <Link
                     href="/account/addresses"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 hover:text-black cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <LucideUser size={18} className="text-veyro-black" />
+                      <LucideUser size={17} className="text-veyro-black" />
                       <span>My Profile</span>
                     </div>
                     <span className="text-xs text-veyro-muted">→</span>
@@ -535,10 +548,10 @@ export function Navbar() {
                   <Link
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <HeartIcon size={18} />
+                      <HeartIcon size={17} />
                       <span>My Wishlist</span>
                     </div>
                     {totalWishlistItems > 0 && (
@@ -555,9 +568,9 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       handleSignOut();
                     }}
-                    className="flex items-center gap-3 w-full text-xs font-semibold text-neutral-600 hover:text-red-600 py-2.5 cursor-pointer pt-3 border-t border-neutral-150 mt-1"
+                    className="flex items-center gap-3 w-full text-xs font-semibold text-neutral-600 hover:text-red-600 py-1.5 cursor-pointer pt-2 border-t border-neutral-150 mt-1"
                   >
-                    <LogOut size={15} />
+                    <LogOut size={14} />
                     <span>Sign Out</span>
                   </button>
                 </div>
@@ -566,10 +579,10 @@ export function Navbar() {
                   <Link
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <HeartIcon size={19} />
+                      <HeartIcon size={18} />
                       <span>My Wishlist</span>
                     </div>
                     {totalWishlistItems > 0 && (
@@ -585,10 +598,10 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       openAccountModal();
                     }}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2.5 cursor-pointer"
+                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <UserIcon size={19} />
+                      <UserIcon size={18} />
                       <span>My Account / Sign In</span>
                     </div>
                     <span className="text-xs text-veyro-muted">→</span>
