@@ -96,9 +96,19 @@ export default function AdminOrdersPage() {
     endDate: "2026-10-03",
   });
 
-  // Extract all unique dates where orders were placed chronologically
+  // Extract all unique dates where orders were placed chronologically with detailed day metrics
   const availableOrderDays = useMemo(() => {
-    const dayMap = new Map<string, { date: string; label: string; count: number; totalRevenue: number }>();
+    const dayMap = new Map<
+      string,
+      {
+        date: string;
+        label: string;
+        count: number;
+        totalRevenue: number;
+        deliveredCount: number;
+        aov: number;
+      }
+    >();
     orders.forEach((o) => {
       const day = parseOrderDateToDayString(o.date);
       const existing = dayMap.get(day) || {
@@ -111,12 +121,20 @@ export default function AdminOrdersPage() {
             : formatDayDisplay(day),
         count: 0,
         totalRevenue: 0,
+        deliveredCount: 0,
+        aov: 0,
       };
       existing.count += 1;
       existing.totalRevenue += o.total || 0;
+      if (o.status === "Delivered") existing.deliveredCount += 1;
       dayMap.set(day, existing);
     });
-    return Array.from(dayMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+    return Array.from(dayMap.values())
+      .map((d) => ({
+        ...d,
+        aov: d.count > 0 ? Math.round(d.totalRevenue / d.count) : 0,
+      }))
+      .sort((a, b) => b.date.localeCompare(a.date));
   }, [orders]);
 
   // Current day index for stepping
@@ -566,42 +584,170 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* ── TILL DATE (LIFETIME SCOPE) BANNER ───────────────────────────────── */}
+      {/* ── TILL DATE (LIFETIME SCOPE) BANNER & DAY-WISE LEDGER ──────────────── */}
       {isTillDateMode && (
-        <div className="relative overflow-hidden rounded-2xl bg-neutral-950 text-white p-5 border border-white/10 shadow-lg">
-          <div className="absolute right-0 top-0 w-80 h-full bg-gradient-to-l from-[#fde047]/10 to-transparent pointer-events-none" />
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-[#fde047] text-black">
-                  Lifetime Cumulative Scope
-                </span>
-                <span className="text-xs text-neutral-400 font-mono">
-                  18 Sep 2026 – Present (03 Oct 2026)
-                </span>
+        <div className="space-y-4">
+          <div className="relative overflow-hidden rounded-2xl bg-neutral-950 text-white p-5 border border-white/10 shadow-lg">
+            <div className="absolute right-0 top-0 w-80 h-full bg-gradient-to-l from-[#fde047]/10 to-transparent pointer-events-none" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-[#fde047] text-black">
+                    Lifetime Cumulative Scope
+                  </span>
+                  <span className="text-xs text-neutral-400 font-mono">
+                    18 Sep 2026 – Present (03 Oct 2026)
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-white tracking-tight">
+                  Store Inception Till Date Overview
+                </h2>
+                <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed">
+                  Displaying all cumulative checkouts, fulfilled luxury orders, and lifetime gross merchandise value. Click any day in the ledger or chart below to isolate individual dates.
+                </p>
               </div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
-                Store Inception Till Date Overview
-              </h2>
-              <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed">
-                Displaying all cumulative checkouts, fulfilled luxury orders, and lifetime gross merchandise value. Switch to Day-Wise to isolate any individual date.
-              </p>
+
+              <div className="flex items-center gap-3">
+                <div className="px-4 py-2.5 rounded-xl bg-white/[0.07] border border-white/10 text-right">
+                  <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Total Lifetime GMV</span>
+                  <span className="text-base font-bold text-[#fde047] font-mono">
+                    ₹{stats.lifetimeRevenue.toLocaleString("en-IN")}
+                  </span>
+                </div>
+                <button
+                  onClick={handleSelectDayWiseMode}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-neutral-950 font-bold text-xs hover:bg-neutral-100 transition-all cursor-pointer shadow-sm"
+                >
+                  <span>View Day-Wise Breakdown</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Daily Sales Timeline Visualizer in All-Time Mode */}
+          <div className="bg-white rounded-2xl p-4 border border-neutral-200/80 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BarChart3 size={15} className="text-amber-500" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800">
+                  Daily Sales Timeline Visualizer (Click any date to inspect day-wise)
+                </h3>
+              </div>
+              <span className="text-[11px] text-neutral-400 font-mono">
+                11 Recorded Days • Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}
+              </span>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="px-4 py-2.5 rounded-xl bg-white/[0.07] border border-white/10 text-right">
-                <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Total Lifetime GMV</span>
-                <span className="text-base font-bold text-[#fde047] font-mono">
-                  ₹{stats.lifetimeRevenue.toLocaleString("en-IN")}
-                </span>
+            <div className="grid grid-cols-11 gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60">
+              {availableOrderDays
+                .slice()
+                .reverse()
+                .map((d) => {
+                  const heightPercent = Math.max(16, Math.round((d.totalRevenue / maxDayRevenue) * 100));
+                  return (
+                    <div
+                      key={d.date}
+                      onClick={() => handleSelectDay(d.date, d.label)}
+                      className="group flex flex-col items-center h-full justify-end cursor-pointer"
+                      title={`${d.label}: ${d.count} orders (₹${d.totalRevenue.toLocaleString("en-IN")}) — Click to inspect day`}
+                    >
+                      <div className="w-full flex justify-center mb-1">
+                        <span className="text-[9px] font-mono font-bold truncate opacity-0 group-hover:opacity-100 text-amber-600 transition-opacity">
+                          ₹{d.totalRevenue}
+                        </span>
+                      </div>
+                      <div
+                        style={{ height: `${heightPercent}%` }}
+                        className="w-full rounded-md bg-neutral-300 group-hover:bg-amber-500 transition-all duration-300 shadow-2xs"
+                      />
+                      <span className="text-[9px] mt-1 font-mono font-semibold truncate text-neutral-500 group-hover:text-neutral-950">
+                        {formatBarDate(d.date)}
+                      </span>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+
+          {/* Day-by-Day Historical Ledger Table */}
+          <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
+            <div className="p-4 bg-neutral-50/70 border-b border-neutral-200/70 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarDays size={15} className="text-amber-600" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                  Day-by-Day Historical Sales Ledger (Inception to Present)
+                </h3>
               </div>
-              <button
-                onClick={handleSelectDayWiseMode}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-neutral-950 font-bold text-xs hover:bg-neutral-100 transition-all cursor-pointer shadow-sm"
-              >
-                <span>View Day-Wise Breakdown</span>
-                <ArrowRight size={14} />
-              </button>
+              <span className="text-xs text-neutral-500 font-mono">
+                {availableOrderDays.length} Active Days Recorded
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-neutral-100/70 text-neutral-500 font-bold uppercase tracking-wider text-[10px] border-b border-neutral-200/70">
+                  <tr>
+                    <th className="py-2.5 px-4">Date</th>
+                    <th className="py-2.5 px-4">Orders Placed</th>
+                    <th className="py-2.5 px-4">Daily GMV Revenue</th>
+                    <th className="py-2.5 px-4">Average Order Value</th>
+                    <th className="py-2.5 px-4">Fulfillment Rate</th>
+                    <th className="py-2.5 px-4 text-right">Day Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100">
+                  {availableOrderDays.map((d) => {
+                    const deliveryRate = d.count > 0 ? Math.round((d.deliveredCount / d.count) * 100) : 0;
+                    return (
+                      <tr
+                        key={d.date}
+                        className="hover:bg-amber-50/40 transition-colors group cursor-pointer"
+                        onClick={() => handleSelectDay(d.date, d.label)}
+                      >
+                        <td className="py-3 px-4 font-semibold text-neutral-900 flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-amber-400 group-hover:scale-125 transition-transform" />
+                          <span>{d.label}</span>
+                        </td>
+                        <td className="py-3 px-4 font-mono font-bold text-neutral-800">
+                          <span className="px-2 py-0.5 rounded-md bg-neutral-100 group-hover:bg-amber-100 text-neutral-900">
+                            {d.count} {d.count === 1 ? "order" : "orders"}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 font-mono font-extrabold text-neutral-950">
+                          ₹{d.totalRevenue.toLocaleString("en-IN")}
+                        </td>
+                        <td className="py-3 px-4 font-mono text-neutral-600">
+                          ₹{d.aov.toLocaleString("en-IN")}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              deliveryRate === 100
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : "bg-blue-50 text-blue-700 border border-blue-200"
+                            }`}
+                          >
+                            {deliveryRate}% Fulfilled
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectDay(d.date, d.label);
+                            }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-900 text-white font-bold text-[11px] hover:bg-neutral-800 group-hover:bg-amber-500 group-hover:text-black transition-all cursor-pointer shadow-2xs"
+                          >
+                            <span>Drill Down Day</span>
+                            <ArrowRight size={12} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -643,6 +789,15 @@ export default function AdminOrdersPage() {
               >
                 <span>Next Day</span>
                 <ChevronRight size={14} />
+              </button>
+
+              <button
+                onClick={handleSelectTillDate}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-xs font-bold text-amber-900 transition-colors cursor-pointer"
+                title="Return to All Time (Till Date) cumulative scope"
+              >
+                <CalendarDays size={13} className="text-amber-600" />
+                <span>All Time View</span>
               </button>
             </div>
           </div>
