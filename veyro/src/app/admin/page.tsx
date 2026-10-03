@@ -5185,6 +5185,7 @@ export default function AdminDashboard() {
   const [selectedOrderForModal, setSelectedOrderForModal] = useState<OrderRecord | null>(null);
   const [isAllOrdersModalOpen, setIsAllOrdersModalOpen] = useState(false);
   const [recentOrdersStatusFilter, setRecentOrdersStatusFilter] = useState<string>("All");
+  const [recentOrdersPage, setRecentOrdersPage] = useState<number>(1);
 
   const triggerToast = (message: string, type: "success" | "info" = "success") => {
     setAdminToast({ message, type });
@@ -5563,7 +5564,7 @@ export default function AdminDashboard() {
   }, [dateFilteredOrders, products]);
 
   // Filtered orders list based on search, recent orders tab, and status filter
-  const displayedOrders = useMemo(() => {
+  const allFilteredRecentOrders = useMemo(() => {
     let list = dateFilteredOrders;
 
     if (recentOrdersStatusFilter !== "All") {
@@ -5603,8 +5604,46 @@ export default function AdminDashboard() {
       );
     }
 
-    return list.slice(0, 5); // Show first 5 matching rows
+    return list;
   }, [dateFilteredOrders, recentOrdersStatusFilter, selectedStatusFilter, searchQuery]);
+
+  const RECENT_ORDERS_PAGE_SIZE = 5;
+  const totalRecentOrdersPages = Math.max(1, Math.ceil(allFilteredRecentOrders.length / RECENT_ORDERS_PAGE_SIZE));
+
+  // Current page displayed orders
+  const displayedOrders = useMemo(() => {
+    const safePage = Math.min(recentOrdersPage, totalRecentOrdersPages);
+    const start = (safePage - 1) * RECENT_ORDERS_PAGE_SIZE;
+    return allFilteredRecentOrders.slice(start, start + RECENT_ORDERS_PAGE_SIZE);
+  }, [allFilteredRecentOrders, recentOrdersPage, totalRecentOrdersPages]);
+
+  // Financial & operational metrics for the active orders period
+  const recentOrdersMetrics = useMemo(() => {
+    const totalRev = allFilteredRecentOrders.reduce((sum, o) => sum + o.total, 0);
+    const deliveredOrders = allFilteredRecentOrders.filter((o) => o.status === "Delivered");
+    const deliveredCount = deliveredOrders.length;
+    const deliveredRev = deliveredOrders.reduce((sum, o) => sum + o.total, 0);
+    const shippedCount = allFilteredRecentOrders.filter(
+      (o) => o.status === "Shipped" || o.status === "Out for Delivery"
+    ).length;
+    const processingCount = allFilteredRecentOrders.filter(
+      (o) => o.status === "Processing" || o.status === "Confirmed" || o.status === "Packed"
+    ).length;
+    const aov = allFilteredRecentOrders.length > 0 ? Math.round(totalRev / allFilteredRecentOrders.length) : 0;
+
+    return {
+      totalRev,
+      deliveredCount,
+      deliveredRev,
+      shippedCount,
+      processingCount,
+      aov,
+    };
+  }, [allFilteredRecentOrders]);
+
+  useEffect(() => {
+    setRecentOrdersPage(1);
+  }, [recentOrdersStatusFilter, dateFilter, searchQuery]);
 
   const chartData = useMemo(() => {
     if (chartPeriod === "7d") return REVENUE_DATA_7D;
@@ -6313,190 +6352,462 @@ export default function AdminDashboard() {
       {/* ── BOTTOM ROW: RECENT ORDERS & TOP PRODUCTS ─────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: Recent Orders Table (8 cols) */}
-        <div className="lg:col-span-8 bg-white rounded-[22px] border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
-          <div className="flex items-center justify-between p-6 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
-                <ShoppingCart size={18} className="text-amber-600" />
+        <div className="lg:col-span-8 bg-white rounded-[22px] border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col justify-between">
+          <div>
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 sm:p-6 pb-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] text-amber-600 flex items-center justify-center shrink-0 shadow-2xs border border-amber-200/50">
+                  <ShoppingCart size={18} className="text-amber-600" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-[17px] font-bold text-neutral-900 leading-tight tracking-tight">
+                      Recent Orders
+                    </h2>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border shadow-2xs flex items-center gap-1 ${
+                        dateFilter.type === "day"
+                          ? "bg-sky-50 text-sky-800 border-sky-300"
+                          : dateFilter.type === "custom"
+                          ? "bg-purple-50 text-purple-800 border-purple-300"
+                          : "bg-amber-50 text-amber-900 border-amber-300"
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          dateFilter.type === "day"
+                            ? "bg-sky-500"
+                            : dateFilter.type === "custom"
+                            ? "bg-purple-500"
+                            : "bg-amber-500"
+                        }`}
+                      />
+                      {dateFilter.type === "day"
+                        ? "Day-wise"
+                        : dateFilter.type === "custom"
+                        ? "Custom Range"
+                        : "Till Date"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-500 font-normal mt-1 flex items-center gap-1.5 truncate">
+                    <CalendarDays size={12} className="text-amber-700 shrink-0" />
+                    <span className="truncate">
+                      {dateFilter.type === "day"
+                        ? `Single day orders: ${dateFilter.label} (${allFilteredRecentOrders.length} ${allFilteredRecentOrders.length === 1 ? "order" : "orders"})`
+                        : dateFilter.type === "custom"
+                        ? `Orders between ${dateFilter.startDate} → ${dateFilter.endDate} (${allFilteredRecentOrders.length} orders)`
+                        : `Accumulated store orders up to ${dateFilter.endDate} (${allFilteredRecentOrders.length} orders)`}
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-[17px] font-bold text-neutral-900 leading-tight tracking-tight">
-                  Recent Orders
-                </h2>
-                <p className="text-xs text-neutral-400 font-normal mt-0.5">
-                  {orders.length} total orders
-                </p>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsAllOrdersModalOpen(true)}
-                className="flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-900 transition-colors group cursor-pointer bg-[#fff8e7] hover:bg-amber-100/70 px-2.5 py-1.5 rounded-xl border border-amber-200/60"
-              >
-                <span>View All ({orders.length})</span>
-                <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5" />
-              </button>
-              <Link
-                href="/admin/orders"
-                className="w-7 h-7 rounded-xl border border-neutral-200/60 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 flex items-center justify-center transition-colors"
-                title="Open Dedicated Full Page"
-              >
-                <ExternalLink size={12} />
-              </Link>
-            </div>
-          </div>
-
-          {/* Recent Orders Status Filter Tabs */}
-          <div className="flex items-center gap-1.5 px-6 pb-3 overflow-x-auto no-scrollbar">
-            {["All", "Delivered", "Processing", "Shipped", "Returned"].map((status) => {
-              const isActive = recentOrdersStatusFilter === status;
-              return (
+              <div className="flex items-center gap-2 shrink-0">
                 <button
-                  key={status}
-                  onClick={() => setRecentOrdersStatusFilter(status)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? "bg-neutral-900 text-white shadow-2xs font-semibold"
-                      : "bg-neutral-100/80 hover:bg-neutral-200/70 text-neutral-600"
-                  }`}
+                  type="button"
+                  onClick={() => setIsAllOrdersModalOpen(true)}
+                  className="flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-950 transition-colors group cursor-pointer bg-[#fff8e7] hover:bg-amber-100/70 px-2.5 py-1.5 rounded-xl border border-amber-200/60 shadow-2xs"
                 >
-                  {status}
+                  <span>View All ({orders.length})</span>
+                  <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5" />
                 </button>
-              );
-            })}
+                <Link
+                  href="/admin/orders"
+                  className="w-8 h-8 rounded-xl border border-neutral-200/60 hover:bg-neutral-100 text-neutral-500 hover:text-neutral-900 flex items-center justify-center transition-colors shadow-2xs"
+                  title="Open Dedicated Full Page"
+                >
+                  <ExternalLink size={13} />
+                </Link>
+              </div>
+            </div>
+
+            {/* Recent Orders Status & Date Controls Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2.5 px-5 sm:px-6 pb-3.5 border-b border-black/[0.04]">
+              {/* Status Filter Tabs */}
+              <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                {["All", "Delivered", "Processing", "Shipped", "Returned"].map((status) => {
+                  const isActive = recentOrdersStatusFilter === status;
+                  return (
+                    <button
+                      key={status}
+                      onClick={() => setRecentOrdersStatusFilter(status)}
+                      className={`px-3 py-1 rounded-xl text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
+                        isActive
+                          ? "bg-neutral-900 text-white shadow-2xs font-semibold"
+                          : "bg-neutral-100/80 hover:bg-neutral-200/70 text-neutral-600"
+                      }`}
+                    >
+                      {status}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Date Scope Controls: Quick Switcher + Compact Picker */}
+              <div className="flex items-center gap-2">
+                {/* 1-Click Quick Mode Switcher: "Till Date" vs "Day-wise" */}
+                <div className="flex items-center bg-neutral-100 p-0.5 rounded-lg border border-neutral-200/60 text-[10px] font-semibold shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDateFilter({
+                        type: "all",
+                        label: "All Time (Till Date)",
+                        startDate: "2026-01-01",
+                        endDate: "2026-10-03",
+                      });
+                      triggerToast("Showing store orders accumulated Till Date (03 Oct 2026)", "info");
+                    }}
+                    className={`px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                      dateFilter.type === "all"
+                        ? "bg-amber-500 text-white font-bold shadow-2xs"
+                        : "text-neutral-600 hover:text-neutral-950"
+                    }`}
+                    title="View orders accumulated till date (03 Oct 2026)"
+                  >
+                    <span>Till Date</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDateFilter({
+                        type: "day",
+                        label: "Today (03 Oct 2026)",
+                        startDate: "2026-10-03",
+                        endDate: "2026-10-03",
+                        singleDay: "2026-10-03",
+                      });
+                      triggerToast("Showing single-day orders for Today (03 Oct 2026)", "info");
+                    }}
+                    className={`px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                      dateFilter.type === "day"
+                        ? "bg-sky-600 text-white font-bold shadow-2xs"
+                        : "text-neutral-600 hover:text-neutral-950"
+                    }`}
+                    title="View single-day orders (Today: 03 Oct 2026)"
+                  >
+                    <span>Day-wise</span>
+                  </button>
+                </div>
+
+                {/* Inline Compact Date Range Picker */}
+                <AdminDateRangePicker
+                  currentFilter={dateFilter}
+                  onSelectFilter={(newFilter) => {
+                    setDateFilter(newFilter);
+                    triggerToast(`Filter applied: ${newFilter.label}`, "info");
+                  }}
+                  orders={orders}
+                  compact={true}
+                  align="right"
+                  customTriggerLabel={
+                    dateFilter.type === "day"
+                      ? `Day: ${dateFilter.singleDay || dateFilter.startDate}`
+                      : dateFilter.type === "custom"
+                      ? `${dateFilter.startDate.slice(5)} → ${dateFilter.endDate.slice(5)}`
+                      : "Till Date (03 Oct)"
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Active Search & Filter Banner */}
+            {searchQuery.trim() && (
+              <div className="mx-5 sm:mx-6 my-2.5 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/60 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
+                <div className="flex items-center gap-2">
+                  <Search size={13} className="text-amber-600 shrink-0" />
+                  <span>
+                    Showing orders matching <strong className="font-semibold text-black">&quot;{searchQuery}&quot;</strong> ({allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} found)
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="text-amber-800 hover:text-amber-950 font-semibold flex items-center gap-1 cursor-pointer hover:underline"
+                >
+                  <X size={12} /> Clear search
+                </button>
+              </div>
+            )}
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse" role="table">
+                <thead>
+                  <tr className="border-b border-neutral-100 text-xs font-medium text-neutral-400">
+                    <th className="pl-6 py-3 font-medium">Order ID</th>
+                    <th className="px-3 py-3 font-medium">Customer</th>
+                    <th className="px-3 py-3 font-medium">Products</th>
+                    <th className="px-3 py-3 font-medium">Total</th>
+                    <th className="px-3 py-3 font-medium">Status</th>
+                    <th className="px-3 py-3 font-medium">Date</th>
+                    <th className="pr-6 py-3 font-medium text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100">
+                  {displayedOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-12 text-center text-xs text-neutral-400">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <Package size={24} className="text-neutral-300" />
+                          <span>No orders found matching the active filters.</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setRecentOrdersStatusFilter("All");
+                              setDateFilter({
+                                type: "all",
+                                label: "All Time (Till Date)",
+                                startDate: "2026-01-01",
+                                endDate: "2026-10-03",
+                              });
+                            }}
+                            className="text-amber-800 hover:underline font-semibold text-xs mt-1 cursor-pointer"
+                          >
+                            Reset filters to All Time
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    displayedOrders.map((order) => {
+                      const customerName = order.shippingAddress?.name || "Customer";
+                      const avatar = getCustomerAvatar(customerName);
+                      const itemCount = order.itemsCount || order.items?.length || 1;
+                      const thumbUrl =
+                        order.items?.[0]?.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp";
+
+                      return (
+                        <tr
+                          key={order.id}
+                          onClick={() => setSelectedOrderForModal(order)}
+                          className="hover:bg-amber-50/40 cursor-pointer transition-colors duration-150 group"
+                          title="Click to deep inspect order"
+                        >
+                          {/* ID */}
+                          <td className="pl-6 py-3.5 whitespace-nowrap text-xs font-mono font-medium text-neutral-800 group-hover:text-amber-800">
+                            {order.id}
+                          </td>
+
+                          {/* Customer */}
+                          <td className="px-3 py-3.5 whitespace-nowrap">
+                            <div className="flex items-center gap-2.5">
+                              <div
+                                className={`w-7 h-7 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-xs font-bold shrink-0`}
+                              >
+                                {avatar.initial}
+                              </div>
+                              <span className="text-xs sm:text-sm font-medium text-neutral-900">
+                                {customerName}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Products */}
+                          <td className="px-3 py-3.5 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-lg bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
+                                <Image
+                                  src={thumbUrl}
+                                  alt="Product thumbnail"
+                                  width={28}
+                                  height={28}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <span className="text-xs text-neutral-500">
+                                {itemCount} {itemCount === 1 ? "item" : "items"}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Total */}
+                          <td className="px-3 py-3.5 whitespace-nowrap">
+                            <span className="text-xs sm:text-sm font-bold text-neutral-900">
+                              ₹{order.total.toLocaleString("en-IN")}
+                            </span>
+                          </td>
+
+                          {/* Status */}
+                          <td className="px-3 py-3.5 whitespace-nowrap">
+                            <StatusPill status={order.status} />
+                          </td>
+
+                          {/* Date */}
+                          <td className="px-3 py-3.5 whitespace-nowrap text-xs text-neutral-500">
+                            {order.date}
+                          </td>
+
+                          {/* Actions */}
+                          <td className="pr-6 py-3.5 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
+                            <OrderRowMenu
+                              order={order}
+                              onUpdateStatus={(id, status) => {
+                                updateOrderStatus(id, status);
+                                triggerToast(`Order #${id} marked as ${status}`);
+                              }}
+                              onInspectOrder={(ord) => setSelectedOrderForModal(ord)}
+                              onDownloadSlip={(ord) => printOrDownloadOrderSlip(ord)}
+                              onCopyId={(id) => {
+                                navigator.clipboard.writeText(id);
+                                triggerToast(`Copied Order ID: ${id}`, "info");
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          {/* Active Search & Filter Banner */}
-          {searchQuery.trim() && (
-            <div className="mx-6 mb-3 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/60 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
-              <div className="flex items-center gap-2">
-                <Search size={13} className="text-amber-600 shrink-0" />
-                <span>
-                  Showing orders matching <strong className="font-semibold text-black">&quot;{searchQuery}&quot;</strong> ({displayedOrders.length} {displayedOrders.length === 1 ? "order" : "orders"} found)
-                </span>
+          {/* ── THE MASTERPIECE FOOTER (Fills the previous blank space!) ── */}
+          <div className="p-4 sm:p-5 bg-gradient-to-b from-[#faf9f6] to-white border-t border-black/[0.05] mt-auto flex flex-col gap-3">
+            {/* Upper Strip: Live Analytics Ribbon */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
+                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <IndianRupee size={10} className="text-amber-700" />
+                  <span>Period Revenue</span>
+                </div>
+                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                  ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")}
+                </div>
+                <div className="text-[10px] text-neutral-400 mt-0.5">
+                  {allFilteredRecentOrders.length} orders in scope
+                </div>
               </div>
-              <button
-                onClick={() => setSearchQuery("")}
-                className="text-amber-800 hover:text-amber-950 font-semibold flex items-center gap-1 cursor-pointer hover:underline"
-              >
-                <X size={12} /> Clear search
-              </button>
+
+              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
+                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <TrendingUp size={10} className="text-emerald-700" />
+                  <span>Avg Order Value</span>
+                </div>
+                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                  ₹{recentOrdersMetrics.aov.toLocaleString("en-IN")}
+                </div>
+                <div className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                  Healthy basket size
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
+                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <CheckCircle2 size={10} className="text-sky-700" />
+                  <span>Delivered</span>
+                </div>
+                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                  {recentOrdersMetrics.deliveredCount} orders
+                </div>
+                <div className="text-[10px] text-neutral-400 mt-0.5">
+                  ₹{recentOrdersMetrics.deliveredRev.toLocaleString("en-IN")} fulfilled
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
+                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <Truck size={10} className="text-indigo-700" />
+                  <span>Active Transit</span>
+                </div>
+                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                  {recentOrdersMetrics.shippedCount} shipped
+                </div>
+                <div className="text-[10px] text-neutral-400 mt-0.5">
+                  {recentOrdersMetrics.processingCount} in packing
+                </div>
+              </div>
             </div>
-          )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse" role="table">
-              <thead>
-                <tr className="border-y border-neutral-100 text-xs font-medium text-neutral-400">
-                  <th className="pl-6 py-3 font-medium">Order ID</th>
-                  <th className="px-3 py-3 font-medium">Customer</th>
-                  <th className="px-3 py-3 font-medium">Products</th>
-                  <th className="px-3 py-3 font-medium">Total</th>
-                  <th className="px-3 py-3 font-medium">Status</th>
-                  <th className="px-3 py-3 font-medium">Date</th>
-                  <th className="pr-6 py-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {displayedOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-8 text-center text-xs text-neutral-400">
-                      No matching orders found.
-                    </td>
-                  </tr>
-                ) : (
-                  displayedOrders.map((order) => {
-                    const customerName = order.shippingAddress?.name || "Customer";
-                    const avatar = getCustomerAvatar(customerName);
-                    const itemCount = order.itemsCount || order.items?.length || 1;
-                    const thumbUrl =
-                      order.items?.[0]?.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp";
+            {/* Lower Strip: Pagination & Quick Batch Operations */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-black/[0.04]">
+              {/* Pagination controls */}
+              <div className="flex items-center gap-2 text-xs text-neutral-500">
+                <span>
+                  Showing{" "}
+                  <strong className="text-neutral-900 font-semibold">
+                    {allFilteredRecentOrders.length === 0 ? 0 : (recentOrdersPage - 1) * RECENT_ORDERS_PAGE_SIZE + 1}
+                  </strong>
+                  –
+                  <strong className="text-neutral-900 font-semibold">
+                    {Math.min(recentOrdersPage * RECENT_ORDERS_PAGE_SIZE, allFilteredRecentOrders.length)}
+                  </strong>{" "}
+                  of <strong className="text-neutral-900 font-semibold">{allFilteredRecentOrders.length}</strong>
+                </span>
 
-                    return (
-                      <tr
-                        key={order.id}
-                        onClick={() => setSelectedOrderForModal(order)}
-                        className="hover:bg-amber-50/40 cursor-pointer transition-colors duration-150 group"
-                        title="Click to deep inspect order"
-                      >
-                        {/* ID */}
-                        <td className="pl-6 py-3.5 whitespace-nowrap text-xs font-mono font-medium text-neutral-800 group-hover:text-amber-800">
-                          {order.id}
-                        </td>
-
-                        {/* Customer */}
-                        <td className="px-3 py-3.5 whitespace-nowrap">
-                          <div className="flex items-center gap-2.5">
-                            <div
-                              className={`w-7 h-7 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-xs font-bold shrink-0`}
-                            >
-                              {avatar.initial}
-                            </div>
-                            <span className="text-xs sm:text-sm font-medium text-neutral-900">
-                              {customerName}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Products */}
-                        <td className="px-3 py-3.5 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-lg bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
-                              <Image
-                                src={thumbUrl}
-                                alt="Product thumbnail"
-                                width={28}
-                                height={28}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <span className="text-xs text-neutral-500">
-                              {itemCount} {itemCount === 1 ? "item" : "items"}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Total */}
-                        <td className="px-3 py-3.5 whitespace-nowrap">
-                          <span className="text-xs sm:text-sm font-bold text-neutral-900">
-                            ₹{order.total.toLocaleString("en-IN")}
-                          </span>
-                        </td>
-
-                        {/* Status */}
-                        <td className="px-3 py-3.5 whitespace-nowrap">
-                          <StatusPill status={order.status} />
-                        </td>
-
-                        {/* Date */}
-                        <td className="px-3 py-3.5 whitespace-nowrap text-xs text-neutral-500">
-                          {order.date}
-                        </td>
-
-                        {/* Actions */}
-                        <td className="pr-6 py-3.5 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
-                          <OrderRowMenu
-                            order={order}
-                            onUpdateStatus={(id, status) => {
-                              updateOrderStatus(id, status);
-                              triggerToast(`Order #${id} marked as ${status}`);
-                            }}
-                            onInspectOrder={(ord) => setSelectedOrderForModal(ord)}
-                            onDownloadSlip={(ord) => printOrDownloadOrderSlip(ord)}
-                            onCopyId={(id) => {
-                              navigator.clipboard.writeText(id);
-                              triggerToast(`Copied Order ID: ${id}`, "info");
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })
+                {totalRecentOrdersPages > 1 && (
+                  <div className="flex items-center gap-1 ml-2">
+                    <button
+                      type="button"
+                      onClick={() => setRecentOrdersPage((p) => Math.max(1, p - 1))}
+                      disabled={recentOrdersPage === 1}
+                      className="p-1 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                      title="Previous Page"
+                    >
+                      <ChevronLeft size={13} />
+                    </button>
+                    {Array.from({ length: totalRecentOrdersPages }).map((_, i) => {
+                      const pageNum = i + 1;
+                      return (
+                        <button
+                          key={pageNum}
+                          type="button"
+                          onClick={() => setRecentOrdersPage(pageNum)}
+                          className={`w-6 h-6 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
+                            recentOrdersPage === pageNum
+                              ? "bg-neutral-900 text-white shadow-2xs font-bold"
+                              : "text-neutral-600 hover:bg-neutral-100"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                    <button
+                      type="button"
+                      onClick={() => setRecentOrdersPage((p) => Math.min(totalRecentOrdersPages, p + 1))}
+                      disabled={recentOrdersPage === totalRecentOrdersPages}
+                      className="p-1 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                      title="Next Page"
+                    >
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
                 )}
-              </tbody>
-            </table>
+              </div>
+
+              {/* Batch Actions */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    downloadAllOrdersCSV(allFilteredRecentOrders);
+                    triggerToast(`Exported ${allFilteredRecentOrders.length} orders to CSV`, "success");
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+                  title="Export currently filtered orders dataset as CSV"
+                >
+                  <Download size={12} className="text-neutral-500" />
+                  <span>Export CSV</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (displayedOrders[0]) {
+                      printOrDownloadOrderSlip(displayedOrders[0]);
+                    } else {
+                      triggerToast("No orders available to print", "info");
+                    }
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+                  title="Print latest order dispatch slip"
+                >
+                  <Printer size={12} className="text-neutral-500" />
+                  <span>Print Slip</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
