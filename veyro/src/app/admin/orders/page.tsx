@@ -256,24 +256,25 @@ export default function AdminOrdersPage() {
       statusCounts[s] = (statusCounts[s] || 0) + 1;
     });
 
-    // Top products in current scope
+    // Top products in current scope - group by normalized product name
     const productCounts: Record<
       string,
       { name: string; count: number; revenue: number; image: string }
     > = {};
     scopeOrders.forEach((order) => {
       (order.items || []).forEach((item) => {
-        const pId = item.productId || item.productName;
-        if (!productCounts[pId]) {
-          productCounts[pId] = {
-            name: item.productName || "Luxury Product",
+        const prodName = (item.productName || "Luxury Product").trim();
+        const pKey = prodName.toLowerCase();
+        if (!productCounts[pKey]) {
+          productCounts[pKey] = {
+            name: prodName,
             count: 0,
             revenue: 0,
             image: item.imageUrl || "/products/shoes/blanc-court-sneaker.webp",
           };
         }
-        productCounts[pId].count += item.quantity || 1;
-        productCounts[pId].revenue += item.totalPrice || item.unitPrice || 0;
+        productCounts[pKey].count += item.quantity || 1;
+        productCounts[pKey].revenue += item.totalPrice || item.unitPrice || 0;
       });
     });
 
@@ -932,7 +933,7 @@ export default function AdminOrdersPage() {
             <div className="space-y-2.5 pt-1">
               {stats.topProducts.map((p, i) => (
                 <div
-                  key={p.name}
+                  key={`${p.name}-${i}`}
                   className="flex items-center justify-between text-xs p-2 rounded-xl bg-neutral-50/80 border border-neutral-100 hover:border-neutral-200 transition-colors"
                 >
                   <div className="flex items-center gap-2.5 truncate max-w-[210px]">
