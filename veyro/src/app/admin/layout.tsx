@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdmin } from "@/context/AdminContext";
@@ -38,6 +38,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ).length;
   }, [orders]);
 
+  // Auth guard — redirect non-admins to login safely inside useEffect
+  useEffect(() => {
+    if (isHydrated && !isAdmin && pathname !== "/admin/login") {
+      router.replace("/admin/login");
+    }
+  }, [isHydrated, isAdmin, pathname, router]);
+
   // Login page — no sidebar, just render children
   if (pathname === "/admin/login") {
     return (
@@ -59,9 +66,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // Auth guard — redirect non-admins to login
+  // Auth guard — render splash while useEffect performs redirect
   if (!isAdmin) {
-    if (typeof window !== "undefined") router.replace("/admin/login");
     return (
       <div className="fixed inset-0 z-[9999] bg-veyro-black flex items-center justify-center">
         <div className="text-veyro-muted text-sm">Redirecting to login...</div>
