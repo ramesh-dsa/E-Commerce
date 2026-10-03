@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, X } from "lucide-react";
 
 export interface WatchFilterState {
@@ -268,6 +268,20 @@ export function WatchFilterSidebar({
   isMobileOpen = false,
   onCloseMobile,
 }: WatchFilterSidebarProps) {
+  // Lock background website scrolling when mobile filter drawer is open
+  useEffect(() => {
+    if (isMobileOpen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalDocOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalDocOverflow;
+      };
+    }
+  }, [isMobileOpen]);
+
   // Count active selections per section to protect them during auto-collapse
   const activeCounts: Record<SectionKey, number> = {
     brands: filters.brands?.length || 0,
@@ -618,7 +632,7 @@ export function WatchFilterSidebar({
         <div className="lg:hidden fixed inset-0 z-50 flex">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200 overscroll-contain touch-none"
             onClick={onCloseMobile}
             aria-hidden="true"
           />
@@ -628,10 +642,10 @@ export function WatchFilterSidebar({
             role="dialog"
             aria-modal="true"
             aria-label="Filter Timepieces"
-            className="relative flex w-full max-w-xs flex-col bg-white text-[#111111] shadow-2xl z-10 animate-drawer-in h-full overflow-hidden ml-auto"
+            className="relative flex w-full max-w-xs flex-col bg-white text-[#111111] shadow-2xl z-10 animate-drawer-in h-[100dvh] max-h-[100dvh] overflow-hidden ml-auto overscroll-contain"
           >
             {/* Drawer Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0f0ed]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0f0ed] shrink-0">
               <div className="flex items-center gap-2">
                 <span className="font-luxury text-sm font-medium uppercase tracking-[0.1em] text-[#111111]">
                   FILTERS
@@ -653,12 +667,12 @@ export function WatchFilterSidebar({
             </div>
 
             {/* Scrollable Filter List */}
-            <div className="overflow-y-auto px-6 py-4 flex-1">
+            <div className="overflow-y-auto px-6 py-4 flex-1 min-h-0 overscroll-contain luxury-sidebar-scrollbar">
               {filterContent}
             </div>
 
             {/* Fixed Bottom Action Bar */}
-            <div className="p-4 border-t border-[#f0f0ed] bg-[#fafaf8] flex items-center gap-3">
+            <div className="p-4 border-t border-[#f0f0ed] bg-[#fafaf8] flex items-center gap-3 shrink-0">
               {activeFilterCount > 0 && (
                 <button
                   type="button"
