@@ -66,6 +66,39 @@ export function Hero() {
 
   const N = panels.length;
 
+  // Touch gesture tracking refs for mobile swipe
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+
+  // Navigation handlers
+  const handleNext = React.useCallback(() => {
+    setIsTransitioning(true);
+    setStartIndex((prev) => {
+      const next = (prev + 1) % N;
+      const newlyEntered = panels[(next + 2) % N];
+      setAnnouncedPanel(`New arrival: ${newlyEntered.title || newlyEntered.titleLines?.[0]}`);
+      return next;
+    });
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 700);
+  }, [N]);
+
+  const handlePrev = React.useCallback(() => {
+    setIsTransitioning(true);
+    setStartIndex((prev) => {
+      const next = (prev - 1 + N) % N;
+      const newlyEntered = panels[next];
+      setAnnouncedPanel(`Previous: ${newlyEntered.title || newlyEntered.titleLines?.[0]}`);
+      return next;
+    });
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 700);
+  }, [N]);
+
   // Track if hero section is in viewport to prevent wasted timers/animations
   useEffect(() => {
     const el = sectionRef.current;
@@ -93,37 +126,59 @@ export function Hero() {
     };
   }, []);
 
-  // Auto-advance sliding window only when visible and not actively scrolling
+  // Auto-advance sliding window only when visible and not actively scrolling or recently swiped
   useEffect(() => {
     if (!isInView) return;
 
     const timer = setInterval(() => {
-      // Don't interrupt user scrolling (scrolled within last 500ms)
-      if (Date.now() - lastScrollTimeRef.current < 500) return;
+      // Don't interrupt user scrolling or recent touch interactions (scrolled within last 2000ms)
+      if (Date.now() - lastScrollTimeRef.current < 2000) return;
 
-      setIsTransitioning(true);
-      setStartIndex((prev) => {
-        const next = (prev + 1) % N;
-        const newlyEntered = panels[(next + 2) % N];
-        setAnnouncedPanel(`New arrival: ${newlyEntered.title || newlyEntered.titleLines?.[0]}`);
-        return next;
-      });
-
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 700);
+      handleNext();
     }, 4500);
 
     return () => clearInterval(timer);
-  }, [isInView, N]);
+  }, [isInView, handleNext]);
+
+  // Touch gesture handlers for mobile swipe navigation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+    if (e.changedTouches.length === 0) return;
+
+    const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartYRef.current;
+
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+
+    // Trigger swipe only when horizontal motion dominates vertical scrolling and exceeds 40px
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+      lastScrollTimeRef.current = Date.now(); // Suppress auto-advance temporarily
+      if (deltaX < 0) {
+        handleNext(); // Swiped left -> next
+      } else {
+        handlePrev(); // Swiped right -> previous
+      }
+    }
+  };
 
   return (
     <section
       ref={sectionRef}
       aria-label="Featured Fashion Campaigns"
-      className="w-full flex flex-col pt-0 pb-0 select-none h-[calc(100dvh-110px)] sm:h-[calc(100dvh-114px)] lg:h-[calc(100dvh-118px)] min-h-[460px]"
+      className="w-full max-w-full flex flex-col pt-0 pb-0 select-none h-[calc(100dvh-110px)] sm:h-[calc(100dvh-114px)] lg:h-[calc(100dvh-118px)] min-h-[460px] overflow-x-clip touch-pan-y"
     >
-      <div className="w-full flex-1 flex flex-col px-0 relative">
+      <div 
+        className="w-full max-w-full flex-1 flex flex-col px-0 relative overflow-x-clip touch-pan-y"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Visually hidden aria-live announcer for accessibility */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
           {announcedPanel}
@@ -134,8 +189,8 @@ export function Hero() {
           Uses a CSS variable for the gap so the inline transform calc() is responsive.
         */}
         <div 
-          className={`relative flex-1 w-full overflow-hidden bg-white ${isTransitioning ? 'pointer-events-none' : ''}`}
-          style={{ '--panel-gap': '11px' } as React.CSSProperties}
+          className={`relative flex-1 w-full max-w-full overflow-hidden bg-white touch-pan-y ${isTransitioning ? 'pointer-events-none' : ''}`}
+          style={{ '--panel-gap': '11px', overscrollBehaviorX: 'none' } as React.CSSProperties}
         >
           {panels.map((panel, index) => {
             // Calculate relative position based on startIndex
@@ -152,10 +207,15 @@ export function Hero() {
               ? 'calc(-100% - var(--panel-gap))' 
               : `calc(${diff} * 100% + ${diff} * var(--panel-gap))`;
 
+            // On mobile (<768px), panels beyond the immediate next item are contained to prevent bleed
+            const isFarOffscreenMobile = diff > 1 && !isExiting;
+
             return (
               <div
                 key={panel.id}
-                className="absolute top-0 left-0 h-full w-full md:w-[calc(50%-5.5px)] lg:w-[calc(33.3333%-7.3333px)]"
+                className={`absolute top-0 left-0 h-full w-full md:w-[calc(50%-5.5px)] lg:w-[calc(33.3333%-7.3333px)] ${
+                  isFarOffscreenMobile ? 'max-md:invisible max-md:pointer-events-none' : ''
+                }`}
                 style={{
                   transform: `translate3d(${translateX}, 0, 0)`,
                   opacity: isExiting ? 0 : (diff > 3 ? 0 : 1), // Fade out exiting, hide far right
@@ -186,6 +246,7 @@ export function Hero() {
               type="button"
               aria-label={`Go to panel ${index + 1}`}
               onClick={() => {
+                lastScrollTimeRef.current = Date.now();
                 setIsTransitioning(true);
                 setStartIndex(index);
                 setTimeout(() => setIsTransitioning(false), 700);
