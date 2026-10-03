@@ -137,16 +137,16 @@ export function CollectionsCatalog() {
           </div>
 
           {/* Segmented Pill Filter Bar (Luxury Minimalist with Liquid Hover) */}
-          <div className="overflow-x-auto pb-1 sm:pb-0 -mx-1 px-1">
+          <div className="w-full md:w-auto overflow-x-auto scrollbar-none overscroll-x-contain -mx-5 px-5 sm:mx-0 sm:px-0 py-1 sm:py-0">
             <div 
-              className="inline-flex items-center p-1.5 bg-[#f0eee9] rounded-full border border-neutral-300/60 shadow-inner"
+              className="inline-flex items-center p-1 sm:p-1.5 bg-[#f0eee9] rounded-full border border-neutral-300/60 shadow-inner shrink-0"
               onMouseLeave={() => setHoveredTab(null)}
             >
               {[
-                { label: "ALL EDITIONS", key: "all" },
-                { label: "T-SHIRTS & APPAREL", key: "tees" },
-                { label: "SNEAKERS & SHOES", key: "shoes" },
-                { label: "SUMMER RESORT", key: "resort" },
+                { key: "all", desktop: "ALL EDITIONS", mobile: "ALL" },
+                { key: "tees", desktop: "T-SHIRTS & APPAREL", mobile: "APPAREL" },
+                { key: "shoes", desktop: "SNEAKERS & SHOES", mobile: "FOOTWEAR" },
+                { key: "resort", desktop: "SUMMER RESORT", mobile: "RESORT" },
               ].map((tab) => {
                 const isActive = activeCategory === tab.key;
                 const isHovered = hoveredTab === tab.key && !isActive;
@@ -157,7 +157,7 @@ export function CollectionsCatalog() {
                     type="button"
                     onClick={() => setActiveCategory(tab.key as typeof activeCategory)}
                     onMouseEnter={() => setHoveredTab(tab.key)}
-                    className={`relative px-4 sm:px-5 py-2 text-xs uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
+                    className={`relative px-3 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
                       isActive
                         ? "text-white font-bold"
                         : isHovered
@@ -189,7 +189,10 @@ export function CollectionsCatalog() {
                       aria-hidden="true"
                     />
 
-                    <span className="relative z-10 block">{tab.label}</span>
+                    <span className="relative z-10 block whitespace-nowrap">
+                      <span className="sm:hidden">{tab.mobile}</span>
+                      <span className="hidden sm:inline">{tab.desktop}</span>
+                    </span>
                   </button>
                 );
               })}
