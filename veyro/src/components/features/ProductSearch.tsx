@@ -264,10 +264,10 @@ export function ProductSearch({
         role="dialog"
         aria-modal="true"
         aria-label="Search Catalog"
-        className="fixed inset-0 z-[120] bg-white flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden overscroll-contain animate-in fade-in duration-200"
+        className="fixed inset-0 z-[150] bg-white flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden overscroll-contain animate-in fade-in duration-200"
       >
         {/* Pinned Top Search Bar */}
-        <div className="shrink-0 px-4 py-3 border-b border-[#f0f0ed] bg-white flex items-center gap-3">
+        <div className="shrink-0 px-4 pt-[max(14px,env(safe-area-inset-top))] pb-3.5 border-b border-[#f0f0ed] bg-white flex items-center gap-3">
           <div className="flex-1 relative flex items-center">
             <span className="absolute left-3.5 text-neutral-400 pointer-events-none">
               <SearchIcon size={18} />

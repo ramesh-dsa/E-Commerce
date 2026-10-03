@@ -399,6 +399,8 @@ export function Navbar() {
         </div>
       </div>
 
+      </header>
+
       {/* Full-Screen Mobile Search Modal (< 768px) */}
       {mobileSearchOpen && (
         <ProductSearch
@@ -407,7 +409,6 @@ export function Navbar() {
           onClose={() => setMobileSearchOpen(false)}
         />
       )}
-      </header>
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
