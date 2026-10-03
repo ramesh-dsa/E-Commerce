@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   Package,
   Truck,
+  Check,
   CheckCircle2,
   Clock,
   MapPin,
@@ -312,45 +313,36 @@ export default function OrderDetailPage() {
               {isJustConfirmed && order.status !== "Cancelled" && (
                 <motion.div 
                   variants={scaleIn} 
-                  className="relative bg-[#111111] text-white rounded-2xl p-6 sm:p-8 overflow-hidden shadow-xl"
+                  className="bg-[#0a0a0c] text-white rounded-xl border border-neutral-800/80 p-5 sm:p-7 shadow-[0_20px_40px_rgba(0,0,0,0.35)] relative overflow-hidden"
                 >
-                  <div className="absolute top-0 left-0 w-full h-1.5 bg-[#fcd017]" />
-                  <motion.div 
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className="absolute -top-32 -right-32 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" 
-                  />
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-                    <div className="flex items-start gap-5">
-                      <motion.div 
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.2 }}
-                        className="w-14 h-14 rounded-full bg-[#fcd017] text-[#111111] flex items-center justify-center shrink-0 shadow-[0_0_30px_rgba(252,208,23,0.3)]"
-                      >
-                        <CheckCircle2 size={28} className="stroke-[2.5]" />
-                      </motion.div>
-                      <div>
-                        <motion.span variants={fadeUp} className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#fcd017] font-bold block mb-1.5">
-                          Order Secured
-                        </motion.span>
-                        <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl font-black tracking-tight uppercase mb-2">
-                          Thank You.
-                        </motion.h2>
-                        <motion.p variants={fadeUp} className="text-xs sm:text-sm text-neutral-400 max-w-xl leading-relaxed">
-                          Reference <strong className="text-white font-mono font-bold">#{order.id}</strong> is confirmed. We are preparing your items for dispatch.
-                        </motion.p>
-                      </div>
+                  {/* Top Meta Bar */}
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-white/10 text-neutral-200 border border-white/15">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                      <span>Order Confirmed</span>
                     </div>
-                    <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
-                      <Link
-                        href="/clothing"
-                        className="w-full sm:w-auto text-center bg-white text-[#111111] hover:bg-neutral-200 px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-colors"
-                      >
-                        Continue Shopping
-                      </Link>
-                    </motion.div>
+                    <span className="text-xs text-neutral-400 font-mono">
+                      Ref #{order.id}
+                    </span>
+                  </div>
+
+                  {/* Body & Action */}
+                  <div className="mt-4 flex flex-col sm:flex-row sm:items-end justify-between gap-5 sm:gap-8">
+                    <div className="max-w-lg">
+                      <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                        Thank you for your order
+                      </h2>
+                      <p className="text-xs sm:text-sm text-neutral-400 mt-1 leading-relaxed">
+                        We&apos;ve received your order and our warehouse team is preparing your pieces for dispatch.
+                      </p>
+                    </div>
+                    <Link
+                      href="/clothing"
+                      className="inline-flex items-center justify-center gap-2 bg-white text-neutral-950 hover:bg-neutral-100 px-5 py-2.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-colors shrink-0 shadow-sm cursor-pointer"
+                    >
+                      <span>Continue Shopping</span>
+                      <ArrowRight size={13} />
+                    </Link>
                   </div>
                 </motion.div>
               )}
@@ -358,29 +350,78 @@ export default function OrderDetailPage() {
 
             {/* STATUS / TIMELINE */}
             {order.status === "Cancelled" ? (
-              <motion.section variants={fadeUp} className="bg-white rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm border border-black/[0.04]">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-rose-500 to-amber-500" />
-                <div className="flex items-start gap-5">
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-14 h-14 rounded-full bg-red-50 border border-red-100 text-red-600 flex items-center justify-center shrink-0">
-                    <XCircle size={28} className="stroke-[2.5]" />
-                  </motion.div>
-                  <div>
-                    <h2 className="text-xl font-black text-neutral-900 uppercase tracking-tight">
-                      Order Cancelled
-                    </h2>
-                    <p className="text-sm text-neutral-500 mt-1 leading-relaxed">
-                      {cancelledTimelineEntry?.description || "This order was cancelled by customer request. No further delivery attempts will be made."}
-                    </p>
-                    
-                    <div className="mt-5 pt-5 border-t border-black/[0.04] flex items-center gap-3 text-sm">
-                      <span className="relative flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                      </span>
-                      <span className="text-neutral-600">
-                        Refund of <strong className="text-black">{formatPrice(order.total)}</strong> to {paymentInfo.label} in 5-7 days.
-                      </span>
+              <motion.section 
+                variants={fadeUp} 
+                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-black/[0.04] transition-all"
+              >
+                {/* Header matching standard Order Status */}
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
+                  <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                    <Package size={14} /> ORDER STATUS
+                  </h2>
+                  <span className="text-xs font-bold text-rose-600 flex items-center gap-1.5 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    Cancelled
+                  </span>
+                </div>
+
+                {/* Native 2-Step Terminal Timeline */}
+                <div className="space-y-6 relative" role="list" aria-label="Order cancellation timeline">
+                  {/* Step 1: Order Placed */}
+                  <div className="flex items-start gap-3.5 sm:gap-4 relative">
+                    {/* Connecting Line to Step 2 */}
+                    <div className="absolute left-[13px] top-[26px] bottom-[-24px] w-[2px] bg-[#111111]" />
+
+                    <div className="relative z-10 w-7 h-7 rounded-full bg-[#111111] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Check size={14} className="stroke-[2.5]" />
                     </div>
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                          Order Placed
+                        </span>
+                        <span className="text-[11px] text-neutral-400 font-mono">
+                          {order.date}
+                        </span>
+                      </div>
+                      <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+                        Order received and payment authorized via {paymentInfo.label}.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 2: Order Cancelled */}
+                  <div className="flex items-start gap-3.5 sm:gap-4 relative">
+                    <div className="relative z-10 w-7 h-7 rounded-full bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <RotateCcw size={13} className="stroke-[2.5]" />
+                    </div>
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
+                          Order Cancelled
+                        </span>
+                        <span className="text-[11px] text-neutral-400 font-mono">
+                          {cancelledTimelineEntry?.timestamp || "Customer Request"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
+                        {cancelledTimelineEntry?.description || "This order was cancelled by customer request. No delivery attempts will be made and reserved stock has been released."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contextual Refund Footer */}
+                <div className="mt-8 pt-5 border-t border-black/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-neutral-600">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-neutral-400">Refund</span>
+                    <strong className="text-sm font-bold text-neutral-900">{formatPrice(order.total)}</strong>
+                    <span className="text-neutral-400">to</span>
+                    <span className="font-semibold text-neutral-800">{paymentInfo.label}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-neutral-500 font-mono">
+                    <Clock size={13} className="text-neutral-400 shrink-0" />
+                    <span>Estimated in 5–7 business days</span>
                   </div>
                 </div>
               </motion.section>
