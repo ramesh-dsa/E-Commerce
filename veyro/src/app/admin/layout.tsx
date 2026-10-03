@@ -158,10 +158,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Footer actions */}
-        <div className="p-3.5 border-t border-white/[0.08] space-y-1.5 flex-shrink-0">
+        <div className="p-4 pb-7 border-t border-white/[0.08] space-y-1.5 flex-shrink-0 bg-[#0d0d0d]/40">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] rounded-xl transition-all"
+            className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-white/[0.06] rounded-xl transition-all"
           >
             <ArrowLeft size={15} />
             <span>Back to Store</span>
@@ -171,7 +171,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               adminLogout();
               router.push("/admin/login");
             }}
-            className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all w-full text-left cursor-pointer"
+            className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all w-full text-left cursor-pointer"
           >
             <LogOut size={15} />
             <span>Logout</span>
