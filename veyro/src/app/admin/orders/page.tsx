@@ -9,6 +9,7 @@ import {
   DateFilterSelection,
   parseOrderDateToDayString,
   formatDayDisplay,
+  formatBarDate,
 } from "@/components/admin/AdminDateRangePicker";
 import {
   ShoppingCart,
@@ -729,12 +730,39 @@ export default function AdminOrdersPage() {
                           isActive ? "text-neutral-950 font-bold" : "text-neutral-400"
                         }`}
                       >
-                        {d.date.slice(8)} Oct
+                        {formatBarDate(d.date)}
                       </span>
                     </div>
                   );
                 })}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── CUSTOM / PRESET RANGE BANNER ──────────────────────────────────────── */}
+      {!isTillDateMode && !isDayWiseMode && (
+        <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-950 animate-in fade-in duration-150">
+          <div className="flex items-center gap-2">
+            <Calendar size={15} className="text-amber-600 shrink-0" />
+            <span>
+              <strong>Custom Scope:</strong> {dateFilter.label} ({filteredOrders.length} {filteredOrders.length === 1 ? "order" : "orders"} • ₹{stats.scopeRevenue.toLocaleString("en-IN")})
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSelectTillDate}
+              className="text-[11px] font-bold text-amber-900 hover:underline cursor-pointer"
+            >
+              Reset to All Time (Till Date)
+            </button>
+            <span className="text-amber-300">•</span>
+            <button
+              onClick={handleSelectDayWiseMode}
+              className="text-[11px] font-bold text-amber-900 hover:underline cursor-pointer"
+            >
+              Switch to Day-Wise
+            </button>
           </div>
         </div>
       )}

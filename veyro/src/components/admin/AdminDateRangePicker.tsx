@@ -64,6 +64,22 @@ export function formatDayDisplay(dayStr: string): string {
   return dayStr;
 }
 
+export function formatBarDate(dayStr: string): string {
+  try {
+    const parts = dayStr.split("-");
+    if (parts.length === 3) {
+      const day = parts[2];
+      const monthNum = parseInt(parts[1], 10);
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const month = months[monthNum - 1] || "Oct";
+      return `${day} ${month}`;
+    }
+  } catch {
+    // ignore
+  }
+  return dayStr;
+}
+
 interface AdminDateRangePickerProps {
   currentFilter: DateFilterSelection;
   onSelectFilter: (filter: DateFilterSelection) => void;

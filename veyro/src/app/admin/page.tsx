@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus, Product } from "@/types";
-import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay } from "@/components/admin/AdminDateRangePicker";
+import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay, formatBarDate } from "@/components/admin/AdminDateRangePicker";
 import {
   Search,
   Calendar,
@@ -6363,7 +6363,7 @@ export default function AdminDashboard() {
                           isActive ? "text-neutral-950 font-bold" : "text-neutral-400"
                         }`}
                       >
-                        {d.date.slice(8)} Oct
+                        {formatBarDate(d.date)}
                       </span>
                     </div>
                   );
@@ -7633,7 +7633,7 @@ export default function AdminDashboard() {
 
                 return (
                   <div
-                    key={item.id || item.rank}
+                    key={`${item.id || item.name || "prod"}-${idx}`}
                     onClick={() => setSelectedTopProduct(item)}
                     className="flex items-center justify-between gap-3 group cursor-pointer p-2 -mx-2 rounded-2xl hover:bg-neutral-50/90 transition-all border border-transparent hover:border-black/[0.04] hover:shadow-2xs"
                     title={`Click to view deep analytics & stock actions for ${item.name}`}
