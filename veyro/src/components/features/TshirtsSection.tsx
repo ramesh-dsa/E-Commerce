@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/features/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 
 export function TshirtsSection() {
+  const { products } = useProducts();
   const [selectedFit, setSelectedFit] = useState("ALL");
 
   const fits = ["ALL", "Oversized", "Regular", "Textured", "Graphic", "Relaxed"];

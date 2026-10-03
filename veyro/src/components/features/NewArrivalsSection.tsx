@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/features/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 
 export function NewArrivalsSection() {
+  const { products } = useProducts();
   const [activeTab, setActiveTab] = useState<"ALL" | "OVERSIZED" | "FOOTWEAR" | "TEXTURED">("ALL");
 
   const tabs: Array<"ALL" | "OVERSIZED" | "FOOTWEAR" | "TEXTURED"> = [

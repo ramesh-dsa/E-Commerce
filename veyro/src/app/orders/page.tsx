@@ -134,6 +134,14 @@ const STATUS_CONFIG: Record<
     rounded: "rounded-full",
     icon: <Package size={13} className="stroke-[2.5]" />,
   },
+  Processing: {
+    label: "Processing",
+    bg: "bg-amber-50",
+    text: "text-amber-800",
+    border: "border-amber-200/80",
+    rounded: "rounded-full",
+    icon: <Package size={13} className="stroke-[2.5]" />,
+  },
   Shipped: {
     label: "In Transit",
     bg: "bg-indigo-50",

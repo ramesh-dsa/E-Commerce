@@ -107,6 +107,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                   alt={`${product.name} thumbnail ${index + 1}`}
                   fill
                   quality={80}
+                  unoptimized={img.startsWith("data:")}
                   className="object-cover object-center"
                   sizes="80px"
                   onError={() => handleImageError(img)}
@@ -133,6 +134,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             fill
             priority
             quality={85}
+            unoptimized={activeImage.startsWith("data:")}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 600px"
             className="object-cover object-center transition-transform duration-150 ease-out"
             onError={() => handleImageError(activeImage)}

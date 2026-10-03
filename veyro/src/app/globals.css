@@ -171,6 +171,34 @@ body {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
+/* ─── Admin Panel Scrollbar ─────────────────────────────────────────────── */
+.admin-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8f8f6;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-scroll-container::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+  height: 8px;
+}
+
+.admin-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1ee;
+  border-radius: 4px;
+}
+
+.admin-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #c4c4be;
+  border-radius: 4px;
+  border: 2px solid #f1f1ee;
+}
+
+.admin-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #999994;
+}
+
 /* ─── Filter Section Collapse/Expand (CSS grid-rows trick) ──────────────── */
 .filter-section-content {
   display: grid;
@@ -679,3 +707,24 @@ footer input:-webkit-autofill:active,
     mask-position: left, right;
   }
 }
+
+/* ─── Admin Panel Form Inputs ──────────────────────────────────────────── */
+.admin-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-veyro-border);
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  color: var(--color-veyro-black);
+  transition: border-color 0.15s ease;
+}
+.admin-input:focus {
+  outline: none;
+  border-color: var(--color-veyro-black);
+}
+.admin-input::placeholder {
+  color: var(--color-veyro-muted);
+  opacity: 0.6;
+}
+

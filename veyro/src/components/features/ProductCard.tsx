@@ -51,6 +51,7 @@ export function ProductCard({
             alt={product.name}
             fill
             quality={80}
+            unoptimized={product.imageUrl?.startsWith("data:")}
             sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
@@ -67,6 +68,7 @@ export function ProductCard({
               fill
               quality={80}
               loading="lazy"
+              unoptimized={product.secondaryImageUrl?.startsWith("data:")}
               sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
               className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
             />

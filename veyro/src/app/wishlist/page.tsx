@@ -9,7 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
 import { Badge } from "@/components/ui/Badge";
 import { ProductCard } from "@/components/features/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Product } from "@/types";
 import {
@@ -34,6 +34,7 @@ export default function WishlistPage() {
     clearWishlist,
   } = useWishlist();
   const { addToCart, openCart } = useCart();
+  const { products } = useProducts();
 
   // State
   const [movingId, setMovingId] = useState<string | null>(null);

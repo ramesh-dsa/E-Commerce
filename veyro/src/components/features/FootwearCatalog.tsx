@@ -4,7 +4,7 @@ import React, { useState, useMemo, useTransition, useCallback, useRef } from "re
 import Image from "next/image";
 import Link from "next/link";
 import { useLenis } from "lenis/react";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -33,6 +33,7 @@ import {
 
 
 export function FootwearCatalog() {
+  const { products } = useProducts();
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
   const { addToCart, openCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -52,17 +53,17 @@ export function FootwearCatalog() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
-  // ── Base Footwear Products (9 SKUs) ────────────────────────────────────────
+  // ── Base Footwear Products ────────────────────────────────────────
   const footwearProducts = useMemo(() => {
     return products.filter((p) => p.category === "Footwear");
-  }, []);
+  }, [products]);
 
   // ── Heavyweight Tee Pairings (Clothing Cross-Sell) ─────────────────────────
   const clothingPairings = useMemo(() => {
     return products
       .filter((p) => p.category === "Clothing" && p.material.includes("240gsm"))
       .slice(0, 3);
-  }, []);
+  }, [products]);
 
   // ── Dynamic Item Counts for All Filter Criteria ────────────────────────────
   const itemCounts = useMemo(() => {

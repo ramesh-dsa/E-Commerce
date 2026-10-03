@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
 import { SearchIcon, CloseIcon } from "@/components/ui/Icons";
 import { ArrowUpRight, TrendingUp, Sparkles } from "lucide-react";
@@ -41,6 +41,7 @@ export function ProductSearch({
   isMobile = false,
   onClose,
 }: ProductSearchProps) {
+  const { products } = useProducts();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -169,7 +170,7 @@ export function ProductSearch({
       .sort((a, b) => b.score - a.score)
       .map((item) => item.product)
       .slice(0, 5);
-  }, [query]);
+  }, [query, products]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

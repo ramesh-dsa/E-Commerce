@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Check,
   User as LucideUser,
+  Shield,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { Toast } from "@/components/ui/Toast";
@@ -26,8 +27,8 @@ import { AnnouncementBar } from "./AnnouncementBar";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/context/UserContext";
+import { useProducts } from "@/context/ProductsContext";
 import { ProductSearch } from "@/components/features/ProductSearch";
-import { products } from "@/data/products";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -41,6 +42,7 @@ export function Navbar() {
   const { totalItems, openCart } = useCart();
   const { totalWishlistItems, openWishlist } = useWishlist();
   const { user, orders, openAccountModal, logout } = useUser();
+  const { products } = useProducts();
 
   const activeOrdersCount = orders ? orders.filter((o) => o.status !== "Delivered").length : 0;
 
@@ -165,10 +167,14 @@ export function Navbar() {
     },
   ];
 
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <>
       <AnnouncementBar />
-      <header className="sticky top-0 z-30 w-full bg-white">
+      <header className="sticky top-0 z-50 w-full bg-white">
         {/* 100% Full-width Navbar with 48-56px desktop horizontal padding */}
       <div className="flex h-[74px] sm:h-[78px] lg:h-[82px] w-full items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-14">
         {/* Left: Brand Wordmark & Main Nav Links */}
@@ -346,6 +352,32 @@ export function Navbar() {
                         </div>
                         <p className="text-[11px] text-neutral-500 truncate">
                           Personal info & address
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                  </Link>
+
+                  {/* Menu Item 3: Admin Portal */}
+                  <Link
+                    href="/admin"
+                    role="menuitem"
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                    className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 rounded-lg transition-colors group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-[#fcd017]/20 flex items-center justify-center text-neutral-900 group-hover:bg-[#fcd017] transition-colors shrink-0">
+                        <Shield size={15} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-neutral-900 flex items-center gap-1.5">
+                          Admin Portal
+                          <span className="text-[9px] bg-neutral-900 text-[#fcd017] px-1.5 py-0.2 rounded font-mono font-bold">
+                            STAFF
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 truncate">
+                          Manage products, orders & sales
                         </p>
                       </div>
                     </div>

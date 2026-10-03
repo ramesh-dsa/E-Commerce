@@ -5,9 +5,10 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { ProductCard } from "@/components/features/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 
 export function FootwearSection() {
+  const { products } = useProducts();
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);

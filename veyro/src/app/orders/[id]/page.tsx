@@ -8,7 +8,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useUser } from "@/context/UserContext";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import type { OrderStatus } from "@/types";
 import {
   ArrowLeft,
@@ -46,6 +46,7 @@ const TIMELINE_STEPS: OrderStatus[] = [
 const TIMELINE_ICONS: Record<OrderStatus, React.ReactNode> = {
   Confirmed: <Package size={16} strokeWidth={2.5} />,
   Packed: <Package size={16} strokeWidth={2.5} />,
+  Processing: <Package size={16} strokeWidth={2.5} />,
   Shipped: <Truck size={16} strokeWidth={2.5} />,
   "Out for Delivery": <Truck size={16} strokeWidth={2.5} />,
   Delivered: <CheckCircle2 size={16} strokeWidth={2.5} />,
@@ -92,6 +93,7 @@ export default function OrderDetailPage() {
   const searchParams = useSearchParams();
   const { user, orders, openAccountModal, cancelOrder } = useUser();
   const { addToCart } = useCart();
+  const { products } = useProducts();
 
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelSuccess, setCancelSuccess] = useState<string | null>(null);
@@ -187,7 +189,7 @@ export default function OrderDetailPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white border-b border-black/[0.04] sticky top-0 z-40 shadow-[0_1px_10px_rgba(0,0,0,0.01)]"
+        className="bg-white border-b border-black/[0.04] sticky top-[74px] sm:top-[78px] lg:top-[82px] z-40 shadow-[0_1px_10px_rgba(0,0,0,0.01)]"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7">
           <Link

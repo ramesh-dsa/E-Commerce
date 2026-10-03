@@ -9,7 +9,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
 import { ProductCard } from "@/components/features/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
 import {
   ShoppingBag,
@@ -31,6 +31,7 @@ import {
 
 export default function CartPage() {
   const router = useRouter();
+  const { products } = useProducts();
   const {
     items,
     totalItems,

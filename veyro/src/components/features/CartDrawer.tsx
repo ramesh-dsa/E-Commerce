@@ -414,7 +414,7 @@ export function CartDrawer() {
 
       addOrder({
         id: generatedId,
-        date: "Just now",
+        date: timestamp,
         total: selectedFinalTotal,
         subtotal: selectedSubtotal,
         bundleDiscount: selectedBundleDiscount,

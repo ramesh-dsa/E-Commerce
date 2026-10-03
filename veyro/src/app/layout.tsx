@@ -6,6 +6,8 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { UserProvider } from "@/context/UserContext";
 import { ReviewsProvider } from "@/context/ReviewsContext";
+import { ProductsProvider } from "@/context/ProductsContext";
+import { AdminProvider } from "@/context/AdminContext";
 import dynamic from "next/dynamic";
 
 const AccountModal = dynamic(
@@ -56,25 +58,29 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} ${montserrat.variable} max-w-full overflow-x-clip overscroll-x-none`}
     >
       <body className="min-h-screen bg-white text-veyro-black antialiased max-w-full overflow-x-clip overscroll-x-none">
-        <CartProvider>
-          <WishlistProvider>
-            <UserProvider>
-              <ReviewsProvider>
-                <SmoothScrolling>
-                  <div className="min-h-screen flex flex-col bg-white text-veyro-black max-w-full overflow-x-clip">
-                    <Navbar />
-                    <main className="flex-1 w-full max-w-full overflow-x-clip">
-                      {children}
-                    </main>
-                    <Footer />
-                  </div>
-                </SmoothScrolling>
-                <ScrollToTop />
-                <AccountModal />
-              </ReviewsProvider>
-            </UserProvider>
-          </WishlistProvider>
-        </CartProvider>
+        <ProductsProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <UserProvider>
+                <ReviewsProvider>
+                  <AdminProvider>
+                    <SmoothScrolling>
+                      <div className="min-h-screen flex flex-col bg-white text-veyro-black max-w-full overflow-x-clip">
+                        <Navbar />
+                        <main className="flex-1 w-full max-w-full overflow-x-clip">
+                          {children}
+                        </main>
+                        <Footer />
+                      </div>
+                    </SmoothScrolling>
+                    <ScrollToTop />
+                    <AccountModal />
+                  </AdminProvider>
+                </ReviewsProvider>
+              </UserProvider>
+            </WishlistProvider>
+          </CartProvider>
+        </ProductsProvider>
       </body>
     </html>
   );

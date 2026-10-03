@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -33,6 +33,7 @@ import {
 type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
 
 export function ClothingCatalog() {
+  const { products } = useProducts();
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
   const { addToCart } = useCart();
   const { isInWishlist } = useWishlist();
@@ -51,15 +52,15 @@ export function ClothingCatalog() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isFitGuideOpen, setIsFitGuideOpen] = useState(false);
 
-  // ── Base Clothing Products (15 SKUs) ───────────────────────────────────────
+  // ── Base Clothing Products ───────────────────────────────────────
   const clothingProducts = useMemo(() => {
     return products.filter((p) => p.category === "Clothing");
-  }, []);
+  }, [products]);
 
   // ── Sneaker Vault Curated Pairings (Footwear) ──────────────────────────────
   const footwearPairings = useMemo(() => {
     return products.filter((p) => p.category === "Footwear").slice(0, 3);
-  }, []);
+  }, [products]);
 
   // ── Filter Toggle Handlers ─────────────────────────────────────────────────
   const handleToggleFit = (fit: string) => {

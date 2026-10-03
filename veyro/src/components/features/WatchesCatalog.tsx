@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { useProducts } from "@/context/ProductsContext";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -66,6 +66,7 @@ const CAROUSEL_BANNERS = [
 ];
 
 export function WatchesCatalog() {
+  const { products } = useProducts();
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
   const { addToCart } = useCart();
   const { isInWishlist } = useWishlist();
@@ -101,10 +102,10 @@ export function WatchesCatalog() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % CAROUSEL_BANNERS.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + CAROUSEL_BANNERS.length) % CAROUSEL_BANNERS.length);
 
-  // ── Base Watch Products (8 SKUs) ──────────────────────────────────────────
+  // ── Base Watch Products ──────────────────────────────────────────
   const watchProducts = useMemo(() => {
     return products.filter((p) => p.category === "Watches");
-  }, []);
+  }, [products]);
 
   // ── Dynamic Item Counts for All Filter Criteria ────────────────────────────
   const itemCounts = useMemo(() => {
@@ -170,7 +171,7 @@ export function WatchesCatalog() {
   // ── Footwear Cross-Sell Pairings ─────────────────────────────────────────
   const footwearPairings = useMemo(() => {
     return products.filter((p) => p.category === "Footwear").slice(0, 3);
-  }, []);
+  }, [products]);
 
   // ── Filter Toggle Handlers ────────────────────────────────────────────────
   const handleToggleBrand = (brand: string) => {

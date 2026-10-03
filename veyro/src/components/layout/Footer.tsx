@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { ArrowRightIcon } from "@/components/ui/Icons";
@@ -58,6 +59,7 @@ function DecryptCode({
 }
 
 export function Footer() {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
   const { appliedCoupon, applyCoupon, openCart } = useCart();
 
@@ -73,6 +75,10 @@ export function Footer() {
       setIsTorn(true);
     }
   }, [appliedCoupon]);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const footerLinks = {
     shop: [
@@ -385,6 +391,13 @@ export function Footer() {
             </Link>
             <Link href="#" className="hover:text-white transition-colors">
               Sitemap
+            </Link>
+            <Link
+              href="/admin"
+              className="text-neutral-500 hover:text-[#fcd017] transition-colors font-mono font-medium flex items-center gap-1"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017]" />
+              Admin Portal
             </Link>
           </div>
         </div>

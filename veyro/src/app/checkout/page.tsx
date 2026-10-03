@@ -216,7 +216,7 @@ export default function CheckoutPage() {
 
       const newOrder: OrderRecord = {
         id: generatedOrderId,
-        date: "Today, Just now",
+        date: timestamp,
         total: grandTotal,
         subtotal,
         bundleDiscount,

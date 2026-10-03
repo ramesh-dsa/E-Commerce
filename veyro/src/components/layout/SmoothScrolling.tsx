@@ -228,7 +228,14 @@ function ScrollRestorationHandler() {
 }
 
 export function SmoothScrolling({ children }: SmoothScrollingProps) {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const lenisRef = useRef<LenisRef>(null);
+
+  // Deep fix: Completely bypass smooth wheel hijacking on admin panel so native scrolling works cleanly
+  if (isAdmin) {
+    return <>{children}</>;
+  }
 
   return (
     <ReactLenis
@@ -237,6 +244,12 @@ export function SmoothScrolling({ children }: SmoothScrollingProps) {
       options={{
         lerp: 0.18,
         smoothWheel: true,
+        prevent: (node) => {
+          return (
+            Boolean(node?.hasAttribute?.("data-lenis-prevent")) ||
+            Boolean(node?.closest?.("[data-lenis-prevent]"))
+          );
+        },
       }}
     >
       <ScrollRestorationHandler />
