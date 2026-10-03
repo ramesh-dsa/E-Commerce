@@ -272,7 +272,7 @@ export function ClothingCatalog() {
   }, [clothingProducts, filters, sortBy]);
 
   return (
-    <div className="w-full max-w-full overflow-x-clip bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
+    <div className="w-full max-w-full overflow-x-clip bg-white text-[#111111] selection:bg-[#111111] selection:text-white">
       {/* ── 1. FULL-WIDTH GETHA ARCHIVE SALE HERO BANNER ──────────────── */}
       <section className="w-full max-w-full overflow-x-clip mb-2">
         <div className="relative w-full overflow-hidden bg-[#111111] aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.4/1] lg:aspect-[2.5/1] min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]">
@@ -579,7 +579,7 @@ export function ClothingCatalog() {
       </main>
 
       {/* ── 5. "ENGINEERED WITH FOOTWEAR" CURATED PAIRINGS ─────────────────── */}
-      <section className="w-full max-w-full overflow-x-clip bg-[#fafaf8] border-t border-[#e8e8e5] py-16 px-5 sm:px-8 lg:px-12 mt-12">
+      <section className="w-full max-w-full overflow-x-clip bg-[#fafaf8] border-t border-b border-[#e8e8e5] py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
         <div className="mx-auto max-w-[1536px]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
             <div>

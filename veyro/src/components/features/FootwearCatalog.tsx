@@ -284,7 +284,7 @@ export function FootwearCatalog() {
   }, [filters]);
 
   return (
-    <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
+    <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white">
       {/* ── 1. FULL-WIDTH GETHA SNEAKER VAULT HERO BANNER ──────────────── */}
       <section className="w-full mb-2">
         <div className="relative w-full overflow-hidden bg-[#111111] aspect-[18/9] sm:aspect-[2.3/1] md:aspect-[2.6/1] lg:aspect-[2.7/1] min-h-[280px] sm:min-h-[340px] md:min-h-[400px] lg:min-h-[460px]">
@@ -372,8 +372,8 @@ export function FootwearCatalog() {
       </section>
 
       {/* ── 3. MAIN WORKSPACE: VERTICAL SIDEBAR + PRODUCT GRID ─────────── */}
-      <main className="mx-auto max-w-[1536px] pl-3 sm:pl-5 lg:pl-7 pr-5 sm:pr-8 lg:pr-12 py-8 sm:py-10 min-h-[1400px] lg:min-h-[1600px] [overflow-anchor:none]">
-        <div className="flex items-start gap-6 xl:gap-8 min-h-[1350px] lg:min-h-[1550px]">
+      <main className="mx-auto max-w-[1536px] pl-3 sm:pl-5 lg:pl-7 pr-5 sm:pr-8 lg:pr-12 py-8 sm:py-10 min-h-0 lg:min-h-[1400px] [overflow-anchor:none]">
+        <div className="flex items-start gap-6 xl:gap-8 min-h-0 lg:min-h-[1350px]">
           {/* Vertical Sidebar Filter (Desktop sticky + Mobile slide-over) */}
           <FootwearFilterSidebar
             filters={filters}
@@ -393,7 +393,7 @@ export function FootwearCatalog() {
           />
 
           {/* Right Product Grid Column */}
-          <div className="flex-1 min-w-0 min-h-[1350px] lg:min-h-[1550px] [overflow-anchor:none]">
+          <div className="flex-1 min-w-0 min-h-0 lg:min-h-[1350px] [overflow-anchor:none]">
             {filteredProducts.length === 0 ? (
               /* Empty State */
               <div className="w-full min-h-[580px] py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
@@ -587,7 +587,7 @@ export function FootwearCatalog() {
       </main>
 
       {/* ── 4. CROSS-CATEGORY CURATED PAIRINGS (HEAVYWEIGHT TEES) ───────────── */}
-      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-14 px-5 sm:px-8 lg:px-12 mt-16 [overflow-anchor:none]">
+      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12 [overflow-anchor:none]">
         <div className="mx-auto max-w-[1536px]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
             <div>

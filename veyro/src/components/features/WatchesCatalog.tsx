@@ -410,7 +410,7 @@ export function WatchesCatalog() {
   };
 
   return (
-    <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white pb-24">
+    <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white">
       {/* ── 1. FULL-WIDTH HOROLOGY EDITORIAL HERO CAROUSEL ───────────────── */}
       <section className="w-full mb-2 relative group">
         <h1 className="sr-only">All Watches — Time Lives Different Here | VEYRO Horology Archive</h1>
@@ -652,7 +652,7 @@ export function WatchesCatalog() {
       </main>
 
       {/* ── 4. CROSS-CATEGORY CURATED PAIRINGS (FOOTWEAR) ───────────── */}
-      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-14 px-5 sm:px-8 lg:px-12 mt-12">
+      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
         <div className="mx-auto max-w-[1536px]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
             <div>
