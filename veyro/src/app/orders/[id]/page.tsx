@@ -32,6 +32,7 @@ import {
   ReceiptText
 } from "lucide-react";
 import { CancelOrderModal, isOrderCancellable } from "@/components/features/CancelOrderModal";
+import { Toast } from "@/components/ui/Toast";
 
 const TIMELINE_STEPS: OrderStatus[] = [
   "Confirmed",
@@ -728,23 +729,22 @@ export default function OrderDetailPage() {
         }}
       />
 
-      {/* TOAST SUCCESS */}
-      <AnimatePresence>
-        {cancelSuccess && (
-          <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 40, scale: 0.9 }}
-            transition={{ duration: 0.4, type: "spring", bounce: 0.4 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#111111] text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center gap-3 text-sm font-medium border border-white/10"
-          >
-            <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
-              <CheckCircle2 size={14} className="text-red-400 stroke-[2.5]" />
-            </div>
-            <span>Order <strong className="font-mono">#{cancelSuccess}</strong> cancelled.</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Cancel Success Toast ─────────────────────────────────────────── */}
+      <Toast
+        isOpen={Boolean(cancelSuccess)}
+        onClose={() => setCancelSuccess(null)}
+        variant="danger"
+        position="top"
+        message={
+          <span className="flex items-center gap-1.5 flex-wrap">
+            <span>Order</span>
+            <span className="font-mono font-semibold text-white tracking-wide whitespace-nowrap">
+              #{cancelSuccess}
+            </span>
+            <span>has been cancelled</span>
+          </span>
+        }
+      />
     </div>
   );
 }

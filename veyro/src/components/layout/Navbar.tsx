@@ -21,6 +21,7 @@ import {
   User as LucideUser,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { Toast } from "@/components/ui/Toast";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -600,17 +601,14 @@ export function Navbar() {
         </div>
       )}
 
-      {/* Floating Sign Out Feedback Pill */}
-      {signOutNotice && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed top-24 right-6 z-50 bg-neutral-900 text-white text-xs font-medium px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 motion-reduce:animate-none"
-        >
-          <Check size={14} className="text-emerald-400" />
-          <span>{signOutNotice}</span>
-        </div>
-      )}
+      {/* Floating Sign Out Feedback */}
+      <Toast
+        isOpen={Boolean(signOutNotice)}
+        onClose={() => setSignOutNotice(null)}
+        variant="success"
+        position="top"
+        message={<span>{signOutNotice}</span>}
+      />
     </>
   );
 }

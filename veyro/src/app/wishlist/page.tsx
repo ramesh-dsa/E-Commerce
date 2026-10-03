@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { Container } from "@/components/ui/Container";
+import { Toast } from "@/components/ui/Toast";
 import { Badge } from "@/components/ui/Badge";
 import { ProductCard } from "@/components/features/ProductCard";
 import { products } from "@/data/products";
@@ -126,21 +127,13 @@ export default function WishlistPage() {
       </div>
 
       {/* Floating Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className="bg-neutral-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs font-medium border border-neutral-800">
-            <CheckCheck size={16} className="text-emerald-400 shrink-0" />
-            <span>{toastMessage}</span>
-            <button
-              type="button"
-              onClick={() => setToastMessage(null)}
-              className="text-neutral-400 hover:text-white transition-colors ml-1 cursor-pointer"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        </div>
-      )}
+      <Toast
+        isOpen={Boolean(toastMessage)}
+        onClose={() => setToastMessage(null)}
+        variant={toastMessage?.toLowerCase().includes("removed") || toastMessage?.toLowerCase().includes("cleared") ? "info" : "success"}
+        position="top"
+        message={<span>{toastMessage}</span>}
+      />
 
       <Container className="pt-8 sm:pt-10">
         {/* Page Header */}

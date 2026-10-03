@@ -39,6 +39,7 @@ import {
   Repeat,
 } from "lucide-react";
 import { CancelOrderModal, isOrderCancellable } from "@/components/features/CancelOrderModal";
+import { Toast } from "@/components/ui/Toast";
 
 // ── Custom Delivery Truck Icon matching reference ─────────────────────────
 function YellowDeliveryTruckIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -1158,24 +1159,21 @@ export default function OrdersPage() {
 
 
       {/* ── Cancel Success Toast ─────────────────────────────────────────── */}
-      <AnimatePresence>
-        {cancelSuccess && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
-              <Check size={14} className="text-red-400 stroke-[2.5]" />
-            </div>
-            <span>Order #{cancelSuccess} has been cancelled</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        isOpen={Boolean(cancelSuccess)}
+        onClose={() => setCancelSuccess(null)}
+        variant="danger"
+        position="top"
+        message={
+          <span className="flex items-center gap-1.5 flex-wrap">
+            <span>Order</span>
+            <span className="font-mono font-semibold text-white tracking-wide whitespace-nowrap">
+              #{cancelSuccess}
+            </span>
+            <span>has been cancelled</span>
+          </span>
+        }
+      />
     </div>
   );
 }

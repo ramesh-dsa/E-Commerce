@@ -8,3 +8,4 @@ export * from "./SortDropdown";
 export * from "./TearTicket";
 export * from "./SpotlightBentoCard";
 export * from "./WishlistButton";
+export * from "./Toast";
