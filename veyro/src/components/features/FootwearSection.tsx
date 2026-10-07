@@ -23,15 +23,13 @@ export function FootwearSection() {
   // Use a Map for refs so filtering doesn't cause stale indices
   const cardsRef = useRef(new Map<string, HTMLDivElement>());
   const glowsRef = useRef(new Map<string, HTMLDivElement>());
-  const indicatorsRef = useRef(new Map<string, HTMLDivElement>());
 
   // Cached CSSStyleDeclaration refs to avoid crossing JS→DOM bridge on every frame
   const cardStylesRef = useRef(new Map<string, CSSStyleDeclaration>());
   const glowStylesRef = useRef(new Map<string, CSSStyleDeclaration>());
-  const indicatorStylesRef = useRef(new Map<string, CSSStyleDeclaration>());
 
   // Track previous visual state per card to skip no-op DOM writes
-  const prevStateRef = useRef(new Map<string, { scale: string; opacity: string; glowOp: string; indOp: string }>());
+  const prevStateRef = useRef(new Map<string, { scale: string; opacity: string; glowOp: string }>());
 
   // Smooth scrolling & snapping state
   const isSnappingRef = useRef(false);
@@ -161,41 +159,32 @@ export function FootwearSection() {
       const distance = Math.abs(centerInTrack - translateX - viewportCenter);
       const isClosest = product.id === closestProductId;
 
-      // Smooth coverflow curve: active focal card reaches 1.08 scale
-      const normalizedDist = distance / 550;
-      const scaleVal = Math.max(1.08 - Math.min(normalizedDist, 1) * 0.24, 0.84);
+      // Smooth coverflow curve: active focal card reaches crisp 1.06 scale, flanking cards recede to 0.82
+      const normalizedDist = distance / 440;
+      const scaleVal = Math.max(1.06 - Math.min(normalizedDist, 1) * 0.24, 0.82);
       const scaleStr = scaleVal.toFixed(3);
 
-      // Cinematic Depth-of-Field: active card is 100% opacity; inactive cards gently fade to 0.42
-      const cardOpacity = isClosest ? 1 : Math.max(0.42, 1 - (distance / 500) * 0.58);
+      // Cinematic Depth-of-Field: active card is 100% opacity; inactive cards gently fade to 0.35
+      const cardOpacity = isClosest ? 1 : Math.max(0.35, 1 - (distance / 420) * 0.65);
       const opacityStr = cardOpacity.toFixed(2);
 
       // Studio Spotlight Halo
       const glowStyle = glowStylesRef.current.get(product.id);
-      const glowOpacity = isClosest ? Math.max(1 - distance / 300, 0.35) : 0;
+      const glowOpacity = isClosest ? Math.max(1 - distance / 260, 0.25) : 0;
       const glowOpStr = glowOpacity.toFixed(2);
-
-      // Luxury status indicator
-      const indicatorStyle = indicatorStylesRef.current.get(product.id);
-      const indicatorOpacity = isClosest && distance < 200 ? 1 : 0;
-      const indOpStr = indicatorOpacity.toString();
 
       // Skip DOM writes if values haven't changed (biggest perf win)
       const prev = prevMap.get(product.id);
-      if (prev && prev.scale === scaleStr && prev.opacity === opacityStr && prev.glowOp === glowOpStr && prev.indOp === indOpStr) {
+      if (prev && prev.scale === scaleStr && prev.opacity === opacityStr && prev.glowOp === glowOpStr) {
         continue;
       }
-      prevMap.set(product.id, { scale: scaleStr, opacity: opacityStr, glowOp: glowOpStr, indOp: indOpStr });
+      prevMap.set(product.id, { scale: scaleStr, opacity: opacityStr, glowOp: glowOpStr });
 
       cardStyle.transform = `scale3d(${scaleStr}, ${scaleStr}, 1)`;
       cardStyle.opacity = opacityStr;
 
       if (glowStyle) {
         glowStyle.opacity = glowOpStr;
-      }
-
-      if (indicatorStyle) {
-        indicatorStyle.opacity = indOpStr;
       }
     }
   }, []);
@@ -496,7 +485,7 @@ export function FootwearSection() {
             {/* Direct CTA to full Footwear Catalog */}
             <Link
               href="/shoes"
-              className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-[#fcd017] hover:bg-white text-black font-extrabold text-[10px] sm:text-[11px] uppercase tracking-[0.15em] rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(252,208,23,0.3)] hover:shadow-[0_8px_25px_rgba(255,255,255,0.4)] group/btn mb-4 sm:mb-8 w-fit"
+              className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-veyro-yellow border border-veyro-yellow hover:bg-white hover:border-white text-veyro-black hover:text-veyro-black font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.18em] rounded-full transition-all duration-300 group/btn mb-4 sm:mb-8 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <span>Explore Sneaker Vault (9)</span>
               <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
@@ -504,19 +493,26 @@ export function FootwearSection() {
 
             {/* Interactive Brutalist Filters & Mobile Carousel Controls */}
             <div className="flex items-center justify-between gap-3 w-full">
-              <div role="tablist" className="flex items-center gap-5 sm:gap-6 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#999] overflow-x-auto scrollbar-none pb-1">
-                {["ALL", "MINIMAL", "RETRO", "CHUNKY"].map((filter) => (
-                  <button 
-                    key={filter}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeFilter === filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`hover:text-white transition-colors duration-300 shrink-0 ${activeFilter === filter ? "text-white" : ""}`}
-                  >
-                    {filter}
-                  </button>
-                ))}
+              <div role="tablist" className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.18em] uppercase overflow-x-auto scrollbar-none">
+                {["ALL", "MINIMAL", "RETRO", "CHUNKY"].map((filter) => {
+                  const isActive = activeFilter === filter;
+                  return (
+                    <button 
+                      key={filter}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setActiveFilter(filter)}
+                      className={`relative px-3 py-1.5 rounded-full transition-all duration-300 ease-out shrink-0 select-none cursor-pointer ${
+                        isActive 
+                          ? "text-white bg-white/[0.1] border border-white/[0.15] backdrop-blur-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" 
+                          : "text-[#666] border border-transparent hover:text-[#b0b0b0] hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Mobile Carousel Navigation Arrows */}
@@ -617,26 +613,6 @@ export function FootwearSection() {
                         style={{ opacity: 0 }}
                       />
 
-                      {/* Sleek Luxury Focal Accent (Visible only on active focal sneaker) */}
-                      <div
-                        ref={(el) => {
-                          if (el) {
-                            indicatorsRef.current.set(product.id, el);
-                            indicatorStylesRef.current.set(product.id, el.style);
-                          } else {
-                            indicatorsRef.current.delete(product.id);
-                            indicatorStylesRef.current.delete(product.id);
-                          }
-                        }}
-                        className="absolute -top-7 left-0 flex items-center gap-1.5 pointer-events-none"
-                        style={{ opacity: 0 }}
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] animate-pulse" />
-                        <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/90">
-                          VAULT ARCHIVE
-                        </span>
-                      </div>
-
                       <ProductCard 
                         product={product} 
                         theme="dark"
@@ -649,14 +625,6 @@ export function FootwearSection() {
             </div>
           </div>
 
-        </div>
-
-        {/* Scroll Indicator - Desktop Only */}
-        <div className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 opacity-50 pointer-events-none">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">
-            Scroll to explore
-          </span>
-          <div className="w-[1px] h-8 bg-gradient-to-b from-[#a3a3a3] to-transparent"></div>
         </div>
 
       </div>

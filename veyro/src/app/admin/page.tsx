@@ -7323,46 +7323,45 @@ export default function AdminDashboard() {
             </div>
 
             {/* List */}
-            <div className="space-y-2.5">
+            <div className="space-y-1.5">
               {activeTopProducts.slice(0, 5).map((item, idx) => {
-                const maxVal = Math.max(
-                  ...activeTopProducts.slice(0, 5).map((p) =>
-                    topProductsMetric === "revenue" ? p.revenue : p.soldCount
-                  ),
-                  1
-                );
-                const currentVal = topProductsMetric === "revenue" ? item.revenue : item.soldCount;
-                const barWidth = Math.round((currentVal / maxVal) * 100);
-
                 return (
                   <div
                     key={`${item.id || item.name || "prod"}-${idx}`}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setSelectedTopProduct(item)}
-                    className="flex items-center justify-between gap-3 group cursor-pointer p-2 -mx-2 rounded-2xl hover:bg-neutral-50/90 transition-all border border-transparent hover:border-black/[0.04] hover:shadow-2xs"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedTopProduct(item);
+                      }
+                    }}
+                    className="flex items-center justify-between gap-3 group cursor-pointer p-2.5 -mx-1.5 rounded-2xl hover:bg-neutral-50/90 transition-all border border-transparent hover:border-black/[0.04] hover:shadow-2xs focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40"
                     title={`Click to view deep analytics & stock actions for ${item.name}`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       {/* Rank Medal */}
                       {idx === 0 ? (
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-600 text-white flex items-center justify-center font-black text-[10px] shadow-xs shrink-0 ring-1 ring-amber-300/60">
+                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-600 text-white flex items-center justify-center font-black text-[10px] shadow-xs shrink-0 ring-1 ring-amber-300/60">
                           1
                         </div>
                       ) : idx === 1 ? (
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 text-white flex items-center justify-center font-black text-[10px] shadow-xs shrink-0">
+                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 text-white flex items-center justify-center font-black text-[10px] shadow-xs ring-1 ring-slate-300/50">
                           2
                         </div>
                       ) : idx === 2 ? (
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-700 via-amber-800 to-yellow-900 text-white flex items-center justify-center font-black text-[10px] shadow-xs shrink-0">
+                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-700 via-amber-800 to-yellow-900 text-white flex items-center justify-center font-black text-[10px] shadow-xs ring-1 ring-amber-700/40">
                           3
                         </div>
                       ) : (
-                        <div className="w-5 h-5 rounded-full bg-neutral-100 text-neutral-600 flex items-center justify-center font-bold text-[10px] shrink-0">
+                        <div className="w-5.5 h-5.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200/70 flex items-center justify-center font-bold text-[10px] shrink-0">
                           {idx + 1}
                         </div>
                       )}
 
                       {/* Thumbnail */}
-                      <div className="w-11 h-11 rounded-xl bg-neutral-50 border border-neutral-100 overflow-hidden shrink-0 flex items-center justify-center relative shadow-2xs group-hover:scale-105 transition-transform duration-200">
+                      <div className="w-11 h-11 rounded-xl bg-neutral-50 border border-neutral-200/70 overflow-hidden shrink-0 flex items-center justify-center relative shadow-2xs group-hover:scale-105 transition-transform duration-200">
                         <Image
                           src={item.imageUrl}
                           alt={item.name}
@@ -7374,57 +7373,69 @@ export default function AdminDashboard() {
 
                       {/* Text info */}
                       <div className="min-w-0 flex-1">
-                        <div className="text-xs sm:text-sm font-semibold text-neutral-900 truncate group-hover:text-amber-800 transition-colors flex items-center gap-1.5">
-                          <span className="truncate">{item.name}</span>
+                        <div className="text-xs sm:text-sm font-semibold text-neutral-900 truncate group-hover:text-amber-800 transition-colors leading-snug">
+                          {item.name}
                         </div>
-                        <div className="flex items-center gap-1.5 text-[11px] text-neutral-400 mt-0.5">
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500 mt-0.5">
                           <span>
                             {item.category} • {item.soldCount} sold
                           </span>
                           {item.stock <= 10 ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/60 px-1.5 py-0.2 rounded-md">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded-md leading-none">
                               <AlertTriangle size={10} strokeWidth={2.4} className="text-amber-600 shrink-0" />
                               {item.stock} left
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/50 px-1.5 py-0.2 rounded-md">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/50 px-1.5 py-0.5 rounded-md leading-none">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                               {item.stock} in stock
                             </span>
                           )}
                         </div>
-
-                        {/* Relative Volume Share Benchmark vs #1 Seller */}
-                        <div className="mt-2 pt-1 border-t border-neutral-100/90">
-                          <div className="flex items-center justify-between text-[9.5px] text-neutral-400 font-medium mb-1">
-                            <span className="flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                              Sales share vs #1 seller
-                            </span>
-                            <span className="font-mono font-bold text-neutral-700">{barWidth}%</span>
-                          </div>
-                          <div className="w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 rounded-full transition-all duration-500"
-                              style={{ width: `${barWidth}%` }}
-                            />
-                          </div>
-                        </div>
                       </div>
                     </div>
 
-                    {/* Revenue & Growth */}
-                    <div className="text-right shrink-0">
-                      <span className="text-xs sm:text-sm font-bold text-neutral-900 block group-hover:text-amber-900 transition-colors">
-                        ₹{item.revenue.toLocaleString("en-IN")}
-                      </span>
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-md mt-0.5">
-                        <TrendingUp size={9} />+{item.growth}%
-                      </span>
+                    {/* Revenue / Units Metric & Growth */}
+                    <div className="text-right shrink-0 flex flex-col items-end justify-center">
+                      {topProductsMetric === "units" ? (
+                        <>
+                          <span className="text-xs sm:text-sm font-bold text-neutral-900 block group-hover:text-sky-900 transition-colors tracking-tight">
+                            {item.soldCount.toLocaleString("en-IN")}{" "}
+                            <span className="text-[11px] font-medium text-neutral-500">sold</span>
+                          </span>
+                          <span className="text-[10px] font-semibold text-neutral-400 mt-0.5">
+                            ₹{item.revenue.toLocaleString("en-IN")}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-xs sm:text-sm font-bold text-neutral-900 block group-hover:text-amber-900 transition-colors tracking-tight">
+                            ₹{item.revenue.toLocaleString("en-IN")}
+                          </span>
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-1.5 py-0.5 rounded-md mt-0.5">
+                            <TrendingUp size={9} strokeWidth={2.4} />+{item.growth}%
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
               })}
+            </div>
+
+            {/* Bottom Card Footer: Clean Leaderboard Link & Context */}
+            <div className="pt-3 mt-2 border-t border-black/[0.04] flex items-center justify-between">
+              <span className="text-[11px] text-neutral-400 font-medium">
+                Top 5 of {activeTopProducts.length} catalog items
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsAllProductsModalOpen(true)}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 hover:text-amber-950 transition-colors cursor-pointer group"
+              >
+                <span>View Full Leaderboard</span>
+                <ChevronRight size={11} className="transition-transform group-hover:translate-x-0.5" />
+              </button>
             </div>
           </div>
         </div>
