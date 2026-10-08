@@ -43,7 +43,7 @@ export function ProductCard({
       <div className={`relative w-full overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-xl ${theme === 'dark' ? 'bg-[#121212] border border-white/[0.08] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.9)]' : 'bg-[#f4f2ee]'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
         <Link
           href={`/product/${product.slug}`}
-          className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
+          className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
           aria-label={product.name}
         >
           <Image

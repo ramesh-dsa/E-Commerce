@@ -28,6 +28,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/context/UserContext";
 import { useProducts } from "@/context/ProductsContext";
+import { useCustomSections } from "@/context/CustomSectionsContext";
 import { ProductSearch } from "@/components/features/ProductSearch";
 
 export function Navbar() {
@@ -43,6 +44,8 @@ export function Navbar() {
   const { totalWishlistItems, openWishlist } = useWishlist();
   const { user, orders, openAccountModal, logout } = useUser();
   const { products } = useProducts();
+  const { sections: customSections } = useCustomSections();
+  const activeCustomSections = customSections.filter((s) => s.isActive);
 
   const activeOrdersCount = orders ? orders.filter((o) => o.status !== "Delivered").length : 0;
 
@@ -136,8 +139,14 @@ export function Navbar() {
       setActiveNav("WATCHES");
     } else if (pathname === "/collections") {
       setActiveNav("COLLECTIONS");
+    } else {
+      // Check custom sections
+      const matchedCustom = activeCustomSections.find((s) => pathname === `/section/${s.slug}`);
+      if (matchedCustom) {
+        setActiveNav(matchedCustom.name.toUpperCase());
+      }
     }
-  }, [pathname, isClothingProduct, isShoeProduct, isWatchProduct]);
+  }, [pathname, isClothingProduct, isShoeProduct, isWatchProduct, activeCustomSections]);
 
   const navLinks = [
     {
@@ -160,6 +169,13 @@ export function Navbar() {
       href: "/watches",
       isActive: pathname === "/watches" || isWatchProduct || (pathname === "/" && activeNav === "WATCHES"),
     },
+    // Dynamic custom section links (e.g. BAGS, ACCESSORIES)
+    ...activeCustomSections.map((section) => ({
+      label: section.name.toUpperCase(),
+      href: `/section/${section.slug}`,
+      isActive: pathname === `/section/${section.slug}` || (pathname === "/" && activeNav === section.name.toUpperCase()),
+    })),
+    // COLLECTIONS is ALWAYS LAST as requested
     {
       label: "COLLECTIONS",
       href: "/collections",
@@ -361,6 +377,8 @@ export function Navbar() {
                   {/* Menu Item 3: Admin Portal */}
                   <Link
                     href="/admin"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     role="menuitem"
                     onClick={() => setIsProfileDropdownOpen(false)}
                     className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 rounded-lg transition-colors group"
@@ -628,6 +646,26 @@ export function Navbar() {
                   </button>
                 </>
               )}
+
+              {/* Admin Portal Shortcut (Opens in new tab) */}
+              <div className="pt-2 mt-2 border-t border-neutral-100">
+                <Link
+                  href="/admin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between w-full text-xs font-semibold text-neutral-600 hover:text-neutral-900 py-1.5 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017]" />
+                    <span>Admin Portal</span>
+                    <span className="text-[9px] bg-neutral-900 text-[#fcd017] px-1.5 py-0.2 rounded font-mono font-bold">
+                      STAFF
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-neutral-400">Open ↗</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

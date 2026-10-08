@@ -15,6 +15,7 @@ import {
   LogOut,
   Menu,
   X,
+  Layers,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { href: "/admin/products/add", label: "Add Product", icon: PlusCircle, exact: true },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart, exact: true },
   { href: "/admin/returns", label: "Returns", icon: RotateCcw, exact: false },
+  { href: "/admin/custom-sections", label: "Custom Sections", icon: Layers, exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

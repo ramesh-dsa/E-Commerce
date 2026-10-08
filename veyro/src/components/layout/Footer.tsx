@@ -394,6 +394,8 @@ export function Footer() {
             </Link>
             <Link
               href="/admin"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-neutral-500 hover:text-[#fcd017] transition-colors font-mono font-medium flex items-center gap-1"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017]" />

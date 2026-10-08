@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import type { Product } from "@/types";
 import { useProducts } from "@/context/ProductsContext";
+import { useCustomSections } from "@/context/CustomSectionsContext";
 import { ProductGallery } from "@/components/features/ProductGallery";
 import { ProductBuyBox } from "@/components/features/ProductBuyBox";
 import { ProductCarousel } from "@/components/features/ProductCarousel";
@@ -18,12 +19,104 @@ interface ProductDetailViewProps {
 }
 
 export function ProductDetailView({ slug, initialProduct }: ProductDetailViewProps) {
-  const { products, isHydrated } = useProducts();
+  const { products, isHydrated: productsHydrated } = useProducts();
+  const { sections, isHydrated: customHydrated } = useCustomSections();
 
-  // Find product from active ProductsContext (or initialProduct SSR fallback)
-  const product = useMemo(() => {
-    return products.find((p) => p.slug === slug) || initialProduct || null;
-  }, [products, slug, initialProduct]);
+  const isHydrated = productsHydrated && customHydrated;
+
+  // Find product from active ProductsContext or CustomSectionsContext (or initialProduct SSR fallback)
+  const { product, backInfo, customSimilar } = useMemo(() => {
+    const standardProduct = products.find((p) => p.slug === slug) || initialProduct || null;
+    if (standardProduct) {
+      return { product: standardProduct, backInfo: null, customSimilar: [] };
+    }
+
+    // Search custom sections
+    for (const sec of sections) {
+      const found = sec.products.find((p) => p.slug === slug || p.id === slug);
+      if (found) {
+        const discountPercent =
+          found.originalPrice && found.originalPrice > found.price
+            ? Math.round(((found.originalPrice - found.price) / found.originalPrice) * 100)
+            : null;
+
+        const mappedProduct: Product = {
+          id: found.id,
+          sku: `VEY-CUST-${found.id.toUpperCase()}`,
+          slug: found.slug,
+          name: found.name,
+          category: sec.name,
+          subcategory: sec.name,
+          subcategoryTag: found.tags?.[0] || sec.name,
+          colorName: found.colorName || "Default",
+          colorHex: found.colorHex || "#111111",
+          material: found.material || "Premium Crafted",
+          price: found.price,
+          originalPrice: found.originalPrice,
+          discount: discountPercent ? `${discountPercent}% OFF` : undefined,
+          imageUrl: found.imageUrl,
+          secondaryImageUrl: found.secondaryImageUrl || found.imageUrl,
+          galleryImages:
+            found.galleryImages && found.galleryImages.length > 0
+              ? found.galleryImages
+              : [found.imageUrl, ...(found.secondaryImageUrl ? [found.secondaryImageUrl] : [])],
+          badge: (found.badge as any) || undefined,
+          sizes: found.sizes && found.sizes.length > 0 ? found.sizes : ["Free Size"],
+          isNewArrival: false,
+          inStock: found.inStock,
+          shortDescription: found.description || found.name,
+          longDescription: found.description || found.name,
+          features: ["Premium materials and craftsmanship", "Exclusive bespoke design", "Built for supreme durability"],
+          care: ["Handle with care", "Store in a cool, dry place", "Wipe clean with a soft cloth"],
+          collections: [sec.name],
+          relatedProducts: [],
+          tags: found.tags || [],
+          rating: 4.9,
+          reviewsCount: 14,
+        };
+
+        const otherSectionProducts: Product[] = sec.products
+          .filter((p) => p.id !== found.id)
+          .map((p) => ({
+            id: p.id,
+            sku: `VEY-CUST-${p.id.toUpperCase()}`,
+            slug: p.slug,
+            name: p.name,
+            category: sec.name,
+            subcategory: sec.name,
+            subcategoryTag: p.tags?.[0] || sec.name,
+            colorName: p.colorName || "Default",
+            colorHex: p.colorHex || "#111111",
+            material: p.material || "Premium Quality",
+            price: p.price,
+            originalPrice: p.originalPrice,
+            imageUrl: p.imageUrl,
+            secondaryImageUrl: p.secondaryImageUrl || p.imageUrl,
+            sizes: p.sizes.length > 0 ? p.sizes : ["Free Size"],
+            isNewArrival: false,
+            inStock: p.inStock,
+            shortDescription: p.description,
+            features: ["Premium quality craftsmanship"],
+            care: ["Handle with care"],
+            collections: [sec.name],
+            relatedProducts: [],
+            rating: 4.8,
+            reviewsCount: 10,
+          }));
+
+        return {
+          product: mappedProduct,
+          backInfo: {
+            href: `/section/${sec.slug}`,
+            label: `BACK TO ${sec.name.toUpperCase()}`,
+          },
+          customSimilar: otherSectionProducts,
+        };
+      }
+    }
+
+    return { product: null, backInfo: null, customSimilar: [] };
+  }, [products, slug, initialProduct, sections]);
 
   if (!product) {
     if (!isHydrated) {
@@ -62,7 +155,10 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
   let backHref = "/clothing";
   let backLabel = "BACK TO CLOTHING";
 
-  if (isFootwear) {
+  if (backInfo) {
+    backHref = backInfo.href;
+    backLabel = backInfo.label;
+  } else if (isFootwear) {
     backHref = "/shoes";
     backLabel = "BACK TO SHOES";
   } else if (isWatch) {
@@ -70,20 +166,24 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
     backLabel = "BACK TO WATCHES";
   }
 
-  // Similar products: same category + same subcategoryTag, excluding current product
-  const similarProducts = products
-    .filter(
-      (p) =>
-        p.category === product.category &&
-        p.subcategoryTag === product.subcategoryTag &&
-        p.id !== product.id
-    )
-    .slice(0, 8);
+  // Similar products: custom products from section OR same category + same subcategoryTag
+  const similarProducts = customSimilar.length > 0
+    ? customSimilar.slice(0, 8)
+    : products
+        .filter(
+          (p) =>
+            p.category === product.category &&
+            p.subcategoryTag === product.subcategoryTag &&
+            p.id !== product.id
+        )
+        .slice(0, 8);
 
   // If not enough similar products from same subcategoryTag, fill from same category
   const filledSimilar =
     similarProducts.length >= 8
       ? similarProducts
+      : customSimilar.length > 0
+      ? customSimilar
       : [
           ...similarProducts,
           ...products

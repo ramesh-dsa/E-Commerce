@@ -8,6 +8,7 @@ import { UserProvider } from "@/context/UserContext";
 import { ReviewsProvider } from "@/context/ReviewsContext";
 import { ProductsProvider } from "@/context/ProductsContext";
 import { AdminProvider } from "@/context/AdminContext";
+import { CustomSectionsProvider } from "@/context/CustomSectionsContext";
 import dynamic from "next/dynamic";
 
 const AccountModal = dynamic(
@@ -64,17 +65,19 @@ export default function RootLayout({
               <UserProvider>
                 <ReviewsProvider>
                   <AdminProvider>
-                    <SmoothScrolling>
-                      <div className="min-h-screen flex flex-col bg-white text-veyro-black max-w-full overflow-x-clip">
-                        <Navbar />
-                        <main className="flex-1 w-full max-w-full overflow-x-clip">
-                          {children}
-                        </main>
-                        <Footer />
-                      </div>
-                    </SmoothScrolling>
-                    <ScrollToTop />
-                    <AccountModal />
+                    <CustomSectionsProvider>
+                      <SmoothScrolling>
+                        <div className="min-h-screen flex flex-col bg-white text-veyro-black max-w-full overflow-x-clip">
+                          <Navbar />
+                          <main className="flex-1 w-full max-w-full overflow-x-clip">
+                            {children}
+                          </main>
+                          <Footer />
+                        </div>
+                      </SmoothScrolling>
+                      <ScrollToTop />
+                      <AccountModal />
+                    </CustomSectionsProvider>
                   </AdminProvider>
                 </ReviewsProvider>
               </UserProvider>
