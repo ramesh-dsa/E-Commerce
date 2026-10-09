@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -107,22 +107,60 @@ export function Navbar() {
   };
 
   // Detect product category when on a PDP (/product/[slug])
-  const productSlug = pathname.startsWith("/product/") ? pathname.split("/product/")[1]?.split("?")[0] : null;
-  const currentProduct = productSlug ? products.find((p) => p.slug === productSlug) : null;
+  const productSlug = pathname.startsWith("/product/")
+    ? decodeURIComponent(pathname.split("/product/")[1]?.split("?")[0]?.replace(/\/$/, "") || "")
+    : null;
+  const currentProduct = productSlug ? products.find((p) => p.slug === productSlug || p.id === productSlug) : null;
+
+  // Detect if current PDP product belongs to any dynamic custom section (e.g. BAGS, ACCESSORIES)
+  const matchingCustomSection = useMemo(() => {
+    if (!productSlug) return null;
+
+    // 1. Direct search inside active custom section products
+    for (const sec of activeCustomSections) {
+      const hasProduct = sec.products?.some(
+        (p) =>
+          p.slug === productSlug ||
+          p.id === productSlug ||
+          p.slug.toLowerCase() === productSlug.toLowerCase() ||
+          p.id.toLowerCase() === productSlug.toLowerCase()
+      );
+      if (hasProduct) return sec;
+    }
+
+    // 2. Fallback check: If product is also in ProductsContext with matching category/collections
+    if (currentProduct) {
+      for (const sec of activeCustomSections) {
+        const nameLower = sec.name.trim().toLowerCase();
+        const slugLower = sec.slug.trim().toLowerCase();
+        if (
+          currentProduct.category?.trim().toLowerCase() === nameLower ||
+          currentProduct.subcategory?.trim().toLowerCase() === nameLower ||
+          currentProduct.category?.trim().toLowerCase() === slugLower ||
+          currentProduct.collections?.some((c) => c.trim().toLowerCase() === nameLower)
+        ) {
+          return sec;
+        }
+      }
+    }
+
+    return null;
+  }, [productSlug, activeCustomSections, currentProduct]);
+
   const isShoeProduct =
-    Boolean(currentProduct && (
+    Boolean(!matchingCustomSection && currentProduct && (
       currentProduct.category?.toLowerCase() === "footwear" ||
       currentProduct.subcategory?.toLowerCase() === "shoes" ||
       currentProduct.id.startsWith("vey-ftw")
     ));
   const isClothingProduct =
-    Boolean(currentProduct && (
+    Boolean(!matchingCustomSection && currentProduct && (
       currentProduct.category?.toLowerCase() === "clothing" ||
       currentProduct.subcategory?.toLowerCase() === "t-shirts" ||
       currentProduct.id.startsWith("vey-tsh")
     ));
   const isWatchProduct =
-    Boolean(currentProduct && (
+    Boolean(!matchingCustomSection && currentProduct && (
       currentProduct.category?.toLowerCase() === "watches" ||
       currentProduct.subcategory?.toLowerCase() === "timepieces" ||
       currentProduct.id.startsWith("vey-wat")
@@ -131,6 +169,8 @@ export function Navbar() {
   useEffect(() => {
     if (pathname === "/") {
       setActiveNav("HOME");
+    } else if (matchingCustomSection) {
+      setActiveNav(matchingCustomSection.name.toUpperCase());
     } else if (pathname === "/clothing" || isClothingProduct) {
       setActiveNav("CLOTHING");
     } else if (pathname === "/shoes" || pathname === "/footwear" || isShoeProduct) {
@@ -140,13 +180,20 @@ export function Navbar() {
     } else if (pathname === "/collections") {
       setActiveNav("COLLECTIONS");
     } else {
-      // Check custom sections
+      // Check custom sections catalog page (/section/[slug])
       const matchedCustom = activeCustomSections.find((s) => pathname === `/section/${s.slug}`);
       if (matchedCustom) {
         setActiveNav(matchedCustom.name.toUpperCase());
       }
     }
-  }, [pathname, isClothingProduct, isShoeProduct, isWatchProduct, activeCustomSections]);
+  }, [
+    pathname,
+    matchingCustomSection,
+    isClothingProduct,
+    isShoeProduct,
+    isWatchProduct,
+    activeCustomSections,
+  ]);
 
   const navLinks = [
     {
@@ -157,29 +204,40 @@ export function Navbar() {
     {
       label: "CLOTHING",
       href: "/clothing",
-      isActive: pathname === "/clothing" || isClothingProduct || (pathname === "/" && activeNav === "CLOTHING"),
+      isActive:
+        !matchingCustomSection &&
+        (pathname === "/clothing" || isClothingProduct || (pathname === "/" && activeNav === "CLOTHING")),
     },
     {
       label: "SHOES",
       href: "/shoes",
-      isActive: pathname === "/shoes" || pathname === "/footwear" || isShoeProduct || (pathname === "/" && activeNav === "SHOES"),
+      isActive:
+        !matchingCustomSection &&
+        (pathname === "/shoes" || pathname === "/footwear" || isShoeProduct || (pathname === "/" && activeNav === "SHOES")),
     },
     {
       label: "WATCHES",
       href: "/watches",
-      isActive: pathname === "/watches" || isWatchProduct || (pathname === "/" && activeNav === "WATCHES"),
+      isActive:
+        !matchingCustomSection &&
+        (pathname === "/watches" || isWatchProduct || (pathname === "/" && activeNav === "WATCHES")),
     },
     // Dynamic custom section links (e.g. BAGS, ACCESSORIES)
     ...activeCustomSections.map((section) => ({
       label: section.name.toUpperCase(),
       href: `/section/${section.slug}`,
-      isActive: pathname === `/section/${section.slug}` || (pathname === "/" && activeNav === section.name.toUpperCase()),
+      isActive:
+        pathname === `/section/${section.slug}` ||
+        matchingCustomSection?.id === section.id ||
+        (pathname === "/" && activeNav === section.name.toUpperCase()),
     })),
     // COLLECTIONS is ALWAYS LAST as requested
     {
       label: "COLLECTIONS",
       href: "/collections",
-      isActive: pathname === "/collections" || (pathname === "/" && activeNav === "COLLECTIONS"),
+      isActive:
+        !matchingCustomSection &&
+        (pathname === "/collections" || (pathname === "/" && activeNav === "COLLECTIONS")),
     },
   ];
 

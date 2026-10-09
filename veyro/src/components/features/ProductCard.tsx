@@ -33,6 +33,11 @@ export function ProductCard({
   const displayDiscount =
     product.discount || (discountPercent ? `${discountPercent}% OFF` : null);
 
+  const isWatch =
+    product.category?.toLowerCase() === "watches" ||
+    product.subcategory?.toLowerCase() === "timepieces" ||
+    product.id.startsWith("vey-wat");
+
   return (
     <article
       className={`group flex flex-col card-hover-lift rounded-lg ${className}`}
@@ -55,13 +60,13 @@ export function ProductCard({
             sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
-            className={`object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108 ${
-              imageLoaded ? "opacity-100" : "opacity-90"
-            }`}
+            className={`object-cover object-center ${
+              isWatch ? "" : "transition-transform duration-500 ease-out group-hover:scale-108"
+            } ${imageLoaded ? "opacity-100" : "opacity-90"}`}
           />
 
-          {/* Secondary image on hover if provided - lazy loaded in background */}
-          {product.secondaryImageUrl && (
+          {/* Secondary image on hover if provided - lazy loaded in background (disabled for watches or identical image) */}
+          {!isWatch && product.secondaryImageUrl && product.secondaryImageUrl !== product.imageUrl && (
             <Image
               src={product.secondaryImageUrl}
               alt={`${product.name} alternate view`}

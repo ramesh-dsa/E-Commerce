@@ -150,7 +150,14 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
     product.category?.toLowerCase() === "footwear" ||
     product.subcategory?.toLowerCase() === "shoes" ||
     product.id.startsWith("vey-ftw");
-  const isWatch = product.category === "Watches";
+  const isWatch =
+    product.category?.toLowerCase() === "watches" ||
+    product.subcategory?.toLowerCase() === "timepieces" ||
+    product.id.startsWith("vey-wat");
+  const isClothing =
+    product.category?.toLowerCase() === "clothing" ||
+    product.subcategory?.toLowerCase() === "t-shirts" ||
+    product.id.startsWith("vey-tsh");
 
   let backHref = "/clothing";
   let backLabel = "BACK TO CLOTHING";
@@ -197,43 +204,39 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
             .slice(0, 8 - similarProducts.length),
         ];
 
-  const isClothing = product.category === "Clothing";
-
-  // "Pair With Shoes" — shown for clothing and watches
-  const shoeRecommendations =
-    isClothing || isWatch
-      ? (() => {
-          const relatedShoes = (product.relatedProducts || [])
-            .map((id) => products.find((p) => p.id === id))
-            .filter(
-              (p): p is Product => p !== undefined && p.category === "Footwear"
-            );
-          const remainingShoes = products.filter(
-            (p) =>
-              p.category === "Footwear" &&
-              !relatedShoes.some((rs) => rs.id === p.id)
+  // "Pair With Shoes" — shown whenever not already viewing footwear (clothing, watches, and all custom sections)
+  const shoeRecommendations = !isFootwear
+    ? (() => {
+        const relatedShoes = (product.relatedProducts || [])
+          .map((id) => products.find((p) => p.id === id))
+          .filter(
+            (p): p is Product => p !== undefined && p.category === "Footwear"
           );
-          return [...relatedShoes, ...remainingShoes].slice(0, 8);
-        })()
-      : [];
+        const remainingShoes = products.filter(
+          (p) =>
+            p.category === "Footwear" &&
+            !relatedShoes.some((rs) => rs.id === p.id)
+        );
+        return [...relatedShoes, ...remainingShoes].slice(0, 8);
+      })()
+    : [];
 
-  // "Pair With Tees" — shown for footwear and watches
-  const clothingPairings =
-    isFootwear || isWatch
-      ? (() => {
-          const relatedTees = (product.relatedProducts || [])
-            .map((id) => products.find((p) => p.id === id))
-            .filter(
-              (p): p is Product => p !== undefined && p.category === "Clothing"
-            );
-          const remainingTees = products.filter(
-            (p) =>
-              p.category === "Clothing" &&
-              !relatedTees.some((rt) => rt.id === p.id)
+  // "Pair With Clothing" — shown whenever not already viewing clothing (footwear, watches, and all custom sections)
+  const clothingPairings = !isClothing
+    ? (() => {
+        const relatedTees = (product.relatedProducts || [])
+          .map((id) => products.find((p) => p.id === id))
+          .filter(
+            (p): p is Product => p !== undefined && p.category === "Clothing"
           );
-          return [...relatedTees, ...remainingTees].slice(0, 8);
-        })()
-      : [];
+        const remainingTees = products.filter(
+          (p) =>
+            p.category === "Clothing" &&
+            !relatedTees.some((rt) => rt.id === p.id)
+        );
+        return [...relatedTees, ...remainingTees].slice(0, 8);
+      })()
+    : [];
 
   // "Pair With Watches" — shown universally as an accessory (unless already viewing a watch)
   const watchRecommendations = !isWatch
@@ -252,6 +255,67 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
       })()
     : [];
 
+  // Other active custom sections' products (e.g. other bespoke collections created via admin)
+  const otherCustomSectionCarousels = useMemo(() => {
+    return sections
+      .filter((sec) => {
+        if (!sec.isActive && sec.isActive !== undefined) return false;
+        // Exclude the section this current product belongs to
+        const containsThisProduct = sec.products.some(
+          (p) => p.id === product.id || p.slug === product.slug
+        );
+        return !containsThisProduct && sec.products.length > 0;
+      })
+      .map((sec) => {
+        const mappedProducts: Product[] = sec.products.map((p) => {
+          const discountPercent =
+            p.originalPrice && p.originalPrice > p.price
+              ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)
+              : null;
+          return {
+            id: p.id,
+            sku: `VEY-CUST-${p.id.toUpperCase()}`,
+            slug: p.slug,
+            name: p.name,
+            category: sec.name,
+            subcategory: sec.name,
+            subcategoryTag: p.tags?.[0] || sec.name,
+            colorName: p.colorName || "Default",
+            colorHex: p.colorHex || "#111111",
+            material: p.material || "Premium Quality",
+            price: p.price,
+            originalPrice: p.originalPrice,
+            discount: discountPercent ? `${discountPercent}% OFF` : undefined,
+            imageUrl: p.imageUrl,
+            secondaryImageUrl: p.secondaryImageUrl || p.imageUrl,
+            galleryImages:
+              p.galleryImages && p.galleryImages.length > 0
+                ? p.galleryImages
+                : [p.imageUrl, ...(p.secondaryImageUrl ? [p.secondaryImageUrl] : [])],
+            badge: (p.badge as any) || undefined,
+            sizes: p.sizes?.length > 0 ? p.sizes : ["Free Size"],
+            isNewArrival: false,
+            inStock: p.inStock,
+            shortDescription: p.description || p.name,
+            longDescription: p.description || p.name,
+            features: ["Premium craftsmanship", "Exclusive bespoke drop"],
+            care: ["Handle with care"],
+            collections: [sec.name],
+            relatedProducts: [],
+            tags: p.tags || [],
+            rating: 4.8,
+            reviewsCount: 12,
+          };
+        });
+
+        return {
+          products: mappedProducts,
+          title: `EXPLORE ${sec.name.toUpperCase()}`,
+          subtitle: sec.description || `Signature designs from ${sec.name}`,
+        };
+      });
+  }, [sections, product.id, product.slug]);
+
   // Build the carousel sections dynamically
   const carouselSections = [];
 
@@ -260,14 +324,6 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
       products: filledSimilar,
       title: "SIMILAR PRODUCTS",
       subtitle: `More from ${product.subcategoryTag || product.category}`,
-    });
-  }
-
-  if (watchRecommendations.length > 0) {
-    carouselSections.push({
-      products: watchRecommendations,
-      title: "ACCESSORIZE WITH WATCHES",
-      subtitle: "Elevate your look",
     });
   }
 
@@ -285,6 +341,21 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
       title: "PAIR WITH SHOES",
       subtitle: "Step up your game",
     });
+  }
+
+  if (watchRecommendations.length > 0) {
+    carouselSections.push({
+      products: watchRecommendations,
+      title: "ACCESSORIZE WITH WATCHES",
+      subtitle: "Elevate your look",
+    });
+  }
+
+  // Also include any other active custom sections
+  for (const extraSection of otherCustomSectionCarousels) {
+    if (extraSection.products.length > 0) {
+      carouselSections.push(extraSection);
+    }
   }
 
   return (
@@ -315,15 +386,19 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
         <ProductReviewsSection product={product} />
 
         {/* Dynamic Recommendation Carousels */}
-        {carouselSections.map((section, idx) => (
-          <ProductCarousel
-            key={section.title}
-            products={section.products}
-            categoryNumber={`[ 00${idx + 2} ]`}
-            title={section.title}
-            subtitle={section.subtitle}
-          />
-        ))}
+        {carouselSections.map((section, idx) => {
+          const num = idx + 2;
+          const formattedNumber = num < 10 ? `[ 00${num} ]` : `[ 0${num} ]`;
+          return (
+            <ProductCarousel
+              key={section.title}
+              products={section.products}
+              categoryNumber={formattedNumber}
+              title={section.title}
+              subtitle={section.subtitle}
+            />
+          );
+        })}
       </Container>
     </div>
   );
