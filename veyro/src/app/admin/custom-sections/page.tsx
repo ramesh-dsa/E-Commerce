@@ -562,7 +562,7 @@ function ProductFormModal({
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Color Name</label>
               <input
                 type="text"
@@ -572,24 +572,40 @@ function ProductFormModal({
                 className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Color Hex</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={colorHex}
-                  onChange={(e) => setColorHex(e.target.value)}
-                  className="w-10 h-10 rounded-lg border border-neutral-200 cursor-pointer bg-transparent"
-                />
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className="relative w-10 h-10 rounded-xl border border-neutral-200 overflow-hidden shrink-0 shadow-sm cursor-pointer hover:border-neutral-400 transition-colors"
+                  title="Click to select color"
+                >
+                  <div
+                    className="w-full h-full"
+                    style={{ backgroundColor: /^#[0-9A-Fa-f]{6}$/.test(colorHex) ? colorHex : '#111111' }}
+                  />
+                  <input
+                    type="color"
+                    value={/^#[0-9A-Fa-f]{6}$/.test(colorHex) ? colorHex : '#111111'}
+                    onChange={(e) => setColorHex(e.target.value.toUpperCase())}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    aria-label="Color picker"
+                  />
+                </div>
                 <input
                   type="text"
                   value={colorHex}
-                  onChange={(e) => setColorHex(e.target.value)}
-                  className="flex-1 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  maxLength={7}
+                  onChange={(e) => {
+                    let val = e.target.value;
+                    if (val && !val.startsWith("#")) val = "#" + val;
+                    setColorHex(val.toUpperCase());
+                  }}
+                  placeholder="#111111"
+                  className="flex-1 min-w-0 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-neutral-900"
                 />
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Material</label>
               <input
                 type="text"
