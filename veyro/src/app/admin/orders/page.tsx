@@ -43,7 +43,99 @@ import {
   BarChart3,
   Layers,
   CheckCircle,
+  Truck,
+  PackageCheck,
+  XCircle,
+  Box,
 } from "lucide-react";
+
+interface StatusConfigItem {
+  code: string;
+  sublabel: string;
+  accentColor: string;
+  badgeBg: string;
+  badgeBorder: string;
+  renderIcon: () => React.ReactNode;
+}
+
+const STATUS_METADATA: Record<OrderStatus, StatusConfigItem> = {
+  Confirmed: {
+    code: "01",
+    sublabel: "ORDER PLACED",
+    accentColor: "#C27803",
+    badgeBg: "bg-[#FEF3C7]",
+    badgeBorder: "border-[#FDE68A]",
+    renderIcon: () => (
+      <div className="w-5 h-5 rounded-full bg-[#C27803] flex items-center justify-center text-white shadow-2xs">
+        <Check size={11} strokeWidth={3.2} />
+      </div>
+    ),
+  },
+  Packed: {
+    code: "02",
+    sublabel: "READY TO SHIP",
+    accentColor: "#C27803",
+    badgeBg: "bg-[#FFEDD5]",
+    badgeBorder: "border-[#FED7AA]",
+    renderIcon: () => <Package size={17} className="text-[#C27803]" strokeWidth={1.75} />,
+  },
+  Shipped: {
+    code: "03",
+    sublabel: "IN TRANSIT",
+    accentColor: "#2563EB",
+    badgeBg: "bg-[#EFF6FF]",
+    badgeBorder: "border-[#DBEAFE]",
+    renderIcon: () => <Truck size={17} className="text-[#2563EB] -scale-x-100" strokeWidth={1.75} />,
+  },
+  "Out for Delivery": {
+    code: "04",
+    sublabel: "ON THE WAY",
+    accentColor: "#3B82F6",
+    badgeBg: "bg-[#EEF2FF]",
+    badgeBorder: "border-[#E0E7FF]",
+    renderIcon: () => <Clock size={17} className="text-[#3B82F6]" strokeWidth={1.75} />,
+  },
+  Delivered: {
+    code: "05",
+    sublabel: "SUCCESSFULLY",
+    accentColor: "#16A34A",
+    badgeBg: "bg-[#ECFDF5]",
+    badgeBorder: "border-[#D1FAE5]",
+    renderIcon: () => <PackageCheck size={17} className="text-[#16A34A]" strokeWidth={1.75} />,
+  },
+  Cancelled: {
+    code: "06",
+    sublabel: "BY CUSTOMER",
+    accentColor: "#DC2626",
+    badgeBg: "bg-[#FEF2F2]",
+    badgeBorder: "border-[#FEE2E2]",
+    renderIcon: () => <XCircle size={17} className="text-[#DC2626]" strokeWidth={1.75} />,
+  },
+  "Return Requested": {
+    code: "07",
+    sublabel: "AWAITING REVIEW",
+    accentColor: "#7C3AED",
+    badgeBg: "bg-[#F5F3FF]",
+    badgeBorder: "border-[#EDE9FE]",
+    renderIcon: () => <RotateCcw size={16} className="text-[#7C3AED]" strokeWidth={1.75} />,
+  },
+  Processing: {
+    code: "00",
+    sublabel: "IN PROGRESS",
+    accentColor: "#F59E0B",
+    badgeBg: "bg-[#FEF3C7]",
+    badgeBorder: "border-[#FDE68A]",
+    renderIcon: () => <Clock size={17} className="text-[#F59E0B]" strokeWidth={1.75} />,
+  },
+  Returned: {
+    code: "08",
+    sublabel: "COMPLETED",
+    accentColor: "#A855F7",
+    badgeBg: "bg-[#FDF4FF]",
+    badgeBorder: "border-[#FAE8FF]",
+    renderIcon: () => <Box size={17} className="text-[#A855F7]" strokeWidth={1.75} />,
+  },
+};
 
 const ALL_STATUSES: OrderStatus[] = [
   "Confirmed",
@@ -55,6 +147,15 @@ const ALL_STATUSES: OrderStatus[] = [
   "Return Requested",
   "Returned",
 ];
+
+export function normalizeOrderStatus(status: string | undefined): OrderStatus {
+  if (!status) return "Confirmed";
+  if (status === "Processing") return "Packed";
+  if (ALL_STATUSES.includes(status as OrderStatus)) {
+    return status as OrderStatus;
+  }
+  return "Confirmed";
+}
 
 export default function AdminOrdersPage() {
   const { orders, updateOrderStatus, deleteOrder } = useUser();
@@ -222,7 +323,7 @@ export default function AdminOrdersPage() {
     let list = dateFilteredOrders;
 
     if (statusFilter !== "all") {
-      list = list.filter((order) => order.status === statusFilter);
+      list = list.filter((order) => normalizeOrderStatus(order.status) === statusFilter);
     }
 
     if (search.trim()) {
@@ -271,7 +372,7 @@ export default function AdminOrdersPage() {
     const statusCounts: Record<string, number> = {};
     ALL_STATUSES.forEach((s) => (statusCounts[s] = 0));
     scopeOrders.forEach((o) => {
-      const s = o.status || "Confirmed";
+      const s = normalizeOrderStatus(o.status);
       statusCounts[s] = (statusCounts[s] || 0) + 1;
     });
 
@@ -1009,89 +1110,138 @@ export default function AdminOrdersPage() {
 
       {/* ── STATUS CHIPS & TOP PRODUCTS GRID ─────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Status Breakdown (2 Columns) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
-              <Layers size={16} className="text-amber-500" />
-              Order Statuses in Active Scope
-            </h2>
+        {/* Status Breakdown (2 Columns) - Exact Luxury Match with Image 1 */}
+        <div className="lg:col-span-2 bg-[#FAF7F2] rounded-3xl border border-[#EFEAE2] p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+          {/* Header Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#EFEAE2]">
+            <div className="flex items-center gap-3.5">
+              {/* Layers Icon in warm square badge */}
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#FFF9EE] border border-[#F6E3C5] flex items-center justify-center shrink-0 shadow-2xs">
+                <Layers className="w-5.5 h-5.5 text-[#C87D10]" strokeWidth={1.75} />
+              </div>
+
+              {/* Divider */}
+              <div className="h-9 w-px bg-[#E7E0D6] shrink-0" />
+
+              {/* Title & Operations Subtitle */}
+              <div>
+                <span className="block text-[10px] font-bold tracking-[0.2em] uppercase text-[#8C827A] leading-tight">
+                  OPERATIONS
+                </span>
+                <h2 className="text-xl sm:text-2xl font-serif text-[#1C1917] tracking-tight leading-snug mt-0.5">
+                  Order Statuses In Active Scope
+                </h2>
+                <p className="text-[11px] sm:text-xs text-[#78716C] mt-0.5 font-normal">
+                  Live count of orders across different fulfilment stages.
+                </p>
+              </div>
+            </div>
+
+            {/* Animated Pill button */}
             <button
               onClick={() => setStatusFilter("all")}
-              className={`text-xs font-bold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
-                statusFilter === "all" ? "bg-neutral-900 text-white" : "text-neutral-500 hover:text-neutral-900"
+              aria-label="View all order statuses"
+              className={`group relative overflow-hidden inline-flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer select-none active:scale-95 ${
+                statusFilter === "all"
+                  ? "bg-[#111111] text-[#E5A93C] border border-[#D97706]/40 shadow-[0_0_15px_rgba(217,119,6,0.2)] hover:shadow-[0_0_22px_rgba(217,119,6,0.35)] hover:border-amber-400/60"
+                  : "bg-[#18181B] text-[#D4A346] border border-stone-800 hover:border-amber-500/40 hover:bg-[#111111] hover:text-[#E5A93C] hover:shadow-[0_0_16px_rgba(217,119,6,0.2)]"
               }`}
             >
-              All ({dateFilteredOrders.length})
+              {/* Shimmer sweep animation on hover */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-amber-400/25 to-transparent pointer-events-none"
+              />
+
+              {/* Live active pulsing beacon dot */}
+              {statusFilter === "all" && (
+                <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-400" />
+                </span>
+              )}
+
+              <span className="relative z-10 font-mono tracking-wider">
+                ALL ({dateFilteredOrders.length})
+              </span>
+
+              {/* Arrow that slides smoothly on hover */}
+              <span
+                aria-hidden="true"
+                className="relative z-10 text-[#E5A93C] text-sm transform transition-transform duration-300 ease-out group-hover:translate-x-1"
+              >
+                →
+              </span>
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+          {/* Cards Grid: 4 columns across, 2 rows */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-5">
             {ALL_STATUSES.map((status) => {
               const count = stats.statusCounts[status] || 0;
               const isSelected = statusFilter === status;
+              const meta = STATUS_METADATA[status];
 
-              const getTheme = () => {
-                switch (status) {
-                  case "Delivered":
-                    return {
-                      dot: "bg-emerald-500",
-                      badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
-                    };
-                  case "Shipped":
-                  case "Out for Delivery":
-                    return {
-                      dot: "bg-blue-500",
-                      badge: "bg-blue-50 text-blue-700 border-blue-200",
-                    };
-                  case "Confirmed":
-                  case "Packed":
-                    return {
-                      dot: "bg-amber-500",
-                      badge: "bg-amber-50 text-amber-700 border-amber-200",
-                    };
-                  case "Cancelled":
-                    return {
-                      dot: "bg-rose-500",
-                      badge: "bg-rose-50 text-rose-700 border-rose-200",
-                    };
-                  case "Return Requested":
-                  case "Returned":
-                    return {
-                      dot: "bg-purple-500",
-                      badge: "bg-purple-50 text-purple-700 border-purple-200",
-                    };
-                  default:
-                    return {
-                      dot: "bg-neutral-400",
-                      badge: "bg-neutral-50 text-neutral-700 border-neutral-200",
-                    };
-                }
-              };
-
-              const theme = getTheme();
+              // Proportional width for the bottom accent bar (minimum 14% accent if count is 0, wider if count > 0)
+              const totalInScope = dateFilteredOrders.length || 1;
+              const barWidthPercent =
+                count > 0
+                  ? Math.min(100, Math.max(30, Math.round((count / totalInScope) * 100)))
+                  : 14;
 
               return (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(statusFilter === status ? "all" : status)}
-                  className={`flex flex-col p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer min-h-[92px] ${
                     isSelected
-                      ? "bg-neutral-900 text-white border-neutral-900 shadow-md ring-2 ring-amber-400"
-                      : "bg-neutral-50/60 hover:bg-neutral-100/80 border-neutral-200/80 text-neutral-800"
+                      ? "bg-white border-[#C27803] shadow-[0_4px_16px_rgba(194,120,3,0.12)] ring-1 ring-[#C27803]"
+                      : "bg-[#FCFAF7] hover:bg-white border-[#ECE5DC] hover:border-[#DFD7CB] shadow-2xs hover:shadow-xs hover:-translate-y-0.5"
                   }`}
                 >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <span className={`w-2 h-2 rounded-full ${theme.dot}`} />
-                    <span
-                      className={`text-[11px] font-mono font-bold px-1.5 py-0.2 rounded ${
-                        isSelected ? "bg-white/20 text-white" : "bg-neutral-200/80 text-neutral-800"
-                      }`}
+                  {/* Top: Icon on Left, Title/Subtitle + Code/Count on Right */}
+                  <div className="flex items-center gap-2.5 w-full">
+                    {/* Left Icon Badge */}
+                    <div
+                      className={`w-8.5 h-8.5 rounded-full ${meta.badgeBg} border ${meta.badgeBorder} flex items-center justify-center shrink-0`}
                     >
-                      {count}
-                    </span>
+                      {meta.renderIcon()}
+                    </div>
+
+                    {/* Right Info: Row 1 (Title + Code), Row 2 (Sublabel + Count) */}
+                    <div className="flex-1 min-w-0">
+                      {/* Row 1: Title on left, Code index on right */}
+                      <div className="flex items-baseline justify-between gap-1 w-full">
+                        <span className="font-serif font-bold text-[#1C1917] text-[12px] sm:text-[12.5px] leading-tight whitespace-nowrap">
+                          {status}
+                        </span>
+                        <span className="text-[10px] sm:text-[11px] font-mono font-medium text-[#B8AEA3] shrink-0 leading-none">
+                          {meta.code}
+                        </span>
+                      </div>
+
+                      {/* Row 2: Sublabel on left, Large count on right */}
+                      <div className="flex items-baseline justify-between gap-1 w-full mt-1">
+                        <span className="text-[8px] sm:text-[8.5px] font-semibold tracking-wider uppercase text-[#8C827A] whitespace-nowrap leading-none">
+                          {meta.sublabel}
+                        </span>
+                        <span className="font-serif text-[18px] sm:text-[20px] font-bold text-[#1C1917] leading-none shrink-0">
+                          {count}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-xs font-semibold truncate">{status}</span>
+
+                  {/* Bottom: Accent Progress Bar */}
+                  <div className="w-full h-[2.5px] bg-[#EFEAE2] rounded-full overflow-hidden mt-2.5">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        backgroundColor: meta.accentColor,
+                        width: `${barWidthPercent}%`,
+                      }}
+                    />
+                  </div>
                 </button>
               );
             })}
@@ -1336,12 +1486,12 @@ export default function AdminOrdersPage() {
                     {/* Status Dropdown */}
                     <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                       <select
-                        value={order.status}
+                        value={normalizeOrderStatus(order.status)}
                         onChange={(e) =>
                           handleStatusChange(order.id, e.target.value as OrderStatus)
                         }
                         className={`text-xs font-bold px-3 py-1.5 rounded-xl border focus:outline-none transition-colors cursor-pointer ${getStatusPill(
-                          order.status
+                          normalizeOrderStatus(order.status)
                         )}`}
                       >
                         {ALL_STATUSES.map((s) => (

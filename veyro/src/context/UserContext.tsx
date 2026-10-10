@@ -120,11 +120,11 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["Blanc Court Sneaker", "Ease Oversized Tee"],
-    status: "Processing",
+    status: "Packed",
     estimatedDelivery: "Arriving by 05 Oct",
     timeline: [
       { status: "Confirmed", timestamp: "02 Oct 2026, 10:20 AM", description: "Payment verified" },
-      { status: "Processing", timestamp: "02 Oct 2026, 11:00 AM", description: "Order is being packed" },
+      { status: "Packed", timestamp: "02 Oct 2026, 11:00 AM", description: "Order is packed and ready to ship" },
     ],
     shippingAddress: {
       name: "Karthik R",
@@ -454,11 +454,11 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["Heritage Automatic (Cognac Brown / 39mm)"],
-    status: "Processing",
+    status: "Packed",
     estimatedDelivery: "Arriving by 24 Sep",
     timeline: [
       { status: "Confirmed", timestamp: "20 Sep 2026, 05:10 PM", description: "Order received" },
-      { status: "Processing", timestamp: "20 Sep 2026, 06:00 PM", description: "Verifying inventory" },
+      { status: "Packed", timestamp: "20 Sep 2026, 06:00 PM", description: "Packed in dispatch box" },
     ],
     shippingAddress: {
       name: "Meera T",
@@ -529,6 +529,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         if (Array.isArray(parsed)) {
           const normalized = parsed.map((o: OrderRecord) => ({
             ...o,
+            status: (o.status === "Processing" ? "Packed" : o.status) as OrderStatus,
             items: (o.items || []).map((it) => {
               let img = it.imageUrl || "";
               if (img.includes("veyro-watch-01.webp")) img = "/products/watches/seiko-watch.jpg";
