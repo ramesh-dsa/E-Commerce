@@ -23,7 +23,9 @@ export function ProductCard({
   const [isHovered, setIsHovered] = useState(false);
   
   const { getStats } = useReviews();
-  const { averageRating: rating, totalCount: reviewsCount } = getStats(product.id);
+  const stats = getStats(product.id);
+  const rating = stats.totalCount > 0 ? stats.averageRating : (product.rating ?? 0);
+  const reviewsCount = stats.totalCount > 0 ? stats.totalCount : (product.reviewsCount ?? 0);
 
   const discountPercent =
     product.originalPrice && product.originalPrice > product.price

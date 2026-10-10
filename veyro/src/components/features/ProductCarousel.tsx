@@ -52,7 +52,7 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
         </div>
         
         <div className="flex items-center gap-4">
-          {products.length > 2 && (
+          {products.length > 1 && (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => scroll("left")}
@@ -90,23 +90,14 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
           className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-6 hide-scrollbar"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {products.map((product) => {
-            const getWidthClass = () => {
-              if (products.length === 1) return "min-w-[80vw] sm:min-w-[80%] lg:min-w-full";
-              if (products.length === 2) return "min-w-[80vw] sm:min-w-[45%] lg:min-w-[calc(50%-0.75rem)]";
-              if (products.length === 3) return "min-w-[80vw] sm:min-w-[45%] lg:min-w-[calc(33.333%-1rem)]";
-              return "min-w-[80vw] sm:min-w-[45%] lg:min-w-[calc(25%-1.125rem)]";
-            };
-
-            return (
-              <div 
-                key={product.id} 
-                className={`${getWidthClass()} snap-start shrink-0`}
-              >
-                <ProductCard product={product} />
-              </div>
-            );
-          })}
+          {products.map((product) => (
+            <div 
+              key={product.id} 
+              className="w-[75vw] sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] max-w-[75vw] sm:max-w-[calc(50%-0.75rem)] lg:max-w-[calc(25%-1.125rem)] snap-start shrink-0"
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
         </div>
       </div>
     </section>

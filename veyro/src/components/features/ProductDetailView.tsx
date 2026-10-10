@@ -118,6 +118,68 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
     return { product: null, backInfo: null, customSimilar: [] };
   }, [products, slug, initialProduct, sections]);
 
+  // Other active custom sections' products (e.g. other bespoke collections created via admin)
+  const otherCustomSectionCarousels = useMemo(() => {
+    if (!product || !sections || sections.length === 0) return [];
+    return sections
+      .filter((sec) => {
+        if (!sec.isActive && sec.isActive !== undefined) return false;
+        // Exclude the section this current product belongs to
+        const containsThisProduct = sec.products.some(
+          (p) => p.id === product.id || p.slug === product.slug
+        );
+        return !containsThisProduct && sec.products.length > 0;
+      })
+      .map((sec) => {
+        const mappedProducts: Product[] = sec.products.map((p) => {
+          const discountPercent =
+            p.originalPrice && p.originalPrice > p.price
+              ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)
+              : null;
+          return {
+            id: p.id,
+            sku: `VEY-CUST-${p.id.toUpperCase()}`,
+            slug: p.slug,
+            name: p.name,
+            category: sec.name,
+            subcategory: sec.name,
+            subcategoryTag: p.tags?.[0] || sec.name,
+            colorName: p.colorName || "Default",
+            colorHex: p.colorHex || "#111111",
+            material: p.material || "Premium Quality",
+            price: p.price,
+            originalPrice: p.originalPrice,
+            discount: discountPercent ? `${discountPercent}% OFF` : undefined,
+            imageUrl: p.imageUrl,
+            secondaryImageUrl: p.secondaryImageUrl || p.imageUrl,
+            galleryImages:
+              p.galleryImages && p.galleryImages.length > 0
+                ? p.galleryImages
+                : [p.imageUrl, ...(p.secondaryImageUrl ? [p.secondaryImageUrl] : [])],
+            badge: (p.badge as any) || undefined,
+            sizes: p.sizes?.length > 0 ? p.sizes : ["Free Size"],
+            isNewArrival: false,
+            inStock: p.inStock,
+            shortDescription: p.description || p.name,
+            longDescription: p.description || p.name,
+            features: ["Premium craftsmanship", "Exclusive bespoke drop"],
+            care: ["Handle with care"],
+            collections: [sec.name],
+            relatedProducts: [],
+            tags: p.tags || [],
+            rating: 4.8,
+            reviewsCount: 12,
+          };
+        });
+
+        return {
+          products: mappedProducts,
+          title: `EXPLORE ${sec.name.toUpperCase()}`,
+          subtitle: sec.description || `Signature designs from ${sec.name}`,
+        };
+      });
+  }, [sections, product?.id, product?.slug]);
+
   if (!product) {
     if (!isHydrated) {
       return (
@@ -254,67 +316,6 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
         return [...relatedWatches, ...remainingWatches].slice(0, 8);
       })()
     : [];
-
-  // Other active custom sections' products (e.g. other bespoke collections created via admin)
-  const otherCustomSectionCarousels = useMemo(() => {
-    return sections
-      .filter((sec) => {
-        if (!sec.isActive && sec.isActive !== undefined) return false;
-        // Exclude the section this current product belongs to
-        const containsThisProduct = sec.products.some(
-          (p) => p.id === product.id || p.slug === product.slug
-        );
-        return !containsThisProduct && sec.products.length > 0;
-      })
-      .map((sec) => {
-        const mappedProducts: Product[] = sec.products.map((p) => {
-          const discountPercent =
-            p.originalPrice && p.originalPrice > p.price
-              ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)
-              : null;
-          return {
-            id: p.id,
-            sku: `VEY-CUST-${p.id.toUpperCase()}`,
-            slug: p.slug,
-            name: p.name,
-            category: sec.name,
-            subcategory: sec.name,
-            subcategoryTag: p.tags?.[0] || sec.name,
-            colorName: p.colorName || "Default",
-            colorHex: p.colorHex || "#111111",
-            material: p.material || "Premium Quality",
-            price: p.price,
-            originalPrice: p.originalPrice,
-            discount: discountPercent ? `${discountPercent}% OFF` : undefined,
-            imageUrl: p.imageUrl,
-            secondaryImageUrl: p.secondaryImageUrl || p.imageUrl,
-            galleryImages:
-              p.galleryImages && p.galleryImages.length > 0
-                ? p.galleryImages
-                : [p.imageUrl, ...(p.secondaryImageUrl ? [p.secondaryImageUrl] : [])],
-            badge: (p.badge as any) || undefined,
-            sizes: p.sizes?.length > 0 ? p.sizes : ["Free Size"],
-            isNewArrival: false,
-            inStock: p.inStock,
-            shortDescription: p.description || p.name,
-            longDescription: p.description || p.name,
-            features: ["Premium craftsmanship", "Exclusive bespoke drop"],
-            care: ["Handle with care"],
-            collections: [sec.name],
-            relatedProducts: [],
-            tags: p.tags || [],
-            rating: 4.8,
-            reviewsCount: 12,
-          };
-        });
-
-        return {
-          products: mappedProducts,
-          title: `EXPLORE ${sec.name.toUpperCase()}`,
-          subtitle: sec.description || `Signature designs from ${sec.name}`,
-        };
-      });
-  }, [sections, product.id, product.slug]);
 
   // Build the carousel sections dynamically
   const carouselSections = [];
