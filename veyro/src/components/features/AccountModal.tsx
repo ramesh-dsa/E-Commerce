@@ -345,9 +345,9 @@ export function AccountModal() {
 
                 <button
                   type="submit"
-                  className="relative group overflow-hidden w-full h-12 bg-white hover:bg-[#fcd017] text-[#111111] font-black text-xs sm:text-sm uppercase tracking-[0.16em] rounded-xl flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer mt-6 shadow-md hover:shadow-[0_8px_30px_rgba(252,208,23,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]"
+                  className="relative group overflow-hidden w-full h-12 bg-white hover:bg-[#fcd017] text-[#111111] font-black text-xs sm:text-sm uppercase tracking-[0.16em] rounded-xl flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer mt-6 shadow-sm hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.5),0_4px_12px_-2px_rgba(252,208,23,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]"
                 >
-                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none ease-out" />
+                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none ease-out" />
                   <span className="relative z-10 transition-colors duration-300">
                     {activeAuthTab === "signin" ? "SIGN IN TO VAULT" : "CREATE & ACTIVATE ACCOUNT"}
                   </span>
