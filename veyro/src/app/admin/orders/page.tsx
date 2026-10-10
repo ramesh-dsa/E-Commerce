@@ -737,7 +737,7 @@ export default function AdminOrdersPage() {
                               e.stopPropagation();
                               handleSelectDay(d.date, d.label);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-900 text-white font-bold text-[11px] hover:bg-neutral-800 group-hover:bg-amber-500 group-hover:text-black transition-all cursor-pointer shadow-2xs"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-900 text-white font-bold text-[11px] group-hover:bg-amber-400 group-hover:text-black hover:bg-amber-400 hover:text-black transition-all cursor-pointer shadow-2xs active:scale-95"
                           >
                             <span>Drill Down Day</span>
                             <ArrowRight size={12} />

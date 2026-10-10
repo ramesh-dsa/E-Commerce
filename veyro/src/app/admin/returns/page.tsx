@@ -881,17 +881,17 @@ export default function AdminReturnsPage() {
       {/* ── RETURNS MASTER TABLE CARD ── */}
       <div className="bg-white rounded-[22px] border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse" role="table">
+          <table className="w-full text-left border-collapse table-fixed min-w-[1240px]" role="table">
             <thead>
-              <tr className="border-b border-neutral-100 text-xs font-semibold text-neutral-400 bg-neutral-50/50">
-                <th className="pl-6 py-3.5">Return ID</th>
-                <th className="px-3 py-3.5">Customer &amp; City</th>
-                <th className="px-3 py-3.5">Product Claimed</th>
-                <th className="px-3 py-3.5">Reason &amp; Feedback</th>
-                <th className="px-3 py-3.5">Refund Value</th>
-                <th className="px-3 py-3.5">Status</th>
-                <th className="px-3 py-3.5">Date Requested</th>
-                <th className="pr-6 py-3.5 text-right">Actions</th>
+              <tr className="border-b border-neutral-100 text-[11px] font-bold uppercase tracking-wider text-neutral-500 bg-[#faf9f6]/90">
+                <th className="pl-6 pr-3 py-4 w-[11%]">Return ID</th>
+                <th className="px-5 py-4 w-[14%]">Customer &amp; City</th>
+                <th className="px-5 py-4 w-[19%]">Product Claimed</th>
+                <th className="px-5 py-4 w-[19%]">Reason &amp; Feedback</th>
+                <th className="px-5 py-4 w-[10%]">Refund Value</th>
+                <th className="px-5 py-4 w-[12%]">Status</th>
+                <th className="px-5 py-4 w-[11%]">Date Requested</th>
+                <th className="pl-3 pr-6 py-4 w-[14%] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
@@ -929,12 +929,12 @@ export default function AdminReturnsPage() {
                   return (
                     <tr
                       key={ret.id}
-                      className="hover:bg-amber-50/40 transition-colors duration-150 group cursor-pointer"
+                      className="hover:bg-amber-50/40 transition-colors duration-150 group cursor-pointer border-b border-neutral-100/70"
                       onClick={() => setSelectedReturn(ret)}
                       title="Click to inspect return claim"
                     >
                       {/* Return ID & Order ID */}
-                      <td className="pl-6 py-4 whitespace-nowrap">
+                      <td className="pl-6 pr-3 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="text-xs font-mono font-bold text-neutral-900 group-hover:text-amber-800">
                             {ret.id}
@@ -946,12 +946,12 @@ export default function AdminReturnsPage() {
                       </td>
 
                       {/* Customer */}
-                      <td className="px-3 py-4 whitespace-nowrap">
+                      <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="text-xs sm:text-sm font-semibold text-neutral-900">
+                          <span className="text-xs sm:text-sm font-semibold text-neutral-900 truncate">
                             {ret.customerName}
                           </span>
-                          <span className="text-[11px] text-neutral-400 flex items-center gap-1 mt-0.5">
+                          <span className="text-[11px] text-neutral-400 flex items-center gap-1 mt-0.5 truncate">
                             <Phone size={10} className="shrink-0" />
                             {ret.customerPhone} • {ret.customerCity}
                           </span>
@@ -959,22 +959,22 @@ export default function AdminReturnsPage() {
                       </td>
 
                       {/* Product */}
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-10 h-10 rounded-xl bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
+                      <td className="px-5 py-4.5 align-middle whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-xl bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
                             <Image
                               src={ret.item.imageUrl}
                               alt={ret.item.productName}
-                              width={40}
-                              height={40}
+                              width={44}
+                              height={44}
                               className="w-full h-full object-cover"
                             />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-semibold text-neutral-900 truncate max-w-[150px]">
+                            <span className="text-xs font-semibold text-neutral-900 truncate max-w-[170px]" title={ret.item.productName}>
                               {ret.item.productName}
                             </span>
-                            <span className="text-[11px] text-neutral-400 mt-0.5">
+                            <span className="text-[11px] text-neutral-400 mt-0.5 truncate max-w-[170px]">
                               {ret.item.colorName} • Size {ret.item.selectedSize} (x{ret.item.quantity})
                             </span>
                           </div>
@@ -982,38 +982,52 @@ export default function AdminReturnsPage() {
                       </td>
 
                       {/* Reason & Comments */}
-                      <td className="px-3 py-4">
-                        <div className="flex flex-col max-w-[220px]">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-amber-50 text-amber-900 border border-amber-200/60 w-fit">
+                      <td className="px-5 py-4.5 align-middle whitespace-nowrap">
+                        <div className="flex flex-col max-w-[210px]">
+                          <span
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10.5px] font-bold bg-amber-50 text-amber-900 border border-amber-200/70 w-fit truncate max-w-[200px]"
+                            title={ret.reason}
+                          >
                             {ret.reason}
                           </span>
-                          {ret.details && (
-                            <span className="text-[11px] text-neutral-500 italic mt-1 line-clamp-1">
+                          {ret.details ? (
+                            <span
+                              className="text-[11px] text-neutral-500 italic mt-1 truncate max-w-[200px] block"
+                              title={ret.details}
+                            >
                               &ldquo;{ret.details}&rdquo;
                             </span>
+                          ) : (
+                            <span className="text-[11px] text-neutral-400 mt-1">No additional note</span>
                           )}
                         </div>
                       </td>
 
                       {/* Refund Amount */}
-                      <td className="px-3 py-4 whitespace-nowrap">
+                      <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="text-xs sm:text-sm font-bold text-neutral-900">
                             ₹{ret.refundAmount.toLocaleString("en-IN")}
                           </span>
                           <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            {ret.paymentMethod === "upi"
-                              ? "UPI • Original Source"
-                              : ret.paymentMethod === "card"
-                              ? "Card • Refund Ready"
-                              : "Bank Transfer"}
+                            {ret.status === "rejected" ? (
+                              <span className="text-neutral-400 font-normal">Claim Void</span>
+                            ) : (
+                              <>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                {ret.paymentMethod === "upi"
+                                  ? "UPI • Original"
+                                  : ret.paymentMethod === "card"
+                                  ? "Card • Refund Ready"
+                                  : "Bank Transfer"}
+                              </>
+                            )}
                           </span>
                         </div>
                       </td>
 
                       {/* Status */}
-                      <td className="px-3 py-4 whitespace-nowrap">
+                      <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         {ret.status === "pending" ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
@@ -1022,7 +1036,7 @@ export default function AdminReturnsPage() {
                         ) : ret.status === "approved" ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-300 shadow-2xs">
                             <CheckCircle2 size={12} className="text-emerald-600" />
-                            Approved / Pickup Set
+                            Approved
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-900 border border-rose-300 shadow-2xs">
@@ -1033,7 +1047,7 @@ export default function AdminReturnsPage() {
                       </td>
 
                       {/* Date */}
-                      <td className="px-3 py-4 whitespace-nowrap">
+                      <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
                           <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900">
                             <span>{ret.requestedAt.includes(",") ? ret.requestedAt.split(",")[0].trim() : ret.requestedAt}</span>
@@ -1051,8 +1065,8 @@ export default function AdminReturnsPage() {
                       </td>
 
                       {/* Actions */}
-                      <td className="pr-6 py-4 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1.5">
+                      <td className="pl-3 pr-6 py-4.5 align-middle whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-1.5 w-full min-w-[150px]">
                           {ret.status === "pending" ? (
                             <>
                               <button
