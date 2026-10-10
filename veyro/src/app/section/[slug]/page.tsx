@@ -558,12 +558,12 @@ export default function CustomSectionPage() {
       {/* ── Catalog Area ─────────────────────────────────────────────── */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-8 lg:py-12">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-neutral-500 mb-6">
-          <Link href="/" className="hover:text-neutral-900 transition-colors font-medium">
-            Home
+        <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em] mb-6">
+          <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
+            HOME
           </Link>
-          <ChevronRight size={12} className="text-neutral-400" />
-          <span className="text-neutral-900 font-semibold tracking-wide">
+          <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
+          <span className="text-[#111111] font-bold uppercase">
             {section.name}
           </span>
         </nav>

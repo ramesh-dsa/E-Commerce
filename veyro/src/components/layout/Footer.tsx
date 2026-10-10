@@ -393,7 +393,7 @@ export function Footer() {
               Sitemap
             </Link>
             <Link
-              href="/admin"
+              href="/admin/login"
               target="_blank"
               rel="noopener noreferrer"
               className="text-neutral-500 hover:text-[#fcd017] transition-colors font-mono font-medium flex items-center gap-1"

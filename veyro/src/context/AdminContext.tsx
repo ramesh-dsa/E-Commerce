@@ -19,30 +19,33 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate admin session from localStorage on mount (SSR safe)
+  // Hydrate admin session from sessionStorage on mount (SSR safe)
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(ADMIN_STORAGE_KEY);
+      // Clear legacy localStorage key to prevent past sessions from auto-logging in
+      localStorage.removeItem(ADMIN_STORAGE_KEY);
+
+      const saved = sessionStorage.getItem(ADMIN_STORAGE_KEY);
       if (saved === "true") {
         setIsAdmin(true);
       }
     } catch (e) {
-      console.warn("Failed to read admin session from localStorage", e);
+      console.warn("Failed to read admin session from sessionStorage", e);
     }
     setIsHydrated(true);
   }, []);
 
-  // Persist admin session to localStorage
+  // Persist admin session to sessionStorage
   useEffect(() => {
     if (!isHydrated) return;
     try {
       if (isAdmin) {
-        localStorage.setItem(ADMIN_STORAGE_KEY, "true");
+        sessionStorage.setItem(ADMIN_STORAGE_KEY, "true");
       } else {
-        localStorage.removeItem(ADMIN_STORAGE_KEY);
+        sessionStorage.removeItem(ADMIN_STORAGE_KEY);
       }
     } catch (e) {
-      console.warn("Failed to save admin session to localStorage", e);
+      console.warn("Failed to save admin session to sessionStorage", e);
     }
   }, [isAdmin, isHydrated]);
 
