@@ -1880,7 +1880,7 @@ function ReturnRequestsReviewModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
-      className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-xl overflow-hidden"
+      className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-6 bg-black/45 backdrop-blur-md overflow-hidden"
       onClick={onClose}
     >
       <motion.div
@@ -2417,6 +2417,7 @@ function ProductPerformanceModal({
   onUpdateStock,
   onUpdatePrice,
   showToast,
+  isNested = false,
 }: {
   product: TopProductItem | null;
   onClose: () => void;
@@ -2424,6 +2425,7 @@ function ProductPerformanceModal({
   onUpdateStock: (productId: string, newStock: number) => void;
   onUpdatePrice: (productId: string, newPrice: number) => void;
   showToast: (msg: string) => void;
+  isNested?: boolean;
 }) {
   const { products: catalogProducts } = useProducts();
   const [activeTab, setActiveTab] = useState<"variants" | "orders" | "actions">("variants");
@@ -2536,7 +2538,9 @@ function ProductPerformanceModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
-      className="fixed inset-0 z-[100010] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
+      className={`fixed inset-0 z-[100010] flex items-center justify-center p-3 sm:p-5 overflow-hidden ${
+        isNested ? "bg-transparent" : "bg-black/45 backdrop-blur-md"
+      }`}
       onClick={onClose}
     >
       <motion.div
@@ -3117,7 +3121,7 @@ function AllTopProductsModal({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
       style={{ pointerEvents: isInspecting ? "none" : "auto" }}
-      className="fixed inset-0 z-[100000] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
+      className="fixed inset-0 z-[100000] bg-black/45 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-hidden"
       onClick={onClose}
     >
       <motion.div
@@ -4273,6 +4277,7 @@ interface OrderDeepInspectionModalProps {
   onClose: () => void;
   onUpdateStatus: (orderId: string, status: OrderStatus, note?: string) => void;
   showToast: (msg: string, type?: "success" | "info") => void;
+  isNested?: boolean;
 }
 
 function OrderDeepInspectionModal({
@@ -4280,6 +4285,7 @@ function OrderDeepInspectionModal({
   onClose,
   onUpdateStatus,
   showToast,
+  isNested = false,
 }: OrderDeepInspectionModalProps) {
   const [currentOrder, setCurrentOrder] = useState<OrderRecord | null>(order);
   const [adminNote, setAdminNote] = useState<string>("");
@@ -4354,7 +4360,9 @@ function OrderDeepInspectionModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
-      className="fixed inset-0 z-[100010] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
+      className={`fixed inset-0 z-[100010] flex items-center justify-center p-3 sm:p-5 overflow-hidden ${
+        isNested ? "bg-transparent" : "bg-black/45 backdrop-blur-md"
+      }`}
       onClick={onClose}
     >
       <motion.div
@@ -4952,7 +4960,7 @@ function AllOrdersManagerModal({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22, ease: "easeOut" }}
       style={{ pointerEvents: isInspecting ? "none" : "auto" }}
-      className="fixed inset-0 z-[100000] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
+      className="fixed inset-0 z-[100000] bg-black/45 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-hidden"
       onClick={onClose}
     >
       <motion.div
@@ -7651,6 +7659,7 @@ export default function AdminDashboard() {
               onUpdateStock={handleUpdateStock}
               onUpdatePrice={handleUpdatePrice}
               showToast={(msg) => triggerToast(msg, "success")}
+              isNested={isAllProductsModalOpen}
             />
           )}
         </AnimatePresence>
@@ -7680,6 +7689,7 @@ export default function AdminDashboard() {
               onClose={() => setSelectedOrderForModal(null)}
               onUpdateStatus={updateOrderStatus}
               showToast={(msg, type) => triggerToast(msg, type || "success")}
+              isNested={isAllOrdersModalOpen}
             />
           )}
         </AnimatePresence>
