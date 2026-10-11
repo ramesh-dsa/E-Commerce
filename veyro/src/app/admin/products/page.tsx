@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useProducts } from "@/context/ProductsContext";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus, Search, RotateCcw } from "lucide-react";
+import { searchProducts } from "@/utils/searchEngine";
 
 export default function AdminProductsPage() {
   const { products, deleteProduct, resetToDefaults } = useProducts();
@@ -19,14 +20,7 @@ export default function AdminProductsPage() {
       result = result.filter((p) => p.category === categoryFilter);
     }
     if (search) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.id.toLowerCase().includes(q) ||
-          p.subcategoryTag.toLowerCase().includes(q) ||
-          p.colorName.toLowerCase().includes(q)
-      );
+      result = searchProducts(result, search);
     }
     return result;
   }, [products, search, categoryFilter]);

@@ -8,6 +8,7 @@ import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
 import { SearchIcon, CloseIcon } from "@/components/ui/Icons";
 import { ArrowUpRight, TrendingUp, Sparkles } from "lucide-react";
+import { searchProducts } from "@/utils/searchEngine";
 
 const searchPhrases = [
   "Search for products...",
@@ -120,56 +121,9 @@ export function ProductSearch({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Real-time Instant Search Matching
+// Real-time Instant Search Matching with Normalization, Synonyms & Fuzzy Typo Tolerance
   const filteredProducts = useMemo(() => {
-    const trimmed = query.trim().toLowerCase();
-    if (!trimmed) return [];
-
-    const words = trimmed.split(/\s+/).filter(Boolean);
-
-    return products
-      .map((product) => {
-        let score = 0;
-        const name = product.name.toLowerCase();
-        const category = product.category.toLowerCase();
-        const subcategory = product.subcategory.toLowerCase();
-        const subcategoryTag = product.subcategoryTag.toLowerCase();
-        const fit = (product.fit || "").toLowerCase();
-        const color = product.colorName.toLowerCase();
-        const material = product.material.toLowerCase();
-        const badge = (product.badge || "").toLowerCase();
-        const tags = (product.tags || []).map((t) => t.toLowerCase());
-
-        // Exact or startsWith phrase matches
-        if (name === trimmed) score += 250;
-        else if (name.startsWith(trimmed)) score += 150;
-        else if (name.includes(trimmed)) score += 90;
-
-        if (subcategoryTag.includes(trimmed)) score += 70;
-        if (category.includes(trimmed)) score += 60;
-        if (fit && fit.includes(trimmed)) score += 50;
-        if (color.includes(trimmed)) score += 40;
-        if (tags.some((t) => t.includes(trimmed))) score += 40;
-
-        // Multi-word partial matching
-        for (const word of words) {
-          if (name.includes(word)) score += 40;
-          if (subcategoryTag.includes(word)) score += 30;
-          if (fit && fit.includes(word)) score += 25;
-          if (category.includes(word)) score += 20;
-          if (subcategory.includes(word)) score += 20;
-          if (color.includes(word)) score += 20;
-          if (material.includes(word)) score += 15;
-          if (badge.includes(word)) score += 15;
-          if (tags.some((t) => t.includes(word))) score += 20;
-        }
-
-        return { product, score };
-      })
-      .filter((item) => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map((item) => item.product)
-      .slice(0, 5);
+    return searchProducts(products, query, 5);
   }, [query, products]);
 
   // Keyboard navigation

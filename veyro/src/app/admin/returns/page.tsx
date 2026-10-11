@@ -11,6 +11,7 @@ import {
   parseOrderDateToDayString,
   formatDayDisplay,
 } from "@/components/admin/AdminDateRangePicker";
+import { normalizeSearchText, stripToAlphaNumeric, getSynonymsForWord } from "@/utils/searchEngine";
 import {
   RotateCcw,
   CheckCircle2,
@@ -246,15 +247,41 @@ export default function AdminReturnsPage() {
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      list = list.filter(
-        (r) =>
-          r.id.toLowerCase().includes(q) ||
-          r.orderId.toLowerCase().includes(q) ||
-          r.customerName.toLowerCase().includes(q) ||
+      const cleanQ = normalizeSearchText(q);
+      const strippedQ = stripToAlphaNumeric(q);
+      const synonyms = getSynonymsForWord(q);
+
+      list = list.filter((r) => {
+        const id = r.id.toLowerCase();
+        const orderId = r.orderId.toLowerCase();
+        const customerName = r.customerName.toLowerCase();
+        const strippedCustomer = stripToAlphaNumeric(r.customerName);
+        const pName = r.item.productName.toLowerCase();
+        const strippedPName = stripToAlphaNumeric(r.item.productName);
+        const reason = r.reason.toLowerCase();
+
+        if (
+          id.includes(q) ||
+          orderId.includes(q) ||
+          customerName.includes(cleanQ) ||
+          strippedCustomer.includes(strippedQ) ||
           r.customerPhone.includes(q) ||
-          r.item.productName.toLowerCase().includes(q) ||
-          r.reason.toLowerCase().includes(q)
-      );
+          pName.includes(cleanQ) ||
+          strippedPName.includes(strippedQ) ||
+          reason.includes(cleanQ)
+        ) {
+          return true;
+        }
+
+        // Check synonyms on product name
+        for (const syn of synonyms) {
+          if (pName.includes(syn) || strippedPName.includes(stripToAlphaNumeric(syn))) {
+            return true;
+          }
+        }
+
+        return false;
+      });
     }
 
     return list;

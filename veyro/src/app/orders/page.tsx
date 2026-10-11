@@ -8,6 +8,7 @@ import { useUser } from "@/context/UserContext";
 import type { OrderRecord } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
+import { searchOrders } from "@/utils/searchEngine";
 import { Container } from "@/components/ui/Container";
 import {
   Package,
@@ -406,17 +407,10 @@ export default function OrdersPage() {
         if (!matchesAny) return false;
       }
 
-      // 3. Search filter
-      const term = activeSearch.toLowerCase();
-      if (term) {
-        const matchesId = order.id.toLowerCase().includes(term);
-        const matchesItems = order.items?.some((item) =>
-          item.productName.toLowerCase().includes(term)
-        );
-        const matchesNames = order.itemNames?.some((name) =>
-          name.toLowerCase().includes(term)
-        );
-        if (!matchesId && !matchesItems && !matchesNames) return false;
+      // 3. Search filter with smart normalization & synonyms
+      if (activeSearch) {
+        const matchesSearch = searchOrders([order], activeSearch).length > 0;
+        if (!matchesSearch) return false;
       }
 
       return true;

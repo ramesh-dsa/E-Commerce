@@ -11,6 +11,13 @@ import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus, Product } from "@/types";
 import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay } from "@/components/admin/AdminDateRangePicker";
 import {
+  searchProducts,
+  searchOrders,
+  searchTopProducts,
+  normalizeSearchText,
+  stripToAlphaNumeric,
+} from "@/utils/searchEngine";
+import {
   Search,
   Calendar,
   CalendarDays,
@@ -3082,20 +3089,16 @@ function AllTopProductsModal({
     };
   }, [isOpen, onClose]);
 
-  // Filter & sort
-  const filtered = products
+  // Filter & sort with smart search & synonym normalization
+  const searchMatched = useMemo(() => {
+    return search ? searchTopProducts(products, search) : products;
+  }, [products, search]);
+
+  const filtered = searchMatched
     .filter((p) => {
       if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
       if (stockFilter === "low_stock" && p.stock > 10) return false;
       if (stockFilter === "in_stock" && p.stock <= 10) return false;
-      if (search) {
-        const q = search.toLowerCase();
-        return (
-          p.name.toLowerCase().includes(q) ||
-          p.sku.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
-        );
-      }
       return true;
     })
     .sort((a, b) => {
@@ -3464,41 +3467,23 @@ function AdminGlobalSearchBar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Filter Matching Orders
+  // Filter Matching Orders with Smart Normalization & Synonyms
   const matchingOrders = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase().trim();
-    return orders.filter((o) => {
-      const idMatch = o.id.toLowerCase().includes(q);
-      const customerMatch = o.shippingAddress?.name?.toLowerCase().includes(q);
-      const statusMatch = o.status.toLowerCase().includes(q);
-      const phoneMatch = o.shippingAddress?.phone?.includes(q);
-      const cityMatch = o.shippingAddress?.address?.toLowerCase().includes(q);
-      const itemsMatch = o.items?.some(
-        (it) => it.productName.toLowerCase().includes(q) || it.colorName.toLowerCase().includes(q)
-      );
-      return idMatch || customerMatch || statusMatch || phoneMatch || cityMatch || itemsMatch;
-    });
+    return searchOrders(orders, searchQuery);
   }, [orders, searchQuery]);
 
-  // Filter Matching Products
+  // Filter Matching Products with Normalization, Synonyms & Typo Tolerance
   const matchingProducts = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase().trim();
-    return products.filter((p) => {
-      const nameMatch = p.name.toLowerCase().includes(q);
-      const catMatch = p.category.toLowerCase().includes(q);
-      const subcatMatch = p.subcategory?.toLowerCase().includes(q);
-      const skuMatch = p.sku?.toLowerCase().includes(q);
-      const tagMatch = p.tags?.some((t) => t.toLowerCase().includes(q));
-      return nameMatch || catMatch || subcatMatch || skuMatch || tagMatch;
-    });
+    return searchProducts(products, searchQuery);
   }, [products, searchQuery]);
 
   // Filter Matching Customers
   const matchingCustomers = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase().trim();
+    const strippedQ = stripToAlphaNumeric(searchQuery);
     const customerMap = new Map<
       string,
       { name: string; phone: string; address: string; ordersCount: number; totalSpent: number }
@@ -3508,8 +3493,10 @@ function AdminGlobalSearchBar({
       const name = o.shippingAddress?.name?.trim();
       if (!name) return;
       const key = name.toLowerCase();
+      const strippedKey = stripToAlphaNumeric(name);
       if (
         key.includes(q) ||
+        strippedKey.includes(strippedQ) ||
         o.shippingAddress.phone?.includes(q) ||
         o.shippingAddress.address?.toLowerCase().includes(q)
       ) {
@@ -4925,16 +4912,7 @@ function AllOrdersManagerModal({
     }
 
     if (modalSearch.trim()) {
-      const q = modalSearch.toLowerCase().trim();
-      list = list.filter(
-        (o) =>
-          o.id.toLowerCase().includes(q) ||
-          o.shippingAddress?.name?.toLowerCase().includes(q) ||
-          o.shippingAddress?.phone?.includes(q) ||
-          o.shippingAddress?.address?.toLowerCase().includes(q) ||
-          o.status.toLowerCase().includes(q) ||
-          o.items?.some((it) => it.productName.toLowerCase().includes(q))
-      );
+      list = searchOrders(list, modalSearch);
     }
 
     if (sortBy === "highest") {
@@ -5754,18 +5732,7 @@ export default function AdminDashboard() {
     }
 
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      list = list.filter(
-        (o) =>
-          o.id.toLowerCase().includes(q) ||
-          o.shippingAddress?.name?.toLowerCase().includes(q) ||
-          o.status.toLowerCase().includes(q) ||
-          o.shippingAddress?.phone?.includes(q) ||
-          o.shippingAddress?.address?.toLowerCase().includes(q) ||
-          o.items?.some(
-            (it) => it.productName.toLowerCase().includes(q) || it.colorName.toLowerCase().includes(q)
-          )
-      );
+      list = searchOrders(list, searchQuery);
     }
 
     return list;
