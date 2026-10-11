@@ -115,8 +115,8 @@ export interface TopProductItem {
 export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   {
     rank: 1,
-    id: "vey-tsh-ovr-001",
-    sku: "VEY-TSH-OVR-001",
+    id: "vey-tsh-ovr-004",
+    sku: "VEY-TSH-OVR-004",
     name: "Mark Graphic Oversized Tee",
     category: "T-Shirts",
     soldCount: 42,
@@ -125,7 +125,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 620,
     marginPercent: 58.6,
     imageUrl: "/products/tshirts/mark-graphic-tee-charcoal-front.webp",
-    slug: "core-oversized-tee-black",
+    slug: "mark-graphic-oversized-tee-charcoal",
     growth: 32.4,
     growthDirection: "up",
     stock: 38,
@@ -149,8 +149,8 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 2,
-    id: "vey-shoe-crt-001",
-    sku: "VEY-SHOE-CRT-001",
+    id: "vey-ftw-min-001",
+    sku: "VEY-FTW-MIN-001",
     name: "Blanc Court Sneaker",
     category: "Shoes",
     soldCount: 38,
@@ -183,9 +183,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 3,
-    id: "vey-wat-stl-001",
-    sku: "VEY-WAT-STL-001",
-    name: "Royal Steel Edition",
+    id: "vey-wat-drz-004",
+    sku: "VEY-WAT-DRZ-004",
+    name: "King Seiko Automatic",
     category: "Watches",
     soldCount: 30,
     revenue: 47970,
@@ -193,7 +193,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 750,
     marginPercent: 53.1,
     imageUrl: "/products/watches/seiko-watch.jpg",
-    slug: "royal-steel-edition",
+    slug: "king-seiko-automatic-silver",
     growth: 18.7,
     growthDirection: "up",
     stock: 9,
@@ -203,8 +203,8 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     reviewCount: 84,
     isFeatured: true,
     variants: [
-      { size: "40mm Case", sold: 18, revenue: 28782, stock: 5, isBestseller: true },
-      { size: "42mm Case", sold: 12, revenue: 19188, stock: 4 },
+      { size: "37mm Case", sold: 18, revenue: 28782, stock: 5, isBestseller: true },
+      { size: "40mm Case", sold: 12, revenue: 19188, stock: 4 },
     ],
     timeframeStats: {
       thisMonth: { soldCount: 30, revenue: 47970, growth: 18.7 },
@@ -217,7 +217,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     rank: 4,
     id: "vey-wat-aut-002",
     sku: "VEY-WAT-AUT-002",
-    name: "Heritage Automatic",
+    name: "Daniel Wellington Classic St Mawes",
     category: "Watches",
     soldCount: 26,
     revenue: 41574,
@@ -225,7 +225,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 720,
     marginPercent: 55.0,
     imageUrl: "/products/watches/dw-watch.jpg",
-    slug: "heritage-automatic-brown",
+    slug: "dw-classic-st-mawes",
     growth: 14.2,
     growthDirection: "up",
     stock: 18,
@@ -247,7 +247,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     rank: 5,
     id: "vey-wat-chr-001",
     sku: "VEY-WAT-CHR-001",
-    name: "Urban Chrono Black",
+    name: "Aigner Blue Roman Dial Watch",
     category: "Watches",
     soldCount: 22,
     revenue: 35178,
@@ -255,7 +255,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 710,
     marginPercent: 55.6,
     imageUrl: "/products/watches/aigner-blue-watch.jpg",
-    slug: "urban-chrono-black",
+    slug: "aigner-blue-roman-dial",
     growth: 9.8,
     growthDirection: "up",
     stock: 6,
@@ -275,9 +275,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 6,
-    id: "vey-tsh-apx-002",
-    sku: "VEY-TSH-APX-002",
-    name: "Apex Arachnid Heavyweight Tee",
+    id: "vey-tsh-gfx-001",
+    sku: "VEY-TSH-GFX-001",
+    name: "Apex Arachnid Graphic Tee",
     category: "T-Shirts",
     soldCount: 19,
     revenue: 28481,
@@ -285,7 +285,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 610,
     marginPercent: 59.3,
     imageUrl: "/products/tshirts/apex-arachnid-front.webp",
-    slug: "apex-arachnid-oversized-tee",
+    slug: "motto-typography-tee-black",
     growth: 16.5,
     growthDirection: "up",
     stock: 24,
@@ -308,9 +308,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 7,
-    id: "vey-shoe-run-002",
-    sku: "VEY-SHOE-RUN-002",
-    name: "Minimalist Retro Runner",
+    id: "vey-ftw-min-002",
+    sku: "VEY-FTW-MIN-002",
+    name: "Mono Low Sneaker",
     category: "Shoes",
     soldCount: 17,
     revenue: 24140,
@@ -318,7 +318,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 660,
     marginPercent: 53.5,
     imageUrl: "/products/shoes/veyro-shoe-02-primary.webp",
-    slug: "retro-runner-black",
+    slug: "mono-low-sneaker-black",
     growth: 12.0,
     growthDirection: "up",
     stock: 11,
@@ -341,7 +341,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     rank: 8,
     id: "vey-wat-div-003",
     sku: "VEY-WAT-DIV-003",
-    name: "Cerruti 1881 Chronograph",
+    name: "Cerruti 1881 Men RUSCELLO",
     category: "Watches",
     soldCount: 15,
     revenue: 23985,
@@ -369,9 +369,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 9,
-    id: "vey-tsh-drg-003",
-    sku: "VEY-TSH-DRG-003",
-    name: "Echo Dragon Oversized Tee",
+    id: "vey-tsh-gfx-002",
+    sku: "VEY-TSH-GFX-002",
+    name: "Echo Mythic Dragon Oversized Tee",
     category: "T-Shirts",
     soldCount: 13,
     revenue: 19487,
@@ -379,7 +379,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 600,
     marginPercent: 60.0,
     imageUrl: "/products/tshirts/echo-dragon-oversized-tee-front.webp",
-    slug: "echo-dragon-oversized-tee",
+    slug: "echo-back-print-tee-off-white",
     growth: 8.5,
     growthDirection: "up",
     stock: 16,
@@ -400,9 +400,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 10,
-    id: "vey-wat-fos-004",
-    sku: "VEY-WAT-FOS-004",
-    name: "Fossil Heritage Chrono",
+    id: "vey-wat-fos-009",
+    sku: "VEY-WAT-FOS-009",
+    name: "Fossil Men's Chronograph Leather",
     category: "Watches",
     soldCount: 11,
     revenue: 17589,
@@ -410,7 +410,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 730,
     marginPercent: 54.3,
     imageUrl: "/products/watches/fossil-watch.jpg",
-    slug: "fossil-heritage-chrono",
+    slug: "fossil-mens-chronograph-leather",
     growth: 7.1,
     growthDirection: "up",
     stock: 7,
@@ -419,7 +419,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     rating: 4.8,
     reviewCount: 29,
     variants: [
-      { size: "42mm Case", sold: 11, revenue: 17589, stock: 7, isBestseller: true },
+      { size: "44mm Case", sold: 11, revenue: 17589, stock: 7, isBestseller: true },
     ],
     timeframeStats: {
       thisMonth: { soldCount: 11, revenue: 17589, growth: 7.1 },
@@ -430,9 +430,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 11,
-    id: "vey-wat-tit-005",
-    sku: "VEY-WAT-TIT-005",
-    name: "Titan Raga Elegance",
+    id: "vey-wat-emr-007",
+    sku: "VEY-WAT-EMR-007",
+    name: "Titan Raga Women's Watch",
     category: "Watches",
     soldCount: 9,
     revenue: 14391,
@@ -440,7 +440,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 710,
     marginPercent: 55.6,
     imageUrl: "/products/watches/titan-raga.jpg",
-    slug: "titan-raga-elegance",
+    slug: "titan-raga-rose-gold",
     growth: 6.4,
     growthDirection: "up",
     stock: 5,
@@ -449,7 +449,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     rating: 4.95,
     reviewCount: 27,
     variants: [
-      { size: "36mm Case", sold: 9, revenue: 14391, stock: 5, isBestseller: true },
+      { size: "32mm Case", sold: 9, revenue: 14391, stock: 5, isBestseller: true },
     ],
     timeframeStats: {
       thisMonth: { soldCount: 9, revenue: 14391, growth: 6.4 },
@@ -460,9 +460,9 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
   },
   {
     rank: 12,
-    id: "vey-shoe-wfl-003",
-    sku: "VEY-SHOE-WFL-003",
-    name: "Street Waffle Runner",
+    id: "vey-ftw-min-003",
+    sku: "VEY-FTW-MIN-003",
+    name: "Fog Low Sneaker",
     category: "Shoes",
     soldCount: 8,
     revenue: 11360,
@@ -470,7 +470,7 @@ export const TOP_PRODUCTS_MASTER: TopProductItem[] = [
     cogs: 670,
     marginPercent: 52.8,
     imageUrl: "/products/shoes/veyro-shoe-03-primary.webp",
-    slug: "street-waffle-runner",
+    slug: "fog-low-sneaker-light-grey",
     growth: 5.2,
     growthDirection: "up",
     stock: 12,
@@ -2425,9 +2425,49 @@ function ProductPerformanceModal({
   onUpdatePrice: (productId: string, newPrice: number) => void;
   showToast: (msg: string) => void;
 }) {
+  const { products: catalogProducts } = useProducts();
   const [activeTab, setActiveTab] = useState<"variants" | "orders" | "actions">("variants");
   const [stockInput, setStockInput] = useState<number>(product ? product.stock : 0);
   const [priceInput, setPriceInput] = useState<number>(product ? product.unitPrice : 0);
+
+  // Dynamic resilient resolution so Live Store never 404s or shows the wrong product
+  const liveStoreSlug = useMemo(() => {
+    if (!product) return "";
+    // 1. Direct slug match in live catalog
+    if (product.slug && catalogProducts.some((p) => p.slug === product.slug)) {
+      return product.slug;
+    }
+    // 2. Match by SKU
+    if (product.sku) {
+      const matchBySku = catalogProducts.find(
+        (p) => p.sku && p.sku.toUpperCase() === product.sku.toUpperCase()
+      );
+      if (matchBySku) return matchBySku.slug;
+    }
+    // 3. Match by ID
+    if (product.id) {
+      const matchById = catalogProducts.find((p) => p.id === product.id);
+      if (matchById) return matchById.slug;
+    }
+    // 4. Match by primary image URL
+    if (product.imageUrl) {
+      const matchByImg = catalogProducts.find(
+        (p) => p.imageUrl === product.imageUrl || p.secondaryImageUrl === product.imageUrl
+      );
+      if (matchByImg) return matchByImg.slug;
+    }
+    // 5. Match by exact or partial name
+    const targetName = product.name.trim().toLowerCase();
+    const matchByName = catalogProducts.find(
+      (p) =>
+        p.name.trim().toLowerCase() === targetName ||
+        p.name.toLowerCase().includes(targetName) ||
+        targetName.includes(p.name.toLowerCase())
+    );
+    if (matchByName) return matchByName.slug;
+
+    return product.slug || "";
+  }, [product, catalogProducts]);
 
   // Sync inputs whenever selected product changes
   useEffect(() => {
@@ -2464,6 +2504,7 @@ function ProductPerformanceModal({
         it.productName.toLowerCase().includes(product.name.toLowerCase()) ||
         product.name.toLowerCase().includes(it.productName.toLowerCase()) ||
         it.productSlug === product.slug ||
+        (liveStoreSlug && it.productSlug === liveStoreSlug) ||
         it.productId === product.id
     )
   );
@@ -2559,7 +2600,7 @@ function ProductPerformanceModal({
             </button>
 
             <a
-              href={`/product/${product.slug}`}
+              href={`/product/${liveStoreSlug || product.slug}`}
               target="_blank"
               rel="noreferrer"
               className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all cursor-pointer"
