@@ -3,6 +3,8 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, AnimatePresence } from "motion/react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
@@ -16,6 +18,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
   Plus,
   IndianRupee,
   ShoppingCart,
@@ -1766,15 +1769,17 @@ function ReturnRequestsReviewModal({
   // Keyboard Escape listener
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
     }
     if (isOpen) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown, true);
     }
     return () => {
-      document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [isOpen, onClose]);
 
@@ -1866,17 +1871,25 @@ function ReturnRequestsReviewModal({
     showToast(`✕ Return request for ${customerName} was rejected.`);
   };
 
-  if (!isOpen) return null;
-
   const totalRefundExposure = pendingRequests.reduce((sum, r) => sum + r.item.price, 0);
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+    <motion.div 
+      key="return-review-modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-xl overflow-hidden"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-3xl max-w-2xl w-full my-auto shadow-2xl border border-black/10 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+      <motion.div
+        key="return-review-modal-card"
+        initial={{ opacity: 0, scale: 0.95, y: 14 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-white rounded-3xl max-w-2xl w-full my-auto shadow-2xl border border-black/10 overflow-hidden flex flex-col max-h-[90vh]"
         role="dialog"
         aria-modal="true"
         aria-label="Return Requests Review Modal"
@@ -2284,8 +2297,8 @@ function ReturnRequestsReviewModal({
             <ArrowRight size={13} />
           </Link>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -2425,18 +2438,20 @@ function ProductPerformanceModal({
     }
   }, [product]);
 
-  // Keyboard Escape listener & scroll lock
+  // Keyboard Escape listener
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
     }
     if (product) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown, true);
     }
     return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [product, onClose]);
 
@@ -2474,12 +2489,22 @@ function ProductPerformanceModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150"
+    <motion.div
+      key="product-performance-modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="fixed inset-0 z-[100010] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-[26px] shadow-2xl border border-black/[0.06] max-w-3xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh] animate-in zoom-in-95 duration-150"
+      <motion.div
+        key="product-performance-modal-card"
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-white rounded-[26px] shadow-2xl border border-black/[0.06] max-w-3xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -2524,6 +2549,15 @@ function ProductPerformanceModal({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all cursor-pointer"
+              title="Return to Leaderboard (Esc)"
+            >
+              <ArrowLeft size={13} />
+              <span className="hidden sm:inline">Back</span>
+            </button>
+
             <a
               href={`/product/${product.slug}`}
               target="_blank"
@@ -2649,7 +2683,7 @@ function ProductPerformanceModal({
         </div>
 
         {/* Tab Content */}
-        <div className="p-5 sm:p-6 overflow-y-auto flex-1 bg-white space-y-4">
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1 min-h-0 bg-white space-y-4 overscroll-contain admin-scroll-container">
           {activeTab === "variants" && (
             <div className="space-y-4">
               <div className="border border-neutral-100 rounded-2xl overflow-hidden shadow-2xs">
@@ -2959,8 +2993,8 @@ function ProductPerformanceModal({
             Done
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -2974,6 +3008,7 @@ function AllTopProductsModal({
   onExportAllCSV,
   timeframe,
   metric,
+  isInspecting = false,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -2982,6 +3017,7 @@ function AllTopProductsModal({
   onExportAllCSV: () => void;
   timeframe: string;
   metric: "revenue" | "units";
+  isInspecting?: boolean;
 }) {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -2994,16 +3030,12 @@ function AllTopProductsModal({
       if (e.key === "Escape") onClose();
     }
     if (isOpen) {
-      document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     }
     return () => {
-      document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
 
   // Filter & sort
   const filtered = products
@@ -3037,12 +3069,27 @@ function AllTopProductsModal({
   const maxRevenue = Math.max(...products.map((p) => p.revenue), 1);
 
   return (
-    <div
-      className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150"
+    <motion.div
+      key="all-products-modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      style={{ pointerEvents: isInspecting ? "none" : "auto" }}
+      className="fixed inset-0 z-[100000] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-[26px] shadow-2xl border border-black/[0.06] max-w-5xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh] animate-in zoom-in-95 duration-150"
+      <motion.div
+        key="all-products-modal-card"
+        initial={{ opacity: 0, scale: 0.95, y: 14 }}
+        animate={{
+          opacity: isInspecting ? 0 : 1,
+          scale: isInspecting ? 0.94 : 1,
+          y: isInspecting ? -10 : 0,
+        }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-white rounded-[26px] shadow-2xl border border-black/[0.06] max-w-5xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -3142,7 +3189,7 @@ function AllTopProductsModal({
         </div>
 
         {/* Leaderboard Table */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 admin-scroll-container overscroll-contain">
           <table className="w-full text-left text-xs">
             <thead className="bg-neutral-50/80 text-neutral-400 font-semibold border-b border-neutral-100">
               <tr>
@@ -3165,9 +3212,8 @@ function AllTopProductsModal({
                     key={item.id}
                     onClick={() => {
                       onSelectProduct(item);
-                      onClose();
                     }}
-                    className="hover:bg-neutral-50/80 transition-colors group cursor-pointer"
+                    className="hover:bg-amber-50/70 transition-colors group cursor-pointer"
                   >
                     <td className="py-3 px-3 text-center">
                       {idx === 0 ? (
@@ -3316,8 +3362,8 @@ function AllTopProductsModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -4210,16 +4256,16 @@ function OrderDeepInspectionModal({
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
         onClose();
       }
     }
     if (order) {
-      window.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown, true);
     }
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [order, onClose]);
 
@@ -4261,12 +4307,22 @@ function OrderDeepInspectionModal({
   ];
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200"
+    <motion.div
+      key="order-inspection-modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="fixed inset-0 z-[100010] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-black/5 animate-in zoom-in-95 duration-200"
+      <motion.div
+        key="order-inspection-modal-card"
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-black/5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
@@ -4291,6 +4347,15 @@ function OrderDeepInspectionModal({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Return to Orders (Esc)"
+            >
+              <ArrowLeft size={13} />
+              <span className="hidden sm:inline">Back</span>
+            </button>
+
             <button
               onClick={handleCopyOrderId}
               className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -4375,7 +4440,7 @@ function OrderDeepInspectionModal({
         </div>
 
         {/* Scrollable Modal Body */}
-        <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
+        <div className="overflow-y-auto flex-1 min-h-0 p-5 sm:p-6 space-y-6 overscroll-contain admin-scroll-container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column (7 cols): Items List + Financials + Staff Notes */}
             <div className="lg:col-span-7 space-y-5">
@@ -4740,8 +4805,8 @@ function OrderDeepInspectionModal({
             Close Window
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -4754,6 +4819,7 @@ interface AllOrdersManagerModalProps {
   onSelectOrder: (order: OrderRecord) => void;
   onUpdateStatus: (orderId: string, status: OrderStatus, note?: string) => void;
   showToast: (msg: string, type?: "success" | "info") => void;
+  isInspecting?: boolean;
 }
 
 function AllOrdersManagerModal({
@@ -4763,6 +4829,7 @@ function AllOrdersManagerModal({
   onSelectOrder,
   onUpdateStatus,
   showToast,
+  isInspecting = false,
 }: AllOrdersManagerModalProps) {
   const [modalSearch, setModalSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
@@ -4777,11 +4844,9 @@ function AllOrdersManagerModal({
     }
     if (isOpen) {
       window.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
     }
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -4838,15 +4903,28 @@ function AllOrdersManagerModal({
     return filteredOrders.reduce((sum, o) => sum + o.total, 0);
   }, [filteredOrders]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200"
+    <motion.div
+      key="all-orders-modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      style={{ pointerEvents: isInspecting ? "none" : "auto" }}
+      className="fixed inset-0 z-[100000] bg-black/92 backdrop-blur-xl flex items-center justify-center p-3 sm:p-5 overflow-hidden"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-black/5 animate-in zoom-in-95 duration-200"
+      <motion.div
+        key="all-orders-modal-card"
+        initial={{ opacity: 0, scale: 0.95, y: 14 }}
+        animate={{
+          opacity: isInspecting ? 0 : 1,
+          scale: isInspecting ? 0.94 : 1,
+          y: isInspecting ? -10 : 0,
+        }}
+        exit={{ opacity: 0, scale: 0.95, y: 12 }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-black/5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -4976,7 +5054,7 @@ function AllOrdersManagerModal({
         </div>
 
         {/* Orders Table Container */}
-        <div className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1 admin-scroll-container overscroll-contain">
           <table className="w-full text-left border-collapse" role="table">
             <thead className="sticky top-0 bg-neutral-50/95 backdrop-blur-xs z-10 border-b border-neutral-200 text-xs font-medium text-neutral-400">
               <tr>
@@ -5007,7 +5085,7 @@ function AllOrdersManagerModal({
                     <tr
                       key={order.id}
                       onClick={() => onSelectOrder(order)}
-                      className="hover:bg-amber-50/40 cursor-pointer transition-colors group"
+                      className="hover:bg-amber-50/70 cursor-pointer transition-colors group"
                       title="Click to deep inspect order"
                     >
                       {/* ID */}
@@ -5087,8 +5165,8 @@ function AllOrdersManagerModal({
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -5156,6 +5234,18 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
   }
 }
 
+function AdminPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || typeof document === "undefined") {
+    return null;
+  }
+  return createPortal(children, document.body);
+}
+
 // ─── MAIN ADMIN DASHBOARD COMPONENT ──────────────────────────────────────────
 
 export default function AdminDashboard() {
@@ -5187,6 +5277,30 @@ export default function AdminDashboard() {
   const [isAllOrdersModalOpen, setIsAllOrdersModalOpen] = useState(false);
   const [recentOrdersStatusFilter, setRecentOrdersStatusFilter] = useState<string>("All");
   const [recentOrdersPage, setRecentOrdersPage] = useState<number>(1);
+
+  // Centralized body scroll lock for admin modals
+  const isAnyAdminModalOpen = Boolean(
+    isReturnModalOpen ||
+    isAllProductsModalOpen ||
+    selectedTopProduct ||
+    isAllOrdersModalOpen ||
+    selectedOrderForModal
+  );
+
+  useEffect(() => {
+    const mainEl = document.querySelector("main.admin-scroll-container") as HTMLElement | null;
+    if (isAnyAdminModalOpen) {
+      document.body.style.overflow = "hidden";
+      if (mainEl) mainEl.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+      if (mainEl) mainEl.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      if (mainEl) mainEl.style.overflow = "auto";
+    };
+  }, [isAnyAdminModalOpen]);
 
   const triggerToast = (message: string, type: "success" | "info" = "success") => {
     setAdminToast({ message, type });
@@ -5746,7 +5860,13 @@ export default function AdminDashboard() {
   }, [chartData, chartPeriod]);
 
   return (
-    <div className="space-y-6 text-neutral-900 pb-16 font-sans">
+    <div
+      className={`space-y-6 text-neutral-900 pb-16 font-sans transition-[opacity,filter] duration-300 ease-out ${
+        isAnyAdminModalOpen
+          ? "opacity-25 filter blur-[6px] pointer-events-none select-none"
+          : "opacity-100 filter blur-0 pointer-events-auto select-auto"
+      }`}
+    >
       {/* ── TOP BAR: SEARCH, DATE RANGE, NOTIFICATIONS, PROFILE ──────────────── */}
       <header className="flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search Input with / shortcut and instant live results palette */}
@@ -7441,77 +7561,102 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* Return Requests Deep Review Modal */}
-      <ReturnRequestsReviewModal
-        isOpen={isReturnModalOpen}
-        onClose={() => setIsReturnModalOpen(false)}
-        orders={orders}
-        onReviewReturn={reviewReturnRequest}
-      />
+      {/* ── FIVE RICH MODALS (PORTALED TO ROOT BODY) ── */}
+      <AdminPortal>
+        {/* Return Requests Deep Review Modal */}
+        <AnimatePresence>
+          {isReturnModalOpen && (
+            <ReturnRequestsReviewModal
+              isOpen={isReturnModalOpen}
+              onClose={() => setIsReturnModalOpen(false)}
+              orders={orders}
+              onReviewReturn={reviewReturnRequest}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* Product Deep Performance & Retail Analytics Modal */}
-      <ProductPerformanceModal
-        product={selectedTopProduct}
-        onClose={() => setSelectedTopProduct(null)}
-        orders={orders}
-        onUpdateStock={handleUpdateStock}
-        onUpdatePrice={handleUpdatePrice}
-        showToast={(msg) => triggerToast(msg, "success")}
-      />
+        {/* All Top Products Catalog Leaderboard Modal (Base List: z-[100000]) */}
+        <AnimatePresence>
+          {isAllProductsModalOpen && (
+            <AllTopProductsModal
+              isOpen={isAllProductsModalOpen}
+              onClose={() => setIsAllProductsModalOpen(false)}
+              products={activeTopProducts}
+              onSelectProduct={(p) => setSelectedTopProduct(p)}
+              onExportAllCSV={() => {
+                downloadAllProductsCSV(activeTopProducts, topProductsTimeframe);
+                triggerToast("📥 Full catalog leaderboard downloaded as CSV");
+              }}
+              timeframe={
+                dateFilter.type === "day"
+                  ? `Day-wise (${dateFilter.singleDay || dateFilter.startDate})`
+                  : dateFilter.type === "custom"
+                  ? `Range: ${dateFilter.startDate} → ${dateFilter.endDate}`
+                  : `Till Date (${dateFilter.endDate})`
+              }
+              metric={topProductsMetric}
+              isInspecting={Boolean(selectedTopProduct)}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* All Top Products Catalog Leaderboard Modal */}
-      <AllTopProductsModal
-        isOpen={isAllProductsModalOpen}
-        onClose={() => setIsAllProductsModalOpen(false)}
-        products={activeTopProducts}
-        onSelectProduct={(p) => setSelectedTopProduct(p)}
-        onExportAllCSV={() => {
-          downloadAllProductsCSV(activeTopProducts, topProductsTimeframe);
-          triggerToast("📥 Full catalog leaderboard downloaded as CSV");
-        }}
-        timeframe={
-          dateFilter.type === "day"
-            ? `Day-wise (${dateFilter.singleDay || dateFilter.startDate})`
-            : dateFilter.type === "custom"
-            ? `Range: ${dateFilter.startDate} → ${dateFilter.endDate}`
-            : `Till Date (${dateFilter.endDate})`
-        }
-        metric={topProductsMetric}
-      />
+        {/* Product Deep Performance & Retail Analytics Modal (Detail Modal: z-[100010]) */}
+        <AnimatePresence>
+          {selectedTopProduct && (
+            <ProductPerformanceModal
+              product={selectedTopProduct}
+              onClose={() => setSelectedTopProduct(null)}
+              orders={orders}
+              onUpdateStock={handleUpdateStock}
+              onUpdatePrice={handleUpdatePrice}
+              showToast={(msg) => triggerToast(msg, "success")}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* Order Deep Inspection Modal */}
-      <OrderDeepInspectionModal
-        order={selectedOrderForModal}
-        onClose={() => setSelectedOrderForModal(null)}
-        onUpdateStatus={updateOrderStatus}
-        showToast={(msg, type) => triggerToast(msg, type || "success")}
-      />
+        {/* All Orders Manager Modal (Base List: z-[100000]) */}
+        <AnimatePresence>
+          {isAllOrdersModalOpen && (
+            <AllOrdersManagerModal
+              isOpen={isAllOrdersModalOpen}
+              onClose={() => setIsAllOrdersModalOpen(false)}
+              orders={orders}
+              onSelectOrder={(ord) => {
+                setSelectedOrderForModal(ord);
+              }}
+              onUpdateStatus={updateOrderStatus}
+              showToast={(msg, type) => triggerToast(msg, type || "success")}
+              isInspecting={Boolean(selectedOrderForModal)}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* All Orders Manager Modal */}
-      <AllOrdersManagerModal
-        isOpen={isAllOrdersModalOpen}
-        onClose={() => setIsAllOrdersModalOpen(false)}
-        orders={orders}
-        onSelectOrder={(ord) => {
-          setSelectedOrderForModal(ord);
-        }}
-        onUpdateStatus={updateOrderStatus}
-        showToast={(msg, type) => triggerToast(msg, type || "success")}
-      />
+        {/* Order Deep Inspection Modal (Detail Modal: z-[100010]) */}
+        <AnimatePresence>
+          {selectedOrderForModal && (
+            <OrderDeepInspectionModal
+              order={selectedOrderForModal}
+              onClose={() => setSelectedOrderForModal(null)}
+              onUpdateStatus={updateOrderStatus}
+              showToast={(msg, type) => triggerToast(msg, type || "success")}
+            />
+          )}
+        </AnimatePresence>
 
-      {/* Floating System Notification Toast */}
-      {adminToast && (
-        <div className="fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-4 py-3 bg-neutral-900 text-white text-xs sm:text-sm font-medium rounded-2xl shadow-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <CheckCircle className="text-emerald-400 shrink-0" size={18} />
-          <span>{adminToast.message}</span>
-          <button
-            onClick={() => setAdminToast(null)}
-            className="ml-2 text-neutral-400 hover:text-white cursor-pointer"
-          >
-            <X size={14} />
-          </button>
-        </div>
-      )}
+        {/* Floating System Notification Toast */}
+        {adminToast && (
+          <div className="fixed bottom-6 right-6 z-[100020] flex items-center gap-3 px-4 py-3 bg-neutral-900 text-white text-xs sm:text-sm font-medium rounded-2xl shadow-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-3 duration-200">
+            <CheckCircle className="text-emerald-400 shrink-0" size={18} />
+            <span>{adminToast.message}</span>
+            <button
+              onClick={() => setAdminToast(null)}
+              className="ml-2 text-neutral-400 hover:text-white cursor-pointer"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
+      </AdminPortal>
     </div>
   );
 }
