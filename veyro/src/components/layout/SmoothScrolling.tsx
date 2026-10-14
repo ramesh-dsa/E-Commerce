@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ReactLenis, useLenis } from "lenis/react";
 import type { LenisRef } from "lenis/react";
 import type Lenis from "lenis";
+import "lenis/dist/lenis.css";
 
 interface SmoothScrollingProps {
   children: React.ReactNode;
@@ -242,8 +243,14 @@ export function SmoothScrolling({ children }: SmoothScrollingProps) {
       ref={lenisRef}
       root
       options={{
-        lerp: 0.18,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
         smoothWheel: true,
+        wheelMultiplier: 1.0,
+        touchMultiplier: 1.5,
+        infinite: false,
         prevent: (node) => {
           return (
             Boolean(node?.hasAttribute?.("data-lenis-prevent")) ||

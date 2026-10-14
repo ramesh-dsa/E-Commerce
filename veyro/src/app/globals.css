@@ -30,8 +30,12 @@
   --underline-gap: 8px;
 }
 
-html {
+html:not(.lenis) {
   scroll-behavior: smooth;
+}
+
+html.lenis {
+  scroll-behavior: auto !important;
 }
 
 html,
