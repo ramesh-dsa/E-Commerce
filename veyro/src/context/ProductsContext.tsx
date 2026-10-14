@@ -30,7 +30,9 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setProducts(parsed);
+          const savedMap = new Map(parsed.map((p: Product) => [p.id, p]));
+          const missingSeeds = seedProducts.filter((sp) => !savedMap.has(sp.id));
+          setProducts([...parsed, ...missingSeeds]);
         }
       }
     } catch (e) {
@@ -46,7 +48,9 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
         try {
           const parsed = JSON.parse(e.newValue);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setProducts(parsed);
+            const savedMap = new Map(parsed.map((p: Product) => [p.id, p]));
+            const missingSeeds = seedProducts.filter((sp) => !savedMap.has(sp.id));
+            setProducts([...parsed, ...missingSeeds]);
           }
         } catch (err) {
           console.warn("Failed to parse storage sync products", err);
@@ -59,7 +63,9 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setProducts(parsed);
+            const savedMap = new Map(parsed.map((p: Product) => [p.id, p]));
+            const missingSeeds = seedProducts.filter((sp) => !savedMap.has(sp.id));
+            setProducts([...parsed, ...missingSeeds]);
           }
         }
       } catch (err) {

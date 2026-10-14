@@ -5,10 +5,11 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLenis } from "lenis/react";
 import { ProductCard } from "@/components/features/ProductCard";
+import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
 
 export function FootwearSection() {
-  const { products } = useProducts();
+  const { products, isHydrated } = useProducts();
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -542,18 +543,30 @@ export function FootwearSection() {
             ref={mobileRailRef}
             className="w-full lg:hidden overflow-x-auto scrollbar-none snap-x snap-mandatory flex gap-4 sm:gap-5 items-stretch px-1 py-3 mt-4 scroll-smooth"
           >
-            {footwear.map((product) => (
-              <div 
-                key={product.id}
-                className="w-[220px] sm:w-[260px] shrink-0 snap-start flex flex-col select-none"
-              >
-                <ProductCard 
-                  product={product} 
-                  theme="dark"
-                  aspectRatio="aspect-[3/4]"
-                />
-              </div>
-            ))}
+            {!isHydrated
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div 
+                    key={index}
+                    className="w-[220px] sm:w-[260px] shrink-0 snap-start flex flex-col select-none"
+                  >
+                    <ProductCardSkeleton 
+                      theme="dark"
+                      aspectRatio="aspect-[3/4]"
+                    />
+                  </div>
+                ))
+              : footwear.map((product) => (
+                  <div 
+                    key={product.id}
+                    className="w-[220px] sm:w-[260px] shrink-0 snap-start flex flex-col select-none"
+                  >
+                    <ProductCard 
+                      product={product} 
+                      theme="dark"
+                      aspectRatio="aspect-[3/4]"
+                    />
+                  </div>
+                ))}
           </div>
 
           {/* Right Sliding Track Area (Desktop only - 3D coverflow effect) */}
@@ -576,51 +589,63 @@ export function FootwearSection() {
                 className="flex gap-10 sm:gap-16 items-center w-max px-[50vw] lg:px-[30vw]"
                 style={{ willChange: 'transform' }}
               >
-                {footwear.map((product) => {
-                  return (
-                    <div 
-                      key={product.id} 
-                      ref={(el) => {
-                        if (el) {
-                          cardsRef.current.set(product.id, el);
-                          cardStylesRef.current.set(product.id, el.style);
-                        } else {
-                          cardsRef.current.delete(product.id);
-                          cardStylesRef.current.delete(product.id);
-                        }
-                      }}
-                      onClick={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (target.closest("a") || target.closest("button")) {
-                          return;
-                        }
-                        scrollToProduct(product.id);
-                      }}
-                      className="relative w-[280px] sm:w-[320px] lg:w-[360px] shrink-0 cursor-pointer select-none"
-                    >
-                      {/* Cinematic Studio Halo Glow behind the sneaker only */}
-                      <div 
-                        ref={(el) => {
-                          if (el) {
-                            glowsRef.current.set(product.id, el);
-                            glowStylesRef.current.set(product.id, el.style);
-                          } else {
-                            glowsRef.current.delete(product.id);
-                            glowStylesRef.current.delete(product.id);
-                          }
-                        }}
-                        className="absolute -top-6 inset-x-0 h-[72%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.04)_55%,transparent_75%)] blur-[45px] rounded-full pointer-events-none -z-10"
-                        style={{ opacity: 0 }}
-                      />
+                {!isHydrated
+                  ? Array.from({ length: 6 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="relative w-[280px] sm:w-[320px] lg:w-[360px] shrink-0 select-none"
+                      >
+                        <ProductCardSkeleton
+                          theme="dark"
+                          aspectRatio="aspect-[3/4]"
+                        />
+                      </div>
+                    ))
+                  : footwear.map((product) => {
+                      return (
+                        <div 
+                          key={product.id} 
+                          ref={(el) => {
+                            if (el) {
+                              cardsRef.current.set(product.id, el);
+                              cardStylesRef.current.set(product.id, el.style);
+                            } else {
+                              cardsRef.current.delete(product.id);
+                              cardStylesRef.current.delete(product.id);
+                            }
+                          }}
+                          onClick={(e) => {
+                            const target = e.target as HTMLElement;
+                            if (target.closest("a") || target.closest("button")) {
+                              return;
+                            }
+                            scrollToProduct(product.id);
+                          }}
+                          className="relative w-[280px] sm:w-[320px] lg:w-[360px] shrink-0 cursor-pointer select-none"
+                        >
+                          {/* Cinematic Studio Halo Glow behind the sneaker only */}
+                          <div 
+                            ref={(el) => {
+                              if (el) {
+                                glowsRef.current.set(product.id, el);
+                                glowStylesRef.current.set(product.id, el.style);
+                              } else {
+                                glowsRef.current.delete(product.id);
+                                glowStylesRef.current.delete(product.id);
+                              }
+                            }}
+                            className="absolute -top-6 inset-x-0 h-[72%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.04)_55%,transparent_75%)] blur-[45px] rounded-full pointer-events-none -z-10"
+                            style={{ opacity: 0 }}
+                          />
 
-                      <ProductCard 
-                        product={product} 
-                        theme="dark"
-                        aspectRatio="aspect-[3/4]"
-                      />
-                    </div>
-                  );
-                })}
+                          <ProductCard 
+                            product={product} 
+                            theme="dark"
+                            aspectRatio="aspect-[3/4]"
+                          />
+                        </div>
+                      );
+                    })}
               </div>
             </div>
           </div>

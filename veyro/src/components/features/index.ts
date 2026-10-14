@@ -24,3 +24,5 @@ export * from "./ProductSearch";
 export * from "./ProductBackButton";
 export * from "./ProductReviewsSection";
 export * from "./CancelOrderModal";
+export * from "./ProductCardSkeleton";
+export * from "./ProductDetailSkeleton";

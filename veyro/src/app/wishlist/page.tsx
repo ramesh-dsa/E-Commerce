@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
 import { Badge } from "@/components/ui/Badge";
 import { ProductCard } from "@/components/features/ProductCard";
+import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Product } from "@/types";
@@ -35,6 +36,11 @@ export default function WishlistPage() {
   } = useWishlist();
   const { addToCart, openCart } = useCart();
   const { products } = useProducts();
+
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // State
   const [movingId, setMovingId] = useState<string | null>(null);
@@ -205,7 +211,13 @@ export default function WishlistPage() {
         </div>
 
         {/* Wishlist Grid or Empty State */}
-        {items.length > 0 ? (
+        {!isMounted ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" aria-hidden="true">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((product) => {
               const currentSize = getProductSize(product);

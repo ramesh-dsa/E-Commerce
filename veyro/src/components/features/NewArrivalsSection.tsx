@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/features/ProductCard";
+import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
 
 export function NewArrivalsSection() {
-  const { products } = useProducts();
+  const { products, isHydrated } = useProducts();
   const [activeTab, setActiveTab] = useState<"ALL" | "OVERSIZED" | "FOOTWEAR" | "TEXTURED">("ALL");
 
   const tabs: Array<"ALL" | "OVERSIZED" | "FOOTWEAR" | "TEXTURED"> = [
@@ -72,17 +73,28 @@ export function NewArrivalsSection() {
 
         {/* Editorial Asymmetrical Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {filteredProducts.map((product, index) => {
-            const isFeatured = index === 0;
-            return (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                isFeatured={isFeatured}
-                className={isFeatured ? "col-span-2 md:row-span-2" : ""}
-              />
-            );
-          })}
+          {!isHydrated
+            ? Array.from({ length: 5 }).map((_, index) => {
+                const isFeatured = index === 0;
+                return (
+                  <ProductCardSkeleton
+                    key={index}
+                    isFeatured={isFeatured}
+                    className={isFeatured ? "col-span-2 md:row-span-2" : ""}
+                  />
+                );
+              })
+            : filteredProducts.map((product, index) => {
+                const isFeatured = index === 0;
+                return (
+                  <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    isFeatured={isFeatured}
+                    className={isFeatured ? "col-span-2 md:row-span-2" : ""}
+                  />
+                );
+              })}
         </div>
       </Container>
     </section>

@@ -10,6 +10,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
+import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
 import {
   WatchFilterSidebar,
@@ -66,7 +67,7 @@ const CAROUSEL_BANNERS = [
 ];
 
 export function WatchesCatalog() {
-  const { products } = useProducts();
+  const { products, isHydrated } = useProducts();
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
   const { addToCart } = useCart();
   const { isInWishlist } = useWishlist();
@@ -532,7 +533,19 @@ export function WatchesCatalog() {
 
           {/* Right Product Grid Column */}
           <div className="flex-1 min-w-0">
-            {filteredProducts.length === 0 ? (
+            {!isHydrated ? (
+              <div
+                className={`grid gap-x-4 sm:gap-x-6 gap-y-10 ${
+                  gridColumns === 4
+                    ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                    : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                }`}
+              >
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
               /* Empty State */
               <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
                 <div className="relative w-28 h-28 mb-5 rounded-full overflow-hidden shadow-md border-2 border-white transform transition-transform hover:rotate-180 duration-1000 ease-in-out">

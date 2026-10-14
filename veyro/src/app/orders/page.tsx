@@ -10,6 +10,7 @@ import { formatPrice } from "@/lib/utils";
 import type { OrderStatus } from "@/types";
 import { searchOrders } from "@/utils/searchEngine";
 import { Container } from "@/components/ui/Container";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Package,
   ChevronRight,
@@ -287,6 +288,11 @@ function matchesTimeFilter(dateStr: string, key: TimeFilterKey): boolean {
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function OrdersPage() {
   const { user, orders, openAccountModal, cancelOrder } = useUser();
+
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // ── State ─────────────────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState<TabKey>("all");
@@ -843,7 +849,41 @@ export default function OrdersPage() {
             </div>
 
             {/* ── Orders List ────────────────────────────────────────────── */}
-            {filteredOrders.length > 0 ? (
+            {!isMounted ? (
+              <div className="space-y-4" aria-hidden="true">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white border border-neutral-200/90 rounded-xl overflow-hidden shadow-xs"
+                  >
+                    {/* Header */}
+                    <div className="px-5 py-3.5 bg-white border-b border-neutral-100 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 sm:gap-5 flex-wrap">
+                        <Skeleton className="w-24 h-4 rounded-full" />
+                        <Skeleton className="w-28 h-4 rounded-full" />
+                        <Skeleton className="w-20 h-4 rounded-full" />
+                      </div>
+                      <Skeleton className="w-24 h-6 rounded-full" />
+                    </div>
+                    {/* Body */}
+                    <div className="p-5 flex flex-col md:flex-row gap-5 items-start">
+                      <div className="flex items-center gap-4 flex-1">
+                        <Skeleton className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg shrink-0 bg-[#f4f2ee]" />
+                        <div className="space-y-2 flex-1">
+                          <Skeleton className="w-3/5 h-4 rounded-full" />
+                          <Skeleton className="w-28 h-3 rounded-full" />
+                          <Skeleton className="w-20 h-4 rounded-full" />
+                        </div>
+                      </div>
+                      <div className="flex md:flex-col gap-2 shrink-0">
+                        <Skeleton className="w-28 h-8 rounded-lg" />
+                        <Skeleton className="w-28 h-8 rounded-lg" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredOrders.length > 0 ? (
               <div className="space-y-4" role="tabpanel">
                 {filteredOrders.map((order) => {
                   const cfg = STATUS_CONFIG[order.status as OrderStatus] || {

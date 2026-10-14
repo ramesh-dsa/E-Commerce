@@ -7,8 +7,13 @@ import { useRouter } from "next/navigation";
 import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
 import { SearchIcon, CloseIcon } from "@/components/ui/Icons";
-import { ArrowUpRight, TrendingUp, Sparkles } from "lucide-react";
-import { searchProducts } from "@/utils/searchEngine";
+import { ArrowUpRight, TrendingUp, Sparkles, Layers } from "lucide-react";
+import {
+  searchProducts,
+  getUnifiedSearchableProducts,
+  searchSections,
+} from "@/utils/searchEngine";
+import { useCustomSections } from "@/context/CustomSectionsContext";
 
 const searchPhrases = [
   "Search for products...",
@@ -43,6 +48,7 @@ export function ProductSearch({
   onClose,
 }: ProductSearchProps) {
   const { products } = useProducts();
+  const { sections } = useCustomSections();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -122,9 +128,17 @@ export function ProductSearch({
   }, []);
 
 // Real-time Instant Search Matching with Normalization, Synonyms & Fuzzy Typo Tolerance
+  const unifiedProducts = useMemo(() => {
+    return getUnifiedSearchableProducts(products, sections);
+  }, [products, sections]);
+
   const filteredProducts = useMemo(() => {
-    return searchProducts(products, query, 5);
-  }, [query, products]);
+    return searchProducts(unifiedProducts, query, 6);
+  }, [query, unifiedProducts]);
+
+  const matchingSections = useMemo(() => {
+    return searchSections(sections, query).slice(0, 3);
+  }, [sections, query]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -200,19 +214,26 @@ export function ProductSearch({
 
   // Dedicated Full-Screen Mobile Search Modal (< 768px)
   if (isMobile) {
+    const matchedCustomSection =
+      matchingSections[0] ||
+      sections.find(
+        (s) => s.name.toLowerCase() === filteredProducts[0]?.category?.toLowerCase()
+      );
     const topCategory = filteredProducts[0]?.category?.toLowerCase();
-    const categoryHref =
-      topCategory === "footwear"
-        ? "/shoes"
-        : topCategory === "watches"
-        ? "/watches"
-        : "/clothing";
-    const categoryLabel =
-      topCategory === "footwear"
-        ? "View All Footwear Catalog"
-        : topCategory === "watches"
-        ? "View All Watches Catalog"
-        : "View All Clothing Catalog";
+    const categoryHref = matchedCustomSection
+      ? `/section/${matchedCustomSection.slug}`
+      : topCategory === "footwear"
+      ? "/shoes"
+      : topCategory === "watches"
+      ? "/watches"
+      : "/clothing";
+    const categoryLabel = matchedCustomSection
+      ? `View All ${matchedCustomSection.name} Catalog`
+      : topCategory === "footwear"
+      ? "View All Footwear Catalog"
+      : topCategory === "watches"
+      ? "View All Watches Catalog"
+      : "View All Clothing Catalog";
 
     return (
       <div
@@ -329,89 +350,131 @@ export function ProductSearch({
           )}
 
           {/* Active Query with Matching Results */}
-          {query.trim() && filteredProducts.length > 0 && (
+          {query.trim() && (filteredProducts.length > 0 || matchingSections.length > 0) && (
             <div>
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-100">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500">
-                  <Sparkles size={12} className="text-[#e2b70d]" />
-                  <span>Matching Catalog Products</span>
+              {/* Matching Custom Sections & Collections */}
+              {matchingSections.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500 pb-2 mb-2 border-b border-neutral-100">
+                    <Layers size={12} className="text-amber-600" />
+                    <span>Custom Collections &amp; Sections</span>
+                  </div>
+                  <div className="space-y-2">
+                    {matchingSections.map((sec) => (
+                      <Link
+                        key={sec.id}
+                        href={`/section/${sec.slug}`}
+                        onClick={handleCloseMobile}
+                        className="flex items-center justify-between p-3 rounded-xl bg-amber-50/70 border border-amber-200/70 hover:bg-amber-100/70 transition-colors"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-800 font-bold text-xs flex items-center justify-center shrink-0">
+                            #
+                          </span>
+                          <div className="min-w-0">
+                            <div className="text-[13px] font-bold text-neutral-900 truncate">
+                              {sec.name}
+                            </div>
+                            <div className="text-[11px] text-neutral-500 truncate">
+                              {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · Custom Storefront Section
+                            </div>
+                          </div>
+                        </div>
+                        <div className="shrink-0 flex items-center gap-1 text-xs font-semibold text-amber-800">
+                          <span>Explore</span>
+                          <ArrowUpRight size={14} />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide">
-                  {filteredProducts.length} Found
-                </span>
-              </div>
+              )}
 
-              <div className="space-y-2">
-                {filteredProducts.map((product) => (
-                  <Link
-                    key={product.id}
-                    href={`/product/${product.slug}`}
-                    onClick={handleCloseMobile}
-                    className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/60 transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="relative w-14 h-16 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-neutral-200">
-                        <Image
-                          src={product.imageUrl}
-                          alt={product.name}
-                          fill
-                          sizes="56px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700">
-                            {product.subcategoryTag || product.subcategory}
-                          </span>
-                          {product.badge && (
-                            <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#fcd017] text-black">
-                              {product.badge}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[13.5px] font-bold text-neutral-900 truncate mt-1">
-                          {product.name}
-                        </div>
-                        <div className="flex items-center gap-2 text-[12px] mt-0.5">
-                          {product.originalPrice && product.originalPrice > product.price && (
-                            <span className="line-through text-neutral-400 font-mono text-[11px]">
-                              {formatPrice(product.originalPrice)}
-                            </span>
-                          )}
-                          <span className="font-mono font-bold text-neutral-900">
-                            {formatPrice(product.price)}
-                          </span>
-                          <span className="text-neutral-300 text-[10px]">·</span>
-                          <span className="text-neutral-500 text-[11px] truncate">
-                            {product.colorName}
-                          </span>
-                        </div>
-                      </div>
+              {filteredProducts.length > 0 && (
+                <>
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-100">
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500">
+                      <Sparkles size={12} className="text-[#e2b70d]" />
+                      <span>Matching Catalog Products</span>
                     </div>
-                    <div className="shrink-0 p-1.5 rounded-full bg-neutral-100 text-neutral-500">
+                    <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide">
+                      {filteredProducts.length} Found
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {filteredProducts.map((product) => (
+                      <Link
+                        key={product.id}
+                        href={`/product/${product.slug}`}
+                        onClick={handleCloseMobile}
+                        className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/60 transition-all cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="relative w-14 h-16 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-neutral-200">
+                            <Image
+                              src={product.imageUrl}
+                              alt={product.name}
+                              fill
+                              sizes="56px"
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700">
+                                {product.subcategoryTag || product.subcategory}
+                              </span>
+                              {product.badge && (
+                                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#fcd017] text-black">
+                                  {product.badge}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[13.5px] font-bold text-neutral-900 truncate mt-1">
+                              {product.name}
+                            </div>
+                            <div className="flex items-center gap-2 text-[12px] mt-0.5">
+                              {product.originalPrice && product.originalPrice > product.price && (
+                                <span className="line-through text-neutral-400 font-mono text-[11px]">
+                                  {formatPrice(product.originalPrice)}
+                                </span>
+                              )}
+                              <span className="font-mono font-bold text-neutral-900">
+                                {formatPrice(product.price)}
+                              </span>
+                              <span className="text-neutral-300 text-[10px]">·</span>
+                              <span className="text-neutral-500 text-[11px] truncate">
+                                {product.colorName}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="shrink-0 p-1.5 rounded-full bg-neutral-100 text-neutral-500">
+                          <ArrowUpRight size={15} />
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  {/* Dynamic Category Navigation Jump */}
+                  <div className="mt-4 pt-3 border-t border-neutral-100">
+                    <Link
+                      href={categoryHref}
+                      onClick={handleCloseMobile}
+                      className="flex items-center justify-between p-3 rounded-xl bg-[#f8f8f6] hover:bg-[#f0f0ee] transition-colors text-neutral-900 font-bold text-xs uppercase tracking-wider cursor-pointer"
+                    >
+                      <span>{categoryLabel}</span>
                       <ArrowUpRight size={15} />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-
-              {/* Dynamic Category Navigation Jump */}
-              <div className="mt-4 pt-3 border-t border-neutral-100">
-                <Link
-                  href={categoryHref}
-                  onClick={handleCloseMobile}
-                  className="flex items-center justify-between p-3 rounded-xl bg-[#f8f8f6] hover:bg-[#f0f0ee] transition-colors text-neutral-900 font-bold text-xs uppercase tracking-wider cursor-pointer"
-                >
-                  <span>{categoryLabel}</span>
-                  <ArrowUpRight size={15} />
-                </Link>
-              </div>
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
           {/* Active Query with No Matches */}
-          {query.trim() && filteredProducts.length === 0 && (
+          {query.trim() && filteredProducts.length === 0 && matchingSections.length === 0 && (
             <div className="py-12 px-4 text-center">
               <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-3 text-neutral-400">
                 <SearchIcon size={22} />
@@ -586,6 +649,47 @@ export function ProductSearch({
               </div>
             )}
 
+            {/* Matching Custom Sections & Collections */}
+            {query.trim() && matchingSections.length > 0 && (
+              <div className="mb-2 pb-2 border-b border-neutral-100">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 py-1 flex items-center gap-1.5">
+                  <Layers size={11} className="text-amber-600" />
+                  <span>Custom Collections &amp; Sections</span>
+                </div>
+                <div className="space-y-1 mt-0.5">
+                  {matchingSections.map((sec) => (
+                    <Link
+                      key={sec.id}
+                      href={`/section/${sec.slug}`}
+                      onClick={() => {
+                        setIsOpen(false);
+                        onClose?.();
+                      }}
+                      className="flex items-center justify-between p-2 rounded-xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/15 transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-700 font-bold text-xs flex items-center justify-center shrink-0">
+                          #
+                        </span>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-neutral-900 group-hover:text-amber-900 truncate">
+                            {sec.name}
+                          </div>
+                          <div className="text-[10.5px] text-neutral-500 truncate">
+                            {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · Custom Storefront Section
+                          </div>
+                        </div>
+                      </div>
+                      <div className="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-amber-700">
+                        <span>Explore</span>
+                        <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* When Query Has Matching Products */}
             {query.trim() && filteredProducts.length > 0 && (
               <div className="space-y-1.5">
@@ -665,7 +769,7 @@ export function ProductSearch({
             )}
 
             {/* When Query Has No Matching Products */}
-            {query.trim() && filteredProducts.length === 0 && (
+            {query.trim() && filteredProducts.length === 0 && matchingSections.length === 0 && (
               <div className="py-7 px-4 text-center">
                 <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-2.5 text-neutral-400">
                   <SearchIcon size={20} />

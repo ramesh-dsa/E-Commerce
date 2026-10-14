@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { ProductCard } from "@/components/features/ProductCard";
 import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
@@ -51,6 +52,11 @@ export default function CartPage() {
   } = useCart();
 
   const { addToWishlist } = useWishlist();
+
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -163,7 +169,63 @@ export default function CartPage() {
           </div>
         </div>
 
-        {items.length > 0 ? (
+        {!isMounted ? (
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8" aria-hidden="true">
+            {/* ── LEFT COLUMN: ITEMS LIST SKELETON ── */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* Delivery Progress Banner Skeleton */}
+              <Skeleton className="w-full h-16 rounded-xl border border-neutral-200/90" />
+
+              {/* Cart Items List Skeletons */}
+              {[...Array(2)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white border border-neutral-200/90 rounded-xl p-4 sm:p-5 flex gap-4 sm:gap-5"
+                >
+                  <Skeleton className="w-20 h-24 sm:w-24 sm:h-28 rounded-lg shrink-0 bg-[#f4f2ee]" />
+                  <div className="flex-1 flex flex-col justify-between py-0.5">
+                    <div>
+                      <div className="flex justify-between items-start gap-2">
+                        <Skeleton className="w-3/5 h-4 sm:h-5 rounded-full" />
+                        <Skeleton className="w-20 h-5 rounded-full" />
+                      </div>
+                      <Skeleton className="w-32 h-3 rounded-full mt-2" />
+                    </div>
+                    <div className="flex justify-between items-center pt-3 border-t border-neutral-100">
+                      <Skeleton className="w-24 h-8 rounded-full" />
+                      <Skeleton className="w-28 h-4 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ── RIGHT COLUMN: SUMMARY SKELETON ── */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-white border border-neutral-200/90 rounded-xl p-6 space-y-5">
+                <Skeleton className="w-32 h-4 rounded-full pb-3 border-b border-neutral-100" />
+                <Skeleton className="w-full h-9 rounded-lg" />
+                <div className="space-y-3 pt-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="flex justify-between">
+                      <Skeleton className="w-24 h-3.5 rounded-full" />
+                      <Skeleton className="w-16 h-3.5 rounded-full" />
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-3 border-t border-neutral-100 flex justify-between items-baseline">
+                  <Skeleton className="w-28 h-5 rounded-full" />
+                  <Skeleton className="w-24 h-6 rounded-full" />
+                </div>
+                <Skeleton className="w-full h-12 rounded-lg" />
+                <div className="pt-3 border-t border-neutral-100 space-y-2">
+                  <Skeleton className="w-48 h-3 rounded-full" />
+                  <Skeleton className="w-40 h-3 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : items.length > 0 ? (
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* ── LEFT COLUMN: ITEMS LIST & OFFERS ── */}
             <div className="lg:col-span-8 space-y-6">

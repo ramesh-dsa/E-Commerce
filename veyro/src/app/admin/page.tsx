@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/context/ProductsContext";
+import { useCustomSections, type CustomSection } from "@/context/CustomSectionsContext";
 import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus, Product } from "@/types";
 import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay } from "@/components/admin/AdminDateRangePicker";
@@ -14,6 +15,8 @@ import {
   searchProducts,
   searchOrders,
   searchTopProducts,
+  getUnifiedSearchableProducts,
+  searchSections,
   normalizeSearchText,
   stripToAlphaNumeric,
 } from "@/utils/searchEngine";
@@ -3422,12 +3425,14 @@ function AdminGlobalSearchBar({
   setSearchQuery,
   orders,
   products,
+  sections,
   onSelectOrder,
 }: {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   orders: OrderRecord[];
   products: Product[];
+  sections?: CustomSection[];
   onSelectOrder?: (orderId: string) => void;
 }) {
   const router = useRouter();
@@ -3479,6 +3484,12 @@ function AdminGlobalSearchBar({
     return searchProducts(products, searchQuery);
   }, [products, searchQuery]);
 
+  // Filter Matching Custom Sections
+  const matchingSections = useMemo(() => {
+    if (!searchQuery.trim() || !sections) return [];
+    return searchSections(sections, searchQuery);
+  }, [sections, searchQuery]);
+
   // Filter Matching Customers
   const matchingCustomers = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -3516,22 +3527,27 @@ function AdminGlobalSearchBar({
     return Array.from(customerMap.values());
   }, [orders, searchQuery]);
 
-  const totalResults = matchingOrders.length + matchingProducts.length + matchingCustomers.length;
+  const totalResults =
+    matchingOrders.length +
+    matchingProducts.length +
+    matchingCustomers.length +
+    matchingSections.length;
 
   // Flattened results for keyboard navigation
   const flattenedItems = useMemo(() => {
-    const list: Array<{ type: "order" | "product" | "customer"; data: any }> = [];
+    const list: Array<{ type: "order" | "product" | "customer" | "section"; data: any }> = [];
     if (activeTab === "all" || activeTab === "orders") {
       matchingOrders.forEach((o) => list.push({ type: "order", data: o }));
     }
     if (activeTab === "all" || activeTab === "products") {
+      matchingSections.forEach((s) => list.push({ type: "section", data: s }));
       matchingProducts.forEach((p) => list.push({ type: "product", data: p }));
     }
     if (activeTab === "all" || activeTab === "customers") {
       matchingCustomers.forEach((c) => list.push({ type: "customer", data: c }));
     }
     return list;
-  }, [activeTab, matchingOrders, matchingProducts, matchingCustomers]);
+  }, [activeTab, matchingOrders, matchingProducts, matchingCustomers, matchingSections]);
 
   // Reset selected index when query or tab changes
   useEffect(() => {
@@ -3559,6 +3575,9 @@ function AdminGlobalSearchBar({
         if (currentItem.type === "order") {
           onSelectOrder?.(currentItem.data.id);
           router.push(`/admin/orders`);
+          setIsOpen(false);
+        } else if (currentItem.type === "section") {
+          router.push(`/admin/custom-sections`);
           setIsOpen(false);
         } else if (currentItem.type === "product") {
           router.push(currentItem.data.slug ? `/product/${currentItem.data.slug}` : "/admin/products");
@@ -3868,6 +3887,48 @@ function AdminGlobalSearchBar({
                           </div>
                         );
                       })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Custom Sections Group */}
+                {(activeTab === "all" || activeTab === "products") && matchingSections.length > 0 && (
+                  <div>
+                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Layers size={12} className="text-amber-600" /> Custom Sections
+                      </span>
+                      <span>{matchingSections.length}</span>
+                    </div>
+                    <div className="space-y-1 mt-1">
+                      {matchingSections.map((sec) => (
+                        <div
+                          key={sec.id}
+                          onClick={() => {
+                            router.push(`/admin/custom-sections`);
+                            setIsOpen(false);
+                          }}
+                          className="p-2.5 rounded-xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/15 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-700 font-bold text-xs flex items-center justify-center shrink-0">
+                              #
+                            </span>
+                            <div className="min-w-0">
+                              <div className="font-semibold text-xs text-neutral-900 group-hover:text-amber-800 truncate">
+                                {sec.name}
+                              </div>
+                              <div className="text-[11px] text-neutral-400 truncate mt-0.5">
+                                {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · /section/{sec.slug}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0 flex items-center gap-1.5 text-xs text-amber-700 font-medium">
+                            <span>Manage</span>
+                            <ChevronRight size={14} className="text-amber-600 group-hover:translate-x-0.5 transition-transform" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -5277,8 +5338,14 @@ function AdminPortal({ children }: { children: React.ReactNode }) {
 
 export default function AdminDashboard() {
   const { products } = useProducts();
+  const { sections } = useCustomSections();
   const { orders, updateOrderStatus, reviewReturnRequest } = useUser();
   const router = useRouter();
+
+  // Dynamically unified catalog combining standard and custom section products
+  const unifiedProducts = useMemo(() => {
+    return getUnifiedSearchableProducts(products, sections);
+  }, [products, sections]);
 
   // Return Requests Deep Review Modal state
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
@@ -5890,7 +5957,8 @@ export default function AdminDashboard() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           orders={orders}
-          products={products}
+          products={unifiedProducts}
+          sections={sections}
           onSelectOrder={(orderId) => {
             setSearchQuery(orderId);
           }}

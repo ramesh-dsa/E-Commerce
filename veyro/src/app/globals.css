@@ -139,6 +139,27 @@ body {
   animation-play-state: paused;
 }
 
+/* ────────────────────────────────────────────────────────────────────────────
+   Skeleton Shimmer Sweep Animation
+   Hardware-accelerated transform: translateX only.
+   Zero layout reflow. Fully accessible with prefers-reduced-motion.
+──────────────────────────────────────────────────────────────────────────── */
+@keyframes skeleton-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-skeleton-shimmer {
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-skeleton-shimmer {
+    animation: none;
+  }
+}
+
 /* Hide scrollbar globally for immersive aesthetic */
 ::-webkit-scrollbar {
   display: none;

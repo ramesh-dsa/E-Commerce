@@ -11,6 +11,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
+import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import {
   X,
   Zap,
@@ -33,7 +34,7 @@ import {
 
 
 export function FootwearCatalog() {
-  const { products } = useProducts();
+  const { products, isHydrated } = useProducts();
   // ── Cart & Wishlist Context ───────────────────────────────────────────────
   const { addToCart, openCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -395,7 +396,13 @@ export function FootwearCatalog() {
 
           {/* Right Product Grid Column */}
           <div className="flex-1 min-w-0 min-h-0 lg:min-h-[1350px] [overflow-anchor:none]">
-            {filteredProducts.length === 0 ? (
+            {!isHydrated ? (
+              <div className="grid gap-x-4 sm:gap-x-6 gap-y-10 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
               /* Empty State */
               <div className="w-full min-h-[580px] py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
                 <div className="relative w-72 h-72 -mt-8 -mb-12 overflow-hidden mix-blend-multiply transform transition-transform hover:scale-105 hover:-rotate-2 duration-500 ease-in-out">

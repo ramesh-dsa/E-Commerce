@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Layers, ShieldCheck, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { SpotlightBentoCard } from "@/components/ui/SpotlightBentoCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface CollectionItem {
   id: string;
@@ -111,6 +112,11 @@ const COLLECTIONS: CollectionItem[] = [
 export function CollectionsCatalog() {
   const [activeCategory, setActiveCategory] = useState<"all" | "tees" | "shoes" | "resort">("all");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const filteredCollections = COLLECTIONS.filter(
     (col) => activeCategory === "all" || col.category === activeCategory
@@ -207,7 +213,17 @@ export function CollectionsCatalog() {
       {/* ── 2. ASYMMETRICAL LUXURY EDITORIAL BENTO GRID ─────────── */}
       <section className="w-full max-w-[1536px] mx-auto px-5 sm:px-8 lg:px-14 py-12 sm:py-16">
         <div className="grid grid-cols-12 gap-6 lg:gap-8">
-          {filteredCollections.map((col) => {
+          {!isMounted
+            ? COLLECTIONS.map((col) => (
+                <div
+                  key={col.id}
+                  className={`${col.bentoSpan} min-h-[350px] sm:min-h-[460px] lg:min-h-[500px] rounded-xl sm:rounded-2xl overflow-hidden`}
+                  aria-hidden="true"
+                >
+                  <Skeleton className="w-full h-full min-h-[350px] sm:min-h-[460px] lg:min-h-[500px] rounded-xl sm:rounded-2xl border border-neutral-200" />
+                </div>
+              ))
+            : filteredCollections.map((col) => {
             // If user filters to a specific category, adjust spans smoothly
             const gridSpan =
               activeCategory === "all"

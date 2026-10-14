@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/features/ProductCard";
+import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
 
 export function TshirtsSection() {
-  const { products } = useProducts();
+  const { products, isHydrated } = useProducts();
   const [selectedFit, setSelectedFit] = useState("ALL");
 
   const fits = ["ALL", "Oversized", "Regular", "Textured", "Graphic", "Relaxed"];
@@ -74,22 +75,37 @@ export function TshirtsSection() {
 
         {/* Asymmetric Product Gallery */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr">
-          {displayedTees.map((product, index) => {
-            // First item gets massive focal treatment
-            const isFirst = index === 0;
-            return (
-              <div 
-                key={product.id} 
-                className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
-              >
-                <ProductCard 
-                  product={product} 
-                  isFeatured={isFirst} 
-                  className="h-full"
-                />
-              </div>
-            );
-          })}
+          {!isHydrated
+            ? Array.from({ length: 4 }).map((_, index) => {
+                const isFirst = index === 0;
+                return (
+                  <div
+                    key={index}
+                    className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
+                  >
+                    <ProductCardSkeleton
+                      isFeatured={isFirst}
+                      className="h-full"
+                    />
+                  </div>
+                );
+              })
+            : displayedTees.map((product, index) => {
+                // First item gets massive focal treatment
+                const isFirst = index === 0;
+                return (
+                  <div 
+                    key={product.id} 
+                    className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
+                  >
+                    <ProductCard 
+                      product={product} 
+                      isFeatured={isFirst} 
+                      className="h-full"
+                    />
+                  </div>
+                );
+              })}
         </div>
       </Container>
     </section>

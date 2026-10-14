@@ -10,6 +10,7 @@
  */
 
 import type { Product, OrderRecord } from "@/types";
+import type { CustomSection } from "@/context/CustomSectionsContext";
 
 // ── 1. TEXT NORMALIZATION ────────────────────────────────────────────────────
 
@@ -542,3 +543,123 @@ export function searchOrders(orders: OrderRecord[], query: string): OrderRecord[
     return false;
   });
 }
+
+// ── 8. UNIFIED CATALOG & CUSTOM SECTIONS AGGREGATOR ─────────────────────────
+
+/**
+ * Dynamically transforms and merges Custom Section products with standard catalogue products
+ * into a single unified searchable Product pool in real time.
+ */
+export function getUnifiedSearchableProducts(
+  products: Product[],
+  sections: CustomSection[]
+): Product[] {
+  if (!sections || sections.length === 0) return products;
+
+  const customProducts: Product[] = [];
+
+  for (const sec of sections) {
+    if (!sec.isActive && sec.isActive !== undefined) continue;
+
+    for (const found of sec.products || []) {
+      const discountPercent =
+        found.originalPrice && found.originalPrice > found.price
+          ? Math.round(((found.originalPrice - found.price) / found.originalPrice) * 100)
+          : null;
+
+      customProducts.push({
+        id: found.id,
+        sku: `VEY-CUST-${found.id.toUpperCase()}`,
+        slug: found.slug,
+        name: found.name,
+        category: sec.name,
+        subcategory: sec.name,
+        subcategoryTag: found.tags?.[0] || sec.name,
+        fit: undefined,
+        colorName: found.colorName || "Default",
+        colorHex: found.colorHex || "#111111",
+        material: found.material || "Premium Crafted",
+        price: found.price,
+        originalPrice: found.originalPrice,
+        discount: discountPercent ? `${discountPercent}% OFF` : undefined,
+        imageUrl: found.imageUrl,
+        secondaryImageUrl: found.secondaryImageUrl || found.imageUrl,
+        galleryImages: found.galleryImages || [],
+        badge: (found.badge || "NEW") as Product["badge"],
+        sizes: found.sizes || [],
+        isNewArrival: false,
+        inStock: found.inStock,
+        shortDescription: found.description || found.name,
+        longDescription: found.description,
+        features: found.tags || [],
+        care: [],
+        collections: [sec.name],
+        tags: [sec.name.toLowerCase(), ...(found.tags || []).map((t) => t.toLowerCase())],
+        relatedProducts: [],
+      });
+    }
+  }
+
+  const existingIds = new Set(products.map((p) => p.id));
+  const uniqueCustom = customProducts.filter((p) => !existingIds.has(p.id));
+
+  return [...products, ...uniqueCustom];
+}
+
+// ── 9. CUSTOM SECTION SEARCH ──────────────────────────────────────────────────
+
+/**
+ * Searches custom sections by name, slug, and description with typo tolerance and synonyms.
+ */
+export function searchSections(
+  sections: CustomSection[],
+  query: string
+): CustomSection[] {
+  const q = query.trim();
+  if (!q || !sections) return [];
+
+  const cleanQuery = normalizeSearchText(q);
+  const strippedQuery = stripToAlphaNumeric(q);
+  const synonyms = getSynonymsForWord(q);
+
+  return sections.filter((sec) => {
+    if (!sec.isActive && sec.isActive !== undefined) return false;
+
+    const cleanName = normalizeSearchText(sec.name);
+    const strippedName = stripToAlphaNumeric(sec.name);
+    const cleanDesc = normalizeSearchText(sec.description);
+    const slug = sec.slug.toLowerCase();
+
+    // Direct / stripped matches
+    if (
+      cleanName.includes(cleanQuery) ||
+      strippedName.includes(strippedQuery) ||
+      slug.includes(cleanQuery) ||
+      cleanDesc.includes(cleanQuery)
+    ) {
+      return true;
+    }
+
+    // Synonym match
+    for (const syn of synonyms) {
+      const strippedSyn = stripToAlphaNumeric(syn);
+      if (
+        cleanName.includes(syn) ||
+        strippedName.includes(strippedSyn) ||
+        slug.includes(syn)
+      ) {
+        return true;
+      }
+    }
+
+    // Fuzzy check for typos
+    if (q.length >= 4) {
+      if (isFuzzyMatch(q, cleanName) || isFuzzyMatch(q, slug)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+}
+

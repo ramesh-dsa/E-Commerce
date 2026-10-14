@@ -10,6 +10,7 @@ import { ProductBuyBox } from "@/components/features/ProductBuyBox";
 import { ProductCarousel } from "@/components/features/ProductCarousel";
 import { ProductBackButton } from "@/components/features/ProductBackButton";
 import { ProductReviewsSection } from "@/components/features/ProductReviewsSection";
+import { ProductDetailSkeleton } from "@/components/features/ProductDetailSkeleton";
 import { Container } from "@/components/ui/Container";
 import { ArrowLeft, PackageX } from "lucide-react";
 
@@ -182,11 +183,7 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
 
   if (!product) {
     if (!isHydrated) {
-      return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
-        </div>
-      );
+      return <ProductDetailSkeleton />;
     }
 
     return (

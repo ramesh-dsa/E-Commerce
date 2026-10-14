@@ -4,18 +4,24 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useProducts } from "@/context/ProductsContext";
+import { useCustomSections } from "@/context/CustomSectionsContext";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus, Search, RotateCcw } from "lucide-react";
-import { searchProducts } from "@/utils/searchEngine";
+import { searchProducts, getUnifiedSearchableProducts } from "@/utils/searchEngine";
 
 export default function AdminProductsPage() {
   const { products, deleteProduct, resetToDefaults } = useProducts();
+  const { sections } = useCustomSections();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
+  const allAvailableProducts = useMemo(() => {
+    return getUnifiedSearchableProducts(products, sections);
+  }, [products, sections]);
+
   const filtered = useMemo(() => {
-    let result = products;
+    let result = allAvailableProducts;
     if (categoryFilter !== "all") {
       result = result.filter((p) => p.category === categoryFilter);
     }
@@ -23,7 +29,7 @@ export default function AdminProductsPage() {
       result = searchProducts(result, search);
     }
     return result;
-  }, [products, search, categoryFilter]);
+  }, [allAvailableProducts, search, categoryFilter]);
 
   const handleDelete = (id: string, name: string) => {
     if (confirm(`Delete "${name}"?\nThis will remove it from all store listings immediately.`)) {
