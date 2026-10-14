@@ -296,10 +296,10 @@ export default function FaqPage() {
       } else if (hash === "#account" || hash === "#terms") {
         setActiveTab("account");
         setOpenId("account-5");
-      } else if (hash === "#contact" || hash === "#team") {
+      } else if (hash === "#contact" || hash === "#team" || hash === "#contact-team") {
         const contactEl = document.getElementById("contact-team");
         if (contactEl) {
-          contactEl.scrollIntoView({ behavior: "smooth" });
+          contactEl.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }
     };
@@ -373,6 +373,14 @@ export default function FaqPage() {
               Can&apos;t find what you&apos;re looking for?{" "}
               <motion.a
                 href="#contact-team"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById("contact-team");
+                  if (target) {
+                    target.scrollIntoView({ behavior: "smooth", block: "center" });
+                    window.history.pushState(null, "", "#contact-team");
+                  }
+                }}
                 initial="rest"
                 whileHover="hover"
                 animate="rest"
@@ -634,7 +642,7 @@ export default function FaqPage() {
         {/* ── 3. DIRECT CONCIERGE (Matches crisp architectural light aesthetic) ─────── */}
         <div
           id="contact-team"
-          className="mt-20 sm:mt-24 max-w-[740px] mx-auto pt-14 border-t border-[#eaecf0] text-center"
+          className="mt-20 sm:mt-24 max-w-[740px] mx-auto pt-14 border-t border-[#eaecf0] text-center scroll-mt-20 sm:scroll-mt-24"
         >
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">
             Still have questions?
