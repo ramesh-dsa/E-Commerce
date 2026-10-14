@@ -8,7 +8,7 @@ import { Logo } from "@/components/ui/Logo";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { TearTicket } from "@/components/ui/TearTicket";
 import { useCart } from "@/context/CartContext";
-import { Check, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 function DecryptCode({
   target = "VEYRO10",
@@ -17,12 +17,11 @@ function DecryptCode({
   target?: string;
   active?: boolean;
 }) {
-  const [displayed, setDisplayed] = useState(active ? target : "••••••••");
+  const [displayed, setDisplayed] = useState("••••••••");
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789!#$*";
 
   useEffect(() => {
     if (!active) {
-      setDisplayed("••••••••");
       return;
     }
 
@@ -53,48 +52,104 @@ function DecryptCode({
 
   return (
     <span className="font-mono text-sm sm:text-base font-black tracking-widest text-[#fcd017] drop-shadow-[0_0_10px_rgba(252,208,23,0.6)] inline-block">
-      {displayed}
+      {active ? displayed : "••••••••"}
     </span>
+  );
+}
+
+function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function XIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function YouTubeIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.376.55 9.376.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+  );
+}
+
+function SpotifyIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.485 17.291c-.216.353-.675.467-1.028.252-2.817-1.722-6.363-2.111-10.54-1.157-.403.092-.806-.162-.898-.565-.092-.404.162-.806.565-.898 4.575-1.045 8.492-.598 11.649 1.339.353.216.467.676.252 1.029zm1.464-3.26c-.272.443-.852.584-1.295.312-3.224-1.982-8.14-2.556-11.954-1.398-.498.151-1.028-.135-1.179-.633-.151-.498.135-1.028.633-1.179 4.364-1.325 9.782-.686 13.483 1.593.443.272.584.852.312 1.305zm.126-3.41c-3.865-2.296-10.239-2.508-13.916-1.392-.593.18-1.221-.157-1.401-.75-.18-.593.157-1.221.75-1.401 4.231-1.284 11.272-1.034 15.727 1.61.533.316.708 1.008.392 1.541-.316.533-1.008.708-1.541.392z" />
+    </svg>
   );
 }
 
 export function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
-  const { appliedCoupon, applyCoupon, openCart } = useCart();
+  const { appliedCoupon, applyCoupon } = useCart();
 
   const [email, setEmail] = useState("");
-  const [isJoined, setIsJoined] = useState(false);
-  const [isTorn, setIsTorn] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  const hasVipCoupon = appliedCoupon === "VEYRO10" || appliedCoupon === "VEYRO-VIP10";
+  const [emailJoined, setEmailJoined] = useState(false);
+  const [ticketTorn, setTicketTorn] = useState(false);
 
-  // Sync if coupon is already active
-  useEffect(() => {
-    if (appliedCoupon === "VEYRO10" || appliedCoupon === "VEYRO-VIP10") {
-      setIsJoined(true);
-      setIsTorn(true);
-    }
-  }, [appliedCoupon]);
+  const isJoined = emailJoined || hasVipCoupon;
+  const isTorn = ticketTorn || hasVipCoupon;
 
   if (pathname?.startsWith("/admin")) {
     return null;
   }
 
+  const socialLinks = [
+    {
+      label: "Instagram",
+      handle: "@veyro.in",
+      href: "https://instagram.com/veyro.in",
+      icon: InstagramIcon,
+    },
+    {
+      label: "X (Twitter)",
+      handle: "@veyroapparel",
+      href: "https://x.com/veyroapparel",
+      icon: XIcon,
+    },
+    {
+      label: "YouTube",
+      handle: "VEYRO Atelier",
+      href: "https://youtube.com/@veyroapparel",
+      icon: YouTubeIcon,
+    },
+    {
+      label: "Spotify",
+      handle: "Runway Soundtracks",
+      href: "https://spotify.com",
+      icon: SpotifyIcon,
+    },
+  ];
+
   const footerLinks = {
     shop: [
-      { label: "New Arrivals", href: "#" },
-      { label: "Oversized T-Shirts", href: "#" },
-      { label: "Heavyweight 240 GSM", href: "#" },
-      { label: "Graphic & Textured", href: "#" },
-      { label: "Minimal Sneakers", href: "#" },
-      { label: "Retro Runners", href: "#" },
+      { label: "New Arrivals", href: "/collections" },
+      { label: "Oversized T-Shirts", href: "/clothing" },
+      { label: "Heavyweight 240 GSM", href: "/clothing" },
+      { label: "Graphic & Textured", href: "/clothing" },
+      { label: "Minimal Sneakers", href: "/shoes" },
+      { label: "Retro Runners", href: "/shoes" },
     ],
     about: [
-      { label: "Our Story", href: "#" },
-      { label: "Indian Craftsmanship", href: "#" },
-      { label: "Fabric & Fit Guide", href: "#" },
-      { label: "Sustainability", href: "#" },
-      { label: "Careers", href: "#" },
+      { label: "Our Story", href: "/faq" },
+      { label: "Indian Craftsmanship", href: "/faq" },
+      { label: "Fabric & Fit Guide", href: "/faq#products" },
+      { label: "Sustainability", href: "/faq#products" },
+      { label: "Careers", href: "mailto:careers@veyro.in" },
     ],
     help: [
       { label: "Track Your Order", href: "/orders" },
@@ -145,7 +200,7 @@ export function Footer() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (email.trim()) {
-                    setIsJoined(true);
+                    setEmailJoined(true);
                   }
                 }}
                 className="flex flex-col sm:flex-row gap-4 w-full items-center sm:items-end"
@@ -210,7 +265,7 @@ export function Footer() {
                     recenter
                     torn={isTorn}
                     onTear={() => {
-                      setIsTorn(true);
+                      setTicketTorn(true);
                       applyCoupon("VEYRO10");
                     }}
                     stub={
@@ -365,7 +420,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 4: Store Info */}
+          {/* Col 4: Store Info & Social Follow */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-widest text-[#999999] mb-4">
               Contact
@@ -375,6 +430,30 @@ export function Footer() {
               <p>Bengaluru & Tirupur, India</p>
               <p className="pt-2 text-white font-medium">support@veyro.in</p>
               <p>Mon – Sat, 10:00 AM – 7:00 PM IST</p>
+            </div>
+
+            {/* Social Presence */}
+            <div className="mt-5 pt-4 border-t border-[#1a1a1a]">
+              <span className="block text-[11px] font-semibold uppercase tracking-widest text-[#777777] mb-2.5">
+                Follow @veyro.in
+              </span>
+              <div className="flex items-center gap-2">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Follow VEYRO on ${social.label}`}
+                      className="w-8 h-8 rounded-full bg-[#111111] border border-[#222222] text-[#888888] hover:text-[#fcd017] hover:border-[#fcd017] flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -389,7 +468,7 @@ export function Footer() {
             <Link href="/faq#terms" className="hover:text-white transition-colors">
               Terms & Conditions
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="/collections" className="hover:text-white transition-colors">
               Sitemap
             </Link>
             <Link
