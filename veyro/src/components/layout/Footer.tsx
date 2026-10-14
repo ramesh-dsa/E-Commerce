@@ -97,11 +97,11 @@ export function Footer() {
       { label: "Careers", href: "#" },
     ],
     help: [
-      { label: "Track Your Order", href: "#" },
-      { label: "Shipping Policy", href: "#" },
-      { label: "7-Day Free Returns", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Contact Support", href: "#" },
+      { label: "Track Your Order", href: "/orders" },
+      { label: "Shipping Policy", href: "/faq#shipping" },
+      { label: "7-Day Free Returns", href: "/faq#returns" },
+      { label: "Terms of Service", href: "/faq#terms" },
+      { label: "Contact Support", href: "/faq#contact" },
     ],
   };
 
@@ -383,10 +383,10 @@ export function Footer() {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#999999]">
           <p>© {currentYear} VEYRO APPAREL. ALL RIGHTS RESERVED.</p>
           <div className="flex items-center gap-6">
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="/faq#terms" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="/faq#terms" className="hover:text-white transition-colors">
               Terms & Conditions
             </Link>
             <Link href="#" className="hover:text-white transition-colors">
