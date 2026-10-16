@@ -9,6 +9,7 @@ import React, {
   useCallback,
 } from "react";
 import { Product } from "@/types";
+import { useProducts } from "@/context/ProductsContext";
 
 export interface CartItem {
   product: Product;
@@ -30,6 +31,7 @@ interface CartContextType {
   freeShippingThreshold: number;
   amountUntilFreeShipping: number;
   hasFreeShipping: boolean;
+  hasOosItems: boolean;
   isCartOpen: boolean;
   cartView: CartViewMode;
   setCartView: (view: CartViewMode) => void;
@@ -59,6 +61,7 @@ const COUPON_STORAGE_KEY = "veyro_applied_coupon";
 const FREE_SHIPPING_THRESHOLD = 999;
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { products } = useProducts();
   const [items, setItems] = useState<CartItem[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -69,31 +72,59 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setItems(parsed);
-        }
-      }
       const savedCoupon = localStorage.getItem(COUPON_STORAGE_KEY);
-      if (savedCoupon) {
-        setAppliedCoupon(savedCoupon);
-      }
+      queueMicrotask(() => {
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              setItems(parsed);
+            }
+          } catch (e) {
+            console.warn("Failed to parse cart from localStorage", e);
+          }
+        }
+        if (savedCoupon) {
+          setAppliedCoupon(savedCoupon);
+        }
+        setIsHydrated(true);
+      });
     } catch (e) {
       console.warn("Failed to read cart from localStorage", e);
+      queueMicrotask(() => setIsHydrated(true));
     }
-    setIsHydrated(true);
   }, []);
+
+  // Real-time synchronization of items against live catalog
+  const liveItems = useMemo(() => {
+    return items.map((item) => {
+      const liveProduct = products.find(
+        (p) => p.id === item.product.id || p.slug === item.product.slug
+      );
+      if (liveProduct) {
+        return {
+          ...item,
+          product: liveProduct,
+        };
+      }
+      return item;
+    });
+  }, [items, products]);
 
   // Persist cart updates to localStorage
   useEffect(() => {
     if (!isHydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(liveItems));
     } catch (e) {
       console.warn("Failed to persist cart to localStorage", e);
     }
-  }, [items, isHydrated]);
+  }, [liveItems, isHydrated]);
+
+  // Out of stock detection against live products catalog
+  const hasOosItems = useMemo(() => {
+    return liveItems.some((item) => !item.product.inStock);
+  }, [liveItems]);
 
   const openCart = useCallback(() => {
     setCartView("bag");
@@ -115,21 +146,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       quantity: number = 1,
       autoOpen: boolean = true
     ) => {
+      const liveProduct = products.find((p) => p.id === product.id) || product;
+      if (!liveProduct.inStock) return;
+
       setItems((prev) => {
         const existingIndex = prev.findIndex(
-          (item) => item.product.id === product.id && item.selectedSize === selectedSize
+          (item) => item.product.id === liveProduct.id && item.selectedSize === selectedSize
         );
 
         if (existingIndex > -1) {
           const updated = [...prev];
           updated[existingIndex] = {
             ...updated[existingIndex],
+            product: liveProduct,
             quantity: updated[existingIndex].quantity + quantity,
           };
           return updated;
         }
 
-        return [...prev, { product, selectedSize, quantity }];
+        return [...prev, { product: liveProduct, selectedSize, quantity }];
       });
 
       if (autoOpen) {
@@ -137,7 +172,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setIsCartOpen(true);
       }
     },
-    []
+    [products]
   );
 
   const removeFromCart = useCallback((productId: string, selectedSize: string) => {
@@ -170,8 +205,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = useCallback(() => setItems([]), []);
 
   const totalItems = useMemo(
-    () => items.reduce((acc, item) => acc + item.quantity, 0),
-    [items]
+    () => liveItems.reduce((acc, item) => acc + item.quantity, 0),
+    [liveItems]
   );
 
   // ── 3-TEE BUNDLE PASS PRICING ENGINE ("Buy any 3 Archive Tees for ₹1,199") ──
@@ -186,7 +221,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     amountUntilFreeShipping,
     hasFreeShipping,
   } = useMemo(() => {
-    const qualifyingTees = items.filter(
+    const qualifyingTees = liveItems.filter(
       (item) =>
         item.product.category === "Clothing" ||
         item.product.subcategory === "T-Shirts"
@@ -215,7 +250,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       bDiscount += Math.max(0, bundleSum - 1199);
     }
 
-    const sub = items.reduce(
+    const sub = liveItems.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0
     );
@@ -235,7 +270,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       amountUntilFreeShipping: untilFree,
       hasFreeShipping: freeShip,
     };
-  }, [items, appliedCoupon]);
+  }, [liveItems, appliedCoupon]);
 
   const applyCoupon = useCallback((rawCode: string) => {
     const code = rawCode.trim().toUpperCase();
@@ -261,7 +296,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const contextValue = useMemo<CartContextType>(
     () => ({
-      items,
+      items: liveItems,
       totalItems,
       subtotal,
       bundleDiscount,
@@ -272,6 +307,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       freeShippingThreshold: FREE_SHIPPING_THRESHOLD,
       amountUntilFreeShipping,
       hasFreeShipping,
+      hasOosItems,
       isCartOpen,
       cartView,
       setCartView,
@@ -289,7 +325,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart,
     }),
     [
-      items,
+      liveItems,
       totalItems,
       subtotal,
       bundleDiscount,
@@ -299,6 +335,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       bundleCount,
       amountUntilFreeShipping,
       hasFreeShipping,
+      hasOosItems,
       isCartOpen,
       cartView,
       openCart,

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
 import { formatPrice } from "@/lib/utils";
 import {
@@ -24,10 +25,12 @@ import {
 } from "lucide-react";
 
 export function CartDrawer() {
+  const { products } = useProducts();
   const {
     items,
     totalItems,
     freeShippingThreshold,
+    hasOosItems: cartHasOosItems,
     isCartOpen,
     cartView,
     setCartView,
@@ -48,9 +51,22 @@ export function CartDrawer() {
   const [isClosing, setIsClosing] = useState(false);
   const [viewTransitionDir, setViewTransitionDir] = useState<"forward" | "back">("forward");
 
+  // ── OUT OF STOCK DETECTION ─────────────────────────────────────────────
+  const hasOosItems = useMemo(
+    () =>
+      cartHasOosItems ||
+      items.some((item) => {
+        const live =
+          products.find((p) => p.id === item.product.id || p.slug === item.product.slug) ||
+          item.product;
+        return !live.inStock;
+      }),
+    [cartHasOosItems, items, products]
+  );
+
   // ── SELECTION STATE ──────────────────────────────────────────────────────
   const makeKey = (productId: string, size: string) => `${productId}::${size}`;
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [deselectedKeys, setDeselectedKeys] = useState<Set<string>>(new Set());
 
   // ── OPTIMISTIC QUANTITY DEBOUNCE ENGINE (120fps Silky Tapping) ──────────
   const [optimisticQuantities, setOptimisticQuantities] = useState<Record<string, number>>({});
@@ -157,22 +173,8 @@ export function CartDrawer() {
     [optimisticQuantities, items, handleSmoothRemove, updateQuantity]
   );
 
-  // Auto-sync selectedKeys when items change without wiping user selections on quantity updates
-  useEffect(() => {
-    setSelectedKeys((prev) => {
-      const validItemKeys = new Set(items.map((i) => makeKey(i.product.id, i.selectedSize)));
-      if (prev.size === 0) return validItemKeys;
-      const next = new Set<string>();
-      items.forEach((i) => {
-        const k = makeKey(i.product.id, i.selectedSize);
-        if (prev.has(k)) next.add(k);
-      });
-      return next.size > 0 ? next : validItemKeys;
-    });
-  }, [items]);
-
   const toggleItem = useCallback((key: string) => {
-    setSelectedKeys((prev) => {
+    setDeselectedKeys((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
@@ -180,23 +182,27 @@ export function CartDrawer() {
     });
   }, []);
 
-  const allSelected = items.length > 0 && selectedKeys.size === items.length;
+  const allSelected = items.length > 0 && deselectedKeys.size === 0;
   const toggleSelectAll = useCallback(() => {
     if (allSelected) {
-      setSelectedKeys(new Set());
+      setDeselectedKeys(new Set(items.map((i) => makeKey(i.product.id, i.selectedSize))));
     } else {
-      setSelectedKeys(new Set(items.map((i) => makeKey(i.product.id, i.selectedSize))));
+      setDeselectedKeys(new Set());
     }
   }, [allSelected, items]);
 
-  // Derived display items reflecting optimistic quantities in real-time
+  // Derived display items reflecting optimistic quantities and live product catalog
   const displayItems = useMemo(() => {
     return items.map((item) => {
+      const liveProduct =
+        products.find(
+          (p) => p.id === item.product.id || p.slug === item.product.slug
+        ) || item.product;
       const key = makeKey(item.product.id, item.selectedSize);
       const qty = optimisticQuantities[key] ?? item.quantity;
-      return { ...item, quantity: qty };
+      return { ...item, product: liveProduct, quantity: qty };
     });
-  }, [items, optimisticQuantities]);
+  }, [items, products, optimisticQuantities]);
 
   // ── LUXURY MICRO-SCROLLBAR (120fps Hardware Accelerated) ──────────────────
   const itemsScrollRef = useRef<HTMLDivElement>(null);
@@ -271,17 +277,16 @@ export function CartDrawer() {
 
   // ── SELECTED ITEMS DERIVED CALCULATIONS (MEMOIZED & INSTANT) ───────────
   const selectedItems = useMemo(() => {
-    return displayItems.filter((i) =>
-      selectedKeys.has(makeKey(i.product.id, i.selectedSize))
+    return displayItems.filter(
+      (i) => !deselectedKeys.has(makeKey(i.product.id, i.selectedSize))
     );
-  }, [displayItems, selectedKeys]);
+  }, [displayItems, deselectedKeys]);
 
   const {
     selectedCount,
     selectedSubtotal,
     selectedBundleDiscount,
     selectedBundleCount,
-    selectedFinalSubtotal,
     selectedCouponDiscount,
     selectedHasFreeShipping,
     selectedAmountUntilFree,
@@ -340,7 +345,7 @@ export function CartDrawer() {
   }, [selectedItems, appliedCoupon, freeShippingThreshold]);
 
   const handleProceedToCheckout = () => {
-    if (selectedCount === 0 || isTruckDriving) return;
+    if (selectedCount === 0 || isTruckDriving || hasOosItems) return;
     flushPendingDebounces();
     setIsTruckDriving(true);
     setTimeout(() => {
@@ -359,12 +364,6 @@ export function CartDrawer() {
       setIsClosing(false);
     }, 260);
   }, [isClosing, flushPendingDebounces, closeCart]);
-
-  useEffect(() => {
-    if (isCartOpen) {
-      setIsClosing(false);
-    }
-  }, [isCartOpen]);
 
   // Checkout Form State
   const [formData, setFormData] = useState({
@@ -645,9 +644,9 @@ export function CartDrawer() {
                           {allSelected ? "Deselect All" : "Select All"}
                         </span>
                       </button>
-                      {selectedKeys.size > 0 && selectedKeys.size < items.length && (
+                      {selectedItems.length > 0 && selectedItems.length < items.length && (
                         <span className="text-[10px] text-neutral-400 font-mono tabular-nums">
-                          {selectedKeys.size} of {items.length} selected
+                          {selectedItems.length} of {items.length} selected
                         </span>
                       )}
                     </div>
@@ -655,9 +654,10 @@ export function CartDrawer() {
                     {/* Each Item */}
                     {displayItems.map((item) => {
                       const key = makeKey(item.product.id, item.selectedSize);
-                      const isSelected = selectedKeys.has(key);
+                      const isSelected = !deselectedKeys.has(key);
                       const isExiting = exitingKeys.has(key);
                       const bumpVer = bumpVersions[key] || 0;
+                      const isItemOos = !item.product.inStock;
 
                       return (
                         <div
@@ -665,6 +665,8 @@ export function CartDrawer() {
                           className={`py-3.5 px-2.5 -mx-2.5 flex gap-3.5 items-start rounded-[6px] transition-all duration-240 ease-out hover:bg-[#fafaf8] group select-none ${
                             isExiting
                               ? "opacity-0 -translate-x-8 max-h-0 py-0 -my-0 overflow-hidden pointer-events-none scale-95"
+                              : isItemOos
+                              ? "opacity-60 max-h-[140px] bg-neutral-50/60"
                               : "opacity-100 max-h-[140px]"
                           }`}
                         >
@@ -695,7 +697,7 @@ export function CartDrawer() {
                           </button>
 
                           {/* Thumbnail */}
-                          <div className="relative w-20 h-24 bg-[#f4f2ee] rounded-[3px] overflow-hidden shrink-0 border border-neutral-200/80 shadow-2xs">
+                          <div className={`relative w-20 h-24 bg-[#f4f2ee] rounded-[3px] overflow-hidden shrink-0 border border-neutral-200/80 shadow-2xs ${isItemOos ? "opacity-60 grayscale" : ""}`}>
                             <Image
                               src={item.product.imageUrl}
                               alt={item.product.name}
@@ -709,13 +711,23 @@ export function CartDrawer() {
                           <div className="flex-1 flex flex-col justify-between self-stretch min-h-[96px]">
                             <div className="flex justify-between items-start gap-2">
                               <div>
-                                <Link
-                                  href={`/product/${item.product.slug}`}
-                                  onClick={handleClose}
-                                  className="text-xs font-bold uppercase tracking-tight text-neutral-900 hover:underline line-clamp-1"
-                                >
-                                  {item.product.name}
-                                </Link>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <Link
+                                    href={`/product/${item.product.slug}`}
+                                    onClick={handleClose}
+                                    className="text-xs font-bold uppercase tracking-tight text-neutral-900 hover:underline line-clamp-1"
+                                  >
+                                    {item.product.name}
+                                  </Link>
+                                  {isItemOos && (
+                                    <span
+                                      aria-label="Out of stock"
+                                      className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-red-100 text-red-700 border border-red-200 shrink-0"
+                                    >
+                                      OUT OF STOCK
+                                    </span>
+                                  )}
+                                </div>
                                 <div className="flex items-center gap-2 mt-1 text-[11px] text-neutral-500">
                                   <span>SIZE: <strong className="text-neutral-800">{item.selectedSize}</strong></span>
                                   <span>•</span>
@@ -749,14 +761,26 @@ export function CartDrawer() {
                                 >
                                   {item.quantity}
                                 </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleOptimisticQuantity(item.product.id, item.selectedSize, 1)}
-                                  className="w-7 h-7 flex items-center justify-center text-neutral-600 hover:text-black hover:bg-neutral-100 active:scale-90 active:bg-neutral-200 transition-all duration-100 cursor-pointer select-none touch-manipulation"
-                                  aria-label="Increase quantity"
-                                >
-                                  <Plus size={12} className="stroke-[2.5]" />
-                                </button>
+                                {isItemOos ? (
+                                  <button
+                                    type="button"
+                                    disabled
+                                    aria-disabled="true"
+                                    aria-label="Cannot increase quantity — item is out of stock"
+                                    className="w-7 h-7 flex items-center justify-center text-neutral-300 bg-neutral-50 cursor-not-allowed select-none"
+                                  >
+                                    <Plus size={12} className="stroke-[2.5]" />
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOptimisticQuantity(item.product.id, item.selectedSize, 1)}
+                                    className="w-7 h-7 flex items-center justify-center text-neutral-600 hover:text-black hover:bg-neutral-100 active:scale-90 active:bg-neutral-200 transition-all duration-100 cursor-pointer select-none touch-manipulation"
+                                    aria-label="Increase quantity"
+                                  >
+                                    <Plus size={12} className="stroke-[2.5]" />
+                                  </button>
+                                )}
                               </div>
                               <span className="text-sm font-black text-[#111111] tabular-nums transition-transform duration-150 origin-right">
                                 {formatPrice(item.product.price * item.quantity)}
@@ -843,12 +867,15 @@ export function CartDrawer() {
 
                 <button
                   type="button"
-                  disabled={selectedCount === 0 || isTruckDriving}
+                  disabled={selectedCount === 0 || isTruckDriving || hasOosItems}
+                  aria-disabled={selectedCount === 0 || isTruckDriving || hasOosItems}
                   onClick={handleProceedToCheckout}
                   className="w-full relative overflow-hidden bg-[#111111] text-white py-3.5 px-4 rounded-full font-black tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-black transition-all shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group touch-manipulation"
                 >
                   {selectedCount === 0 ? (
                     "SELECT ITEMS TO CHECKOUT"
+                  ) : hasOosItems ? (
+                    "UNAVAILABLE STOCK IN BAG"
                   ) : isTruckDriving ? (
                     <span className="flex items-center gap-2 text-[#fcd017] tracking-wider">
                       <Truck size={15} className="animate-bounce" />
@@ -861,6 +888,15 @@ export function CartDrawer() {
                     </>
                   )}
                 </button>
+
+                {hasOosItems && (
+                  <div
+                    role="alert"
+                    className="mt-2.5 text-[11px] font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center"
+                  >
+                    Remove out-of-stock items before proceeding to checkout
+                  </div>
+                )}
 
                 <div className="flex items-center justify-center gap-1.5 mt-3 text-[10px] text-neutral-500 font-medium">
                   <ShieldCheck size={13} className="text-emerald-600" />

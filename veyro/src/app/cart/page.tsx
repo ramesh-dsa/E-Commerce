@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { Container } from "@/components/ui/Container";
@@ -13,7 +12,6 @@ import { ProductCard } from "@/components/features/ProductCard";
 import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
 import {
-  ShoppingBag,
   Trash2,
   Heart,
   ArrowRight,
@@ -24,14 +22,21 @@ import {
   Sparkles,
   Tag,
   Check,
-  X,
   Minus,
   Plus,
   CheckCircle2,
 } from "lucide-react";
 
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 export default function CartPage() {
-  const router = useRouter();
   const { products } = useProducts();
   const {
     items,
@@ -42,6 +47,7 @@ export default function CartPage() {
     hasFreeShipping,
     amountUntilFreeShipping,
     freeShippingThreshold,
+    hasOosItems: cartHasOosItems,
     appliedCoupon,
     couponDiscount,
     applyCoupon,
@@ -52,11 +58,7 @@ export default function CartPage() {
   } = useCart();
 
   const { addToWishlist } = useWishlist();
-
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useMounted();
 
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -99,6 +101,15 @@ export default function CartPage() {
   const deliveryFee = hasFreeShipping ? 0 : 99;
   const grandTotal = Math.max(0, finalSubtotal - couponDiscount + deliveryFee);
   const totalSavings = bundleDiscount + couponDiscount;
+
+  const hasOosItems =
+    cartHasOosItems ||
+    items.some((item) => {
+      const live =
+        products.find((p) => p.id === item.product.id || p.slug === item.product.slug) ||
+        item.product;
+      return !live.inStock;
+    });
 
   // Free shipping progress percentage
   const shippingProgress = Math.min(
@@ -265,44 +276,63 @@ export default function CartPage() {
               {/* Items Table / Cards */}
               <div className="bg-white border border-neutral-200/90 rounded-xl divide-y divide-neutral-100 shadow-xs overflow-hidden">
                 {items.map((item) => {
-                  const lineTotal = item.product.price * item.quantity;
+                  const liveProduct =
+                    products.find(
+                      (p) => p.id === item.product.id || p.slug === item.product.slug
+                    ) || item.product;
+                  const lineTotal = liveProduct.price * item.quantity;
+                  const isItemOos = !liveProduct.inStock;
                   return (
                     <div
                       key={`${item.product.id}-${item.selectedSize}`}
-                      className="p-5 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start justify-between"
+                      className={`p-5 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start justify-between ${
+                        isItemOos ? "opacity-60 bg-neutral-50/50" : ""
+                      }`}
                     >
                       {/* Product Thumbnail & Basic Info */}
                       <div className="flex items-start gap-4 min-w-0 flex-1">
                         <Link
-                          href={`/product/${item.product.slug}`}
+                          href={`/product/${liveProduct.slug}`}
                           className="relative w-20 h-24 sm:w-24 sm:h-28 bg-neutral-100 rounded-lg overflow-hidden shrink-0 block group border border-neutral-200/70"
                         >
                           <Image
-                            src={item.product.imageUrl}
-                            alt={item.product.name}
+                            src={liveProduct.imageUrl}
+                            alt={liveProduct.name}
                             fill
                             sizes="96px"
-                            className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                            className={`object-cover object-center group-hover:scale-105 transition-transform duration-300 ${
+                              isItemOos ? "grayscale" : ""
+                            }`}
                           />
                         </Link>
 
                         <div className="space-y-1 min-w-0">
                           <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">
-                            {item.product.subcategoryTag || item.product.category}
+                            {liveProduct.subcategoryTag || liveProduct.category}
                           </span>
-                          <Link
-                            href={`/product/${item.product.slug}`}
-                            className="text-sm font-bold text-neutral-900 hover:text-neutral-700 transition-colors line-clamp-1 block"
-                          >
-                            {item.product.name}
-                          </Link>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Link
+                              href={`/product/${liveProduct.slug}`}
+                              className="text-sm font-bold text-neutral-900 hover:text-neutral-700 transition-colors line-clamp-1 block"
+                            >
+                              {liveProduct.name}
+                            </Link>
+                            {isItemOos && (
+                              <span
+                                aria-label="Out of stock"
+                                className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700 border border-red-200 shrink-0"
+                              >
+                                OUT OF STOCK
+                              </span>
+                            )}
+                          </div>
                           <div className="text-xs text-neutral-500">
                             Size: <span className="font-semibold text-neutral-900">{item.selectedSize}</span>
-                            {item.product.colorName && ` • Color: ${item.product.colorName}`}
+                            {liveProduct.colorName && ` • Color: ${liveProduct.colorName}`}
                           </div>
 
                           <div className="text-xs font-semibold text-neutral-900 pt-1 sm:hidden">
-                            {formatPrice(item.product.price)} each
+                            {formatPrice(liveProduct.price)} each
                           </div>
 
                           {/* Action links */}
@@ -360,16 +390,28 @@ export default function CartPage() {
                           <span className="w-8 text-center text-xs font-bold text-neutral-900">
                             {item.quantity}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              updateQuantity(item.product.id, item.selectedSize, item.quantity + 1)
-                            }
-                            aria-label="Increase quantity"
-                            className="w-8 h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
-                          >
-                            <Plus size={13} />
-                          </button>
+                          {isItemOos ? (
+                            <button
+                              type="button"
+                              disabled
+                              aria-disabled="true"
+                              aria-label="Cannot increase quantity — item is out of stock"
+                              className="w-8 h-8 flex items-center justify-center text-neutral-300 bg-neutral-50 cursor-not-allowed"
+                            >
+                              <Plus size={13} />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateQuantity(item.product.id, item.selectedSize, item.quantity + 1)
+                              }
+                              aria-label="Increase quantity"
+                              className="w-8 h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+                            >
+                              <Plus size={13} />
+                            </button>
+                          )}
                         </div>
 
                         <div className="text-right sm:hidden">
@@ -510,14 +552,34 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                {/* Primary Proceed to Checkout Link */}
-                <Link
-                  href="/checkout"
-                  className="w-full bg-neutral-900 text-white hover:bg-black py-3.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md text-center"
-                >
-                  <span>Proceed to Checkout</span>
-                  <ArrowRight size={14} />
-                </Link>
+                {/* Primary Proceed to Checkout Link / Disabled Button */}
+                {hasOosItems ? (
+                  <>
+                    <button
+                      type="button"
+                      disabled
+                      aria-disabled="true"
+                      className="w-full bg-neutral-300 text-neutral-500 py-3.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-not-allowed opacity-60 shadow-none text-center"
+                    >
+                      <span>Proceed to Checkout</span>
+                      <ArrowRight size={14} />
+                    </button>
+                    <div
+                      role="alert"
+                      className="mt-2 text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center font-medium"
+                    >
+                      Remove out-of-stock items to proceed
+                    </div>
+                  </>
+                ) : (
+                  <Link
+                    href="/checkout"
+                    className="w-full bg-neutral-900 text-white hover:bg-black py-3.5 px-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md text-center"
+                  >
+                    <span>Proceed to Checkout</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                )}
 
                 {/* Trust Badges */}
                 <div className="pt-3 border-t border-neutral-100 space-y-2 text-[11px] text-neutral-500">

@@ -27,7 +27,15 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
 
   // Find product from active ProductsContext or CustomSectionsContext (or initialProduct SSR fallback)
   const { product, backInfo, customSimilar } = useMemo(() => {
-    const standardProduct = products.find((p) => p.slug === slug) || initialProduct || null;
+    const standardProduct =
+      products.find(
+        (p) =>
+          p.slug === slug ||
+          (initialProduct && p.id === initialProduct.id) ||
+          p.id === slug
+      ) ||
+      initialProduct ||
+      null;
     if (standardProduct) {
       return { product: standardProduct, backInfo: null, customSimilar: [] };
     }

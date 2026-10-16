@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
 import { formatPrice } from "@/lib/utils";
 import type { OrderRecord } from "@/types";
@@ -20,15 +21,23 @@ import {
   Tag,
   Check,
   RotateCcw,
-  Sparkles,
   ArrowRight,
   ShoppingBag,
-  HelpCircle,
   AlertCircle,
 } from "lucide-react";
 
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
+  const { products } = useProducts();
   const {
     items,
     totalItems,
@@ -41,25 +50,24 @@ export default function CheckoutPage() {
     removeCoupon,
     clearCart,
     hasFreeShipping,
-    freeShippingThreshold,
+    hasOosItems: cartHasOosItems,
   } = useCart();
 
   const { user, addOrder } = useUser();
-
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State - Contact
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("ramesh.kumar@example.com");
+  const [phone, setPhone] = useState("+91 98765 43210");
 
   // Form State - Shipping Address
-  const [fullName, setFullName] = useState("");
-  const [streetAddress, setStreetAddress] = useState("");
+  const [fullName, setFullName] = useState("Ramesh Kumar");
+  const [streetAddress, setStreetAddress] = useState("Flat 402, Prestige Tower, Indiranagar");
   const [apartment, setApartment] = useState("");
-  const [city, setCity] = useState("");
-  const [stateName, setStateName] = useState("");
-  const [pincode, setPincode] = useState("");
+  const [city, setCity] = useState("Bengaluru");
+  const [stateName, setStateName] = useState("Karnataka");
+  const [pincode, setPincode] = useState("560038");
   const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
 
   // Form State - Payment
@@ -78,28 +86,38 @@ export default function CheckoutPage() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setIsMounted(true);
-    if (user) {
-      setEmail(user.email || "");
-      setPhone(user.phone || "");
-      setFullName(user.name || "");
+    if (!user) return;
+    queueMicrotask(() => {
+      if (user.email) setEmail(user.email);
+      if (user.phone) setPhone(user.phone);
+      if (user.name) setFullName(user.name);
       if (user.address) {
-        setStreetAddress(user.address.line1 || "");
-        setCity(user.address.city || "");
-        setStateName(user.address.state || "");
-        setPincode(user.address.pincode || "");
+        if (user.address.line1) setStreetAddress(user.address.line1);
+        if (user.address.city) setCity(user.address.city);
+        if (user.address.state) setStateName(user.address.state);
+        if (user.address.pincode) setPincode(user.address.pincode);
       }
-    } else {
-      // Default initial dummy values for fast testing if blank
-      setEmail("ramesh.kumar@example.com");
-      setPhone("+91 98765 43210");
-      setFullName("Ramesh Kumar");
-      setStreetAddress("Flat 402, Prestige Tower, Indiranagar");
-      setCity("Bengaluru");
-      setStateName("Karnataka");
-      setPincode("560038");
-    }
+    });
   }, [user]);
+
+  const isAnyItemOos = useMemo(
+    () =>
+      cartHasOosItems ||
+      items.some((i) => {
+        const live =
+          products.find((p) => p.id === i.product.id || p.slug === i.product.slug) ||
+          i.product;
+        return !live.inStock;
+      }),
+    [cartHasOosItems, items, products]
+  );
+
+  // Guard against out-of-stock items: redirect to /cart
+  useEffect(() => {
+    if (isMounted && items.length > 0 && isAnyItemOos) {
+      router.replace("/cart");
+    }
+  }, [isMounted, items.length, isAnyItemOos, router]);
 
   // Delivery calculation
   const shippingFee = shippingMethod === "express" ? 149 : hasFreeShipping ? 0 : 99;
@@ -306,6 +324,29 @@ export default function CheckoutPage() {
             className="inline-flex items-center justify-center w-full bg-neutral-900 text-white hover:bg-black py-3 px-5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
           >
             Explore Collections
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Out of stock guard fallback
+  if (items.some((i) => !i.product.inStock)) {
+    return (
+      <div className="min-h-[80vh] bg-neutral-50/50 flex items-center justify-center px-4 py-16">
+        <div className="max-w-md w-full bg-white border border-neutral-200/90 rounded-2xl p-8 sm:p-10 text-center shadow-xs">
+          <div className="w-14 h-14 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={24} />
+          </div>
+          <h1 className="text-xl font-bold text-neutral-900 mb-2">Unavailable Items in Bag</h1>
+          <p className="text-xs text-neutral-500 mb-6 leading-relaxed">
+            One or more items in your shopping bag are currently out of stock. Please remove them before proceeding with checkout.
+          </p>
+          <Link
+            href="/cart"
+            className="inline-flex items-center justify-center w-full bg-neutral-900 text-white hover:bg-black py-3 px-5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
+          >
+            Return to Bag
           </Link>
         </div>
       </div>

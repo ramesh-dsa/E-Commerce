@@ -78,16 +78,20 @@ function productToFormData(p: Product): ProductFormData {
   };
 }
 
-function formDataToProduct(data: ProductFormData, existingId?: string): Product {
-  const id = existingId || `vey-cst-${Date.now().toString(36)}`;
-  const slug = data.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+function formDataToProduct(data: ProductFormData, existingProduct?: Product): Product {
+  const id = existingProduct?.id || `vey-cst-${Date.now().toString(36)}`;
+  // Preserve existing slug if editing an existing product, or derive from name if new
+  const slug =
+    existingProduct?.slug ||
+    data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
 
   return {
+    ...existingProduct,
     id,
-    sku: id.toUpperCase().replace(/-/g, "_"),
+    sku: existingProduct?.sku || id.toUpperCase().replace(/-/g, "_"),
     slug,
     name: data.name.trim(),
     category: data.category,
@@ -102,7 +106,7 @@ function formDataToProduct(data: ProductFormData, existingId?: string): Product 
     discount: data.discount.trim() || undefined,
     imageUrl: data.imageUrl.trim() || "/products/tshirts/core-oversized-wolf-tee-front.webp",
     secondaryImageUrl: data.secondaryImageUrl.trim() || undefined,
-    galleryImages: [],
+    galleryImages: existingProduct?.galleryImages || [],
     badge: (data.badge || undefined) as Product["badge"],
     sizes: data.sizes
       .split(",")
@@ -305,7 +309,7 @@ export function ProductForm({
       return;
     }
 
-    const result = formDataToProduct(form, product?.id);
+    const result = formDataToProduct(form, product);
     onSubmit(result);
   };
 

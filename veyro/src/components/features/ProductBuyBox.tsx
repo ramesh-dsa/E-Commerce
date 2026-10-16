@@ -27,6 +27,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Star,
+  PackageX,
 } from "lucide-react";
 
 interface FootwearSizingRow {
@@ -77,6 +78,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const isWishlisted = isInWishlist(product.id);
+  const isOutOfStock = !product.inStock;
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [unitMode, setUnitMode] = useState<"in" | "cm">("in");
 
@@ -148,6 +150,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   };
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     if (!selectedSize) {
       setSizeError(true);
       return;
@@ -162,6 +165,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   };
 
   const handleBuyNow = () => {
+    if (isOutOfStock) return;
     if (!selectedSize) {
       setSizeError(true);
       return;
@@ -308,7 +312,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         </div>
 
         {/* Dynamic Pill Size Grid */}
-        <div className={`flex flex-wrap gap-2 sm:gap-2.5`}>
+        <div className={`flex flex-wrap gap-2 sm:gap-2.5 ${isOutOfStock ? "pointer-events-none opacity-50" : ""}`}>
           {product.sizes.map((size) => {
             const isSelected = selectedSize === size;
             return (
@@ -330,7 +334,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         </div>
 
         {/* Size Error Feedback */}
-        {sizeError && (
+        {sizeError && !isOutOfStock && (
           <p className="mt-2.5 text-xs font-semibold text-red-600 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block" />
             Please select a size to proceed.
@@ -343,54 +347,93 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         </p>
       </div>
 
+      {/* Out of Stock Waitlist Banner */}
+      {isOutOfStock && (
+        <div
+          role="alert"
+          className="mb-4 bg-neutral-100 border border-neutral-200 rounded-xl p-3 flex items-center justify-between gap-3 text-xs text-neutral-600"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-red-600 font-bold" aria-hidden="true">⚑</span>
+            <span>This item is currently out of stock. Join the waitlist to be notified.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => toggleWishlist(product, selectedSize || undefined)}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 hover:underline shrink-0 cursor-pointer"
+          >
+            <HeartIcon
+              size={14}
+              filled={isWishlisted}
+              className={isWishlisted ? "text-red-500 fill-red-500" : "text-neutral-900"}
+            />
+            <span>{isWishlisted ? "Wishlisted" : "Wishlist"}</span>
+          </button>
+        </div>
+      )}
+
       {/* 7. Purchase Action Bar */}
       <div className="flex flex-col gap-3 mb-6">
         <div className="flex gap-2.5 items-center">
-          {/* Pill Quantity Stepper */}
-          <div className="flex items-center gap-1 bg-neutral-100 rounded-full p-1 shrink-0">
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition-all cursor-pointer border border-neutral-200"
-              aria-label="Decrease quantity"
-            >
-              <Minus size={12} className="stroke-[2.5]" />
-            </button>
-            <span className="w-8 text-center text-sm font-black text-veyro-black select-none tabular-nums">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => q + 1)}
-              className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition-all cursor-pointer border border-neutral-200"
-              aria-label="Increase quantity"
-            >
-              <Plus size={12} className="stroke-[2.5]" />
-            </button>
-          </div>
+          {/* Pill Quantity Stepper (hidden if OOS) */}
+          {!isOutOfStock && (
+            <div className="flex items-center gap-1 bg-neutral-100 rounded-full p-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition-all cursor-pointer border border-neutral-200"
+                aria-label="Decrease quantity"
+              >
+                <Minus size={12} className="stroke-[2.5]" />
+              </button>
+              <span className="w-8 text-center text-sm font-black text-veyro-black select-none tabular-nums">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => q + 1)}
+                className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition-all cursor-pointer border border-neutral-200"
+                aria-label="Increase quantity"
+              >
+                <Plus size={12} className="stroke-[2.5]" />
+              </button>
+            </div>
+          )}
 
-          {/* Primary ADD TO BAG CTA */}
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className={`flex-1 h-12 px-6 rounded-2xl text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 transition-all duration-200 cursor-pointer shadow-md ${
-              isAdding
-                ? "bg-emerald-600 text-white shadow-emerald-200"
-                : "bg-veyro-black text-white hover:bg-veyro-charcoal hover:shadow-lg active:scale-[0.98]"
-            }`}
-          >
-            {isAdding ? (
-              <>
-                <CheckIcon size={16} />
-                <span>Added!</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBagIcon size={16} />
-                <span>Add to Bag</span>
-              </>
-            )}
-          </button>
+          {/* Primary ADD TO BAG CTA / Sold Out Button */}
+          {isOutOfStock ? (
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              className="flex-1 h-12 px-6 rounded-2xl text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 bg-neutral-200 text-neutral-500 cursor-not-allowed opacity-60 shadow-none border border-neutral-300"
+            >
+              <PackageX size={16} />
+              <span>Sold Out</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className={`flex-1 h-12 px-6 rounded-2xl text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 transition-all duration-200 cursor-pointer shadow-md ${
+                isAdding
+                  ? "bg-emerald-600 text-white shadow-emerald-200"
+                  : "bg-veyro-black text-white hover:bg-veyro-charcoal hover:shadow-lg active:scale-[0.98]"
+              }`}
+            >
+              {isAdding ? (
+                <>
+                  <CheckIcon size={16} />
+                  <span>Added!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBagIcon size={16} />
+                  <span>Add to Bag</span>
+                </>
+              )}
+            </button>
+          )}
 
           {/* Wishlist Circle Button */}
           <button
@@ -411,15 +454,26 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           </button>
         </div>
 
-        {/* Instant BUY NOW CTA - Full Pill */}
-        <button
-          type="button"
-          onClick={handleBuyNow}
-          className="group w-full h-13 px-6 rounded-full text-xs font-black uppercase tracking-[0.18em] bg-veyro-yellow text-veyro-black hover:bg-veyro-yellow-dark active:scale-[0.99] flex items-center justify-center gap-2.5 transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
-        >
-          <span>Buy Now</span>
-          <ArrowRight size={15} className="stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1.5" />
-        </button>
+        {/* Instant BUY NOW CTA / Not Available Button */}
+        {isOutOfStock ? (
+          <button
+            type="button"
+            disabled
+            aria-disabled="true"
+            className="w-full h-13 px-6 rounded-full text-xs font-black uppercase tracking-[0.18em] bg-neutral-200 text-neutral-400 cursor-not-allowed opacity-60 flex items-center justify-center gap-2.5 shadow-none border border-neutral-300"
+          >
+            <span>Not Available</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleBuyNow}
+            className="group w-full h-13 px-6 rounded-full text-xs font-black uppercase tracking-[0.18em] bg-veyro-yellow text-veyro-black hover:bg-veyro-yellow-dark active:scale-[0.99] flex items-center justify-center gap-2.5 transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
+          >
+            <span>Buy Now</span>
+            <ArrowRight size={15} className="stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1.5" />
+          </button>
+        )}
       </div>
 
       {/* 8. Minimalist Luxury Trust Strip */}
