@@ -34,6 +34,7 @@ import {
   Pencil,
   ArrowUpRight,
   Clock,
+  Loader2,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -901,12 +902,8 @@ export default function CheckoutPage() {
           </nav>
 
           {/* Right: Reassuring Micro-Trust Badge */}
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-neutral-50 border border-neutral-200/80 text-[11px] text-neutral-600 select-none shadow-2xs shrink-0 whitespace-nowrap">
-            <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <ShieldCheck size={14} className="text-neutral-700 shrink-0" aria-hidden="true" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-50 border border-neutral-200/80 text-[11px] text-neutral-600 select-none shadow-2xs shrink-0 whitespace-nowrap">
+            <ShieldCheck size={14} className="text-neutral-800 shrink-0" aria-hidden="true" />
             <span className="font-mono font-semibold text-neutral-800 tracking-tight text-[11px] hidden sm:inline">
               256-Bit SSL
             </span>
@@ -1122,34 +1119,32 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="mt-4 pt-3.5 border-t border-neutral-200/80 flex flex-wrap items-center gap-2.5">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-950 text-white text-xs font-bold cursor-default select-none">
-                        <Check size={13} className="stroke-[3]" />
+                    <div className="mt-4 pt-3.5 border-t border-neutral-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-950 text-white text-xs font-semibold cursor-default select-none shrink-0 self-start sm:self-auto">
+                        <Check size={12} className="stroke-[3]" />
                         <span>Delivering to this Address</span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={handleSelectCustomAddress}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-white text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
-                      >
-                        <Plus size={13} />
-                        <span>Deliver to a Different Address</span>
-                      </button>
+                      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={handleSelectCustomAddress}
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-white text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
+                        >
+                          <Plus size={13} className="text-neutral-600" />
+                          <span>Different Address</span>
+                        </button>
 
-                      <button
-                        type="button"
-                        onClick={handleDetectLiveLocation}
-                        disabled={isLocating}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-xs font-semibold text-neutral-800 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group active:scale-[0.98]"
-                      >
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-live-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                        </span>
-                        <Navigation size={13} className="text-emerald-600 transition-transform group-hover:scale-110" />
-                        <span>Use Live Location</span>
-                      </button>
+                        <button
+                          type="button"
+                          onClick={handleDetectLiveLocation}
+                          disabled={isLocating}
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-xs font-semibold text-neutral-800 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group active:scale-[0.98]"
+                        >
+                          <Navigation size={13} className="text-neutral-700 transition-transform group-hover:scale-110" />
+                          <span>Use Live Location</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1189,21 +1184,14 @@ export default function CheckoutPage() {
 
                       {isLocating ? (
                         <>
-                          <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-                          </span>
+                          <Loader2 size={13} className="animate-spin text-neutral-300" />
                           <span className="normal-case tracking-normal font-medium text-neutral-200">
                             {locatingStep || "Detecting live location..."}
                           </span>
                         </>
                       ) : (
                         <>
-                          <span className="relative flex h-2 w-2">
-                            <span className="animate-live-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                          </span>
-                          <LocateFixed size={13} className="text-emerald-400 transition-transform group-hover:rotate-45" />
+                          <LocateFixed size={13} className="text-neutral-300 transition-transform group-hover:rotate-45" />
                           <span>Detect Live Location</span>
                         </>
                       )}
@@ -1225,13 +1213,12 @@ export default function CheckoutPage() {
                         /* State 1: Active Radar Scanning */
                         <div className="flex items-center gap-3.5">
                           <div className="relative flex items-center justify-center w-7 h-7 shrink-0">
-                            <div className="absolute inset-0 rounded-full border border-emerald-500/40 animate-ping" />
-                            <div className="w-6 h-6 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+                            <div className="w-6 h-6 rounded-full border-2 border-neutral-400 border-t-white animate-spin" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-neutral-100 flex items-center gap-2">
                               <span>Live Telemetry Radar</span>
-                              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">
+                              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-neutral-800 text-neutral-300 rounded border border-neutral-700">
                                 Active Scanning
                               </span>
                             </div>
