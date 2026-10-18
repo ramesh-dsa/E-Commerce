@@ -82,8 +82,15 @@ export function ProductCard({
           )}
         </Link>
 
-        {/* Product Badge */}
-        {product.badge && (
+        {/* Product Badge / Sold Out Pill */}
+        {!product.inStock ? (
+          <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-neutral-950/90 text-white backdrop-blur-md shadow-xs border border-white/15">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+              Sold Out
+            </span>
+          </div>
+        ) : product.badge ? (
           <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
             <Badge
               variant={
@@ -97,7 +104,7 @@ export function ProductCard({
               {product.badge}
             </Badge>
           </div>
-        )}
+        ) : null}
 
         {/* Wishlist Button */}
         <WishlistButton

@@ -22,6 +22,8 @@ import {
   CheckCircle2,
   Lock,
   Package,
+  AlertCircle,
+  RotateCcw,
 } from "lucide-react";
 
 export function CartDrawer() {
@@ -276,9 +278,10 @@ export function CartDrawer() {
   }, []);
 
   // ── SELECTED ITEMS DERIVED CALCULATIONS (MEMOIZED & INSTANT) ───────────
+  // Exclude out-of-stock items so they are never billed or passed into checkout
   const selectedItems = useMemo(() => {
     return displayItems.filter(
-      (i) => !deselectedKeys.has(makeKey(i.product.id, i.selectedSize))
+      (i) => i.product.inStock && !deselectedKeys.has(makeKey(i.product.id, i.selectedSize))
     );
   }, [displayItems, deselectedKeys]);
 
@@ -345,7 +348,7 @@ export function CartDrawer() {
   }, [selectedItems, appliedCoupon, freeShippingThreshold]);
 
   const handleProceedToCheckout = () => {
-    if (selectedCount === 0 || isTruckDriving || hasOosItems) return;
+    if (selectedCount === 0 || isTruckDriving) return;
     flushPendingDebounces();
     setIsTruckDriving(true);
     setTimeout(() => {
@@ -373,8 +376,20 @@ export function CartDrawer() {
     address: "",
     paymentMethod: "upi",
   });
+  type PaymentStatus = "idle" | "processing" | "failed" | "success";
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle");
+  const [failureReason, setFailureReason] = useState<string>("");
+  const [retryCount, setRetryCount] = useState(0);
+  const drawerFailureBannerRef = useRef<HTMLDivElement>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedOrderId, setConfirmedOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (paymentStatus === "failed" && drawerFailureBannerRef.current) {
+      drawerFailureBannerRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [paymentStatus]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -394,8 +409,35 @@ export function CartDrawer() {
   const handleCheckoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setPaymentStatus("processing");
+
     setTimeout(() => {
+      // Failure simulation logic (E9 specification)
+      let simulatedError: string | null = null;
+
+      if (formData.paymentMethod === "card") {
+        if (formData.name.toLowerCase().includes("fail") || retryCount >= 2) {
+          simulatedError =
+            "Card authorization declined. Your bank rejected the transaction. Please check your card limit or try a different card.";
+        }
+      } else if (formData.paymentMethod === "upi") {
+        if (formData.name.toLowerCase().includes("fail") || retryCount >= 2) {
+          simulatedError =
+            "UPI payment timed out or was declined. Please verify your UPI ID and bank balance, then retry.";
+        }
+      }
+      // Note: COD never fails
+
+      if (simulatedError) {
+        setIsSubmitting(false);
+        setPaymentStatus("failed");
+        setFailureReason(simulatedError);
+        setRetryCount((prev) => prev + 1);
+        return;
+      }
+
       setIsSubmitting(false);
+      setPaymentStatus("success");
       const generatedId = `VEY-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
       setConfirmedOrderId(generatedId);
 
@@ -453,7 +495,7 @@ export function CartDrawer() {
       setCartView("success");
       // Only remove selected items — unselected stay in bag
       selectedItems.forEach((i) => removeFromCart(i.product.id, i.selectedSize));
-    }, 850);
+    }, 1200);
   };
 
   return (
@@ -671,30 +713,40 @@ export function CartDrawer() {
                           }`}
                         >
                           {/* Premium Checkbox */}
-                          <button
-                            type="button"
-                            onClick={() => toggleItem(key)}
-                            aria-label={isSelected ? "Deselect item" : "Select item"}
-                            aria-checked={isSelected}
-                            role="checkbox"
-                            className="mt-1 shrink-0 cursor-pointer group active:scale-75 transition-transform duration-150 motion-reduce:transform-none touch-manipulation"
-                          >
-                            <span
-                              className={`w-5 h-5 rounded-[5px] border-2 flex items-center justify-center transition-all duration-200 ${
-                                isSelected
-                                  ? "bg-[#111111] border-[#111111] shadow-xs"
-                                  : "border-neutral-400 bg-white group-hover:border-[#111111]"
-                              }`}
+                          {isItemOos ? (
+                            <div
+                              className="mt-1 shrink-0 w-5 h-5 rounded-[5px] border-2 border-neutral-300 bg-neutral-100 flex items-center justify-center cursor-not-allowed opacity-50"
+                              title="Item is out of stock"
+                              aria-label="Item is out of stock"
+                            >
+                              <Minus size={10} className="text-neutral-400 stroke-[3]" />
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => toggleItem(key)}
+                              aria-label={isSelected ? "Deselect item" : "Select item"}
+                              aria-checked={isSelected}
+                              role="checkbox"
+                              className="mt-1 shrink-0 cursor-pointer group active:scale-75 transition-transform duration-150 motion-reduce:transform-none touch-manipulation"
                             >
                               <span
-                                className={`transition-all duration-150 ${
-                                  isSelected ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                                className={`w-5 h-5 rounded-[5px] border-2 flex items-center justify-center transition-all duration-200 ${
+                                  isSelected
+                                    ? "bg-[#111111] border-[#111111] shadow-xs"
+                                    : "border-neutral-400 bg-white group-hover:border-[#111111]"
                                 }`}
                               >
-                                <Check size={12} className="text-white stroke-[3]" />
+                                <span
+                                  className={`transition-all duration-150 ${
+                                    isSelected ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                                  }`}
+                                >
+                                  <Check size={12} className="text-white stroke-[3]" />
+                                </span>
                               </span>
-                            </span>
-                          </button>
+                            </button>
+                          )}
 
                           {/* Thumbnail */}
                           <div className={`relative w-20 h-24 bg-[#f4f2ee] rounded-[3px] overflow-hidden shrink-0 border border-neutral-200/80 shadow-2xs ${isItemOos ? "opacity-60 grayscale" : ""}`}>
@@ -867,15 +919,13 @@ export function CartDrawer() {
 
                 <button
                   type="button"
-                  disabled={selectedCount === 0 || isTruckDriving || hasOosItems}
-                  aria-disabled={selectedCount === 0 || isTruckDriving || hasOosItems}
+                  disabled={selectedCount === 0 || isTruckDriving}
+                  aria-disabled={selectedCount === 0 || isTruckDriving}
                   onClick={handleProceedToCheckout}
                   className="w-full relative overflow-hidden bg-[#111111] text-white py-3.5 px-4 rounded-full font-black tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-black transition-all shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group touch-manipulation"
                 >
                   {selectedCount === 0 ? (
                     "SELECT ITEMS TO CHECKOUT"
-                  ) : hasOosItems ? (
-                    "UNAVAILABLE STOCK IN BAG"
                   ) : isTruckDriving ? (
                     <span className="flex items-center gap-2 text-[#fcd017] tracking-wider">
                       <Truck size={15} className="animate-bounce" />
@@ -891,10 +941,10 @@ export function CartDrawer() {
 
                 {hasOosItems && (
                   <div
-                    role="alert"
-                    className="mt-2.5 text-[11px] font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center"
+                    role="status"
+                    className="mt-2.5 text-[11px] font-medium text-amber-800 bg-amber-50/80 border border-amber-200/80 rounded-lg px-3 py-2 text-center"
                   >
-                    Remove out-of-stock items before proceeding to checkout
+                    Unavailable items remain saved in your bag and won&apos;t be billed.
                   </div>
                 )}
 
@@ -1090,7 +1140,10 @@ export function CartDrawer() {
                       <button
                         key={method}
                         type="button"
-                        onClick={() => setFormData({ ...formData, paymentMethod: method })}
+                        onClick={() => {
+                          setFormData({ ...formData, paymentMethod: method });
+                          if (paymentStatus === "failed") setPaymentStatus("idle");
+                        }}
                         className={`p-2.5 rounded-[2px] border text-center font-bold transition-all cursor-pointer ${
                           formData.paymentMethod === method
                             ? "border-[#111111] bg-[#111111] text-white shadow-xs"
@@ -1103,14 +1156,60 @@ export function CartDrawer() {
                   </div>
                 </div>
 
-                <div className="pt-3">
+                {/* Payment Failure Banner */}
+                {paymentStatus === "failed" && (
+                  <div
+                    ref={drawerFailureBannerRef}
+                    role="alert"
+                    aria-live="assertive"
+                    className="bg-neutral-50/90 border border-neutral-200/90 rounded-[2px] p-3 text-xs animate-payment-shake"
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle size={15} className="text-red-600 shrink-0 mt-0.5" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1 flex-wrap">
+                          <span className="font-bold text-neutral-900 text-xs">Payment was declined</span>
+                          <span className="text-[10px] text-neutral-500">No funds deducted</span>
+                        </div>
+                        <p className="text-[11px] text-neutral-600 leading-snug mt-1">
+                          {failureReason}
+                        </p>
+                        <p className="text-[10px] text-neutral-400 mt-1">
+                          Your items remain safely reserved in your bag.
+                        </p>
+                        {formData.paymentMethod !== "cod" && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({ ...prev, paymentMethod: "cod" }));
+                              setPaymentStatus("idle");
+                            }}
+                            className="mt-2 text-[11px] font-bold text-neutral-900 underline underline-offset-4 hover:text-black block cursor-pointer"
+                          >
+                            Switch to Cash on Delivery →
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full h-13 bg-[#fcd017] text-[#111111] hover:bg-[#e5bc05] font-black text-xs uppercase tracking-[0.18em] rounded-[2px] transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
-                      <span>Processing Payment...</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3.5 h-3.5 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+                        <span>Verifying Payment...</span>
+                      </div>
+                    ) : paymentStatus === "failed" ? (
+                      <>
+                        <RotateCcw size={15} className="stroke-[2.5]" />
+                        <span>RETRY PAYMENT • {formatPrice(selectedFinalTotal)}</span>
+                      </>
                     ) : (
                       <>
                         <span>PAY & COMPLETE ORDER • {formatPrice(selectedFinalTotal)}</span>

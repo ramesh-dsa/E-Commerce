@@ -21,8 +21,14 @@ export type CartViewMode = "bag" | "checkout" | "success";
 
 interface CartContextType {
   items: CartItem[];
+  inStockItems: CartItem[];
+  oosItems: CartItem[];
+  inStockCount: number;
+  oosCount: number;
+  hasAvailableItems: boolean;
   totalItems: number;
   subtotal: number;
+  rawBagSubtotal: number;
   bundleDiscount: number;
   finalSubtotal: number;
   qualifyingTeesCount: number;
@@ -46,6 +52,8 @@ interface CartContextType {
     autoOpen?: boolean
   ) => void;
   removeFromCart: (productId: string, selectedSize: string) => void;
+  removeOosItems: () => void;
+  removePurchasedItems: (purchased: { productId: string; selectedSize: string }[]) => void;
   updateQuantity: (productId: string, selectedSize: string, quantity: number) => void;
   appliedCoupon: string | null;
   couponDiscount: number;
@@ -121,10 +129,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [liveItems, isHydrated]);
 
-  // Out of stock detection against live products catalog
-  const hasOosItems = useMemo(() => {
-    return liveItems.some((item) => !item.product.inStock);
+  // Out of stock separation against live products catalog
+  const inStockItems = useMemo(() => {
+    return liveItems.filter((item) => item.product.inStock);
   }, [liveItems]);
+
+  const oosItems = useMemo(() => {
+    return liveItems.filter((item) => !item.product.inStock);
+  }, [liveItems]);
+
+  const hasOosItems = oosItems.length > 0;
+  const hasAvailableItems = inStockItems.length > 0;
+
+  const inStockCount = useMemo(() => {
+    return inStockItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [inStockItems]);
+
+  const oosCount = useMemo(() => {
+    return oosItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [oosItems]);
 
   const openCart = useCallback(() => {
     setCartView("bag");
@@ -183,6 +206,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const removeOosItems = useCallback(() => {
+    setItems((prev) =>
+      prev.filter((item) => {
+        const liveProduct =
+          products.find(
+            (p) => p.id === item.product.id || p.slug === item.product.slug
+          ) || item.product;
+        return liveProduct.inStock;
+      })
+    );
+  }, [products]);
+
+  const removePurchasedItems = useCallback(
+    (purchased: { productId: string; selectedSize: string }[]) => {
+      setItems((prev) =>
+        prev.filter(
+          (item) =>
+            !purchased.some(
+              (p) =>
+                p.productId === item.product.id &&
+                p.selectedSize === item.selectedSize
+            )
+        )
+      );
+    },
+    []
+  );
+
   const updateQuantity = useCallback(
     (productId: string, selectedSize: string, quantity: number) => {
       if (quantity <= 0) {
@@ -209,7 +260,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [liveItems]
   );
 
-  // ── 3-TEE BUNDLE PASS PRICING ENGINE ("Buy any 3 Archive Tees for ₹1,199") ──
+  const rawBagSubtotal = useMemo(
+    () =>
+      liveItems.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0
+      ),
+    [liveItems]
+  );
+
+  // ── PRICING ENGINE CALCULATED EXCLUSIVELY ON AVAILABLE (IN-STOCK) ITEMS ──
+  // Ensures buyers are never charged for out-of-stock items and bundle savings reflect purchasable items
   const {
     qualifyingTeesCount,
     teesNeededForBundle,
@@ -221,7 +282,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     amountUntilFreeShipping,
     hasFreeShipping,
   } = useMemo(() => {
-    const qualifyingTees = liveItems.filter(
+    const qualifyingTees = inStockItems.filter(
       (item) =>
         item.product.category === "Clothing" ||
         item.product.subcategory === "T-Shirts"
@@ -250,7 +311,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       bDiscount += Math.max(0, bundleSum - 1199);
     }
 
-    const sub = liveItems.reduce(
+    const sub = inStockItems.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0
     );
@@ -270,7 +331,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       amountUntilFreeShipping: untilFree,
       hasFreeShipping: freeShip,
     };
-  }, [liveItems, appliedCoupon]);
+  }, [inStockItems, appliedCoupon]);
 
   const applyCoupon = useCallback((rawCode: string) => {
     const code = rawCode.trim().toUpperCase();
@@ -297,8 +358,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const contextValue = useMemo<CartContextType>(
     () => ({
       items: liveItems,
+      inStockItems,
+      oosItems,
+      inStockCount,
+      oosCount,
+      hasAvailableItems,
       totalItems,
       subtotal,
+      rawBagSubtotal,
       bundleDiscount,
       finalSubtotal,
       qualifyingTeesCount,
@@ -317,6 +384,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       openCheckout,
       addToCart,
       removeFromCart,
+      removeOosItems,
+      removePurchasedItems,
       updateQuantity,
       appliedCoupon,
       couponDiscount,
@@ -326,8 +395,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       liveItems,
+      inStockItems,
+      oosItems,
+      inStockCount,
+      oosCount,
+      hasAvailableItems,
       totalItems,
       subtotal,
+      rawBagSubtotal,
       bundleDiscount,
       finalSubtotal,
       qualifyingTeesCount,
@@ -344,6 +419,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       openCheckout,
       addToCart,
       removeFromCart,
+      removeOosItems,
+      removePurchasedItems,
       updateQuantity,
       appliedCoupon,
       couponDiscount,

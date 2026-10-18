@@ -28,6 +28,7 @@ import {
   ShieldCheck,
   Star,
   PackageX,
+  Bell,
 } from "lucide-react";
 
 interface FootwearSizingRow {
@@ -81,6 +82,36 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   const isOutOfStock = !product.inStock;
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [unitMode, setUnitMode] = useState<"in" | "cm">("in");
+
+  // Priority Restock Waitlist state
+  const [restockEmail, setRestockEmail] = useState("");
+  const [isSubscribedToRestock, setIsSubscribedToRestock] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("veyro_restock_subscribers");
+      if (saved) {
+        const list = JSON.parse(saved);
+        if (Array.isArray(list) && list.includes(product.id)) {
+          setIsSubscribedToRestock(true);
+        }
+      }
+    } catch {}
+  }, [product.id]);
+
+  const handleRestockSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!restockEmail.trim()) return;
+    try {
+      const saved = localStorage.getItem("veyro_restock_subscribers");
+      const list = saved ? JSON.parse(saved) : [];
+      if (!list.includes(product.id)) {
+        list.push(product.id);
+        localStorage.setItem("veyro_restock_subscribers", JSON.stringify(list));
+      }
+      setIsSubscribedToRestock(true);
+    } catch {}
+  };
 
   const isFootwear =
     product.category?.toLowerCase() === "footwear" ||
@@ -184,14 +215,25 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
 
   return (
     <div className="w-full flex flex-col select-none max-w-[540px]">
-      {/* Badge (if present) */}
-      {product.badge && (
-        <div className="mb-3">
-          <span className="inline-block bg-veyro-black text-white text-[10px] font-bold px-2.5 py-0.5 rounded-[2px] tracking-widest uppercase">
+      {/* 1. Availability Status & Merchandising Badges */}
+      <div className="flex items-center gap-2 mb-3">
+        {isOutOfStock ? (
+          <span className="inline-flex items-center gap-1.5 bg-neutral-950 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+            Sold Out
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full tracking-wider uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            In Stock
+          </span>
+        )}
+        {product.badge && (
+          <span className="inline-block bg-neutral-100 text-neutral-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full tracking-wider uppercase border border-neutral-200">
             {product.badge}
           </span>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* 2. Architectural Title */}
       <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black uppercase tracking-tight text-veyro-black leading-[0.95] mb-2.5">
@@ -475,6 +517,51 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           </button>
         )}
       </div>
+
+      {/* Priority Restock Waitlist Card for Sold Out Items */}
+      {isOutOfStock && (
+        <div className="bg-neutral-50/90 border border-neutral-200/90 rounded-2xl p-4 sm:p-5 mb-5 shadow-2xs">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center shrink-0">
+              <Bell size={15} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                Notify Me When Restocked
+              </h4>
+              <p className="text-[11px] text-neutral-500 mt-0.5 leading-relaxed">
+                Join the priority waitlist for this piece. We&apos;ll alert you the moment inventory is replenished.
+              </p>
+            </div>
+          </div>
+
+          {isSubscribedToRestock ? (
+            <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-medium">
+              <Check size={14} className="text-emerald-600 shrink-0" />
+              <span>You&apos;re on the priority waitlist. We will notify you upon restock.</span>
+            </div>
+          ) : (
+            <form onSubmit={handleRestockSubscribe} className="space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  required
+                  value={restockEmail}
+                  onChange={(e) => setRestockEmail(e.target.value)}
+                  placeholder="ENTER YOUR EMAIL"
+                  className="flex-1 bg-white border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs text-neutral-900 uppercase font-mono placeholder:text-neutral-400 placeholder:normal-case focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black"
+                />
+                <button
+                  type="submit"
+                  className="bg-neutral-950 hover:bg-black text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all cursor-pointer shrink-0"
+                >
+                  Notify Me
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
 
       {/* 8. Minimalist Luxury Trust Strip */}
       <div className="grid grid-cols-3 gap-3 py-4 border-y border-veyro-border-light my-2 text-center">

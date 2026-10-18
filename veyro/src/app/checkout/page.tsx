@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useSyncExternalStore } from "react";
+import React, { useState, useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,8 @@ import {
   ArrowRight,
   ShoppingBag,
   AlertCircle,
+  XCircle,
+  RefreshCw,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -40,6 +42,11 @@ export default function CheckoutPage() {
   const { products } = useProducts();
   const {
     items,
+    inStockItems,
+    oosItems,
+    inStockCount,
+    oosCount,
+    hasAvailableItems,
     totalItems,
     subtotal,
     finalSubtotal,
@@ -48,6 +55,7 @@ export default function CheckoutPage() {
     appliedCoupon,
     applyCoupon,
     removeCoupon,
+    removePurchasedItems,
     clearCart,
     hasFreeShipping,
     hasOosItems: cartHasOosItems,
@@ -55,7 +63,22 @@ export default function CheckoutPage() {
 
   const { user, addOrder } = useUser();
   const isMounted = useMounted();
+  
+  // Payment lifecycle state (E9)
+  type PaymentStatus = "idle" | "processing" | "failed" | "success";
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle");
+  const [failureReason, setFailureReason] = useState<string>("");
+  const [retryCount, setRetryCount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const failureBannerRef = useRef<HTMLDivElement>(null);
+  const paymentSectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (paymentStatus === "failed" && failureBannerRef.current) {
+      failureBannerRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [paymentStatus]);
 
   // Form State - Contact
   const [email, setEmail] = useState("ramesh.kumar@example.com");
@@ -100,24 +123,12 @@ export default function CheckoutPage() {
     });
   }, [user]);
 
-  const isAnyItemOos = useMemo(
-    () =>
-      cartHasOosItems ||
-      items.some((i) => {
-        const live =
-          products.find((p) => p.id === i.product.id || p.slug === i.product.slug) ||
-          i.product;
-        return !live.inStock;
-      }),
-    [cartHasOosItems, items, products]
-  );
-
-  // Guard against out-of-stock items: redirect to /cart
+  // Guard: redirect to /cart only if there are no available in-stock items to purchase
   useEffect(() => {
-    if (isMounted && items.length > 0 && isAnyItemOos) {
+    if (isMounted && (items.length === 0 || inStockCount === 0)) {
       router.replace("/cart");
     }
-  }, [isMounted, items.length, isAnyItemOos, router]);
+  }, [isMounted, items.length, inStockCount, router]);
 
   // Delivery calculation
   const shippingFee = shippingMethod === "express" ? 149 : hasFreeShipping ? 0 : 99;
@@ -207,8 +218,42 @@ export default function CheckoutPage() {
     }
 
     setIsSubmitting(true);
+    setPaymentStatus("processing");
 
     setTimeout(() => {
+      // Failure simulation logic (E9 specification)
+      let simulatedError: string | null = null;
+
+      if (paymentMethod === "card") {
+        if (cardCvv.trim() === "000") {
+          simulatedError =
+            "Card authorization declined. Your bank rejected the transaction. Please check your card limit or try a different card.";
+        } else if (retryCount >= 2) {
+          simulatedError =
+            "Multiple authorization attempts failed. For security, please switch to a different payment method or try later.";
+        }
+      } else if (paymentMethod === "upi") {
+        if (upiId.toLowerCase().includes("fail")) {
+          simulatedError =
+            "UPI payment timed out or was declined. Please verify your UPI ID and bank balance, then retry.";
+        } else if (retryCount >= 2) {
+          simulatedError =
+            "Multiple authorization attempts failed. For security, please switch to a different payment method or try later.";
+        }
+      }
+      // Note: COD never fails
+
+      if (simulatedError) {
+        setIsSubmitting(false);
+        setPaymentStatus("failed");
+        setFailureReason(simulatedError);
+        setRetryCount((prev) => prev + 1);
+        return;
+      }
+
+      setPaymentStatus("success");
+      setIsSubmitting(false);
+
       const generatedOrderId = `VEY-${new Date().getFullYear()}-${Math.floor(
         10000 + Math.random() * 90000
       )}`;
@@ -241,8 +286,8 @@ export default function CheckoutPage() {
         couponDiscount,
         couponCode: appliedCoupon,
         shippingCost: shippingFee,
-        itemsCount: totalItems,
-        items: items.map((i) => ({
+        itemsCount: inStockCount,
+        items: inStockItems.map((i) => ({
           productId: i.product.id,
           productName: i.product.name,
           productSlug: i.product.slug,
@@ -253,7 +298,7 @@ export default function CheckoutPage() {
           unitPrice: i.product.price,
           totalPrice: i.product.price * i.quantity,
         })),
-        itemNames: items.map((i) => `${i.product.name} (${i.selectedSize})`),
+        itemNames: inStockItems.map((i) => `${i.product.name} (${i.selectedSize})`),
         status: "Confirmed",
         estimatedDelivery:
           shippingMethod === "express"
@@ -286,11 +331,32 @@ export default function CheckoutPage() {
       };
 
       addOrder(newOrder);
-      clearCart();
+      // Remove only the purchased in-stock items from bag, preserving out-of-stock items
+      removePurchasedItems(
+        inStockItems.map((i) => ({
+          productId: i.product.id,
+          selectedSize: i.selectedSize,
+        }))
+      );
 
       // Navigate to dedicated Order Confirmation & Tracking view
       router.push(`/orders/${generatedOrderId}?new=1`);
-    }, 900);
+    }, 1200);
+  };
+
+  const handleRetryPayment = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handlePlaceOrder(e as unknown as React.FormEvent);
+  };
+
+  const handleChangePaymentMethod = () => {
+    setPaymentStatus("idle");
+    paymentSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleSwitchToCod = () => {
+    setPaymentMethod("cod");
+    setPaymentStatus("idle");
   };
 
   // SSR Loading state
@@ -307,46 +373,27 @@ export default function CheckoutPage() {
     );
   }
 
-  // Empty cart fallback
-  if (items.length === 0) {
+  // Empty cart or no available items fallback
+  if (items.length === 0 || inStockCount === 0) {
     return (
       <div className="min-h-[80vh] bg-neutral-50/50 flex items-center justify-center px-4 py-16">
         <div className="max-w-md w-full bg-white border border-neutral-200/90 rounded-2xl p-8 sm:p-10 text-center shadow-xs">
           <div className="w-14 h-14 rounded-full bg-neutral-100 text-neutral-400 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={24} />
           </div>
-          <h1 className="text-xl font-bold text-neutral-900 mb-2">Your Bag is Empty</h1>
+          <h1 className="text-xl font-bold text-neutral-900 mb-2">
+            {items.length === 0 ? "Your Bag is Empty" : "No Available Items to Checkout"}
+          </h1>
           <p className="text-xs text-neutral-500 mb-6 leading-relaxed">
-            There are no items currently in your bag to checkout. Explore our premium drops to start your order.
+            {items.length === 0
+              ? "There are no items currently in your bag to checkout. Explore our premium drops to start your order."
+              : "All items in your bag are currently out of stock. Please return to your shopping bag to manage saved items."}
           </p>
           <Link
-            href="/clothing"
+            href={items.length === 0 ? "/clothing" : "/cart"}
             className="inline-flex items-center justify-center w-full bg-neutral-900 text-white hover:bg-black py-3 px-5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
           >
-            Explore Collections
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Out of stock guard fallback
-  if (items.some((i) => !i.product.inStock)) {
-    return (
-      <div className="min-h-[80vh] bg-neutral-50/50 flex items-center justify-center px-4 py-16">
-        <div className="max-w-md w-full bg-white border border-neutral-200/90 rounded-2xl p-8 sm:p-10 text-center shadow-xs">
-          <div className="w-14 h-14 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle size={24} />
-          </div>
-          <h1 className="text-xl font-bold text-neutral-900 mb-2">Unavailable Items in Bag</h1>
-          <p className="text-xs text-neutral-500 mb-6 leading-relaxed">
-            One or more items in your shopping bag are currently out of stock. Please remove them before proceeding with checkout.
-          </p>
-          <Link
-            href="/cart"
-            className="inline-flex items-center justify-center w-full bg-neutral-900 text-white hover:bg-black py-3 px-5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
-          >
-            Return to Bag
+            {items.length === 0 ? "Explore Collections" : "Return to Shopping Bag"}
           </Link>
         </div>
       </div>
@@ -681,7 +728,7 @@ export default function CheckoutPage() {
             </section>
 
             {/* Section 3: Payment Method */}
-            <section className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs">
+            <section ref={paymentSectionRef} className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs">
               <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-5">
                 <div className="flex items-center gap-3">
                   <span className="w-7 h-7 rounded-full bg-neutral-100 text-neutral-900 text-xs font-bold flex items-center justify-center">
@@ -701,7 +748,10 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-3 gap-2.5 mb-5">
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("upi")}
+                  onClick={() => {
+                    setPaymentMethod("upi");
+                    if (paymentStatus === "failed") setPaymentStatus("idle");
+                  }}
                   className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                     paymentMethod === "upi"
                       ? "border-neutral-900 bg-neutral-950 text-white shadow-xs"
@@ -717,7 +767,10 @@ export default function CheckoutPage() {
 
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("card")}
+                  onClick={() => {
+                    setPaymentMethod("card");
+                    if (paymentStatus === "failed") setPaymentStatus("idle");
+                  }}
                   className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                     paymentMethod === "card"
                       ? "border-neutral-900 bg-neutral-950 text-white shadow-xs"
@@ -733,7 +786,10 @@ export default function CheckoutPage() {
 
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod("cod")}
+                  onClick={() => {
+                    setPaymentMethod("cod");
+                    if (paymentStatus === "failed") setPaymentStatus("idle");
+                  }}
                   className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                     paymentMethod === "cod"
                       ? "border-neutral-900 bg-neutral-950 text-white shadow-xs"
@@ -770,7 +826,10 @@ export default function CheckoutPage() {
                           <input
                             type="text"
                             value={upiId}
-                            onChange={(e) => setUpiId(e.target.value)}
+                            onChange={(e) => {
+                              setUpiId(e.target.value);
+                              if (paymentStatus === "failed") setPaymentStatus("idle");
+                            }}
                             placeholder="username@okhdfcbank"
                             className="w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border border-neutral-300 bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black"
                           />
@@ -880,7 +939,10 @@ export default function CheckoutPage() {
                             type="password"
                             maxLength={4}
                             value={cardCvv}
-                            onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ""))}
+                            onChange={(e) => {
+                              setCardCvv(e.target.value.replace(/\D/g, ""));
+                              if (paymentStatus === "failed") setPaymentStatus("idle");
+                            }}
                             placeholder="•••"
                             className={`w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
                               formErrors.cardCvv ? "border-red-400 bg-red-50/20" : "border-neutral-300"
@@ -909,7 +971,50 @@ export default function CheckoutPage() {
               </div>
 
               {/* Order Placement CTA */}
-              <div className="mt-7 pt-5 border-t border-neutral-100 space-y-3">
+              <div className="mt-7 pt-5 border-t border-neutral-100 space-y-4">
+                {/* Payment Failure Banner */}
+                {paymentStatus === "failed" && (
+                  <div
+                    ref={failureBannerRef}
+                    role="alert"
+                    aria-live="assertive"
+                    className="bg-neutral-50/80 border border-neutral-200/90 rounded-xl p-4 sm:p-5 transition-all animate-payment-shake"
+                  >
+                    <div className="flex items-start gap-3">
+                      <AlertCircle size={18} className="text-red-600 shrink-0 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
+                          <h4 className="text-xs sm:text-sm font-bold text-neutral-900 tracking-tight">
+                            Payment Unsuccessful
+                          </h4>
+                          <span className="text-[11px] font-medium text-neutral-500">
+                            No funds were deducted
+                          </span>
+                        </div>
+                        <p className="text-xs text-neutral-600 leading-relaxed">
+                          {failureReason}
+                        </p>
+                        <p className="text-[11px] text-neutral-400 mt-1">
+                          Your items remain safely reserved in your bag.
+                        </p>
+
+                        {paymentMethod !== "cod" && (
+                          <div className="mt-3 pt-3 border-t border-neutral-200/60 flex items-center justify-between text-xs flex-wrap gap-2">
+                            <span className="text-neutral-500">Prefer to pay on parcel arrival?</span>
+                            <button
+                              type="button"
+                              onClick={handleSwitchToCod}
+                              className="font-bold text-neutral-900 hover:text-black underline underline-offset-4 cursor-pointer"
+                            >
+                              Switch to Cash on Delivery →
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -918,7 +1023,12 @@ export default function CheckoutPage() {
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Securing Order & Generating Receipt...</span>
+                      <span>Verifying Payment...</span>
+                    </>
+                  ) : paymentStatus === "failed" ? (
+                    <>
+                      <RotateCcw size={16} />
+                      <span>Retry Payment • {formatPrice(grandTotal)}</span>
                     </>
                   ) : (
                     <>
@@ -946,13 +1056,13 @@ export default function CheckoutPage() {
                     Order Summary
                   </h3>
                   <span className="text-xs font-semibold text-neutral-500 font-mono">
-                    {totalItems} {totalItems === 1 ? "Item" : "Items"}
+                    {inStockCount} {inStockCount === 1 ? "Item" : "Items"}
                   </span>
                 </div>
 
-                {/* Items Mini List */}
+                {/* Items Mini List (Available In-Stock Items Only) */}
                 <div className="max-h-72 overflow-y-auto divide-y divide-neutral-100 pr-1 space-y-3">
-                  {items.map((item) => {
+                  {inStockItems.map((item) => {
                     const primaryImg =
                       item.product.imageUrl ||
                       "/products/tshirts/core-oversized-wolf-tee-front.webp";
@@ -991,6 +1101,12 @@ export default function CheckoutPage() {
                     );
                   })}
                 </div>
+
+                {oosCount > 0 && (
+                  <div className="bg-amber-50/80 border border-amber-200/70 p-2.5 rounded-lg text-[11px] text-amber-900 leading-relaxed">
+                    <span className="font-semibold">{oosCount} unavailable item{oosCount > 1 ? "s" : ""}</span> from your bag {oosCount > 1 ? "are" : "is"} excluded from this order and remain safely saved in your bag.
+                  </div>
+                )}
 
                 {/* Promo Code Input */}
                 <div className="pt-4 border-t border-neutral-100">
