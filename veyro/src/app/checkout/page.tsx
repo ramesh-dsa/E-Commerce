@@ -1681,55 +1681,120 @@ export default function CheckoutPage() {
                       {/* Official UPI Ecosystem Badges with Real Brand Vector Logos */}
                       <div className="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-neutral-100 w-full flex-wrap">
                         {/* 1. Google Pay */}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUpiId((prev) => {
+                              const username = prev.split("@")[0];
+                              return username ? `${username}@okhdfcbank` : "@okhdfcbank";
+                            });
+                          }}
+                          title="Click to use Google Pay (@okhdfcbank)"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50/90 border border-neutral-200/90 shadow-2xs hover:shadow-xs text-[11px] font-semibold text-neutral-800 transition-all hover:-translate-y-0.5 cursor-pointer active:scale-95 select-none"
+                        >
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" aria-hidden="true">
                             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
                             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
                             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
                             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
                           </svg>
                           <span>Google Pay</span>
-                        </span>
+                        </button>
 
                         {/* 2. PhonePe */}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0">
-                            <rect width="24" height="24" rx="6" fill="#5f259f" />
-                            <path d="M12 4.5v15M12 8.5a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H7.5V8.5H16" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                          </svg>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUpiId((prev) => {
+                              const username = prev.split("@")[0];
+                              return username ? `${username}@ybl` : "@ybl";
+                            });
+                          }}
+                          title="Click to use PhonePe (@ybl)"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50/90 border border-neutral-200/90 shadow-2xs hover:shadow-xs text-[11px] font-semibold text-neutral-800 transition-all hover:-translate-y-0.5 cursor-pointer active:scale-95 select-none"
+                        >
+                          <span className="w-4 h-4 rounded-full bg-[#5f259f] flex items-center justify-center shrink-0">
+                            <svg viewBox="18 12 32 34" className="w-3 h-3" aria-hidden="true">
+                              <path d="m 48.431347,27.0768 c 0,-1.168224 -1.001334,-2.169558 -2.169557,-2.169558 h -4.005338 l -9.1789,-10.514013 c -0.834446,-1.001335 -2.169559,-1.335113 -3.504671,-1.001335 l -3.170893,1.001335 c -0.500667,0.166889 -0.667556,0.834445 -0.333778,1.168223 l 10.013345,9.512679 H 20.894648 c -0.500667,0 -0.834445,0.333778 -0.834445,0.834445 v 1.668891 c 0,1.168224 1.001334,2.169558 2.169558,2.169558 h 2.336448 v 8.010676 c 0,6.008008 3.170892,9.512678 8.511343,9.512678 1.668891,0 3.004003,-0.166889 4.672894,-0.834445 v 5.340451 c 0,1.502002 1.168224,2.670225 2.670225,2.670225 h 2.336448 c 0.500667,0 1.001335,-0.500667 1.001335,-1.001334 v -23.86514 h 3.838448 c 0.500667,0 0.834445,-0.333778 0.834445,-0.834445 z M 37.750446,41.429261 c -1.001334,0.500668 -2.336447,0.667557 -3.337781,0.667557 -2.670226,0 -4.005339,-1.335114 -4.005339,-4.339117 v -8.010676 h 7.34312 z" fill="#ffffff" />
+                            </svg>
+                          </span>
                           <span>PhonePe</span>
-                        </span>
+                        </button>
 
                         {/* 3. Paytm */}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0">
-                            <rect width="24" height="24" rx="6" fill="#002970" />
-                            <path d="M7 6h5c2.2 0 4 1.8 4 4s-1.8 4-4 4H9v4H7V6z" fill="#00BAF2" />
-                            <path d="M9 8v4h3c1.1 0 2-.9 2-2s-.9-2-2-2H9z" fill="#ffffff" />
-                          </svg>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUpiId((prev) => {
+                              const username = prev.split("@")[0];
+                              return username ? `${username}@paytm` : "@paytm";
+                            });
+                          }}
+                          title="Click to use Paytm (@paytm)"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50/90 border border-neutral-200/90 shadow-2xs hover:shadow-xs text-[11px] font-semibold text-neutral-800 transition-all hover:-translate-y-0.5 cursor-pointer active:scale-95 select-none"
+                        >
+                          <span className="w-5 h-3.5 bg-[#002970] rounded-[3px] flex items-center justify-center shrink-0 px-0.5">
+                            <svg viewBox="0 0 16.837998 5.2849998" className="w-4 h-[5px]" aria-hidden="true">
+                              <g transform="matrix(0.35277777,0,0,-0.35277777,16.777056,1.5610286)">
+                                <path fill="#00BAF2" d="M 0,0 C -0.433,1.238 -1.613,2.127 -2.999,2.127 H -3.028 C -3.929,2.127 -4.741,1.752 -5.319,1.15 -5.898,1.752 -6.71,2.127 -7.61,2.127 h -0.029 c -0.792,0 -1.516,-0.29 -2.072,-0.77 V 1.601 C -9.73,1.844 -9.93,2.035 -10.177,2.035 h -2.126 c -0.26,0 -0.47,-0.21 -0.47,-0.471 V -9.981 c 0,-0.261 0.21,-0.471 0.47,-0.471 h 2.126 c 0.237,0 0.432,0.177 0.463,0.406 l -10e-4,8.288 c 0,0.029 10e-4,0.056 0.004,0.083 0.034,0.37 0.305,0.674 0.733,0.712 h 0.079 0.223 0.09 c 0.179,-0.016 0.33,-0.079 0.449,-0.174 0.185,-0.147 0.288,-0.373 0.288,-0.621 l 0.008,-8.247 c 0,-0.261 0.211,-0.472 0.47,-0.472 h 2.126 c 0.251,0 0.455,0.2 0.467,0.449 l -0.001,8.281 c -0.001,0.272 0.125,0.518 0.346,0.664 0.109,0.07 0.24,0.117 0.391,0.131 h 0.079 0.223 0.09 c 0.46,-0.04 0.738,-0.389 0.737,-0.795 l 0.008,-8.236 c 0,-0.261 0.211,-0.471 0.47,-0.471 h 2.126 c 0.259,0 0.47,0.21 0.47,0.471 v 8.858 C 0.161,-0.521 0.093,-0.264 0,0" />
+                              </g>
+                              <g transform="matrix(0.35277777,0,0,-0.35277777,11.699676,0.85374862)">
+                                <path fill="#00BAF2" d="m 0,0 h -1.216 v 1.97 0 c 0,0.002 0,0.004 0,0.006 0,0.237 -0.192,0.429 -0.429,0.429 C -1.673,2.405 -1.7,2.401 -1.726,2.396 -3.074,2.026 -2.804,0.159 -5.265,0 H -5.32 -5.504 c -0.036,0 -0.07,-0.005 -0.103,-0.012 h -0.002 l 0.002,-10e-4 C -5.817,-0.06 -5.975,-0.246 -5.975,-0.47 v -2.126 c 0,-0.259 0.211,-0.47 0.471,-0.47 h 1.283 l -0.002,-9.015 c 0,-0.257 0.208,-0.465 0.465,-0.465 h 2.102 c 0.256,0 0.464,0.208 0.464,0.465 l 10e-4,9.015 H 0 c 0.259,0 0.47,0.211 0.47,0.47 V -0.47 C 0.47,-0.211 0.259,0 0,0" />
+                              </g>
+                              <g transform="matrix(0.35277777,0,0,-0.35277777,9.0012361,0.85374862)">
+                                <path fill="#ffffff" d="M 0,0 H -2.126 C -2.385,0 -2.595,-0.211 -2.595,-0.47 V -4.866 C -2.6,-5.138 -2.82,-5.356 -3.093,-5.356 h -0.89 c -0.276,0 -0.499,0.222 -0.499,0.498 L -4.49,-0.47 C -4.49,-0.211 -4.701,0 -4.96,0 h -2.126 c -0.26,0 -0.47,-0.211 -0.47,-0.47 v -4.818 c 0,-1.83 1.305,-3.135 3.136,-3.135 0,0 1.374,0 1.416,-0.008 0.248,-0.028 0.441,-0.236 0.441,-0.492 0,-0.253 -0.189,-0.46 -0.434,-0.491 -0.012,-0.002 -0.023,-0.005 -0.036,-0.007 l -3.109,-0.011 c -0.26,0 -0.47,-0.211 -0.47,-0.47 v -2.125 c 0,-0.26 0.21,-0.47 0.47,-0.47 h 3.476 c 1.832,0 3.136,1.304 3.136,3.135 V -0.47 C 0.47,-0.211 0.26,0 0,0" />
+                              </g>
+                              <g transform="matrix(0.35277777,0,0,-0.35277777,1.7417071,2.2279886)">
+                                <path fill="#ffffff" d="m 0,0 v -0.992 -0.32 c 0,-0.275 -0.223,-0.499 -0.498,-0.499 l -1.349,-0.001 v 2.629 h 1.349 C -0.223,0.817 0,0.595 0,0.319 Z M 0.187,3.896 H -4.46 c -0.255,0 -0.461,-0.207 -0.461,-0.461 V 1.352 c 0,-0.004 0.001,-0.008 0.001,-0.012 0,-0.01 -0.001,-0.02 -0.001,-0.029 V -5.37 -8.117 c 0,-0.256 0.192,-0.465 0.43,-0.471 h 0.04 2.126 c 0.259,0 0.47,0.21 0.47,0.47 l 0.008,3.231 h 2.034 c 1.702,0 2.888,1.181 2.888,2.89 v 2.999 c 0,1.709 -1.186,2.894 -2.888,2.894" />
+                              </g>
+                              <g transform="matrix(0.35277777,0,0,-0.35277777,4.8535941,3.9887686)">
+                                <path fill="#ffffff" d="M 0,0 V -0.332 C 0,-0.359 -0.004,-0.385 -0.008,-0.41 -0.013,-0.434 -0.02,-0.457 -0.028,-0.479 -0.094,-0.665 -0.28,-0.8 -0.501,-0.8 h -0.885 c -0.276,0 -0.501,0.21 -0.501,0.468 v 0.401 c 0,0.005 -10e-4,0.01 -10e-4,0.015 l 10e-4,1.067 v 0.002 0.118 0.214 l 0.001,0.003 c 10e-4,0.257 0.224,0.465 0.5,0.465 h 0.885 C -0.224,1.953 0,1.744 0,1.485 Z m -0.338,8.875 h -2.95 C -3.549,8.875 -3.76,8.677 -3.76,8.434 V 7.607 c 0,-0.005 10e-4,-0.011 10e-4,-0.016 0,-0.006 -10e-4,-0.012 -10e-4,-0.018 V 6.44 c 0,-0.257 0.224,-0.467 0.5,-0.467 h 2.809 c 0.222,-0.035 0.398,-0.197 0.423,-0.45 V 5.249 C -0.053,5.008 -0.227,4.832 -0.439,4.812 H -1.83 c -1.85,0 -3.168,-1.229 -3.168,-2.955 v -2.409 -0.063 c 0,-1.716 1.133,-2.937 2.97,-2.937 h 3.855 c 0.692,0 1.253,0.524 1.253,1.169 v 8.067 c 0,1.956 -1.008,3.191 -3.418,3.191" />
+                              </g>
+                            </svg>
+                          </span>
                           <span>Paytm</span>
-                        </span>
+                        </button>
 
                         {/* 4. BHIM UPI */}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none">
-                            <rect width="24" height="24" rx="6" fill="#002F6C" />
-                            <path d="M14.5 4.5L20.5 12L14.5 19.5H19L25 12L19 4.5H14.5Z" fill="#00823E" transform="scale(0.7) translate(3, 4)" />
-                            <path d="M7 4.5L13 12L7 19.5H11.5L17.5 12L11.5 4.5H7Z" fill="#FF7300" transform="scale(0.7) translate(3, 4)" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUpiId((prev) => {
+                              const username = prev.split("@")[0];
+                              return username ? `${username}@upi` : "@upi";
+                            });
+                          }}
+                          title="Click to use BHIM UPI (@upi)"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50/90 border border-neutral-200/90 shadow-2xs hover:shadow-xs text-[11px] font-semibold text-neutral-800 transition-all hover:-translate-y-0.5 cursor-pointer active:scale-95 select-none"
+                        >
+                          <svg viewBox="0 0 28 16" className="w-[18px] h-[10px] shrink-0" aria-hidden="true">
+                            <path d="M 17,1 23,8 17,15 h 4 L 27,8 21,1 Z" fill="#00823E" />
+                            <path d="M 10,1 16,8 10,15 h 4 L 20,8 14,1 Z" fill="#FF7300" />
+                            <text x="0" y="12" fontFamily="inherit" fontWeight="900" fontStyle="italic" fontSize="11" fill="#1e293b" letterSpacing="0.5">UPI</text>
                           </svg>
                           <span>BHIM UPI</span>
-                        </span>
+                        </button>
 
                         {/* 5. CRED */}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none">
-                            <rect width="24" height="24" rx="6" fill="#000000" />
-                            <path d="M7 6h10v12H7z" stroke="#ffffff" strokeWidth="1.8" strokeLinejoin="round" fill="none" />
-                            <path d="M10 9v5a2 2 0 0 0 4 0V9" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-                            <path d="M12 11h2" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
-                          </svg>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUpiId((prev) => {
+                              const username = prev.split("@")[0];
+                              return username ? `${username}@cred` : "@cred";
+                            });
+                          }}
+                          title="Click to use CRED (@cred)"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50/90 border border-neutral-200/90 shadow-2xs hover:shadow-xs text-[11px] font-semibold text-neutral-800 transition-all hover:-translate-y-0.5 cursor-pointer active:scale-95 select-none"
+                        >
+                          <span className="w-4 h-4 bg-black rounded-[4px] flex items-center justify-center shrink-0">
+                            <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" aria-hidden="true">
+                              <path d="M4 3h16v11a8 8 0 0 1-16 0V3z" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M8.5 7.5h7v5.5a3.5 3.5 0 0 1-7 0V7.5z" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
                           <span>CRED</span>
-                        </span>
+                        </button>
                       </div>
 
                       {/* Manual UPI ID Alternative */}
