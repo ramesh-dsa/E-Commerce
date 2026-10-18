@@ -809,6 +809,23 @@ footer input:-webkit-autofill:active,
   will-change: transform, opacity;
 }
 
+/* ─── Address Mode Tab Panel Entrance Transition ────────────────────────── */
+@keyframes tab-panel-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-tab-panel-enter {
+  animation: tab-panel-enter 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
 /* ─── Payment Method Selector Micro-Animations ──────────────────────────── */
 @keyframes upi-phone-vibe {
   0%, 45%, 100% {
@@ -895,7 +912,8 @@ footer input:-webkit-autofill:active,
   .animate-cash-flutter,
   .animate-sheen-sweep,
   .animate-change-sheen,
-  .animate-order-sheen {
+  .animate-order-sheen,
+  .animate-tab-panel-enter {
     animation: none !important;
     transform: none !important;
   }

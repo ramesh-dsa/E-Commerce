@@ -970,36 +970,63 @@ export default function CheckoutPage() {
               </div>
 
               {/* Address Mode Selection Tabs */}
-              <div className="grid grid-cols-2 gap-2 mb-5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/60">
+              <div
+                role="tablist"
+                aria-label="Address mode selection"
+                className="relative grid grid-cols-2 p-1 mb-5 bg-neutral-100/90 rounded-xl border border-neutral-200/70 select-none"
+              >
+                {/* Sliding Active Pill Background - GPU accelerated transform only */}
+                <div
+                  aria-hidden="true"
+                  className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+                  style={{
+                    transform: addressMode === "saved" ? "translateX(0%)" : "translateX(100%)",
+                  }}
+                />
+
                 <button
                   type="button"
+                  role="tab"
+                  id="tab-saved-address"
+                  aria-selected={addressMode === "saved"}
+                  aria-controls="panel-saved-address"
                   onClick={handleSelectSavedAddress}
-                  className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
                     addressMode === "saved"
-                      ? "bg-white text-neutral-950 shadow-xs font-bold"
-                      : "text-neutral-600 hover:text-neutral-950"
+                      ? "text-neutral-950 font-bold"
+                      : "text-neutral-500 hover:text-neutral-800"
                   }`}
                 >
-                  <Home size={13} className={addressMode === "saved" ? "text-neutral-950" : "text-neutral-500"} />
+                  <Home size={13} className={`transition-colors duration-200 ${addressMode === "saved" ? "text-neutral-950" : "text-neutral-400"}`} />
                   <span>Saved Profile Address</span>
                 </button>
                 <button
                   type="button"
+                  role="tab"
+                  id="tab-custom-address"
+                  aria-selected={addressMode === "custom"}
+                  aria-controls="panel-custom-address"
                   onClick={handleSelectCustomAddress}
-                  className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
                     addressMode === "custom"
-                      ? "bg-white text-neutral-950 shadow-xs font-bold"
-                      : "text-neutral-600 hover:text-neutral-950"
+                      ? "text-neutral-950 font-bold"
+                      : "text-neutral-500 hover:text-neutral-800"
                   }`}
                 >
-                  <MapPin size={13} className={addressMode === "custom" ? "text-neutral-950" : "text-neutral-500"} />
+                  <MapPin size={13} className={`transition-colors duration-200 ${addressMode === "custom" ? "text-neutral-950" : "text-neutral-400"}`} />
                   <span>Different / Live Location</span>
                 </button>
               </div>
 
               {/* ── MODE A: SAVED PROFILE ADDRESS ── */}
               {addressMode === "saved" ? (
-                <div className="space-y-4">
+                <div
+                  key="saved-panel"
+                  id="panel-saved-address"
+                  role="tabpanel"
+                  aria-labelledby="tab-saved-address"
+                  className="animate-tab-panel-enter space-y-4"
+                >
                   <div className="relative rounded-xl border-2 border-neutral-900 bg-neutral-50/70 p-4 sm:p-5 transition-all">
                     {/* Top Row: Badge + Status */}
                     <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
@@ -1076,7 +1103,13 @@ export default function CheckoutPage() {
                 </div>
               ) : (
                 /* ── MODE B: CUSTOM / LIVE LOCATION ADDRESS ── */
-                <div className="space-y-4">
+                <div
+                  key="custom-panel"
+                  id="panel-custom-address"
+                  role="tabpanel"
+                  aria-labelledby="tab-custom-address"
+                  className="animate-tab-panel-enter space-y-4"
+                >
                   {/* Top Bar inside Custom Mode */}
                   <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl bg-neutral-50/90 border border-neutral-200/90 shadow-2xs">
                     <button
