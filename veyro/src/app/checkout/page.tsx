@@ -24,7 +24,6 @@ import {
   ArrowRight,
   ShoppingBag,
   AlertCircle,
-  XCircle,
   RefreshCw,
   MapPin,
   Navigation,
@@ -32,6 +31,8 @@ import {
   Plus,
   LocateFixed,
   ArrowLeft,
+  Pencil,
+  ArrowUpRight,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -2087,11 +2088,33 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={() => {
                         const sec = document.getElementById("section-delivery-address");
-                        if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+                        if (sec) {
+                          sec.scrollIntoView({ behavior: "smooth", block: "start" });
+                          sec.classList.add("ring-2", "ring-neutral-900", "transition-all", "duration-500");
+                          setTimeout(() => {
+                            sec.classList.remove("ring-2", "ring-neutral-900");
+                          }, 1600);
+                        }
                       }}
-                      className="text-xs font-bold text-neutral-900 hover:text-black underline underline-offset-4 shrink-0 cursor-pointer transition-colors"
+                      className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-neutral-950 text-neutral-800 hover:text-white border border-neutral-300 hover:border-neutral-950 shadow-2xs hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden active:scale-95 shrink-0"
+                      aria-label="Change delivery address"
                     >
-                      Change
+                      {/* Ambient Sheen Sweep Micro-Animation */}
+                      <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none animate-change-sheen" />
+
+                      {/* Hover Sheen Light Ray */}
+                      <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out pointer-events-none" />
+
+                      {/* Animated Edit Pencil */}
+                      <Pencil
+                        size={11}
+                        className="transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12 text-neutral-500 group-hover:text-emerald-400"
+                      />
+                      <span className="text-xs font-bold tracking-tight">Change</span>
+                      <ArrowUpRight
+                        size={12}
+                        className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 text-neutral-400 group-hover:text-white"
+                      />
                     </button>
                   </div>
 
