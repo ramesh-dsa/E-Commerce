@@ -1570,35 +1570,31 @@ export default function CheckoutPage() {
                     {/* Main Luxury Fintech UPI Terminal */}
                     <div className="bg-gradient-to-b from-white via-neutral-50/60 to-white border border-neutral-200/90 rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group">
                       
-                      {/* Top Header: NPCI UPI Official Emblem & Dynamic Amount Pill */}
+                      {/* Top Header: Authentic UPI Identity & Clean Editorial Amount Display */}
                       <div className="flex items-center justify-between w-full pb-3.5 mb-4 border-b border-neutral-200/70 flex-wrap gap-2">
                         <div className="flex items-center gap-2.5">
                           {/* Official NPCI UPI Chevron Emblem */}
-                          <div className="w-8 h-8 rounded-lg bg-neutral-950 flex items-center justify-center shadow-xs p-1.5 border border-neutral-800">
-                            <svg viewBox="0 0 24 24" className="w-full h-full" fill="none">
-                              <path d="M14.5 4.5L20.5 12L14.5 19.5H19L25 12L19 4.5H14.5Z" fill="#00823E" />
-                              <path d="M7 4.5L13 12L7 19.5H11.5L17.5 12L11.5 4.5H7Z" fill="#FF7300" />
+                          <div className="w-8 h-8 rounded-lg bg-neutral-50 border border-neutral-200/90 flex items-center justify-center p-1 shadow-2xs">
+                            <svg viewBox="0 0 28 16" className="w-5 h-3 shrink-0" aria-hidden="true">
+                              <path d="M 17,1 23,8 17,15 h 4 L 27,8 21,1 Z" fill="#00823E" />
+                              <path d="M 10,1 16,8 10,15 h 4 L 20,8 14,1 Z" fill="#FF7300" />
+                              <text x="0" y="12" fontFamily="inherit" fontWeight="900" fontStyle="italic" fontSize="11" fill="#1e293b" letterSpacing="0.5">UPI</text>
                             </svg>
                           </div>
                           <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-neutral-900 tracking-tight">
-                                Scan & Pay via UPI
-                              </span>
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                0% Fee
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-neutral-500 font-medium">
-                              Verified Merchant: Veyro Official Luxury Store
+                            <span className="text-xs font-bold text-neutral-900 tracking-tight">
+                              Scan &amp; Pay via UPI
+                            </span>
+                            <p className="text-[11px] text-neutral-500 font-normal">
+                              Scan using any UPI app to pay
                             </p>
                           </div>
                         </div>
 
-                        {/* Real-time Payable Amount Pill */}
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-950 text-white shadow-xs">
-                          <span className="text-[10px] text-neutral-400 uppercase tracking-wider font-semibold">Payable:</span>
-                          <span className="text-xs font-bold font-mono text-emerald-400">{formatPrice(grandTotal)}</span>
+                        {/* Clean Editorial Amount Display */}
+                        <div className="text-right">
+                          <span className="block text-[10px] text-neutral-400 uppercase tracking-wider font-semibold">To Pay</span>
+                          <span className="text-sm font-bold text-neutral-900 tracking-tight">{formatPrice(grandTotal)}</span>
                         </div>
                       </div>
 
