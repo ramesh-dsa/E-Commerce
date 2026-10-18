@@ -26,6 +26,12 @@ import {
   AlertCircle,
   XCircle,
   RefreshCw,
+  MapPin,
+  Navigation,
+  Home,
+  Plus,
+  LocateFixed,
+  ArrowLeft,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -35,6 +41,95 @@ function useMounted() {
     () => true,
     () => false
   );
+}
+
+export type CardBrand = "visa" | "mastercard" | "amex" | "rupay" | "unknown";
+
+export function detectCardBrand(num: string): CardBrand {
+  const clean = num.replace(/\D/g, "");
+  if (/^4/.test(clean)) return "visa";
+  if (/^(5[1-5]|2[2-7])/.test(clean)) return "mastercard";
+  if (/^3[47]/.test(clean)) return "amex";
+  if (/^(60|65|81|82|508)/.test(clean)) return "rupay";
+  return "unknown";
+}
+
+function VisaBadge({ active = true }: { active?: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded-[3px] text-[10px] font-black tracking-tight text-white bg-[#1a1f71] select-none transition-opacity duration-200 ${
+        active ? "opacity-100 shadow-xs" : "opacity-35"
+      }`}
+    >
+      VISA
+    </span>
+  );
+}
+
+function MastercardBadge({ active = true }: { active?: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded-[3px] bg-[#1f1f1f] select-none transition-opacity duration-200 ${
+        active ? "opacity-100 shadow-xs" : "opacity-35"
+      }`}
+    >
+      <span className="w-3 h-3 rounded-full bg-[#EB001B] inline-block" />
+      <span className="w-3 h-3 rounded-full bg-[#F79E1B] inline-block -ml-1.5 opacity-90" />
+    </span>
+  );
+}
+
+function RuPayBadge({ active = true }: { active?: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded-[3px] text-[9px] font-extrabold italic tracking-tight text-white bg-[#004B87] select-none transition-opacity duration-200 ${
+        active ? "opacity-100 shadow-xs" : "opacity-35"
+      }`}
+    >
+      RuPay
+    </span>
+  );
+}
+
+function AmexBadge({ active = true }: { active?: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 rounded-[3px] text-[9px] font-black tracking-wider text-white bg-[#006FCF] select-none transition-opacity duration-200 ${
+        active ? "opacity-100 shadow-xs" : "opacity-35"
+      }`}
+    >
+      AMEX
+    </span>
+  );
+}
+
+interface ReverseGeocodeResult {
+  success?: boolean;
+  street?: string;
+  suburb?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  displayName?: string;
+  latitude?: number;
+  longitude?: number;
+  source?: "live_gps" | "network_ip";
+  error?: string;
+}
+
+function DetectedBrandIcon({ brand }: { brand: CardBrand }) {
+  switch (brand) {
+    case "visa":
+      return <VisaBadge active={true} />;
+    case "mastercard":
+      return <MastercardBadge active={true} />;
+    case "rupay":
+      return <RuPayBadge active={true} />;
+    case "amex":
+      return <AmexBadge active={true} />;
+    default:
+      return null;
+  }
 }
 
 export default function CheckoutPage() {
@@ -108,20 +203,250 @@ export default function CheckoutPage() {
   // Validation errors
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  // Saved Profile Address derived from UserContext or active account
+  const savedProfileAddress = useMemo(() => {
+    if (user?.address?.line1) {
+      return {
+        name: user.name || "Ramesh Kumar",
+        phone: user.phone || phone || "+91 98765 43210",
+        line1: user.address.line1,
+        city: user.address.city || "Bengaluru",
+        state: user.address.state || "Karnataka",
+        pincode: user.address.pincode || "560038",
+        label: "Saved Profile Address (Home)",
+        isCustomUser: true,
+      };
+    }
+    return {
+      name: "Ramesh Kumar",
+      phone: "+91 98765 43210",
+      line1: "Flat 402, Prestige Tower, Indiranagar",
+      city: "Bengaluru",
+      state: "Karnataka",
+      pincode: "560038",
+      label: "Saved Profile Address (Home)",
+      isCustomUser: false,
+    };
+  }, [user, phone]);
+
+  // Delivery address selection: "saved" (profile address) | "custom" (entered or live location)
+  const [addressMode, setAddressMode] = useState<"saved" | "custom">("saved");
+
+  // Live Location Auto-Detect states
+  const [isLocating, setIsLocating] = useState(false);
+  const [locatingStep, setLocatingStep] = useState("");
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [justAutofilled, setJustAutofilled] = useState(false);
+  const [detectedLocationBadge, setDetectedLocationBadge] = useState<{
+    area: string;
+    city: string;
+    state?: string;
+    pincode?: string;
+    accuracy?: number;
+    source?: "live_gps" | "network_ip";
+  } | null>(null);
+
+  const handleSelectSavedAddress = () => {
+    setAddressMode("saved");
+    setFullName(savedProfileAddress.name);
+    setStreetAddress(savedProfileAddress.line1);
+    setApartment("");
+    setCity(savedProfileAddress.city);
+    setStateName(savedProfileAddress.state);
+    setPincode(savedProfileAddress.pincode);
+    setLocationError(null);
+    setFormErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.fullName;
+      delete copy.streetAddress;
+      delete copy.city;
+      delete copy.stateName;
+      delete copy.pincode;
+      return copy;
+    });
+  };
+
+  const handleSelectCustomAddress = () => {
+    setAddressMode("custom");
+  };
+
+  const handleDetectLiveLocation = () => {
+    setIsLocating(true);
+    setLocationError(null);
+    setLocatingStep("Connecting to GPS & network sensors...");
+
+    const startTime = Date.now();
+    const MIN_ANIMATION_TIME = 1600;
+
+    // Staged step ticker sequence
+    const ticker1 = setTimeout(() => {
+      setLocatingStep("Triangulating live coordinates...");
+    }, 450);
+
+    const ticker2 = setTimeout(() => {
+      setLocatingStep("Resolving street, city & postal code...");
+    }, 950);
+
+    const ticker3 = setTimeout(() => {
+      setLocatingStep("Locking delivery destination...");
+    }, 1350);
+
+    const finishLocatingWithData = async (
+      data: ReverseGeocodeResult,
+      accuracy?: number,
+      source: "live_gps" | "network_ip" = "network_ip"
+    ) => {
+      clearTimeout(ticker1);
+      clearTimeout(ticker2);
+      clearTimeout(ticker3);
+
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, MIN_ANIMATION_TIME - elapsed);
+      if (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
+
+      setAddressMode("custom");
+      if (data.street) setStreetAddress(data.street);
+      if (data.city) setCity(data.city);
+      if (data.state) setStateName(data.state);
+      if (data.pincode) setPincode(data.pincode);
+      if (data.suburb && data.suburb !== data.city && !data.suburb.includes("Central")) {
+        setApartment(data.suburb);
+      } else {
+        setApartment("");
+      }
+
+      setDetectedLocationBadge({
+        area: data.suburb || data.street || data.city || "Current Area",
+        city: data.city || "Your City",
+        state: data.state,
+        pincode: data.pincode,
+        accuracy: accuracy,
+        source: source,
+      });
+
+      // Trigger glowing micro-animation on filled inputs
+      setJustAutofilled(true);
+      setTimeout(() => setJustAutofilled(false), 2600);
+
+      // Clear validation errors on filled fields
+      setFormErrors((prev) => {
+        const copy = { ...prev };
+        delete copy.streetAddress;
+        delete copy.city;
+        delete copy.stateName;
+        delete copy.pincode;
+        return copy;
+      });
+
+      setIsLocating(false);
+      setLocatingStep("");
+    };
+
+    const resolveViaNetworkFallback = async (reasonNotice?: string) => {
+      try {
+        const res = await fetch("/api/reverse-geocode?detectIp=true");
+        if (!res.ok) {
+          throw new Error(`Reverse geocode API failed with status ${res.status}`);
+        }
+        const data = await res.json();
+        if (data.success && data.city) {
+          await finishLocatingWithData(data, undefined, "network_ip");
+          if (reasonNotice) {
+            console.info("Live location resolved via network telemetry:", reasonNotice);
+          }
+        } else {
+          throw new Error(data.error || "Network telemetry returned empty address");
+        }
+      } catch (fallbackErr) {
+        console.error("Network telemetry fallback failed:", fallbackErr);
+        clearTimeout(ticker1);
+        clearTimeout(ticker2);
+        clearTimeout(ticker3);
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 1000 - elapsed);
+        if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
+        setIsLocating(false);
+        setLocatingStep("");
+        setLocationError(
+          "Could not detect your exact location automatically. Please enter your address details below."
+        );
+      }
+    };
+
+    if (typeof window === "undefined" || !navigator.geolocation) {
+      resolveViaNetworkFallback("Geolocation API unsupported");
+      return;
+    }
+
+    let resolved = false;
+
+    // Safety timeout: if GPS doesn't answer within 3800ms, fall back to network telemetry
+    const gpsTimer = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        resolveViaNetworkFallback("GPS response timed out");
+      }
+    }, 3800);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(gpsTimer);
+
+        const { latitude, longitude, accuracy } = position.coords;
+
+        try {
+          const res = await fetch(`/api/reverse-geocode?lat=${latitude}&lon=${longitude}`);
+          if (!res.ok) {
+            throw new Error(`Reverse geocode failed with status ${res.status}`);
+          }
+          const data = await res.json();
+          if (data.success && data.city) {
+            await finishLocatingWithData(data, Math.round(accuracy), "live_gps");
+          } else {
+            throw new Error(data.error || "Nominatim returned no address");
+          }
+        } catch (osmErr) {
+          console.warn("Reverse geocode failed, falling back to network telemetry:", osmErr);
+          await resolveViaNetworkFallback("Reverse geocode failed on coordinates");
+        }
+      },
+      (err) => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(gpsTimer);
+        console.warn(`GPS error ${err.code}: ${err.message}. Falling back to network telemetry.`);
+        resolveViaNetworkFallback(`GPS error code ${err.code}`);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 3500,
+        maximumAge: 60000,
+      }
+    );
+  };
+
+  const hasInitializedUserRef = useRef(false);
   useEffect(() => {
     if (!user) return;
     queueMicrotask(() => {
       if (user.email) setEmail(user.email);
       if (user.phone) setPhone(user.phone);
       if (user.name) setFullName(user.name);
-      if (user.address) {
+
+      // Only populate address fields once on initial mount if still in saved mode
+      if (!hasInitializedUserRef.current && addressMode === "saved" && user.address) {
+        hasInitializedUserRef.current = true;
         if (user.address.line1) setStreetAddress(user.address.line1);
         if (user.address.city) setCity(user.address.city);
         if (user.address.state) setStateName(user.address.state);
         if (user.address.pincode) setPincode(user.address.pincode);
       }
     });
-  }, [user]);
+  }, [user, addressMode]);
 
   // Guard: redirect to /cart only if there are no available in-stock items to purchase
   useEffect(() => {
@@ -149,11 +474,35 @@ export default function CheckoutPage() {
     }
   };
 
-  // Card number formatter
+  // Card brand detection
+  const cardBrand = useMemo(() => detectCardBrand(cardNumber), [cardNumber]);
+
+  // Card number formatter (handles 16-digit 4-4-4-4 and Amex 15-digit 4-6-5)
   const handleCardNumberChange = (val: string) => {
-    const cleaned = val.replace(/\D/g, "").slice(0, 16);
-    const formatted = cleaned.match(/.{1,4}/g)?.join(" ") || cleaned;
+    const clean = val.replace(/\D/g, "");
+    const brand = detectCardBrand(clean);
+    const maxDigits = brand === "amex" ? 15 : 16;
+    const truncated = clean.slice(0, maxDigits);
+
+    let formatted = truncated;
+    if (brand === "amex") {
+      const p1 = truncated.slice(0, 4);
+      const p2 = truncated.slice(4, 10);
+      const p3 = truncated.slice(10, 15);
+      formatted = [p1, p2, p3].filter(Boolean).join(" ");
+    } else {
+      formatted = truncated.match(/.{1,4}/g)?.join(" ") || truncated;
+    }
+
     setCardNumber(formatted);
+    if (formErrors.cardNumber) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next.cardNumber;
+        return next;
+      });
+    }
+    if (paymentStatus === "failed") setPaymentStatus("idle");
   };
 
   // Card expiry formatter
@@ -164,6 +513,31 @@ export default function CheckoutPage() {
     } else {
       setCardExpiry(cleaned);
     }
+    if (formErrors.cardExpiry) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next.cardExpiry;
+        return next;
+      });
+    }
+    if (paymentStatus === "failed") setPaymentStatus("idle");
+  };
+
+  // Quick fill demo test card
+  const handleFillTestCard = () => {
+    setCardNumber("4532 8921 4402 7891");
+    setCardHolder(fullName || "Ramesh Kumar");
+    setCardExpiry("12/28");
+    setCardCvv("789");
+    setFormErrors((prev) => {
+      const next = { ...prev };
+      delete next.cardNumber;
+      delete next.cardHolder;
+      delete next.cardExpiry;
+      delete next.cardCvv;
+      return next;
+    });
+    if (paymentStatus === "failed") setPaymentStatus("idle");
   };
 
   const validateForm = () => {
@@ -191,8 +565,11 @@ export default function CheckoutPage() {
     }
 
     if (paymentMethod === "card") {
-      if (cardNumber.replace(/\s/g, "").length < 16) {
-        errors.cardNumber = "Please enter a valid 16-digit card number.";
+      const cleanNum = cardNumber.replace(/\s/g, "");
+      const brand = detectCardBrand(cleanNum);
+      const expectedDigits = brand === "amex" ? 15 : 16;
+      if (cleanNum.length < expectedDigits) {
+        errors.cardNumber = `Please enter a valid ${expectedDigits}-digit card number.`;
       }
       if (!cardHolder.trim()) {
         errors.cardHolder = "Name on card is required.";
@@ -200,8 +577,9 @@ export default function CheckoutPage() {
       if (!cardExpiry || cardExpiry.length < 5) {
         errors.cardExpiry = "Expiry (MM/YY) is required.";
       }
-      if (!cardCvv || cardCvv.length < 3) {
-        errors.cardCvv = "Valid CVV is required.";
+      const expectedCvv = brand === "amex" ? 4 : 3;
+      if (!cardCvv || cardCvv.length < expectedCvv) {
+        errors.cardCvv = `Valid ${expectedCvv}-digit CVV is required.`;
       }
     }
 
@@ -469,7 +847,12 @@ export default function CheckoutPage() {
 
       {/* ── MAIN CHECKOUT WORKSPACE ───────────────────────────────────────────── */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
-        <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        <form
+          onSubmit={handlePlaceOrder}
+          autoComplete="off"
+          data-form-type="other"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12"
+        >
           {/* ════ LEFT COLUMN: CUSTOMER, ADDRESS & PAYMENT (7 cols) ════ */}
           <div className="lg:col-span-7 space-y-8">
             {/* Section 1: Contact Details */}
@@ -538,15 +921,23 @@ export default function CheckoutPage() {
             </section>
 
             {/* Section 2: Delivery Address & Shipping */}
-            <section className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs">
+            <section
+              id="section-delivery-address"
+              className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs scroll-mt-24"
+            >
               <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-5">
                 <div className="flex items-center gap-3">
                   <span className="w-7 h-7 rounded-full bg-neutral-100 text-neutral-900 text-xs font-bold flex items-center justify-center">
                     02
                   </span>
-                  <h2 className="text-sm sm:text-base font-bold text-neutral-950 tracking-tight">
-                    Shipping & Delivery Address
-                  </h2>
+                  <div>
+                    <h2 className="text-sm sm:text-base font-bold text-neutral-950 tracking-tight">
+                      Shipping & Delivery Address
+                    </h2>
+                    <p className="text-[11px] text-neutral-500">
+                      Choose saved profile address or auto-detect with live GPS
+                    </p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-1 text-[11px] text-neutral-500 font-mono">
                   <Truck size={13} className="text-neutral-700" />
@@ -554,112 +945,386 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                    Recipient Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Recipient Full Name"
-                    className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                      formErrors.fullName ? "border-red-400 bg-red-50/20" : "border-neutral-300"
-                    }`}
-                  />
-                  {formErrors.fullName && (
-                    <p className="text-[11px] text-red-600 mt-1">{formErrors.fullName}</p>
+              {/* Address Mode Selection Tabs */}
+              <div className="grid grid-cols-2 gap-2 mb-5 p-1 bg-neutral-100/80 rounded-xl border border-neutral-200/60">
+                <button
+                  type="button"
+                  onClick={handleSelectSavedAddress}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    addressMode === "saved"
+                      ? "bg-white text-neutral-950 shadow-xs font-bold"
+                      : "text-neutral-600 hover:text-neutral-950"
+                  }`}
+                >
+                  <Home size={13} className={addressMode === "saved" ? "text-neutral-950" : "text-neutral-500"} />
+                  <span>Saved Profile Address</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSelectCustomAddress}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    addressMode === "custom"
+                      ? "bg-white text-neutral-950 shadow-xs font-bold"
+                      : "text-neutral-600 hover:text-neutral-950"
+                  }`}
+                >
+                  <MapPin size={13} className={addressMode === "custom" ? "text-neutral-950" : "text-neutral-500"} />
+                  <span>Different / Live Location</span>
+                </button>
+              </div>
+
+              {/* ── MODE A: SAVED PROFILE ADDRESS ── */}
+              {addressMode === "saved" ? (
+                <div className="space-y-4">
+                  <div className="relative rounded-xl border-2 border-neutral-900 bg-neutral-50/70 p-4 sm:p-5 transition-all">
+                    {/* Top Row: Badge + Status */}
+                    <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
+                        <Home size={14} className="text-neutral-900" />
+                        <span>{savedProfileAddress.label}</span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100/80 text-emerald-800 border border-emerald-200">
+                        <CheckCircle2 size={11} className="text-emerald-700" />
+                        Active Destination
+                      </span>
+                    </div>
+
+                    {/* Address details */}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-neutral-950">
+                          {savedProfileAddress.name}
+                        </span>
+                        <span className="text-xs text-neutral-500 font-mono">
+                          • {savedProfileAddress.phone}
+                        </span>
+                      </div>
+                      <p className="text-xs text-neutral-700 leading-relaxed font-medium">
+                        {savedProfileAddress.line1}
+                      </p>
+                      <p className="text-xs text-neutral-700 font-medium">
+                        {savedProfileAddress.city}, {savedProfileAddress.state} -{" "}
+                        <span className="font-mono font-bold text-neutral-950">
+                          {savedProfileAddress.pincode}
+                        </span>
+                      </p>
+                    </div>
+
+                    {/* Courier trust note */}
+                    <div className="mt-3.5 pt-3 border-t border-neutral-200/80 flex items-center justify-between gap-2 text-[11px] text-neutral-600">
+                      <div className="flex items-center gap-1.5">
+                        <ShieldCheck size={13} className="text-emerald-600" />
+                        <span>Verified shipping destination. OTP verification upon doorstep delivery.</span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-4 pt-3.5 border-t border-neutral-200/80 flex flex-wrap items-center gap-2.5">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-950 text-white text-xs font-bold cursor-default select-none">
+                        <Check size={13} className="stroke-[3]" />
+                        <span>Delivering to this Address</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleSelectCustomAddress}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-white text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
+                      >
+                        <Plus size={13} />
+                        <span>Deliver to a Different Address</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleDetectLiveLocation}
+                        disabled={isLocating}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-xs font-semibold text-neutral-800 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group active:scale-[0.98]"
+                      >
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-live-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                        </span>
+                        <Navigation size={13} className="text-emerald-600 transition-transform group-hover:scale-110" />
+                        <span>Use Live Location</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* ── MODE B: CUSTOM / LIVE LOCATION ADDRESS ── */
+                <div className="space-y-4">
+                  {/* Top Bar inside Custom Mode */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl bg-neutral-50/90 border border-neutral-200/90 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={handleSelectSavedAddress}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-700 hover:text-black hover:bg-neutral-200/60 transition-all cursor-pointer group"
+                    >
+                      <ArrowLeft size={13} className="text-neutral-500 group-hover:text-black transition-transform group-hover:-translate-x-0.5" />
+                      <span>
+                        Back to Saved Profile Address{" "}
+                        <span className="text-neutral-500 font-normal">({savedProfileAddress.city})</span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleDetectLiveLocation}
+                      disabled={isLocating}
+                      className="relative overflow-hidden inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-neutral-950 hover:bg-black active:scale-[0.98] text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-xs disabled:opacity-85 disabled:cursor-not-allowed group"
+                    >
+                      {/* Micro-animation: scanning light sweep effect when locating */}
+                      {isLocating && (
+                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-radar-sweep pointer-events-none" />
+                      )}
+
+                      {isLocating ? (
+                        <>
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                          </span>
+                          <span className="normal-case tracking-normal font-medium text-neutral-200">
+                            {locatingStep || "Detecting live location..."}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-live-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                          </span>
+                          <LocateFixed size={13} className="text-emerald-400 transition-transform group-hover:rotate-45" />
+                          <span>Detect Live Location</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Live Telemetry Feedback Box with Smooth Morphing Transition */}
+                  {(isLocating || detectedLocationBadge) && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className={`p-3.5 sm:p-4 rounded-xl text-xs transition-all duration-500 ease-out shadow-xs border ${
+                        isLocating
+                          ? "bg-neutral-900 border-neutral-800 text-white"
+                          : "bg-emerald-50/95 border-emerald-200/90 text-emerald-950"
+                      }`}
+                    >
+                      {isLocating ? (
+                        /* State 1: Active Radar Scanning */
+                        <div className="flex items-center gap-3.5">
+                          <div className="relative flex items-center justify-center w-7 h-7 shrink-0">
+                            <div className="absolute inset-0 rounded-full border border-emerald-500/40 animate-ping" />
+                            <div className="w-6 h-6 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-neutral-100 flex items-center gap-2">
+                              <span>Live Telemetry Radar</span>
+                              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/30">
+                                Active Scanning
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-neutral-400 mt-0.5 truncate transition-all duration-300 font-mono">
+                              {locatingStep || "Connecting to geolocation nodes..."}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        /* State 2: Location Locked */
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2.5 min-w-0">
+                            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                              <MapPin size={15} />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-emerald-950 text-[13px]">
+                                  Live Location Locked
+                                </span>
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200/70 text-emerald-900 border border-emerald-300/80">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                                  {detectedLocationBadge?.source === "live_gps" ? "Satellite GPS" : "Real-time Telemetry"}
+                                  {detectedLocationBadge?.accuracy ? ` (~${detectedLocationBadge.accuracy}m)` : ""}
+                                </span>
+                              </div>
+                              <p className="text-xs text-emerald-800 mt-1 font-semibold">
+                                {detectedLocationBadge?.area ? `${detectedLocationBadge.area}, ` : ""}
+                                {detectedLocationBadge?.city}
+                                {detectedLocationBadge?.state ? `, ${detectedLocationBadge.state}` : ""}
+                                {detectedLocationBadge?.pincode ? ` - ${detectedLocationBadge.pincode}` : ""}
+                              </p>
+                              <p className="text-[11px] text-emerald-700/90 mt-0.5">
+                                Auto-populated into shipping fields. You can adjust house/flat number if needed.
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleDetectLiveLocation}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold text-emerald-800 hover:text-emerald-950 hover:bg-emerald-100/80 transition-colors shrink-0 cursor-pointer border border-emerald-300/60"
+                          >
+                            <RefreshCw size={11} />
+                            <span>Re-scan</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
-                </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                    Street Address, Building, House No. <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={streetAddress}
-                    onChange={(e) => setStreetAddress(e.target.value)}
-                    placeholder="e.g. 42, Richmond Road, Flat 3B"
-                    className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                      formErrors.streetAddress ? "border-red-400 bg-red-50/20" : "border-neutral-300"
-                    }`}
-                  />
-                  {formErrors.streetAddress && (
-                    <p className="text-[11px] text-red-600 mt-1">{formErrors.streetAddress}</p>
+                  {locationError && !isLocating && (
+                    <div
+                      aria-live="polite"
+                      className="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900"
+                    >
+                      <AlertCircle size={15} className="text-amber-700 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p>{locationError}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setLocationError(null)}
+                        className="text-amber-700 hover:text-amber-950 text-xs font-bold cursor-pointer"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
                   )}
-                </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                    Apartment, Suite, Landmark <span className="text-neutral-400 font-normal">(Optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={apartment}
-                    onChange={(e) => setApartment(e.target.value)}
-                    placeholder="Near Indiranagar Metro Station"
-                    className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-neutral-300 bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Manual Inputs */}
                   <div>
                     <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                      City <span className="text-red-500">*</span>
+                      Recipient Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="Bengaluru"
-                      className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                        formErrors.city ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                      autoComplete="name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Recipient Full Name"
+                      className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                        formErrors.fullName ? "border-red-400 bg-red-50/20" : "border-neutral-300"
                       }`}
                     />
-                    {formErrors.city && (
-                      <p className="text-[11px] text-red-600 mt-1">{formErrors.city}</p>
+                    {formErrors.fullName && (
+                      <p className="text-[11px] text-red-600 mt-1">{formErrors.fullName}</p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                      State <span className="text-red-500">*</span>
+                      Street Address, Building, House No. <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      value={stateName}
-                      onChange={(e) => setStateName(e.target.value)}
-                      placeholder="Karnataka"
-                      className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                        formErrors.stateName ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                      autoComplete="street-address"
+                      value={streetAddress}
+                      onChange={(e) => setStreetAddress(e.target.value)}
+                      placeholder="e.g. 42, Richmond Road, Flat 3B"
+                      className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                        formErrors.streetAddress
+                          ? "border-red-400 bg-red-50/20"
+                          : justAutofilled
+                          ? "animate-autofill-highlight"
+                          : "border-neutral-300"
                       }`}
                     />
-                    {formErrors.stateName && (
-                      <p className="text-[11px] text-red-600 mt-1">{formErrors.stateName}</p>
+                    {formErrors.streetAddress && (
+                      <p className="text-[11px] text-red-600 mt-1">{formErrors.streetAddress}</p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                      PIN Code <span className="text-red-500">*</span>
+                      Apartment, Suite, Landmark{" "}
+                      <span className="text-neutral-400 font-normal">(Optional)</span>
                     </label>
                     <input
                       type="text"
-                      maxLength={6}
-                      value={pincode}
-                      onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      placeholder="560038"
-                      className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                        formErrors.pincode ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                      value={apartment}
+                      onChange={(e) => setApartment(e.target.value)}
+                      placeholder="Near Landmark / Colony"
+                      className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                        justAutofilled ? "animate-autofill-highlight" : "border-neutral-300"
                       }`}
                     />
-                    {formErrors.pincode && (
-                      <p className="text-[11px] text-red-600 mt-1">{formErrors.pincode}</p>
-                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+                        City <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        autoComplete="address-level2"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="City"
+                        className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                          formErrors.city
+                            ? "border-red-400 bg-red-50/20"
+                            : justAutofilled
+                            ? "animate-autofill-highlight"
+                            : "border-neutral-300"
+                        }`}
+                      />
+                      {formErrors.city && (
+                        <p className="text-[11px] text-red-600 mt-1">{formErrors.city}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+                        State <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        autoComplete="address-level1"
+                        value={stateName}
+                        onChange={(e) => setStateName(e.target.value)}
+                        placeholder="State"
+                        className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                          formErrors.stateName
+                            ? "border-red-400 bg-red-50/20"
+                            : justAutofilled
+                            ? "animate-autofill-highlight"
+                            : "border-neutral-300"
+                        }`}
+                      />
+                      {formErrors.stateName && (
+                        <p className="text-[11px] text-red-600 mt-1">{formErrors.stateName}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+                        PIN Code <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="postal-code"
+                        maxLength={6}
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        placeholder="6-digit PIN"
+                        className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                          formErrors.pincode
+                            ? "border-red-400 bg-red-50/20"
+                            : justAutofilled
+                            ? "animate-autofill-highlight"
+                            : "border-neutral-300"
+                        }`}
+                      />
+                      {formErrors.pincode && (
+                        <p className="text-[11px] text-red-600 mt-1">{formErrors.pincode}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
+              )}
 
                 {/* Shipping Method Options */}
                 <div className="pt-4 border-t border-neutral-100">
@@ -724,7 +1389,6 @@ export default function CheckoutPage() {
                     </label>
                   </div>
                 </div>
-              </div>
             </section>
 
             {/* Section 3: Payment Method */}
@@ -868,86 +1532,234 @@ export default function CheckoutPage() {
                 )}
 
                 {paymentMethod === "card" && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-xs pb-3 border-b border-neutral-200/80">
-                      <span className="font-semibold text-neutral-800">
-                        Credit & Debit Cards (Visa, MasterCard, RuPay, Amex)
-                      </span>
-                      <div className="flex items-center gap-1 text-[10px] text-neutral-500 font-mono">
-                        <Lock size={12} className="text-emerald-600" />
-                        <span>256-Bit Encrypted</span>
+                  <div className="space-y-4 bg-neutral-50/70 border border-neutral-200/80 rounded-xl p-4 sm:p-5">
+                    {/* Header: Network Badges & Encryption Reassurance */}
+                    <div className="flex items-center justify-between pb-3 border-b border-neutral-200/70 flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-neutral-800">
+                          Accepted Networks:
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <VisaBadge active={cardBrand === "visa" || cardBrand === "unknown"} />
+                          <MastercardBadge active={cardBrand === "mastercard" || cardBrand === "unknown"} />
+                          <RuPayBadge active={cardBrand === "rupay" || cardBrand === "unknown"} />
+                          <AmexBadge active={cardBrand === "amex" || cardBrand === "unknown"} />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] text-neutral-500 font-mono">
+                        <Lock size={12} className="text-emerald-600 shrink-0" />
+                        <span>256-Bit SSL Encrypted</span>
                       </div>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-3.5">
+                      {/* Card Number Input with In-Field Brand Indicator & Demo Fill */}
                       <div>
-                        <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                          Card Number
-                        </label>
-                        <input
-                          type="text"
-                          value={cardNumber}
-                          onChange={(e) => handleCardNumberChange(e.target.value)}
-                          placeholder="4532 •••• •••• 8921"
-                          maxLength={19}
-                          className={`w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                            formErrors.cardNumber ? "border-red-400 bg-red-50/20" : "border-neutral-300"
-                          }`}
-                        />
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label
+                            htmlFor="veyro_cc_num"
+                            className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700"
+                          >
+                            Card Number <span className="text-red-500">*</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={handleFillTestCard}
+                            className="text-[10px] font-bold text-neutral-500 hover:text-neutral-900 underline underline-offset-2 cursor-pointer transition-colors"
+                          >
+                            Fill Test Card
+                          </button>
+                        </div>
+
+                        <div className="relative flex items-center">
+                          <div className="absolute left-3.5 pointer-events-none text-neutral-400">
+                            <CreditCard size={16} />
+                          </div>
+                          <input
+                            type="text"
+                            id="veyro_cc_num"
+                            name="veyro_cc_num"
+                            autoComplete="off"
+                            data-form-type="other"
+                            data-lpignore="true"
+                            autoCorrect="off"
+                            autoCapitalize="none"
+                            spellCheck={false}
+                            value={cardNumber}
+                            onChange={(e) => handleCardNumberChange(e.target.value)}
+                            placeholder={cardBrand === "amex" ? "3782 822468 91006" : "4532 8921 4402 7891"}
+                            maxLength={cardBrand === "amex" ? 17 : 19}
+                            className={`w-full text-xs sm:text-sm font-mono pl-10 pr-20 py-2.5 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-300 focus:outline-hidden focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 transition-all ${
+                              formErrors.cardNumber
+                                ? "border-red-400 bg-red-50/20"
+                                : "border-neutral-300 hover:border-neutral-400"
+                            }`}
+                          />
+                          <div className="absolute right-3 flex items-center gap-1.5 pointer-events-none">
+                            {cardBrand !== "unknown" ? (
+                              <DetectedBrandIcon brand={cardBrand} />
+                            ) : (
+                              <span className="text-[10px] font-mono font-medium text-neutral-400 uppercase tracking-wider">
+                                Card
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
                         {formErrors.cardNumber && (
-                          <p className="text-[11px] text-red-600 mt-1">{formErrors.cardNumber}</p>
+                          <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                            <AlertCircle size={12} className="shrink-0" />
+                            <span>{formErrors.cardNumber}</span>
+                          </p>
                         )}
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="sm:col-span-1">
-                          <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                            Cardholder Name
+                      {/* Row 2: Cardholder Name (2 cols) + Expiry (1 col) + CVV (1 col) */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div className="sm:col-span-2">
+                          <label
+                            htmlFor="veyro_cc_holder"
+                            className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1.5"
+                          >
+                            Cardholder Name <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
+                            id="veyro_cc_holder"
+                            name="veyro_cc_holder"
+                            autoComplete="off"
+                            data-form-type="other"
+                            data-lpignore="true"
+                            autoCorrect="off"
+                            autoCapitalize="words"
+                            spellCheck={false}
                             value={cardHolder}
-                            onChange={(e) => setCardHolder(e.target.value)}
+                            onChange={(e) => {
+                              setCardHolder(e.target.value);
+                              if (formErrors.cardHolder) {
+                                setFormErrors((prev) => {
+                                  const next = { ...prev };
+                                  delete next.cardHolder;
+                                  return next;
+                                });
+                              }
+                              if (paymentStatus === "failed") setPaymentStatus("idle");
+                            }}
                             placeholder="Ramesh Kumar"
-                            className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                              formErrors.cardHolder ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                            className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-300 focus:outline-hidden focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 transition-all ${
+                              formErrors.cardHolder
+                                ? "border-red-400 bg-red-50/20"
+                                : "border-neutral-300 hover:border-neutral-400"
                             }`}
                           />
+                          {formErrors.cardHolder && (
+                            <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                              <AlertCircle size={12} className="shrink-0" />
+                              <span>{formErrors.cardHolder}</span>
+                            </p>
+                          )}
                         </div>
 
-                        <div>
-                          <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                            Expiry (MM/YY)
+                        <div className="sm:col-span-1">
+                          <label
+                            htmlFor="veyro_cc_exp"
+                            className="block text-[11px] font-bold uppercase tracking-wider text-neutral-700 mb-1.5"
+                          >
+                            Expiry (MM/YY) <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
+                            id="veyro_cc_exp"
+                            name="veyro_cc_exp"
+                            autoComplete="off"
+                            data-form-type="other"
+                            data-lpignore="true"
+                            autoCorrect="off"
+                            autoCapitalize="none"
+                            spellCheck={false}
                             maxLength={5}
                             value={cardExpiry}
                             onChange={(e) => handleCardExpiryChange(e.target.value)}
                             placeholder="12/28"
-                            className={`w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                              formErrors.cardExpiry ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                            className={`w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-300 text-center focus:outline-hidden focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 transition-all ${
+                              formErrors.cardExpiry
+                                ? "border-red-400 bg-red-50/20"
+                                : "border-neutral-300 hover:border-neutral-400"
                             }`}
                           />
+                          {formErrors.cardExpiry && (
+                            <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                              <AlertCircle size={12} className="shrink-0" />
+                              <span>{formErrors.cardExpiry}</span>
+                            </p>
+                          )}
                         </div>
 
-                        <div>
-                          <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                            CVV
-                          </label>
-                          <input
-                            type="password"
-                            maxLength={4}
-                            value={cardCvv}
-                            onChange={(e) => {
-                              setCardCvv(e.target.value.replace(/\D/g, ""));
-                              if (paymentStatus === "failed") setPaymentStatus("idle");
-                            }}
-                            placeholder="•••"
-                            className={`w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
-                              formErrors.cardCvv ? "border-red-400 bg-red-50/20" : "border-neutral-300"
-                            }`}
-                          />
+                        <div className="sm:col-span-1">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label
+                              htmlFor="veyro_cc_cvv"
+                              className="text-[11px] font-bold uppercase tracking-wider text-neutral-700"
+                            >
+                              CVV <span className="text-red-500">*</span>
+                            </label>
+                            <span className="text-[10px] text-neutral-400">
+                              {cardBrand === "amex" ? "4 digits" : "3 digits"}
+                            </span>
+                          </div>
+                          <div className="relative flex items-center">
+                            <input
+                              type="password"
+                              id="veyro_cc_cvv"
+                              name="veyro_cc_cvv"
+                              autoComplete="off"
+                              data-form-type="other"
+                              data-lpignore="true"
+                              autoCorrect="off"
+                              autoCapitalize="none"
+                              spellCheck={false}
+                              maxLength={cardBrand === "amex" ? 4 : 3}
+                              value={cardCvv}
+                              onChange={(e) => {
+                                const maxCvv = cardBrand === "amex" ? 4 : 3;
+                                setCardCvv(e.target.value.replace(/\D/g, "").slice(0, maxCvv));
+                                if (formErrors.cardCvv) {
+                                  setFormErrors((prev) => {
+                                    const next = { ...prev };
+                                    delete next.cardCvv;
+                                    return next;
+                                  });
+                                }
+                                if (paymentStatus === "failed") setPaymentStatus("idle");
+                              }}
+                              placeholder={cardBrand === "amex" ? "••••" : "•••"}
+                              className={`w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-300 text-center focus:outline-hidden focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950 transition-all ${
+                                formErrors.cardCvv
+                                  ? "border-red-400 bg-red-50/20"
+                                  : "border-neutral-300 hover:border-neutral-400"
+                              }`}
+                            />
+                            <div className="absolute right-2.5 pointer-events-none text-neutral-400">
+                              <Lock size={12} />
+                            </div>
+                          </div>
+                          {formErrors.cardCvv && (
+                            <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                              <AlertCircle size={12} className="shrink-0" />
+                              <span>{formErrors.cardCvv}</span>
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Micro-footer: PCI-DSS note & CVV 000 failure test guide */}
+                      <div className="pt-2.5 flex items-center justify-between text-[11px] text-neutral-500 border-t border-neutral-200/60 flex-wrap gap-2">
+                        <span>
+                          Simulator: Enter CVV <span className="font-mono font-bold text-neutral-800">000</span> to test decline & retry
+                        </span>
+                        <div className="flex items-center gap-1 text-[10px] text-neutral-400 font-medium">
+                          <CheckCircle2 size={11} className="text-emerald-600" />
+                          <span>PCI-DSS Tier 1 Ready</span>
                         </div>
                       </div>
                     </div>
@@ -1004,9 +1816,15 @@ export default function CheckoutPage() {
                             <button
                               type="button"
                               onClick={handleSwitchToCod}
-                              className="font-bold text-neutral-900 hover:text-black underline underline-offset-4 cursor-pointer"
+                              className="group inline-flex items-center gap-1.5 font-bold text-neutral-900 hover:text-black cursor-pointer transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 rounded-[2px]"
                             >
-                              Switch to Cash on Delivery →
+                              <span className="relative pb-0.5 border-b border-neutral-300/80 group-hover:border-transparent after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-neutral-950 after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+                                Switch to Cash on Delivery
+                              </span>
+                              <ArrowRight
+                                size={13}
+                                className="stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:transform-none shrink-0"
+                              />
                             </button>
                           </div>
                         )}
@@ -1014,6 +1832,64 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 )}
+
+                {/* Delivery Destination Reassurance Card */}
+                <div className="bg-neutral-50/90 border border-neutral-200/90 rounded-2xl p-4 sm:p-4.5 transition-all">
+                  {/* Top Bar: Icon + Label + Badge on Left, Change Button on Right */}
+                  <div className="flex items-center justify-between gap-3 pb-3 mb-3 border-b border-neutral-200/70">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="w-6 h-6 rounded-lg bg-neutral-950 text-white flex items-center justify-center shrink-0">
+                        <Truck size={13} />
+                      </div>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+                        Delivering Order To
+                      </span>
+                      {addressMode === "saved" ? (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-200/80 text-neutral-700">
+                          Saved Profile Address
+                        </span>
+                      ) : detectedLocationBadge ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100/90 text-emerald-800 border border-emerald-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                          {detectedLocationBadge.source === "live_gps" ? "Live GPS Location" : "Live Telemetry Location"}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                          Custom Address
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sec = document.getElementById("section-delivery-address");
+                        if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                      className="text-xs font-bold text-neutral-900 hover:text-black underline underline-offset-4 shrink-0 cursor-pointer transition-colors"
+                    >
+                      Change
+                    </button>
+                  </div>
+
+                  {/* Address Details */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs sm:text-sm font-bold text-neutral-950">
+                        {fullName}
+                      </span>
+                      <span className="text-xs text-neutral-400">•</span>
+                      <span className="text-xs font-mono text-neutral-600 font-medium">
+                        {phone}
+                      </span>
+                    </div>
+                    <p className="text-xs text-neutral-600 leading-relaxed font-normal">
+                      {streetAddress
+                        ? `${streetAddress}, ${city}, ${stateName} - ${pincode}`
+                        : "Address pending"}
+                    </p>
+                  </div>
+                </div>
 
                 <button
                   type="submit"
@@ -1107,6 +1983,22 @@ export default function CheckoutPage() {
                     <span className="font-semibold">{oosCount} unavailable item{oosCount > 1 ? "s" : ""}</span> from your bag {oosCount > 1 ? "are" : "is"} excluded from this order and remain safely saved in your bag.
                   </div>
                 )}
+
+                {/* Delivery Destination Assurance */}
+                <div className="p-3 bg-neutral-50/80 rounded-xl border border-neutral-200/70 text-xs">
+                  <div className="flex items-center justify-between text-neutral-900 font-semibold mb-1">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin size={13} className="text-neutral-700 shrink-0" />
+                      <span>Delivery Destination</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-neutral-500 font-semibold">
+                      {pincode || "560038"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-neutral-600 line-clamp-1">
+                    {streetAddress ? `${streetAddress}, ${city}` : "Address specified in Section 02"}
+                  </p>
+                </div>
 
                 {/* Promo Code Input */}
                 <div className="pt-4 border-t border-neutral-100">

@@ -661,13 +661,73 @@ footer input:-webkit-autofill:active,
   will-change: transform;
 }
 
+/* ─── Geolocation Radar & Live Telemetry Physics ────────────────────────── */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes live-ping-slow {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes autofill-glow {
+  0% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+    background-color: rgba(236, 253, 245, 0.4);
+    border-color: #10b981;
+  }
+  70% {
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+    background-color: rgba(236, 253, 245, 0.2);
+    border-color: #10b981;
+  }
+  100% {
+    box-shadow: none;
+    background-color: #ffffff;
+    border-color: #d4d4d4;
+  }
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 2s linear infinite;
+  will-change: transform;
+}
+
+.animate-live-ping {
+  animation: live-ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-autofill-highlight {
+  animation: autofill-glow 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-drawer-in,
   .animate-drawer-out,
   .animate-qty-pop,
   .animate-view-forward,
   .animate-view-back,
-  .animate-payment-shake {
+  .animate-payment-shake,
+  .animate-radar-sweep,
+  .animate-live-ping,
+  .animate-autofill-highlight {
     animation: none !important;
     transform: none !important;
   }

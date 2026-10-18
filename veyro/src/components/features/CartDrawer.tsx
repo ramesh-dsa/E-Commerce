@@ -1184,9 +1184,15 @@ export function CartDrawer() {
                               setFormData((prev) => ({ ...prev, paymentMethod: "cod" }));
                               setPaymentStatus("idle");
                             }}
-                            className="mt-2 text-[11px] font-bold text-neutral-900 underline underline-offset-4 hover:text-black block cursor-pointer"
+                            className="group mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-neutral-900 hover:text-black cursor-pointer transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 rounded-[2px]"
                           >
-                            Switch to Cash on Delivery →
+                            <span className="relative pb-0.5 border-b border-neutral-300/80 group-hover:border-transparent after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-neutral-950 after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+                              Switch to Cash on Delivery
+                            </span>
+                            <ArrowRight
+                              size={12}
+                              className="stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:transform-none shrink-0"
+                            />
                           </button>
                         )}
                       </div>
