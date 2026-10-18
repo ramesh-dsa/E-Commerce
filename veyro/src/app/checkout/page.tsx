@@ -117,6 +117,9 @@ interface ReverseGeocodeResult {
   error?: string;
 }
 
+const AUTHENTIC_UPI_QR_PATH =
+  "M2,2h7v1h-7zM10,2h1v1h-1zM12,2h3v1h-3zM18,2h3v1h-3zM23,2h1v1h-1zM25,2h2v1h-2zM28,2h1v1h-1zM30,2h5v1h-5zM36,2h7v1h-7zM2,3h1v1h-1zM8,3h1v1h-1zM10,3h2v1h-2zM14,3h2v1h-2zM21,3h1v1h-1zM23,3h1v1h-1zM25,3h2v1h-2zM29,3h3v1h-3zM36,3h1v1h-1zM42,3h1v1h-1zM2,4h1v1h-1zM4,4h3v1h-3zM8,4h1v1h-1zM10,4h9v1h-9zM22,4h1v1h-1zM24,4h2v1h-2zM28,4h1v1h-1zM31,4h2v1h-2zM34,4h1v1h-1zM36,4h1v1h-1zM38,4h3v1h-3zM42,4h1v1h-1zM2,5h1v1h-1zM4,5h3v1h-3zM8,5h1v1h-1zM11,5h3v1h-3zM15,5h2v1h-2zM20,5h3v1h-3zM24,5h1v1h-1zM26,5h1v1h-1zM29,5h2v1h-2zM36,5h1v1h-1zM38,5h3v1h-3zM42,5h1v1h-1zM2,6h1v1h-1zM4,6h3v1h-3zM8,6h1v1h-1zM11,6h3v1h-3zM16,6h1v1h-1zM19,6h1v1h-1zM21,6h3v1h-3zM26,6h1v1h-1zM28,6h7v1h-7zM36,6h1v1h-1zM38,6h3v1h-3zM42,6h1v1h-1zM2,7h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM13,7h1v1h-1zM15,7h1v1h-1zM17,7h1v1h-1zM20,7h1v1h-1zM22,7h1v1h-1zM25,7h2v1h-2zM28,7h3v1h-3zM32,7h1v1h-1zM34,7h1v1h-1zM36,7h1v1h-1zM42,7h1v1h-1zM2,8h7v1h-7zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM22,8h1v1h-1zM24,8h1v1h-1zM26,8h1v1h-1zM28,8h1v1h-1zM30,8h1v1h-1zM32,8h1v1h-1zM34,8h1v1h-1zM36,8h7v1h-7zM10,9h5v1h-5zM16,9h1v1h-1zM23,9h4v1h-4zM28,9h3v1h-3zM33,9h1v1h-1zM4,10h3v1h-3zM8,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h2v1h-2zM23,10h2v1h-2zM26,10h1v1h-1zM30,10h3v1h-3zM34,10h4v1h-4zM40,10h3v1h-3zM2,11h1v1h-1zM5,11h1v1h-1zM11,11h3v1h-3zM15,11h1v1h-1zM17,11h2v1h-2zM21,11h1v1h-1zM23,11h6v1h-6zM30,11h2v1h-2zM33,11h2v1h-2zM36,11h1v1h-1zM38,11h2v1h-2zM41,11h1v1h-1zM4,12h1v1h-1zM6,12h3v1h-3zM10,12h4v1h-4zM15,12h7v1h-7zM25,12h6v1h-6zM32,12h1v1h-1zM34,12h1v1h-1zM36,12h4v1h-4zM2,13h3v1h-3zM6,13h2v1h-2zM9,13h1v1h-1zM11,13h3v1h-3zM16,13h2v1h-2zM19,13h1v1h-1zM21,13h1v1h-1zM23,13h3v1h-3zM29,13h2v1h-2zM35,13h5v1h-5zM3,14h3v1h-3zM8,14h1v1h-1zM14,14h3v1h-3zM20,14h2v1h-2zM24,14h1v1h-1zM27,14h2v1h-2zM31,14h2v1h-2zM34,14h1v1h-1zM36,14h1v1h-1zM39,14h2v1h-2zM42,14h1v1h-1zM2,15h1v1h-1zM4,15h1v1h-1zM14,15h1v1h-1zM18,15h6v1h-6zM25,15h8v1h-8zM35,15h1v1h-1zM37,15h2v1h-2zM40,15h1v1h-1zM42,15h1v1h-1zM2,16h2v1h-2zM5,16h1v1h-1zM8,16h2v1h-2zM12,16h1v1h-1zM15,16h1v1h-1zM18,16h1v1h-1zM21,16h1v1h-1zM23,16h2v1h-2zM28,16h1v1h-1zM31,16h1v1h-1zM34,16h1v1h-1zM36,16h1v1h-1zM38,16h2v1h-2zM2,17h2v1h-2zM5,17h2v1h-2zM10,17h1v1h-1zM12,17h1v1h-1zM16,17h4v1h-4zM21,17h3v1h-3zM26,17h2v1h-2zM30,17h1v1h-1zM36,17h1v1h-1zM38,17h2v1h-2zM3,18h1v1h-1zM5,18h1v1h-1zM7,18h2v1h-2zM11,18h2v1h-2zM15,18h3v1h-3zM27,18h2v1h-2zM31,18h1v1h-1zM34,18h2v1h-2zM39,18h2v1h-2zM2,19h1v1h-1zM6,19h1v1h-1zM9,19h1v1h-1zM14,19h4v1h-4zM30,19h1v1h-1zM33,19h4v1h-4zM38,19h1v1h-1zM40,19h1v1h-1zM42,19h1v1h-1zM3,20h3v1h-3zM7,20h3v1h-3zM12,20h2v1h-2zM16,20h1v1h-1zM27,20h1v1h-1zM29,20h1v1h-1zM32,20h1v1h-1zM34,20h3v1h-3zM39,20h1v1h-1zM6,21h2v1h-2zM10,21h1v1h-1zM16,21h2v1h-2zM28,21h1v1h-1zM30,21h1v1h-1zM33,21h1v1h-1zM39,21h1v1h-1zM4,22h1v1h-1zM6,22h1v1h-1zM8,22h2v1h-2zM14,22h4v1h-4zM28,22h3v1h-3zM32,22h1v1h-1zM38,22h3v1h-3zM2,23h1v1h-1zM5,23h3v1h-3zM9,23h1v1h-1zM13,23h2v1h-2zM27,23h2v1h-2zM31,23h1v1h-1zM33,23h4v1h-4zM38,23h1v1h-1zM40,23h1v1h-1zM42,23h1v1h-1zM2,24h4v1h-4zM7,24h2v1h-2zM11,24h1v1h-1zM14,24h1v1h-1zM27,24h1v1h-1zM29,24h1v1h-1zM31,24h1v1h-1zM34,24h2v1h-2zM39,24h1v1h-1zM4,25h2v1h-2zM7,25h1v1h-1zM9,25h3v1h-3zM13,25h2v1h-2zM27,25h1v1h-1zM30,25h1v1h-1zM35,25h2v1h-2zM38,25h2v1h-2zM41,25h1v1h-1zM2,26h1v1h-1zM5,26h1v1h-1zM7,26h2v1h-2zM14,26h4v1h-4zM28,26h1v1h-1zM30,26h2v1h-2zM33,26h1v1h-1zM35,26h1v1h-1zM41,26h1v1h-1zM4,27h1v1h-1zM6,27h2v1h-2zM10,27h2v1h-2zM16,27h1v1h-1zM18,27h1v1h-1zM22,27h1v1h-1zM24,27h1v1h-1zM26,27h1v1h-1zM28,27h1v1h-1zM33,27h2v1h-2zM36,27h1v1h-1zM38,27h1v1h-1zM42,27h1v1h-1zM3,28h1v1h-1zM5,28h2v1h-2zM8,28h3v1h-3zM14,28h2v1h-2zM17,28h3v1h-3zM21,28h1v1h-1zM25,28h1v1h-1zM27,28h5v1h-5zM35,28h1v1h-1zM37,28h1v1h-1zM41,28h1v1h-1zM4,29h4v1h-4zM9,29h1v1h-1zM13,29h3v1h-3zM17,29h1v1h-1zM21,29h1v1h-1zM23,29h1v1h-1zM25,29h1v1h-1zM29,29h1v1h-1zM32,29h1v1h-1zM37,29h1v1h-1zM39,29h1v1h-1zM3,30h4v1h-4zM8,30h1v1h-1zM12,30h3v1h-3zM16,30h1v1h-1zM19,30h1v1h-1zM21,30h1v1h-1zM24,30h2v1h-2zM29,30h3v1h-3zM35,30h1v1h-1zM38,30h1v1h-1zM40,30h1v1h-1zM2,31h1v1h-1zM6,31h2v1h-2zM11,31h2v1h-2zM14,31h1v1h-1zM16,31h5v1h-5zM22,31h1v1h-1zM25,31h2v1h-2zM28,31h2v1h-2zM34,31h1v1h-1zM37,31h2v1h-2zM41,31h2v1h-2zM2,32h1v1h-1zM4,32h2v1h-2zM7,32h2v1h-2zM10,32h2v1h-2zM13,32h1v1h-1zM17,32h1v1h-1zM19,32h3v1h-3zM23,32h2v1h-2zM26,32h1v1h-1zM28,32h6v1h-6zM36,32h2v1h-2zM40,32h1v1h-1zM2,33h1v1h-1zM5,33h1v1h-1zM10,33h5v1h-5zM16,33h1v1h-1zM19,33h2v1h-2zM23,33h1v1h-1zM26,33h1v1h-1zM29,33h1v1h-1zM32,33h3v1h-3zM36,33h2v1h-2zM39,33h1v1h-1zM41,33h2v1h-2zM2,34h1v1h-1zM5,34h5v1h-5zM13,34h1v1h-1zM15,34h1v1h-1zM20,34h1v1h-1zM23,34h7v1h-7zM31,34h1v1h-1zM33,34h6v1h-6zM40,34h1v1h-1zM10,35h3v1h-3zM14,35h5v1h-5zM21,35h1v1h-1zM23,35h4v1h-4zM28,35h1v1h-1zM31,35h4v1h-4zM38,35h1v1h-1zM41,35h2v1h-2zM2,36h7v1h-7zM11,36h1v1h-1zM14,36h5v1h-5zM20,36h1v1h-1zM22,36h2v1h-2zM27,36h1v1h-1zM29,36h3v1h-3zM34,36h1v1h-1zM36,36h1v1h-1zM38,36h1v1h-1zM40,36h1v1h-1zM2,37h1v1h-1zM8,37h1v1h-1zM11,37h5v1h-5zM17,37h3v1h-3zM22,37h1v1h-1zM24,37h2v1h-2zM29,37h6v1h-6zM38,37h2v1h-2zM41,37h2v1h-2zM2,38h1v1h-1zM4,38h3v1h-3zM8,38h1v1h-1zM10,38h2v1h-2zM15,38h2v1h-2zM18,38h2v1h-2zM22,38h3v1h-3zM26,38h4v1h-4zM34,38h5v1h-5zM40,38h1v1h-1zM2,39h1v1h-1zM4,39h3v1h-3zM8,39h1v1h-1zM10,39h1v1h-1zM12,39h3v1h-3zM17,39h3v1h-3zM22,39h1v1h-1zM24,39h2v1h-2zM30,39h1v1h-1zM32,39h1v1h-1zM37,39h1v1h-1zM39,39h2v1h-2zM42,39h1v1h-1zM2,40h1v1h-1zM4,40h3v1h-3zM8,40h1v1h-1zM10,40h1v1h-1zM13,40h1v1h-1zM16,40h2v1h-2zM20,40h2v1h-2zM25,40h1v1h-1zM27,40h3v1h-3zM32,40h1v1h-1zM36,40h1v1h-1zM38,40h1v1h-1zM40,40h2v1h-2zM2,41h1v1h-1zM8,41h1v1h-1zM11,41h1v1h-1zM15,41h1v1h-1zM21,41h1v1h-1zM23,41h1v1h-1zM25,41h1v1h-1zM27,41h3v1h-3zM32,41h1v1h-1zM34,41h2v1h-2zM37,41h3v1h-3zM41,41h1v1h-1zM2,42h7v1h-7zM11,42h1v1h-1zM13,42h2v1h-2zM16,42h2v1h-2zM19,42h3v1h-3zM23,42h2v1h-2zM27,42h1v1h-1zM29,42h1v1h-1zM31,42h1v1h-1zM33,42h1v1h-1zM36,42h1v1h-1zM39,42h1v1h-1z";
+
 function DetectedBrandIcon({ brand }: { brand: CardBrand }) {
   switch (brand) {
     case "visa":
@@ -195,6 +198,23 @@ export default function CheckoutPage() {
   const [cardHolder, setCardHolder] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
+
+  // UPI Live Terminal State
+  const [copiedUpi, setCopiedUpi] = useState(false);
+  const [upiCountdown, setUpiCountdown] = useState(599);
+  useEffect(() => {
+    if (paymentMethod !== "upi") return;
+    const timer = setInterval(() => {
+      setUpiCountdown((prev) => (prev > 1 ? prev - 1 : 599));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [paymentMethod]);
+
+  const formatUpiTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  };
 
   // Promo code
   const [promoInput, setPromoInput] = useState("");
@@ -1577,20 +1597,164 @@ export default function CheckoutPage() {
               <div className="bg-neutral-50/80 border border-neutral-200/80 rounded-xl p-5">
                 {paymentMethod === "upi" && (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between text-xs pb-3 border-b border-neutral-200/80">
-                      <span className="font-semibold text-neutral-800">
-                        Scan with any UPI App or Enter Virtual Payment Address (VPA)
-                      </span>
-                      <span className="text-[10px] font-mono font-bold bg-neutral-200/70 text-neutral-800 px-2 py-0.5 rounded">
-                        0% Surcharge
-                      </span>
-                    </div>
+                    {/* Main Luxury Fintech UPI Terminal */}
+                    <div className="bg-gradient-to-b from-white via-neutral-50/60 to-white border border-neutral-200/90 rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col items-center justify-center relative overflow-hidden group">
+                      
+                      {/* Top Header: NPCI UPI Official Emblem & Dynamic Amount Pill */}
+                      <div className="flex items-center justify-between w-full pb-3.5 mb-4 border-b border-neutral-200/70 flex-wrap gap-2">
+                        <div className="flex items-center gap-2.5">
+                          {/* Official NPCI UPI Chevron Emblem */}
+                          <div className="w-8 h-8 rounded-lg bg-neutral-950 flex items-center justify-center shadow-xs p-1.5 border border-neutral-800">
+                            <svg viewBox="0 0 24 24" className="w-full h-full" fill="none">
+                              <path d="M14.5 4.5L20.5 12L14.5 19.5H19L25 12L19 4.5H14.5Z" fill="#00823E" />
+                              <path d="M7 4.5L13 12L7 19.5H11.5L17.5 12L11.5 4.5H7Z" fill="#FF7300" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-neutral-900 tracking-tight">
+                                Scan & Pay via UPI
+                              </span>
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                0% Fee
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-neutral-500 font-medium">
+                              Verified Merchant: Veyro Official Luxury Store
+                            </p>
+                          </div>
+                        </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                      <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-neutral-700">
-                          Enter UPI ID
-                        </label>
+                        {/* Real-time Payable Amount Pill */}
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-950 text-white shadow-xs">
+                          <span className="text-[10px] text-neutral-400 uppercase tracking-wider font-semibold">Payable:</span>
+                          <span className="text-xs font-bold font-mono text-emerald-400">{formatPrice(grandTotal)}</span>
+                        </div>
+                      </div>
+
+                      {/* Luxury QR Viewport Frame with Optical Scanner & Viewfinder Reticles */}
+                      <div className="relative w-52 h-52 bg-white rounded-2xl p-3 border border-neutral-200/90 shadow-sm flex items-center justify-center overflow-hidden">
+                        {/* 4 Optical Corner Viewfinder Brackets */}
+                        <div className="absolute top-2.5 left-2.5 w-4 h-4 border-t-2 border-l-2 border-neutral-900 rounded-tl-sm pointer-events-none" />
+                        <div className="absolute top-2.5 right-2.5 w-4 h-4 border-t-2 border-r-2 border-neutral-900 rounded-tr-sm pointer-events-none" />
+                        <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-neutral-900 rounded-bl-sm pointer-events-none" />
+                        <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-neutral-900 rounded-br-sm pointer-events-none" />
+
+                        {/* Ambient Corner Pulse Overlay */}
+                        <div className="absolute inset-2 pointer-events-none animate-qr-corner-reticle">
+                          <div className="absolute top-0.5 left-0.5 w-3.5 h-3.5 border-t-2 border-l-2 border-emerald-500/80 rounded-tl-sm" />
+                          <div className="absolute top-0.5 right-0.5 w-3.5 h-3.5 border-t-2 border-r-2 border-emerald-500/80 rounded-tr-sm" />
+                          <div className="absolute bottom-0.5 left-0.5 w-3.5 h-3.5 border-b-2 border-l-2 border-emerald-500/80 rounded-bl-sm" />
+                          <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 border-b-2 border-r-2 border-emerald-500/80 rounded-br-sm" />
+                        </div>
+
+                        {/* Authentic High-Resolution Vector QR Code SVG (45x45 matrix) */}
+                        <div className="relative w-full h-full p-1 flex items-center justify-center">
+                          <svg
+                            viewBox="0 0 45 45"
+                            className="w-full h-full select-none"
+                            shapeRendering="crispEdges"
+                            aria-label="Official Veyro UPI QR Code"
+                          >
+                            <rect width="45" height="45" fill="#ffffff" />
+                            <path d={AUTHENTIC_UPI_QR_PATH} fill="#0a0a0a" />
+
+                            {/* Center Official NPCI UPI Shield Badge */}
+                            <rect
+                              x="17.5"
+                              y="17.5"
+                              width="10"
+                              height="10"
+                              rx="2"
+                              fill="#ffffff"
+                              stroke="#e2e8f0"
+                              strokeWidth="0.4"
+                            />
+                            {/* UPI Logo in Center */}
+                            <g transform="translate(18.2, 18.2) scale(0.36)">
+                              <path d="M14.5 4.5L20.5 12L14.5 19.5H19L25 12L19 4.5H14.5Z" fill="#00823E" />
+                              <path d="M7 4.5L13 12L7 19.5H11.5L17.5 12L11.5 4.5H7Z" fill="#FF7300" />
+                            </g>
+                          </svg>
+                        </div>
+
+                        {/* Optical Laser Scanner Beam & Trailing Gradient Veil */}
+                        <div className="absolute inset-x-2.5 top-2.5 pointer-events-none z-20 animate-qr-optical-sweep flex flex-col justify-end">
+                          {/* Luminous Light Curtain Veil */}
+                          <div className="h-10 w-full bg-gradient-to-b from-transparent via-emerald-500/10 to-emerald-500/25" />
+                          {/* Laser Head with Hotspot Core & Tracking Nodes */}
+                          <div className="relative h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_10px_#10b981]">
+                            {/* Center Hotspot */}
+                            <span className="absolute inset-x-1/4 top-0 h-[1.5px] bg-white/95 shadow-[0_0_6px_#ffffff]" />
+                            {/* Precision Optical Tracking Nodes */}
+                            <span className="absolute left-[20%] -top-[2px] w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_#34d399]" />
+                            <span className="absolute right-[20%] -top-[2px] w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_#34d399]" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Status Telemetry & Live Countdown */}
+                      <div className="mt-3.5 text-center space-y-1">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-semibold text-emerald-800">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+                          </span>
+                          <span>Point camera or any UPI app to pay</span>
+                          <span className="text-emerald-300">·</span>
+                          <span className="font-mono text-emerald-700 font-bold">{formatUpiTime(upiCountdown)}</span>
+                        </div>
+                        <p className="text-[11px] text-neutral-500 font-medium">
+                          Open Google Pay, PhonePe, Paytm, or BHIM to complete transaction
+                        </p>
+                      </div>
+
+                      {/* Official UPI Ecosystem Badges */}
+                      <div className="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-neutral-100 w-full flex-wrap">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
+                          <span className="w-2 h-2 rounded-full bg-[#4285F4]" />
+                          Google Pay
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
+                          <span className="w-2 h-2 rounded-full bg-[#5f259f]" />
+                          PhonePe
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
+                          <span className="w-2 h-2 rounded-full bg-[#00baf2]" />
+                          Paytm
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
+                          <span className="w-2 h-2 rounded-full bg-[#00823E]" />
+                          BHIM UPI
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
+                          <span className="w-2 h-2 rounded-full bg-neutral-900" />
+                          CRED
+                        </span>
+                      </div>
+
+                      {/* Manual UPI ID Alternative */}
+                      <div className="w-full mt-4 pt-3.5 border-t border-dashed border-neutral-200">
+                        <div className="flex items-center justify-between text-xs mb-2">
+                          <span className="text-[11px] font-semibold text-neutral-600">
+                            Or pay by entering your UPI ID / VPA:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard?.writeText("veyro@icici");
+                              setCopiedUpi(true);
+                              setTimeout(() => setCopiedUpi(false), 2000);
+                            }}
+                            className="text-[10px] font-medium text-neutral-500 hover:text-neutral-900 flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            {copiedUpi ? (
+                              <span className="text-emerald-600 font-semibold">✓ Copied veyro@icici</span>
+                            ) : (
+                              <span>Copy Merchant VPA</span>
+                            )}
+                          </button>
+                        </div>
                         <div className="relative">
                           <input
                             type="text"
@@ -1599,223 +1763,25 @@ export default function CheckoutPage() {
                               setUpiId(e.target.value);
                               if (paymentStatus === "failed") setPaymentStatus("idle");
                             }}
-                            placeholder="username@okhdfcbank"
+                            placeholder="mobileNumber@upi or username@okaxis"
                             className="w-full text-xs font-mono px-3.5 py-2.5 rounded-lg border border-neutral-300 bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black"
                           />
                         </div>
-                        <div className="flex gap-2 text-[10px] text-neutral-500">
-                          <span className="bg-white border border-neutral-200 px-2 py-0.5 rounded">@paytm</span>
-                          <span className="bg-white border border-neutral-200 px-2 py-0.5 rounded">@oksbi</span>
-                          <span className="bg-white border border-neutral-200 px-2 py-0.5 rounded">@ybl</span>
-                        </div>
-                      </div>
-
-                      <div className="bg-white border border-neutral-200/90 rounded-2xl p-4 sm:p-5 text-center shadow-xs flex flex-col items-center justify-center relative overflow-hidden group">
-                        {/* Top Header Badge */}
-                        <div className="flex items-center justify-between w-full pb-3 mb-3 border-b border-neutral-100">
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                            </span>
-                            <span>Scan to Pay via UPI</span>
-                          </div>
-                          <span className="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 px-2 py-0.5 rounded-full">
-                            Instant Approval
-                          </span>
-                        </div>
-
-                        {/* Luxury QR Viewport Frame */}
-                        <div className="relative w-36 h-36 bg-white rounded-xl p-2.5 border border-neutral-200/80 shadow-xs flex items-center justify-center overflow-hidden">
-                          {/* Authentic High-Resolution SVG QR Code */}
-                          <svg
-                            viewBox="0 0 100 100"
-                            className="w-full h-full select-none"
-                            shapeRendering="crispEdges"
-                            aria-label="Simulated dynamic UPI QR code"
-                          >
-                            {/* Background */}
-                            <rect width="100" height="100" fill="#ffffff" />
-
-                            {/* Top-Left Finder Eye (7x7 modules) */}
-                            <rect x="4" y="4" width="24" height="24" rx="3" fill="#0f172a" />
-                            <rect x="7" y="7" width="18" height="18" rx="2" fill="#ffffff" />
-                            <rect x="10" y="10" width="12" height="12" rx="1.5" fill="#0f172a" />
-
-                            {/* Top-Right Finder Eye */}
-                            <rect x="72" y="4" width="24" height="24" rx="3" fill="#0f172a" />
-                            <rect x="75" y="7" width="18" height="18" rx="2" fill="#ffffff" />
-                            <rect x="78" y="10" width="12" height="12" rx="1.5" fill="#0f172a" />
-
-                            {/* Bottom-Left Finder Eye */}
-                            <rect x="4" y="72" width="24" height="24" rx="3" fill="#0f172a" />
-                            <rect x="7" y="75" width="18" height="18" rx="2" fill="#ffffff" />
-                            <rect x="10" y="78" width="12" height="12" rx="1.5" fill="#0f172a" />
-
-                            {/* Alignment Pattern (Bottom-Right) */}
-                            <rect x="70" y="70" width="16" height="16" rx="2" fill="#0f172a" />
-                            <rect x="73" y="73" width="10" height="10" rx="1" fill="#ffffff" />
-                            <rect x="76" y="76" width="4" height="4" rx="0.5" fill="#0f172a" />
-
-                            {/* Timing Pattern Lines */}
-                            {/* Horizontal Timing Pattern */}
-                            <rect x="31" y="14" width="3" height="3" fill="#0f172a" />
-                            <rect x="37" y="14" width="3" height="3" fill="#0f172a" />
-                            <rect x="43" y="14" width="3" height="3" fill="#0f172a" />
-                            <rect x="49" y="14" width="3" height="3" fill="#0f172a" />
-                            <rect x="55" y="14" width="3" height="3" fill="#0f172a" />
-                            <rect x="61" y="14" width="3" height="3" fill="#0f172a" />
-                            <rect x="67" y="14" width="3" height="3" fill="#0f172a" />
-
-                            {/* Vertical Timing Pattern */}
-                            <rect x="14" y="31" width="3" height="3" fill="#0f172a" />
-                            <rect x="14" y="37" width="3" height="3" fill="#0f172a" />
-                            <rect x="14" y="43" width="3" height="3" fill="#0f172a" />
-                            <rect x="14" y="49" width="3" height="3" fill="#0f172a" />
-                            <rect x="14" y="55" width="3" height="3" fill="#0f172a" />
-                            <rect x="14" y="61" width="3" height="3" fill="#0f172a" />
-                            <rect x="14" y="67" width="3" height="3" fill="#0f172a" />
-
-                            {/* High-density authentic QR data modules */}
-                            {/* Top area between finders */}
-                            <rect x="31" y="5" width="3" height="3" fill="#0f172a" />
-                            <rect x="37" y="5" width="6" height="3" fill="#0f172a" />
-                            <rect x="46" y="5" width="3" height="3" fill="#0f172a" />
-                            <rect x="52" y="5" width="3" height="3" fill="#0f172a" />
-                            <rect x="61" y="5" width="6" height="3" fill="#0f172a" />
-                            <rect x="34" y="9" width="3" height="3" fill="#0f172a" />
-                            <rect x="40" y="9" width="3" height="3" fill="#0f172a" />
-                            <rect x="49" y="9" width="6" height="3" fill="#0f172a" />
-                            <rect x="58" y="9" width="3" height="3" fill="#0f172a" />
-                            <rect x="64" y="9" width="3" height="3" fill="#0f172a" />
-                            <rect x="31" y="18" width="6" height="3" fill="#0f172a" />
-                            <rect x="40" y="18" width="3" height="3" fill="#0f172a" />
-                            <rect x="46" y="18" width="6" height="3" fill="#0f172a" />
-                            <rect x="55" y="18" width="3" height="3" fill="#0f172a" />
-                            <rect x="64" y="18" width="3" height="3" fill="#0f172a" />
-                            <rect x="34" y="22" width="3" height="3" fill="#0f172a" />
-                            <rect x="43" y="22" width="3" height="3" fill="#0f172a" />
-                            <rect x="52" y="22" width="6" height="3" fill="#0f172a" />
-                            <rect x="61" y="22" width="6" height="3" fill="#0f172a" />
-
-                            {/* Left area below top-left finder */}
-                            <rect x="5" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="18" y="31" width="3" height="3" fill="#0f172a" />
-                            <rect x="24" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="8" y="37" width="3" height="3" fill="#0f172a" />
-                            <rect x="21" y="37" width="6" height="3" fill="#0f172a" />
-                            <rect x="5" y="43" width="3" height="3" fill="#0f172a" />
-                            <rect x="11" y="43" width="6" height="3" fill="#0f172a" />
-                            <rect x="24" y="43" width="3" height="3" fill="#0f172a" />
-                            <rect x="8" y="49" width="6" height="3" fill="#0f172a" />
-                            <rect x="18" y="49" width="6" height="3" fill="#0f172a" />
-                            <rect x="5" y="55" width="6" height="3" fill="#0f172a" />
-                            <rect x="14" y="55" width="3" height="3" fill="#0f172a" />
-                            <rect x="21" y="55" width="3" height="3" fill="#0f172a" />
-                            <rect x="8" y="61" width="3" height="3" fill="#0f172a" />
-                            <rect x="18" y="61" width="6" height="3" fill="#0f172a" />
-                            <rect x="5" y="67" width="6" height="3" fill="#0f172a" />
-                            <rect x="24" y="67" width="6" height="3" fill="#0f172a" />
-
-                            {/* Right area below top-right finder */}
-                            <rect x="72" y="31" width="3" height="3" fill="#0f172a" />
-                            <rect x="78" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="87" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="75" y="37" width="3" height="3" fill="#0f172a" />
-                            <rect x="84" y="37" width="3" height="3" fill="#0f172a" />
-                            <rect x="90" y="37" width="6" height="3" fill="#0f172a" />
-                            <rect x="72" y="43" width="6" height="3" fill="#0f172a" />
-                            <rect x="81" y="43" width="6" height="3" fill="#0f172a" />
-                            <rect x="93" y="43" width="3" height="3" fill="#0f172a" />
-                            <rect x="75" y="49" width="3" height="3" fill="#0f172a" />
-                            <rect x="84" y="49" width="6" height="3" fill="#0f172a" />
-                            <rect x="93" y="49" width="3" height="3" fill="#0f172a" />
-                            <rect x="72" y="55" width="6" height="3" fill="#0f172a" />
-                            <rect x="81" y="55" width="3" height="3" fill="#0f172a" />
-                            <rect x="87" y="55" width="6" height="3" fill="#0f172a" />
-                            <rect x="78" y="61" width="6" height="3" fill="#0f172a" />
-                            <rect x="90" y="61" width="6" height="3" fill="#0f172a" />
-                            <rect x="72" y="67" width="3" height="3" fill="#0f172a" />
-                            <rect x="81" y="67" width="6" height="3" fill="#0f172a" />
-                            <rect x="93" y="67" width="3" height="3" fill="#0f172a" />
-
-                            {/* Bottom area beside bottom-left finder */}
-                            <rect x="31" y="73" width="6" height="3" fill="#0f172a" />
-                            <rect x="40" y="73" width="3" height="3" fill="#0f172a" />
-                            <rect x="46" y="73" width="6" height="3" fill="#0f172a" />
-                            <rect x="55" y="73" width="6" height="3" fill="#0f172a" />
-                            <rect x="64" y="73" width="3" height="3" fill="#0f172a" />
-                            <rect x="34" y="79" width="3" height="3" fill="#0f172a" />
-                            <rect x="43" y="79" width="6" height="3" fill="#0f172a" />
-                            <rect x="52" y="79" width="3" height="3" fill="#0f172a" />
-                            <rect x="61" y="79" width="6" height="3" fill="#0f172a" />
-                            <rect x="31" y="85" width="6" height="3" fill="#0f172a" />
-                            <rect x="40" y="85" width="6" height="3" fill="#0f172a" />
-                            <rect x="49" y="85" width="3" height="3" fill="#0f172a" />
-                            <rect x="58" y="85" width="6" height="3" fill="#0f172a" />
-                            <rect x="34" y="91" width="3" height="3" fill="#0f172a" />
-                            <rect x="43" y="91" width="3" height="3" fill="#0f172a" />
-                            <rect x="49" y="91" width="6" height="3" fill="#0f172a" />
-                            <rect x="58" y="91" width="3" height="3" fill="#0f172a" />
-                            <rect x="64" y="91" width="3" height="3" fill="#0f172a" />
-
-                            {/* Center Area Data Modules */}
-                            <rect x="31" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="40" y="31" width="3" height="3" fill="#0f172a" />
-                            <rect x="46" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="55" y="31" width="3" height="3" fill="#0f172a" />
-                            <rect x="61" y="31" width="6" height="3" fill="#0f172a" />
-                            <rect x="34" y="37" width="3" height="3" fill="#0f172a" />
-                            <rect x="64" y="37" width="3" height="3" fill="#0f172a" />
-                            <rect x="31" y="43" width="3" height="3" fill="#0f172a" />
-                            <rect x="67" y="43" width="3" height="3" fill="#0f172a" />
-                            <rect x="31" y="49" width="3" height="3" fill="#0f172a" />
-                            <rect x="67" y="49" width="3" height="3" fill="#0f172a" />
-                            <rect x="34" y="55" width="3" height="3" fill="#0f172a" />
-                            <rect x="64" y="55" width="3" height="3" fill="#0f172a" />
-                            <rect x="31" y="61" width="6" height="3" fill="#0f172a" />
-                            <rect x="40" y="61" width="3" height="3" fill="#0f172a" />
-                            <rect x="46" y="61" width="6" height="3" fill="#0f172a" />
-                            <rect x="55" y="61" width="3" height="3" fill="#0f172a" />
-                            <rect x="61" y="61" width="6" height="3" fill="#0f172a" />
-
-                            {/* Center Official UPI Emblem Badge */}
-                            <rect x="38" y="38" width="24" height="24" rx="4" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1" />
-                            <path
-                              d="M49 42 L44 50 L49 50 L46 58 L56 48 L51 48 Z"
-                              fill="#059669"
-                            />
-                          </svg>
-
-                          {/* Delicate Emerald Laser Scanning Sweep */}
-                          <div className="absolute inset-x-0 top-0 h-7 pointer-events-none z-20 animate-qr-laser flex flex-col justify-end">
-                            <div className="h-5 w-full bg-gradient-to-b from-transparent to-emerald-500/15" />
-                            <div className="h-[1.5px] w-full bg-gradient-to-r from-transparent via-emerald-500 to-transparent shadow-[0_0_6px_#10b981]" />
-                          </div>
-                        </div>
-
-                        {/* Helper texts */}
-                        <p className="text-xs font-semibold text-neutral-800 mt-3">
-                          Auto-generates upon confirming order
-                        </p>
-                        <p className="text-[11px] text-neutral-500 mt-0.5">
-                          Point phone camera or any UPI payment app
-                        </p>
-
-                        {/* Clean Brand Badges */}
-                        <div className="flex items-center justify-center gap-1.5 mt-3 flex-wrap">
-                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
-                            Google Pay
-                          </span>
-                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
-                            PhonePe
-                          </span>
-                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
-                            Paytm
-                          </span>
-                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
-                            BHIM
-                          </span>
+                        <div className="flex gap-2 text-[10px] text-neutral-500 mt-2 flex-wrap">
+                          <span className="text-[10px] text-neutral-400 self-center">Popular handles:</span>
+                          {["@okhdfcbank", "@okaxis", "@paytm", "@ybl", "@sbi"].map((handle) => (
+                            <button
+                              key={handle}
+                              type="button"
+                              onClick={() => {
+                                const base = upiId.split("@")[0] || "";
+                                setUpiId(base ? `${base}${handle}` : handle);
+                              }}
+                              className="bg-white hover:bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded text-[10px] transition-colors cursor-pointer"
+                            >
+                              {handle}
+                            </button>
+                          ))}
                         </div>
                       </div>
                     </div>
