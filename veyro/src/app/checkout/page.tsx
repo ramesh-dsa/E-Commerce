@@ -140,6 +140,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { products } = useProducts();
   const {
+    isHydrated,
     items,
     inStockItems,
     oosItems,
@@ -469,12 +470,13 @@ export default function CheckoutPage() {
     });
   }, [user, addressMode]);
 
-  // Guard: redirect to /cart only if there are no available in-stock items to purchase
+  // Guard: redirect to /cart only AFTER cart has hydrated from localStorage and there are truly 0 in-stock items
   useEffect(() => {
-    if (isMounted && (items.length === 0 || inStockCount === 0)) {
+    if (!isMounted || !isHydrated) return;
+    if (items.length === 0 || inStockCount === 0) {
       router.replace("/cart");
     }
-  }, [isMounted, items.length, inStockCount, router]);
+  }, [isMounted, isHydrated, items.length, inStockCount, router]);
 
   // Delivery calculation
   const shippingFee = shippingMethod === "express" ? 149 : hasFreeShipping ? 0 : 99;
@@ -758,8 +760,8 @@ export default function CheckoutPage() {
     setPaymentStatus("idle");
   };
 
-  // SSR Loading state
-  if (!isMounted) {
+  // SSR & Cart Hydration Loading state
+  if (!isMounted || !isHydrated) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <div className="text-center space-y-3">

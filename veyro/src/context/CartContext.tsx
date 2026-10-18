@@ -20,6 +20,7 @@ export interface CartItem {
 export type CartViewMode = "bag" | "checkout" | "success";
 
 interface CartContextType {
+  isHydrated: boolean;
   items: CartItem[];
   inStockItems: CartItem[];
   oosItems: CartItem[];
@@ -357,6 +358,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const contextValue = useMemo<CartContextType>(
     () => ({
+      isHydrated,
       items: liveItems,
       inStockItems,
       oosItems,
@@ -394,6 +396,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCart,
     }),
     [
+      isHydrated,
       liveItems,
       inStockItems,
       oosItems,
