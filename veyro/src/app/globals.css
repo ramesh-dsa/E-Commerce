@@ -785,6 +785,30 @@ footer input:-webkit-autofill:active,
   will-change: transform, opacity;
 }
 
+/* ─── Primary Place Order Button Micro-Sheen Keyframe ──────────────────── */
+@keyframes order-btn-sheen {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 1;
+  }
+  46%, 100% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-order-sheen {
+  animation: order-btn-sheen 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
 /* ─── Payment Method Selector Micro-Animations ──────────────────────────── */
 @keyframes upi-phone-vibe {
   0%, 45%, 100% {
@@ -870,7 +894,8 @@ footer input:-webkit-autofill:active,
   .animate-card-float,
   .animate-cash-flutter,
   .animate-sheen-sweep,
-  .animate-change-sheen {
+  .animate-change-sheen,
+  .animate-order-sheen {
     animation: none !important;
     transform: none !important;
   }

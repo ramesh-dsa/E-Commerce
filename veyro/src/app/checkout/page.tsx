@@ -2142,22 +2142,42 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-neutral-950 text-white hover:bg-black py-4 px-6 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group relative w-full bg-gradient-to-r from-neutral-950 via-neutral-900 to-neutral-950 text-white hover:from-black hover:to-neutral-900 py-4.5 px-6 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl hover:scale-[1.01] active:scale-[0.985] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden border border-neutral-800/80 hover:border-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                 >
+                  {/* Ambient Periodic Sheen Light Wave (Every 3.2s) */}
+                  {!isSubmitting && (
+                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/12 to-transparent pointer-events-none animate-order-sheen" />
+                  )}
+
+                  {/* High-speed Hover Light Ray Sweep */}
+                  {!isSubmitting && (
+                    <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out pointer-events-none" />
+                  )}
+
+                  {/* Subtle Bottom Emerald Glow Line on Hover */}
+                  <span className="absolute bottom-0 inset-x-8 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Verifying Payment...</span>
+                      <span className="tracking-widest">Securing Order & Payment...</span>
                     </>
                   ) : paymentStatus === "failed" ? (
                     <>
-                      <RotateCcw size={16} />
+                      <RotateCcw size={16} className="text-amber-400 animate-spin" />
                       <span>Retry Payment • {formatPrice(grandTotal)}</span>
                     </>
                   ) : (
                     <>
-                      <span>Place Order • {formatPrice(grandTotal)}</span>
-                      <ArrowRight size={16} />
+                      <Lock
+                        size={15}
+                        className="transition-transform duration-300 group-hover:scale-110 text-neutral-400 group-hover:text-emerald-400 shrink-0"
+                      />
+                      <span className="tracking-wider">Place Order • {formatPrice(grandTotal)}</span>
+                      <ArrowRight
+                        size={16}
+                        className="transition-transform duration-300 group-hover:translate-x-1.5 text-neutral-300 group-hover:text-white shrink-0"
+                      />
                     </>
                   )}
                 </button>
