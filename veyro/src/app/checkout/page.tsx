@@ -33,6 +33,7 @@ import {
   ArrowLeft,
   Pencil,
   ArrowUpRight,
+  Clock,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -1609,14 +1610,6 @@ export default function CheckoutPage() {
                         <div className="absolute bottom-2.5 left-2.5 w-4 h-4 border-b-2 border-l-2 border-neutral-900 rounded-bl-sm pointer-events-none" />
                         <div className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-2 border-r-2 border-neutral-900 rounded-br-sm pointer-events-none" />
 
-                        {/* Ambient Corner Pulse Overlay */}
-                        <div className="absolute inset-2 pointer-events-none animate-qr-corner-reticle">
-                          <div className="absolute top-0.5 left-0.5 w-3.5 h-3.5 border-t-2 border-l-2 border-emerald-500/80 rounded-tl-sm" />
-                          <div className="absolute top-0.5 right-0.5 w-3.5 h-3.5 border-t-2 border-r-2 border-emerald-500/80 rounded-tr-sm" />
-                          <div className="absolute bottom-0.5 left-0.5 w-3.5 h-3.5 border-b-2 border-l-2 border-emerald-500/80 rounded-bl-sm" />
-                          <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 border-b-2 border-r-2 border-emerald-500/80 rounded-br-sm" />
-                        </div>
-
                         {/* Authentic High-Resolution Vector QR Code SVG (45x45 matrix) */}
                         <div className="relative w-full h-full p-1 flex items-center justify-center">
                           <svg
@@ -1647,35 +1640,23 @@ export default function CheckoutPage() {
                           </svg>
                         </div>
 
-                        {/* Optical Laser Scanner Beam & Trailing Gradient Veil */}
+                        {/* Subtle Elegant Scanning Ray */}
                         <div className="absolute inset-x-2.5 top-2.5 pointer-events-none z-20 animate-qr-optical-sweep flex flex-col justify-end">
-                          {/* Luminous Light Curtain Veil */}
-                          <div className="h-10 w-full bg-gradient-to-b from-transparent via-emerald-500/10 to-emerald-500/25" />
-                          {/* Laser Head with Hotspot Core & Tracking Nodes */}
-                          <div className="relative h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_10px_#10b981]">
-                            {/* Center Hotspot */}
-                            <span className="absolute inset-x-1/4 top-0 h-[1.5px] bg-white/95 shadow-[0_0_6px_#ffffff]" />
-                            {/* Precision Optical Tracking Nodes */}
-                            <span className="absolute left-[20%] -top-[2px] w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_#34d399]" />
-                            <span className="absolute right-[20%] -top-[2px] w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_#34d399]" />
-                          </div>
+                          <div className="h-8 w-full bg-gradient-to-b from-transparent to-neutral-900/5" />
+                          <div className="h-[1.5px] w-full bg-gradient-to-r from-transparent via-neutral-800/60 to-transparent shadow-xs" />
                         </div>
                       </div>
 
-                      {/* Status Telemetry & Live Countdown */}
-                      <div className="mt-3.5 text-center space-y-1">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-[11px] font-semibold text-emerald-800">
-                          <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
-                          </span>
-                          <span>Point camera or any UPI app to pay</span>
-                          <span className="text-emerald-300">·</span>
-                          <span className="font-mono text-emerald-700 font-bold">{formatUpiTime(upiCountdown)}</span>
+                      {/* Clean Professional Instructions & Expiry Countdown */}
+                      <div className="mt-3.5 text-center flex flex-col items-center gap-1.5">
+                        <div className="text-[13px] font-semibold text-neutral-900 tracking-tight">
+                          Scan with any UPI app to pay
                         </div>
-                        <p className="text-[11px] text-neutral-500 font-medium">
-                          Open Google Pay, PhonePe, Paytm, or BHIM to complete transaction
-                        </p>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-100/90 border border-neutral-200/80 text-[11px] font-medium text-neutral-600">
+                          <Clock className="w-3 h-3 text-neutral-400 shrink-0" aria-hidden="true" />
+                          <span>Code expires in</span>
+                          <span className="font-mono font-bold text-neutral-900">{formatUpiTime(upiCountdown)}</span>
+                        </div>
                       </div>
 
                       {/* Official UPI Ecosystem Badges with Real Brand Vector Logos */}
