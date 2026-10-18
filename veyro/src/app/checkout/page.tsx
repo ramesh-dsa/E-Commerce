@@ -137,6 +137,41 @@ function DetectedBrandIcon({ brand }: { brand: CardBrand }) {
   }
 }
 
+function UpiOfficialLogo({ className = "w-9 h-3" }: { className?: string }) {
+  return (
+    <svg viewBox="38 4 364 100" className={className} aria-hidden="true">
+      <g transform="matrix(1,0,0,-1,0,180)">
+        {/* U */}
+        <g transform="translate(156.1196,82.541)">
+          <path
+            d="m 0,0 c -1.065,-3.835 -4.557,-6.488 -8.538,-6.488 h -99.491 c -2.711,0 -4.726,0.924 -6.051,2.77 -1.324,1.848 -1.608,4.134 -0.851,6.857 l 24.276,87.387 h 19.301 l -21.683,-78.05 h 77.206 l 21.683,78.05 h 19.297 z"
+            fill="#0f172a"
+          />
+        </g>
+        {/* P */}
+        <g transform="translate(306.4521,170.2881)">
+          <path
+            d="m 0,0 c -1.337,1.843 -3.399,2.773 -6.2,2.773 h -106.036 l -5.252,-18.97 h 19.294 v 0.011 h 77.169 l -5.614,-20.272 h -77.171 l 0.007,0.042 h -19.286 l -16.007,-57.787 h 19.296 l 10.742,38.786 h 86.746 c 2.709,0 5.259,0.924 7.657,2.772 2.393,1.85 3.968,4.131 4.723,6.855 L 0.809,-6.996 C 1.593,-4.181 1.322,-1.845 0,0"
+            fill="#0f172a"
+          />
+        </g>
+        {/* I */}
+        <g transform="translate(316.4629,76.4951)">
+          <path d="M 0,0 H -19.283 L 7.535,96.855 h 19.284 z" fill="#0f172a" />
+        </g>
+        {/* Orange Chevron */}
+        <g transform="translate(359.4717,173.1689)">
+          <path d="m 0,0 24.396,-48.553 -51.343,-48.54 z" fill="#FF7300" />
+        </g>
+        {/* Green Chevron */}
+        <g transform="translate(376.5859,173.1689)">
+          <path d="m 0,0 24.414,-48.553 -51.322,-48.54 z" fill="#00823E" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { products } = useProducts();
@@ -1606,13 +1641,9 @@ export default function CheckoutPage() {
                       {/* Top Header: Authentic UPI Identity & Clean Editorial Amount Display */}
                       <div className="flex items-center justify-between w-full pb-3.5 mb-4 border-b border-neutral-200/70 flex-wrap gap-2">
                         <div className="flex items-center gap-2.5">
-                          {/* Official NPCI UPI Chevron Emblem */}
-                          <div className="w-8 h-8 rounded-lg bg-neutral-50 border border-neutral-200/90 flex items-center justify-center p-1 shadow-2xs">
-                            <svg viewBox="0 0 28 16" className="w-5 h-3 shrink-0" aria-hidden="true">
-                              <path d="M 17,1 23,8 17,15 h 4 L 27,8 21,1 Z" fill="#00823E" />
-                              <path d="M 10,1 16,8 10,15 h 4 L 20,8 14,1 Z" fill="#FF7300" />
-                              <text x="0" y="12" fontFamily="inherit" fontWeight="900" fontStyle="italic" fontSize="11" fill="#1e293b" letterSpacing="0.5">UPI</text>
-                            </svg>
+                          {/* Official NPCI UPI Emblem Badge */}
+                          <div className="h-8 px-2.5 rounded-lg bg-neutral-50 border border-neutral-200/90 flex items-center justify-center shadow-2xs">
+                            <UpiOfficialLogo className="w-9 h-3 shrink-0" />
                           </div>
                           <div>
                             <span className="text-xs font-bold text-neutral-900 tracking-tight">
@@ -1661,8 +1692,8 @@ export default function CheckoutPage() {
                               stroke="#e2e8f0"
                               strokeWidth="0.4"
                             />
-                            {/* UPI Logo in Center */}
-                            <g transform="translate(18.2, 18.2) scale(0.36)">
+                            {/* UPI Logo in Center - Mathematically Centered at (22.5, 22.5) */}
+                            <g transform="translate(16.74, 18.18) scale(0.36)">
                               <path d="M14.5 4.5L20.5 12L14.5 19.5H19L25 12L19 4.5H14.5Z" fill="#00823E" />
                               <path d="M7 4.5L13 12L7 19.5H11.5L17.5 12L11.5 4.5H7Z" fill="#FF7300" />
                             </g>
@@ -1780,11 +1811,7 @@ export default function CheckoutPage() {
                           title="Click to use BHIM UPI (@upi)"
                           className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50/90 border border-neutral-200/90 shadow-2xs hover:shadow-xs text-[11px] font-semibold text-neutral-800 transition-all hover:-translate-y-0.5 cursor-pointer active:scale-95 select-none"
                         >
-                          <svg viewBox="0 0 28 16" className="w-[18px] h-[10px] shrink-0" aria-hidden="true">
-                            <path d="M 17,1 23,8 17,15 h 4 L 27,8 21,1 Z" fill="#00823E" />
-                            <path d="M 10,1 16,8 10,15 h 4 L 20,8 14,1 Z" fill="#FF7300" />
-                            <text x="0" y="12" fontFamily="inherit" fontWeight="900" fontStyle="italic" fontSize="11" fill="#1e293b" letterSpacing="0.5">UPI</text>
-                          </svg>
+                          <UpiOfficialLogo className="w-7 h-2.5 shrink-0" />
                           <span>BHIM UPI</span>
                         </button>
 
