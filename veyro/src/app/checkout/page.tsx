@@ -1505,27 +1505,213 @@ export default function CheckoutPage() {
                         </div>
                       </div>
 
-                      <div className="bg-white border border-neutral-200 rounded-lg p-3 text-center">
-                        <div className="w-24 h-24 bg-neutral-900 mx-auto rounded-lg flex items-center justify-center text-white mb-2 shadow-inner">
-                          {/* Simulated high-res dynamic QR code graphic */}
-                          <div className="grid grid-cols-4 gap-1 p-2 bg-white rounded">
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-200 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-200 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-200 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-200 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
-                            <div className="w-3 h-3 bg-neutral-900 rounded-xs" />
+                      <div className="bg-white border border-neutral-200/90 rounded-2xl p-4 sm:p-5 text-center shadow-xs flex flex-col items-center justify-center relative overflow-hidden group">
+                        {/* Top Header Badge */}
+                        <div className="flex items-center justify-between w-full pb-3 mb-3 border-b border-neutral-100">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                            </span>
+                            <span>Scan to Pay via UPI</span>
+                          </div>
+                          <span className="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80 px-2 py-0.5 rounded-full">
+                            Instant Approval
+                          </span>
+                        </div>
+
+                        {/* Luxury QR Viewport Frame */}
+                        <div className="relative w-36 h-36 bg-white rounded-xl p-2.5 border border-neutral-200/80 shadow-xs flex items-center justify-center overflow-hidden">
+                          {/* Authentic High-Resolution SVG QR Code */}
+                          <svg
+                            viewBox="0 0 100 100"
+                            className="w-full h-full select-none"
+                            shapeRendering="crispEdges"
+                            aria-label="Simulated dynamic UPI QR code"
+                          >
+                            {/* Background */}
+                            <rect width="100" height="100" fill="#ffffff" />
+
+                            {/* Top-Left Finder Eye (7x7 modules) */}
+                            <rect x="4" y="4" width="24" height="24" rx="3" fill="#0f172a" />
+                            <rect x="7" y="7" width="18" height="18" rx="2" fill="#ffffff" />
+                            <rect x="10" y="10" width="12" height="12" rx="1.5" fill="#0f172a" />
+
+                            {/* Top-Right Finder Eye */}
+                            <rect x="72" y="4" width="24" height="24" rx="3" fill="#0f172a" />
+                            <rect x="75" y="7" width="18" height="18" rx="2" fill="#ffffff" />
+                            <rect x="78" y="10" width="12" height="12" rx="1.5" fill="#0f172a" />
+
+                            {/* Bottom-Left Finder Eye */}
+                            <rect x="4" y="72" width="24" height="24" rx="3" fill="#0f172a" />
+                            <rect x="7" y="75" width="18" height="18" rx="2" fill="#ffffff" />
+                            <rect x="10" y="78" width="12" height="12" rx="1.5" fill="#0f172a" />
+
+                            {/* Alignment Pattern (Bottom-Right) */}
+                            <rect x="70" y="70" width="16" height="16" rx="2" fill="#0f172a" />
+                            <rect x="73" y="73" width="10" height="10" rx="1" fill="#ffffff" />
+                            <rect x="76" y="76" width="4" height="4" rx="0.5" fill="#0f172a" />
+
+                            {/* Timing Pattern Lines */}
+                            {/* Horizontal Timing Pattern */}
+                            <rect x="31" y="14" width="3" height="3" fill="#0f172a" />
+                            <rect x="37" y="14" width="3" height="3" fill="#0f172a" />
+                            <rect x="43" y="14" width="3" height="3" fill="#0f172a" />
+                            <rect x="49" y="14" width="3" height="3" fill="#0f172a" />
+                            <rect x="55" y="14" width="3" height="3" fill="#0f172a" />
+                            <rect x="61" y="14" width="3" height="3" fill="#0f172a" />
+                            <rect x="67" y="14" width="3" height="3" fill="#0f172a" />
+
+                            {/* Vertical Timing Pattern */}
+                            <rect x="14" y="31" width="3" height="3" fill="#0f172a" />
+                            <rect x="14" y="37" width="3" height="3" fill="#0f172a" />
+                            <rect x="14" y="43" width="3" height="3" fill="#0f172a" />
+                            <rect x="14" y="49" width="3" height="3" fill="#0f172a" />
+                            <rect x="14" y="55" width="3" height="3" fill="#0f172a" />
+                            <rect x="14" y="61" width="3" height="3" fill="#0f172a" />
+                            <rect x="14" y="67" width="3" height="3" fill="#0f172a" />
+
+                            {/* High-density authentic QR data modules */}
+                            {/* Top area between finders */}
+                            <rect x="31" y="5" width="3" height="3" fill="#0f172a" />
+                            <rect x="37" y="5" width="6" height="3" fill="#0f172a" />
+                            <rect x="46" y="5" width="3" height="3" fill="#0f172a" />
+                            <rect x="52" y="5" width="3" height="3" fill="#0f172a" />
+                            <rect x="61" y="5" width="6" height="3" fill="#0f172a" />
+                            <rect x="34" y="9" width="3" height="3" fill="#0f172a" />
+                            <rect x="40" y="9" width="3" height="3" fill="#0f172a" />
+                            <rect x="49" y="9" width="6" height="3" fill="#0f172a" />
+                            <rect x="58" y="9" width="3" height="3" fill="#0f172a" />
+                            <rect x="64" y="9" width="3" height="3" fill="#0f172a" />
+                            <rect x="31" y="18" width="6" height="3" fill="#0f172a" />
+                            <rect x="40" y="18" width="3" height="3" fill="#0f172a" />
+                            <rect x="46" y="18" width="6" height="3" fill="#0f172a" />
+                            <rect x="55" y="18" width="3" height="3" fill="#0f172a" />
+                            <rect x="64" y="18" width="3" height="3" fill="#0f172a" />
+                            <rect x="34" y="22" width="3" height="3" fill="#0f172a" />
+                            <rect x="43" y="22" width="3" height="3" fill="#0f172a" />
+                            <rect x="52" y="22" width="6" height="3" fill="#0f172a" />
+                            <rect x="61" y="22" width="6" height="3" fill="#0f172a" />
+
+                            {/* Left area below top-left finder */}
+                            <rect x="5" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="18" y="31" width="3" height="3" fill="#0f172a" />
+                            <rect x="24" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="8" y="37" width="3" height="3" fill="#0f172a" />
+                            <rect x="21" y="37" width="6" height="3" fill="#0f172a" />
+                            <rect x="5" y="43" width="3" height="3" fill="#0f172a" />
+                            <rect x="11" y="43" width="6" height="3" fill="#0f172a" />
+                            <rect x="24" y="43" width="3" height="3" fill="#0f172a" />
+                            <rect x="8" y="49" width="6" height="3" fill="#0f172a" />
+                            <rect x="18" y="49" width="6" height="3" fill="#0f172a" />
+                            <rect x="5" y="55" width="6" height="3" fill="#0f172a" />
+                            <rect x="14" y="55" width="3" height="3" fill="#0f172a" />
+                            <rect x="21" y="55" width="3" height="3" fill="#0f172a" />
+                            <rect x="8" y="61" width="3" height="3" fill="#0f172a" />
+                            <rect x="18" y="61" width="6" height="3" fill="#0f172a" />
+                            <rect x="5" y="67" width="6" height="3" fill="#0f172a" />
+                            <rect x="24" y="67" width="6" height="3" fill="#0f172a" />
+
+                            {/* Right area below top-right finder */}
+                            <rect x="72" y="31" width="3" height="3" fill="#0f172a" />
+                            <rect x="78" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="87" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="75" y="37" width="3" height="3" fill="#0f172a" />
+                            <rect x="84" y="37" width="3" height="3" fill="#0f172a" />
+                            <rect x="90" y="37" width="6" height="3" fill="#0f172a" />
+                            <rect x="72" y="43" width="6" height="3" fill="#0f172a" />
+                            <rect x="81" y="43" width="6" height="3" fill="#0f172a" />
+                            <rect x="93" y="43" width="3" height="3" fill="#0f172a" />
+                            <rect x="75" y="49" width="3" height="3" fill="#0f172a" />
+                            <rect x="84" y="49" width="6" height="3" fill="#0f172a" />
+                            <rect x="93" y="49" width="3" height="3" fill="#0f172a" />
+                            <rect x="72" y="55" width="6" height="3" fill="#0f172a" />
+                            <rect x="81" y="55" width="3" height="3" fill="#0f172a" />
+                            <rect x="87" y="55" width="6" height="3" fill="#0f172a" />
+                            <rect x="78" y="61" width="6" height="3" fill="#0f172a" />
+                            <rect x="90" y="61" width="6" height="3" fill="#0f172a" />
+                            <rect x="72" y="67" width="3" height="3" fill="#0f172a" />
+                            <rect x="81" y="67" width="6" height="3" fill="#0f172a" />
+                            <rect x="93" y="67" width="3" height="3" fill="#0f172a" />
+
+                            {/* Bottom area beside bottom-left finder */}
+                            <rect x="31" y="73" width="6" height="3" fill="#0f172a" />
+                            <rect x="40" y="73" width="3" height="3" fill="#0f172a" />
+                            <rect x="46" y="73" width="6" height="3" fill="#0f172a" />
+                            <rect x="55" y="73" width="6" height="3" fill="#0f172a" />
+                            <rect x="64" y="73" width="3" height="3" fill="#0f172a" />
+                            <rect x="34" y="79" width="3" height="3" fill="#0f172a" />
+                            <rect x="43" y="79" width="6" height="3" fill="#0f172a" />
+                            <rect x="52" y="79" width="3" height="3" fill="#0f172a" />
+                            <rect x="61" y="79" width="6" height="3" fill="#0f172a" />
+                            <rect x="31" y="85" width="6" height="3" fill="#0f172a" />
+                            <rect x="40" y="85" width="6" height="3" fill="#0f172a" />
+                            <rect x="49" y="85" width="3" height="3" fill="#0f172a" />
+                            <rect x="58" y="85" width="6" height="3" fill="#0f172a" />
+                            <rect x="34" y="91" width="3" height="3" fill="#0f172a" />
+                            <rect x="43" y="91" width="3" height="3" fill="#0f172a" />
+                            <rect x="49" y="91" width="6" height="3" fill="#0f172a" />
+                            <rect x="58" y="91" width="3" height="3" fill="#0f172a" />
+                            <rect x="64" y="91" width="3" height="3" fill="#0f172a" />
+
+                            {/* Center Area Data Modules */}
+                            <rect x="31" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="40" y="31" width="3" height="3" fill="#0f172a" />
+                            <rect x="46" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="55" y="31" width="3" height="3" fill="#0f172a" />
+                            <rect x="61" y="31" width="6" height="3" fill="#0f172a" />
+                            <rect x="34" y="37" width="3" height="3" fill="#0f172a" />
+                            <rect x="64" y="37" width="3" height="3" fill="#0f172a" />
+                            <rect x="31" y="43" width="3" height="3" fill="#0f172a" />
+                            <rect x="67" y="43" width="3" height="3" fill="#0f172a" />
+                            <rect x="31" y="49" width="3" height="3" fill="#0f172a" />
+                            <rect x="67" y="49" width="3" height="3" fill="#0f172a" />
+                            <rect x="34" y="55" width="3" height="3" fill="#0f172a" />
+                            <rect x="64" y="55" width="3" height="3" fill="#0f172a" />
+                            <rect x="31" y="61" width="6" height="3" fill="#0f172a" />
+                            <rect x="40" y="61" width="3" height="3" fill="#0f172a" />
+                            <rect x="46" y="61" width="6" height="3" fill="#0f172a" />
+                            <rect x="55" y="61" width="3" height="3" fill="#0f172a" />
+                            <rect x="61" y="61" width="6" height="3" fill="#0f172a" />
+
+                            {/* Center Official UPI Emblem Badge */}
+                            <rect x="38" y="38" width="24" height="24" rx="4" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1" />
+                            <path
+                              d="M49 42 L44 50 L49 50 L46 58 L56 48 L51 48 Z"
+                              fill="#059669"
+                            />
+                          </svg>
+
+                          {/* Delicate Emerald Laser Scanning Sweep */}
+                          <div className="absolute inset-x-0 top-0 h-7 pointer-events-none z-20 animate-qr-laser flex flex-col justify-end">
+                            <div className="h-5 w-full bg-gradient-to-b from-transparent to-emerald-500/15" />
+                            <div className="h-[1.5px] w-full bg-gradient-to-r from-transparent via-emerald-500 to-transparent shadow-[0_0_6px_#10b981]" />
                           </div>
                         </div>
-                        <p className="text-[10px] text-neutral-500 font-medium">
-                          Auto-generated UPI QR code active on confirmation
+
+                        {/* Helper texts */}
+                        <p className="text-xs font-semibold text-neutral-800 mt-3">
+                          Auto-generates upon confirming order
                         </p>
+                        <p className="text-[11px] text-neutral-500 mt-0.5">
+                          Point phone camera or any UPI payment app
+                        </p>
+
+                        {/* Clean Brand Badges */}
+                        <div className="flex items-center justify-center gap-1.5 mt-3 flex-wrap">
+                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
+                            Google Pay
+                          </span>
+                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
+                            PhonePe
+                          </span>
+                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
+                            Paytm
+                          </span>
+                          <span className="text-[10px] font-medium bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded border border-neutral-200/70">
+                            BHIM
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>

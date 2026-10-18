@@ -718,6 +718,29 @@ footer input:-webkit-autofill:active,
   animation: autofill-glow 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ─── UPI Dynamic QR Laser Scanner Keyframes ───────────────────────────── */
+@keyframes qr-laser-scan {
+  0% {
+    transform: translateY(-2px);
+    opacity: 0.15;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(116px);
+    opacity: 0.15;
+  }
+}
+
+.animate-qr-laser {
+  animation: qr-laser-scan 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  will-change: transform, opacity;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-drawer-in,
   .animate-drawer-out,
@@ -727,7 +750,8 @@ footer input:-webkit-autofill:active,
   .animate-payment-shake,
   .animate-radar-sweep,
   .animate-live-ping,
-  .animate-autofill-highlight {
+  .animate-autofill-highlight,
+  .animate-qr-laser {
     animation: none !important;
     transform: none !important;
   }
