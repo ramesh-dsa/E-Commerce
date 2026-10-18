@@ -1669,10 +1669,13 @@ export default function CheckoutPage() {
                           </svg>
                         </div>
 
-                        {/* Subtle Elegant Scanning Ray */}
-                        <div className="absolute inset-x-2.5 top-2.5 pointer-events-none z-20 animate-qr-optical-sweep flex flex-col justify-end">
-                          <div className="h-8 w-full bg-gradient-to-b from-transparent to-neutral-900/5" />
-                          <div className="h-[1.5px] w-full bg-gradient-to-r from-transparent via-neutral-800/60 to-transparent shadow-xs" />
+                        {/* High-Precision Optical Laser Scanner Ray */}
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-x-3 top-3 pointer-events-none z-20 animate-qr-optical-sweep flex flex-col items-center"
+                        >
+                          <div className="qr-laser-halo" />
+                          <div className="qr-laser-beam" />
                         </div>
                       </div>
 

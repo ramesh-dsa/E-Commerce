@@ -721,28 +721,57 @@ footer input:-webkit-autofill:active,
 /* ─── UPI Dynamic QR Optical Laser Scanner Keyframes ───────────────────── */
 @keyframes qr-optical-sweep {
   0% {
-    transform: translateY(0px);
-    opacity: 0.2;
+    transform: translateY(4px);
+    opacity: 0.3;
   }
-  10% {
+  12% {
     opacity: 1;
   }
   50% {
-    transform: translateY(84px);
+    transform: translateY(88px);
     opacity: 1;
   }
-  90% {
+  88% {
     opacity: 1;
   }
   100% {
-    transform: translateY(168px);
-    opacity: 0.2;
+    transform: translateY(172px);
+    opacity: 0.3;
   }
 }
 
 .animate-qr-optical-sweep {
-  animation: qr-optical-sweep 2.5s cubic-bezier(0.45, 0, 0.25, 1) infinite alternate;
+  animation: qr-optical-sweep 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
   will-change: transform, opacity;
+}
+
+/* Symmetrical Optical Laser Halo (16px aura) */
+.qr-laser-halo {
+  position: absolute;
+  top: -7px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: linear-gradient(180deg, transparent 0%, rgba(16, 185, 129, 0.18) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Razor-Sharp 2px Luminescent Emerald Beam with White-Hot Core */
+.qr-laser-beam {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(16, 185, 129, 0.25) 8%, 
+    #10b981 25%, 
+    #34d399 50%, 
+    #10b981 75%, 
+    rgba(16, 185, 129, 0.25) 92%, 
+    transparent 100%
+  );
+  box-shadow: 0 0 8px 1px rgba(16, 185, 129, 0.65), 0 0 2px 0.5px #ffffff;
+  border-radius: 9999px;
 }
 
 @keyframes qr-corner-reticle {
