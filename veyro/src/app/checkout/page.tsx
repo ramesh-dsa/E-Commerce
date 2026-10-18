@@ -1448,18 +1448,6 @@ export default function CheckoutPage() {
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-sheen-sweep pointer-events-none" />
                   )}
 
-                  {/* Top-Right Active Status Indicator */}
-                  <span className="absolute top-2 right-2 flex items-center justify-center">
-                    {paymentMethod === "upi" ? (
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                      </span>
-                    ) : (
-                      <span className="w-2 h-2 rounded-full border border-neutral-300 opacity-0 group-hover:opacity-60 transition-opacity" />
-                    )}
-                  </span>
-
                   {/* Animated Icon Container */}
                   <div
                     className={`w-9 h-9 rounded-lg flex items-center justify-center mb-1.5 transition-all duration-300 ${
@@ -1503,17 +1491,6 @@ export default function CheckoutPage() {
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-sheen-sweep pointer-events-none" />
                   )}
 
-                  <span className="absolute top-2 right-2 flex items-center justify-center">
-                    {paymentMethod === "card" ? (
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                      </span>
-                    ) : (
-                      <span className="w-2 h-2 rounded-full border border-neutral-300 opacity-0 group-hover:opacity-60 transition-opacity" />
-                    )}
-                  </span>
-
                   <div
                     className={`w-9 h-9 rounded-lg flex items-center justify-center mb-1.5 transition-all duration-300 ${
                       paymentMethod === "card"
@@ -1555,17 +1532,6 @@ export default function CheckoutPage() {
                   {paymentMethod === "cod" && (
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-sheen-sweep pointer-events-none" />
                   )}
-
-                  <span className="absolute top-2 right-2 flex items-center justify-center">
-                    {paymentMethod === "cod" ? (
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                      </span>
-                    ) : (
-                      <span className="w-2 h-2 rounded-full border border-neutral-300 opacity-0 group-hover:opacity-60 transition-opacity" />
-                    )}
-                  </span>
 
                   <div
                     className={`w-9 h-9 rounded-lg flex items-center justify-center mb-1.5 transition-all duration-300 ${
