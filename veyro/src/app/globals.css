@@ -741,6 +741,75 @@ footer input:-webkit-autofill:active,
   will-change: transform, opacity;
 }
 
+/* ─── Payment Method Selector Micro-Animations ──────────────────────────── */
+@keyframes upi-phone-vibe {
+  0%, 45%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  48% {
+    transform: translateY(-2px) rotate(-6deg);
+  }
+  52% {
+    transform: translateY(-2px) rotate(6deg);
+  }
+  56% {
+    transform: translateY(-1px) rotate(-3deg);
+  }
+  60% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes card-magnetic-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-4deg);
+  }
+}
+
+@keyframes cash-flutter-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.05) rotate(2deg);
+  }
+}
+
+@keyframes card-sheen-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  35% {
+    transform: translateX(200%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+  }
+}
+
+.animate-upi-phone {
+  animation: upi-phone-vibe 3.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-card-float {
+  animation: card-magnetic-float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-cash-flutter {
+  animation: cash-flutter-bounce 3.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-sheen-sweep {
+  animation: card-sheen-sweep 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-drawer-in,
   .animate-drawer-out,
@@ -751,7 +820,11 @@ footer input:-webkit-autofill:active,
   .animate-radar-sweep,
   .animate-live-ping,
   .animate-autofill-highlight,
-  .animate-qr-laser {
+  .animate-qr-laser,
+  .animate-upi-phone,
+  .animate-card-float,
+  .animate-cash-flutter,
+  .animate-sheen-sweep {
     animation: none !important;
     transform: none !important;
   }

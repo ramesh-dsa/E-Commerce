@@ -1408,61 +1408,166 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Payment Tabs */}
-              <div className="grid grid-cols-3 gap-2.5 mb-5">
+              {/* Payment Tabs with Micro-Animations & Physics */}
+              <div className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-5">
+                {/* 1. Instant UPI */}
                 <button
                   type="button"
                   onClick={() => {
                     setPaymentMethod("upi");
                     if (paymentStatus === "failed") setPaymentStatus("idle");
                   }}
-                  className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                  className={`group relative flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer overflow-hidden active:scale-[0.98] ${
                     paymentMethod === "upi"
-                      ? "border-neutral-900 bg-neutral-950 text-white shadow-xs"
-                      : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
+                      ? "border-neutral-950 bg-neutral-950 text-white shadow-md ring-2 ring-neutral-950/20"
+                      : "border-neutral-200/90 bg-white text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50/80 hover:shadow-xs"
                   }`}
                 >
-                  <Smartphone size={20} className="mb-1.5 shrink-0" />
-                  <span className="text-xs font-bold">Instant UPI</span>
-                  <span className={`text-[10px] ${paymentMethod === "upi" ? "text-neutral-300" : "text-neutral-400"}`}>
+                  {/* Subtle luxury sheen sweep on active card */}
+                  {paymentMethod === "upi" && (
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-sheen-sweep pointer-events-none" />
+                  )}
+
+                  {/* Top-Right Active Status Indicator */}
+                  <span className="absolute top-2 right-2 flex items-center justify-center">
+                    {paymentMethod === "upi" ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                    ) : (
+                      <span className="w-2 h-2 rounded-full border border-neutral-300 opacity-0 group-hover:opacity-60 transition-opacity" />
+                    )}
+                  </span>
+
+                  {/* Animated Icon Container */}
+                  <div
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center mb-1.5 transition-all duration-300 ${
+                      paymentMethod === "upi"
+                        ? "bg-neutral-900 text-emerald-400 shadow-inner"
+                        : "bg-neutral-100 text-neutral-800 group-hover:bg-neutral-200/80 group-hover:text-black"
+                    }`}
+                  >
+                    <Smartphone
+                      size={20}
+                      className={`transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 ${
+                        paymentMethod === "upi" ? "animate-upi-phone text-emerald-400" : ""
+                      }`}
+                    />
+                  </div>
+
+                  <span className="text-xs font-bold tracking-tight">Instant UPI</span>
+                  <span
+                    className={`text-[10px] transition-colors ${
+                      paymentMethod === "upi" ? "text-neutral-300 font-medium" : "text-neutral-500 font-normal"
+                    }`}
+                  >
                     GPay / PhonePe
                   </span>
                 </button>
 
+                {/* 2. Cards */}
                 <button
                   type="button"
                   onClick={() => {
                     setPaymentMethod("card");
                     if (paymentStatus === "failed") setPaymentStatus("idle");
                   }}
-                  className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                  className={`group relative flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer overflow-hidden active:scale-[0.98] ${
                     paymentMethod === "card"
-                      ? "border-neutral-900 bg-neutral-950 text-white shadow-xs"
-                      : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
+                      ? "border-neutral-950 bg-neutral-950 text-white shadow-md ring-2 ring-neutral-950/20"
+                      : "border-neutral-200/90 bg-white text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50/80 hover:shadow-xs"
                   }`}
                 >
-                  <CreditCard size={20} className="mb-1.5 shrink-0" />
-                  <span className="text-xs font-bold">Cards</span>
-                  <span className={`text-[10px] ${paymentMethod === "card" ? "text-neutral-300" : "text-neutral-400"}`}>
+                  {paymentMethod === "card" && (
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-sheen-sweep pointer-events-none" />
+                  )}
+
+                  <span className="absolute top-2 right-2 flex items-center justify-center">
+                    {paymentMethod === "card" ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                    ) : (
+                      <span className="w-2 h-2 rounded-full border border-neutral-300 opacity-0 group-hover:opacity-60 transition-opacity" />
+                    )}
+                  </span>
+
+                  <div
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center mb-1.5 transition-all duration-300 ${
+                      paymentMethod === "card"
+                        ? "bg-neutral-900 text-blue-400 shadow-inner"
+                        : "bg-neutral-100 text-neutral-800 group-hover:bg-neutral-200/80 group-hover:text-black"
+                    }`}
+                  >
+                    <CreditCard
+                      size={20}
+                      className={`transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 ${
+                        paymentMethod === "card" ? "animate-card-float text-blue-400" : ""
+                      }`}
+                    />
+                  </div>
+
+                  <span className="text-xs font-bold tracking-tight">Cards</span>
+                  <span
+                    className={`text-[10px] transition-colors ${
+                      paymentMethod === "card" ? "text-neutral-300 font-medium" : "text-neutral-500 font-normal"
+                    }`}
+                  >
                     Credit / Debit
                   </span>
                 </button>
 
+                {/* 3. Cash on Delivery */}
                 <button
                   type="button"
                   onClick={() => {
                     setPaymentMethod("cod");
                     if (paymentStatus === "failed") setPaymentStatus("idle");
                   }}
-                  className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                  className={`group relative flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer overflow-hidden active:scale-[0.98] ${
                     paymentMethod === "cod"
-                      ? "border-neutral-900 bg-neutral-950 text-white shadow-xs"
-                      : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300"
+                      ? "border-neutral-950 bg-neutral-950 text-white shadow-md ring-2 ring-neutral-950/20"
+                      : "border-neutral-200/90 bg-white text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50/80 hover:shadow-xs"
                   }`}
                 >
-                  <Banknote size={20} className="mb-1.5 shrink-0" />
-                  <span className="text-xs font-bold">Cash on Delivery</span>
-                  <span className={`text-[10px] ${paymentMethod === "cod" ? "text-neutral-300" : "text-neutral-400"}`}>
+                  {paymentMethod === "cod" && (
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-sheen-sweep pointer-events-none" />
+                  )}
+
+                  <span className="absolute top-2 right-2 flex items-center justify-center">
+                    {paymentMethod === "cod" ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                    ) : (
+                      <span className="w-2 h-2 rounded-full border border-neutral-300 opacity-0 group-hover:opacity-60 transition-opacity" />
+                    )}
+                  </span>
+
+                  <div
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center mb-1.5 transition-all duration-300 ${
+                      paymentMethod === "cod"
+                        ? "bg-neutral-900 text-amber-400 shadow-inner"
+                        : "bg-neutral-100 text-neutral-800 group-hover:bg-neutral-200/80 group-hover:text-black"
+                    }`}
+                  >
+                    <Banknote
+                      size={20}
+                      className={`transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1 ${
+                        paymentMethod === "cod" ? "animate-cash-flutter text-amber-400" : ""
+                      }`}
+                    />
+                  </div>
+
+                  <span className="text-xs font-bold tracking-tight">Cash on Delivery</span>
+                  <span
+                    className={`text-[10px] transition-colors ${
+                      paymentMethod === "cod" ? "text-neutral-300 font-medium" : "text-neutral-500 font-normal"
+                    }`}
+                  >
                     Doorstep Pay
                   </span>
                 </button>
