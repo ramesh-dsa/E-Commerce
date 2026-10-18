@@ -1678,27 +1678,57 @@ export default function CheckoutPage() {
                         </p>
                       </div>
 
-                      {/* Official UPI Ecosystem Badges */}
+                      {/* Official UPI Ecosystem Badges with Real Brand Vector Logos */}
                       <div className="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-neutral-100 w-full flex-wrap">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
-                          <span className="w-2 h-2 rounded-full bg-[#4285F4]" />
-                          Google Pay
+                        {/* 1. Google Pay */}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
+                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+                          </svg>
+                          <span>Google Pay</span>
                         </span>
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
-                          <span className="w-2 h-2 rounded-full bg-[#5f259f]" />
-                          PhonePe
+
+                        {/* 2. PhonePe */}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0">
+                            <rect width="24" height="24" rx="6" fill="#5f259f" />
+                            <path d="M12 4.5v15M12 8.5a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H7.5V8.5H16" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                          </svg>
+                          <span>PhonePe</span>
                         </span>
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
-                          <span className="w-2 h-2 rounded-full bg-[#00baf2]" />
-                          Paytm
+
+                        {/* 3. Paytm */}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0">
+                            <rect width="24" height="24" rx="6" fill="#002970" />
+                            <path d="M7 6h5c2.2 0 4 1.8 4 4s-1.8 4-4 4H9v4H7V6z" fill="#00BAF2" />
+                            <path d="M9 8v4h3c1.1 0 2-.9 2-2s-.9-2-2-2H9z" fill="#ffffff" />
+                          </svg>
+                          <span>Paytm</span>
                         </span>
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
-                          <span className="w-2 h-2 rounded-full bg-[#00823E]" />
-                          BHIM UPI
+
+                        {/* 4. BHIM UPI */}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none">
+                            <rect width="24" height="24" rx="6" fill="#002F6C" />
+                            <path d="M14.5 4.5L20.5 12L14.5 19.5H19L25 12L19 4.5H14.5Z" fill="#00823E" transform="scale(0.7) translate(3, 4)" />
+                            <path d="M7 4.5L13 12L7 19.5H11.5L17.5 12L11.5 4.5H7Z" fill="#FF7300" transform="scale(0.7) translate(3, 4)" />
+                          </svg>
+                          <span>BHIM UPI</span>
                         </span>
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/80 text-[11px] font-semibold text-neutral-800 transition-colors">
-                          <span className="w-2 h-2 rounded-full bg-neutral-900" />
-                          CRED
+
+                        {/* 5. CRED */}
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-neutral-50 border border-neutral-200/90 shadow-2xs text-[11px] font-semibold text-neutral-800 transition-all hover:scale-[1.03]">
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none">
+                            <rect width="24" height="24" rx="6" fill="#000000" />
+                            <path d="M7 6h10v12H7z" stroke="#ffffff" strokeWidth="1.8" strokeLinejoin="round" fill="none" />
+                            <path d="M10 9v5a2 2 0 0 0 4 0V9" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                            <path d="M12 11h2" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
+                          </svg>
+                          <span>CRED</span>
                         </span>
                       </div>
 
