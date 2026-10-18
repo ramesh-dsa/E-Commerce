@@ -839,68 +839,85 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-neutral-900 pb-20">
-      {/* ── DISTRACTION-FREE LUXURY HEADER ────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Back link */}
+      {/* ── UNIFIED EDITORIAL CHECKOUT PROGRESS & UTILITY BAR ─────────────────── */}
+      <div className="bg-white border-b border-neutral-200/80 sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2 sm:gap-4">
+          {/* Left: Return to Bag with Item Count Pill */}
           <Link
             href="/cart"
-            className="flex items-center gap-1.5 text-xs font-semibold text-neutral-600 hover:text-neutral-950 transition-colors"
+            className="group flex items-center gap-1.5 sm:gap-2 text-xs font-semibold text-neutral-600 hover:text-neutral-950 transition-colors select-none shrink-0"
           >
-            <ChevronLeft size={16} />
-            <span className="hidden sm:inline">Return to Bag</span>
-            <span className="sm:hidden">Bag</span>
+            <span className="w-6 h-6 rounded-full bg-neutral-100 group-hover:bg-neutral-900 group-hover:text-white flex items-center justify-center transition-all duration-200 shrink-0">
+              <ChevronLeft size={14} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
+            </span>
+            <span className="hidden md:inline whitespace-nowrap">Return to Bag</span>
+            <span className="md:hidden whitespace-nowrap">Bag</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-neutral-100 text-neutral-600 text-[10px] font-semibold font-mono tracking-tight group-hover:bg-neutral-200/80 transition-colors">
+              {inStockCount}
+            </span>
           </Link>
 
-          {/* Centered Brand Mark */}
-          <Link
-            href="/"
-            className="text-lg sm:text-xl font-black tracking-[0.25em] uppercase text-neutral-950 hover:opacity-90 transition-opacity"
-          >
-            VEYRO
-          </Link>
-
-          {/* Secure Trust Badge */}
-          <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-neutral-500">
-            <Lock size={13} className="text-emerald-600 shrink-0" />
-            <span className="hidden sm:inline">256-Bit SSL Encrypted</span>
-            <span className="sm:hidden font-mono">Secure</span>
-          </div>
-        </div>
-      </header>
-
-      {/* ── PROGRESS STEPPER ─────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-neutral-200/60 py-3.5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav aria-label="Checkout Steps" className="flex items-center justify-center gap-2 sm:gap-4 text-xs">
+          {/* Center: Refined Editorial Stepper with Connected Hairline Tracks */}
+          <nav aria-label="Checkout Progress" className="flex items-center gap-1.5 sm:gap-2.5 text-xs select-none shrink-0">
+            {/* Step 1: Bag (Completed) */}
             <Link
               href="/cart"
-              className="flex items-center gap-1.5 text-neutral-500 hover:text-neutral-900 font-medium transition-colors"
+              className="group flex items-center gap-1.5 text-neutral-500 hover:text-neutral-950 transition-colors shrink-0 whitespace-nowrap"
             >
-              <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center justify-center">
-                ✓
+              <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <Check size={10} className="stroke-[3]" />
               </span>
-              <span>Bag</span>
+              <span className="font-medium text-neutral-600 group-hover:text-neutral-950 transition-colors hidden sm:inline">
+                Bag
+              </span>
             </Link>
 
-            <span className="text-neutral-300">/</span>
+            {/* Completed Hairline Connector Track */}
+            <div className="w-3 sm:w-6 lg:w-10 h-px bg-emerald-600/70 shrink-0" aria-hidden="true" />
 
-            <div className="flex items-center gap-1.5 text-neutral-950 font-bold">
-              <span className="w-5 h-5 rounded-full bg-neutral-950 text-white text-[10px] font-bold flex items-center justify-center">
+            {/* Step 2: Delivery & Payment (Active) */}
+            <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-950 shrink-0 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-neutral-950 text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-xs ring-2 ring-neutral-950/15">
                 2
               </span>
-              <span>Delivery & Payment</span>
+              <span className="font-bold tracking-tight text-neutral-950">
+                <span className="hidden lg:inline">Delivery & Payment</span>
+                <span className="lg:hidden">Payment</span>
+              </span>
             </div>
 
-            <span className="text-neutral-300">/</span>
+            {/* Pending Hairline Connector Track */}
+            <div className="w-3 sm:w-6 lg:w-10 h-px bg-neutral-200 shrink-0" aria-hidden="true" />
 
-            <div className="flex items-center gap-1.5 text-neutral-400 font-medium">
-              <span className="w-5 h-5 rounded-full bg-neutral-100 text-neutral-400 text-[10px] font-bold flex items-center justify-center">
+            {/* Step 3: Confirmation (Upcoming) */}
+            <div className="flex items-center gap-1.5 text-neutral-400 shrink-0 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-400 text-[10px] font-semibold flex items-center justify-center shrink-0">
                 3
               </span>
-              <span>Confirmation</span>
+              <span className="font-medium text-neutral-400 hidden sm:inline">
+                Confirmation
+              </span>
             </div>
           </nav>
+
+          {/* Right: Reassuring Micro-Trust Badge */}
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-neutral-50 border border-neutral-200/80 text-[11px] text-neutral-600 select-none shadow-2xs shrink-0 whitespace-nowrap">
+            <span className="relative flex h-2 w-2" aria-hidden="true">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <ShieldCheck size={14} className="text-neutral-700 shrink-0" aria-hidden="true" />
+            <span className="font-mono font-semibold text-neutral-800 tracking-tight text-[11px] hidden sm:inline">
+              256-Bit SSL
+            </span>
+            <span className="text-neutral-300 hidden md:inline">•</span>
+            <span className="text-neutral-500 font-medium text-[11px] hidden md:inline">
+              Bank-Grade
+            </span>
+            <span className="sm:hidden font-mono font-semibold text-neutral-800 text-[10px]">
+              Secure
+            </span>
+          </div>
         </div>
       </div>
 
