@@ -20,6 +20,8 @@ export * from "./FootwearFilterSidebar";
 export * from "./WatchesCatalog";
 export * from "./WatchFilterSidebar";
 export * from "./CollectionsCatalog";
+export * from "./CollectionsInteractiveShowcase";
+export * from "./CollectionsShowcase";
 export * from "./ProductSearch";
 export * from "./ProductBackButton";
 export * from "./ProductReviewsSection";

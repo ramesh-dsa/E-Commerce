@@ -109,7 +109,11 @@ const COLLECTIONS: CollectionItem[] = [
   },
 ];
 
-export function CollectionsCatalog() {
+export interface CollectionsCatalogProps {
+  showHeroHeader?: boolean;
+}
+
+export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalogProps = {}) {
   const [activeCategory, setActiveCategory] = useState<"all" | "tees" | "shoes" | "resort">("all");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -125,24 +129,25 @@ export function CollectionsCatalog() {
   return (
     <div className="w-full bg-[#fbfbf9] text-[#111111]">
       {/* ── 1. EDITORIAL LOOKBOOK HEADER ─────────────────────────── */}
-      <section className="w-full border-b border-[#e8e8e5] bg-white py-14 sm:py-20 px-5 sm:px-8 lg:px-14">
-        <div className="max-w-[1536px] mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-2.5 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-2">
-              <span>VEYRO ARCHIVE</span>
-              <span>•</span>
-              <span className="text-[#111111]">CURATED EDITIONS</span>
+      {showHeroHeader ? (
+        <section className="w-full border-b border-[#e8e8e5] bg-white py-14 sm:py-20 px-5 sm:px-8 lg:px-14">
+          <div className="max-w-[1536px] mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2.5 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-2">
+                <span>VEYRO ARCHIVE</span>
+                <span>•</span>
+                <span className="text-[#111111]">CURATED EDITIONS</span>
+              </div>
+              <span className="font-script text-3xl sm:text-5xl text-[#111111] tracking-normal block -mb-1 font-bold">
+                the signature capsules
+              </span>
+              <h1 className="text-3xl sm:text-6xl font-black uppercase tracking-tight text-[#111111] leading-none">
+                ARCHIVE COLLECTIONS
+              </h1>
+              <p className="mt-3 text-xs sm:text-sm text-neutral-600 max-w-xl leading-relaxed">
+                Explore our architectural drops categorised by silhouette, yarn density, and aesthetic purpose. Built for effortless daily rotation.
+              </p>
             </div>
-            <span className="font-script text-3xl sm:text-5xl text-[#111111] tracking-normal block -mb-1 font-bold">
-              the signature capsules
-            </span>
-            <h1 className="text-3xl sm:text-6xl font-black uppercase tracking-tight text-[#111111] leading-none">
-              ARCHIVE COLLECTIONS
-            </h1>
-            <p className="mt-3 text-xs sm:text-sm text-neutral-600 max-w-xl leading-relaxed">
-              Explore our architectural drops categorised by silhouette, yarn density, and aesthetic purpose. Built for effortless daily rotation.
-            </p>
-          </div>
 
           {/* Segmented Pill Filter Bar (Luxury Minimalist with Liquid Hover) */}
           <div className="w-full md:w-auto overflow-x-auto scrollbar-none overscroll-x-contain -mx-5 px-5 sm:mx-0 sm:px-0 py-1 sm:py-0">
@@ -207,8 +212,82 @@ export function CollectionsCatalog() {
             </div>
           </div>
 
-        </div>
-      </section>
+          </div>
+        </section>
+      ) : (
+        <section id="capsule-editions" className="w-full border-b border-[#e8e8e5] bg-white py-6 sm:py-8 px-5 sm:px-8 lg:px-14">
+          <div className="max-w-[1536px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.2em] uppercase text-neutral-400">
+                <span>CURATED CAPSULES</span>
+                <span>•</span>
+                <span className="text-[#111111]">ARCHIVE VOLUMES</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#111111] mt-0.5">
+                Signature Capsule Editions
+              </h2>
+            </div>
+            {/* Filter Pill Bar */}
+            <div className="w-full md:w-auto overflow-x-auto scrollbar-none overscroll-x-contain -mx-5 px-5 sm:mx-0 sm:px-0 py-1 sm:py-0">
+              <div
+                className="inline-flex items-center p-1 sm:p-1.5 bg-[#f0eee9] rounded-full border border-neutral-300/60 shadow-inner shrink-0"
+                onMouseLeave={() => setHoveredTab(null)}
+              >
+                {[
+                  { key: "all", desktop: "ALL EDITIONS", mobile: "ALL" },
+                  { key: "tees", desktop: "T-SHIRTS & APPAREL", mobile: "APPAREL" },
+                  { key: "shoes", desktop: "SNEAKERS & SHOES", mobile: "FOOTWEAR" },
+                  { key: "resort", desktop: "SUMMER RESORT", mobile: "RESORT" },
+                ].map((tab) => {
+                  const isActive = activeCategory === tab.key;
+                  const isHovered = hoveredTab === tab.key && !isActive;
+
+                  return (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => setActiveCategory(tab.key as typeof activeCategory)}
+                      onMouseEnter={() => setHoveredTab(tab.key)}
+                      className={`relative px-3 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
+                        isActive
+                          ? "text-white font-bold"
+                          : isHovered
+                          ? "text-white font-bold"
+                          : "text-neutral-600 font-semibold"
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTabCompact"
+                          className="absolute inset-0 bg-[#111111] rounded-full shadow-md"
+                          style={{ zIndex: 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 35,
+                            mass: 0.8,
+                          }}
+                        />
+                      )}
+                      <div
+                        className={`absolute inset-0 bg-[#111111] rounded-full shadow-sm transition-opacity duration-150 ease-out ${
+                          isHovered ? "opacity-100" : "opacity-0"
+                        }`}
+                        style={{ zIndex: 0 }}
+                        aria-hidden="true"
+                      />
+                      <span className="relative z-10 block whitespace-nowrap">
+                        <span className="sm:hidden">{tab.mobile}</span>
+                        <span className="hidden sm:inline">{tab.desktop}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── 2. ASYMMETRICAL LUXURY EDITORIAL BENTO GRID ─────────── */}
       <section className="w-full max-w-[1536px] mx-auto px-5 sm:px-8 lg:px-14 py-12 sm:py-16">

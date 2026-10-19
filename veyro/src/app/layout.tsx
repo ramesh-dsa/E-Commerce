@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Dancing_Script, Montserrat } from "next/font/google";
+import { Geist, Geist_Mono, Dancing_Script, Montserrat, Outfit } from "next/font/google";
 import "./globals.css";
 import { SmoothScrolling, Navbar, Footer, ScrollToTop } from "@/components/layout";
 import { CartProvider } from "@/context/CartContext";
@@ -37,7 +37,14 @@ const dancingScript = Dancing_Script({
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -56,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} ${montserrat.variable} max-w-full overflow-x-clip overscroll-x-none`}
+      className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} ${montserrat.variable} ${outfit.variable} max-w-full overflow-x-clip overscroll-x-none`}
     >
       <body className="min-h-screen bg-white text-veyro-black antialiased max-w-full overflow-x-clip overscroll-x-none">
         <ProductsProvider>

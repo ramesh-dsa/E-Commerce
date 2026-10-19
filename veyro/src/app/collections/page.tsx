@@ -1,5 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
+import { CollectionsShowcase } from "@/components/features/CollectionsShowcase";
 import { CollectionsCatalog } from "@/components/features/CollectionsCatalog";
 
 export const metadata: Metadata = {
@@ -13,5 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default function CollectionsPage() {
-  return <CollectionsCatalog />;
+  return (
+    <main className="w-full bg-[#fbfbf9]">
+      {/* ── 1. INTERACTIVE COLLECTION HERO SHOWCASE (Fan Deck -> Rail -> Detail) ── */}
+      <CollectionsShowcase />
+
+      {/* ── 2. CURATED CAPSULE VOLUMES CATALOG ── */}
+      <CollectionsCatalog showHeroHeader={false} />
+    </main>
+  );
 }
