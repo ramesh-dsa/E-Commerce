@@ -111,15 +111,15 @@ export default function AdminLoginPage() {
       />
 
       {/* ─── 3. TOP REFINED GLOBAL HEADER BAR ─── */}
-      <header className="absolute top-0 inset-x-0 z-20 px-8 sm:px-12 lg:px-16 xl:px-20 py-5 sm:py-6 flex items-center justify-between border-b border-white/[0.04] backdrop-blur-md bg-[#070709]/70">
+      <header className="group/banner absolute top-0 inset-x-0 z-20 px-8 sm:px-12 lg:px-16 xl:px-20 py-5 sm:py-6 flex items-center justify-between border-b border-white/[0.04] backdrop-blur-md bg-[#070709]/70">
         {/* Brand Atelier Identity */}
         <div className="flex items-center gap-3">
-          <Link href="/" className="group flex items-center gap-2.5 focus:outline-none">
-            <span className="font-serif text-xl tracking-[0.32em] text-white uppercase group-hover:text-[#fcd017] transition-colors font-medium">
+          <Link href="/" className="flex items-center gap-2.5 focus:outline-none">
+            <span className="font-serif text-xl tracking-[0.32em] text-white uppercase group-hover/banner:text-[#fcd017] transition-colors duration-300 font-medium">
               VEYRO
             </span>
             <span className="text-white/20 text-xs font-light">/</span>
-            <span className="text-[11px] font-mono tracking-[0.22em] text-neutral-400 group-hover:text-neutral-200 transition-colors uppercase font-medium">
+            <span className="text-[11px] font-mono tracking-[0.22em] text-neutral-400 group-hover/banner:text-neutral-200 transition-colors duration-300 uppercase font-medium">
               BACKSTAGE CONTROL
             </span>
           </Link>
