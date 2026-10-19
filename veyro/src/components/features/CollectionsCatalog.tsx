@@ -214,23 +214,35 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
 
           </div>
         </section>
-      ) : (
-        <section id="capsule-editions" className="w-full border-b border-[#e8e8e5] bg-white py-6 sm:py-8 px-5 sm:px-8 lg:px-14">
-          <div className="max-w-[1536px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      ) : null}
+
+      {/* ── 2. ASYMMETRICAL LUXURY EDITORIAL BENTO GRID ─────────── */}
+      <section
+        id="capsule-editions"
+        className={`w-full max-w-[1536px] mx-auto px-5 sm:px-8 lg:px-14 ${
+          showHeroHeader ? "py-12 sm:py-16" : "pt-14 sm:pt-20 pb-16 sm:pb-24"
+        }`}
+      >
+        {!showHeroHeader && (
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8 sm:mb-10">
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.2em] uppercase text-neutral-400">
+              <div className="flex items-center gap-2 text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-2">
                 <span>CURATED CAPSULES</span>
-                <span>•</span>
+                <span className="text-neutral-300">•</span>
                 <span className="text-[#111111]">ARCHIVE VOLUMES</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#111111] mt-0.5">
-                Signature Capsule Editions
+              <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-0.5">
+                the signature capsules
+              </span>
+              <h2 className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111] leading-none mt-1">
+                SIGNATURE CAPSULE EDITIONS
               </h2>
             </div>
-            {/* Filter Pill Bar */}
+
+            {/* Filter Pill Dock (Luxury Minimalist with Translucent Glass) */}
             <div className="w-full md:w-auto overflow-x-auto scrollbar-none overscroll-x-contain -mx-5 px-5 sm:mx-0 sm:px-0 py-1 sm:py-0">
               <div
-                className="inline-flex items-center p-1 sm:p-1.5 bg-[#f0eee9] rounded-full border border-neutral-300/60 shadow-inner shrink-0"
+                className="inline-flex items-center p-1 sm:p-1.5 bg-white/95 backdrop-blur-md rounded-full border border-neutral-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)] shrink-0"
                 onMouseLeave={() => setHoveredTab(null)}
               >
                 {[
@@ -248,18 +260,18 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                       type="button"
                       onClick={() => setActiveCategory(tab.key as typeof activeCategory)}
                       onMouseEnter={() => setHoveredTab(tab.key)}
-                      className={`relative px-3 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
+                      className={`relative px-3.5 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-[family-name:var(--font-outfit)] uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
                         isActive
                           ? "text-white font-bold"
                           : isHovered
-                          ? "text-white font-bold"
-                          : "text-neutral-600 font-semibold"
+                          ? "text-black font-semibold"
+                          : "text-neutral-500 font-medium"
                       }`}
                     >
                       {isActive && (
                         <motion.div
                           layoutId="activeTabCompact"
-                          className="absolute inset-0 bg-[#111111] rounded-full shadow-md"
+                          className="absolute inset-0 bg-[#111111] rounded-full shadow-sm"
                           style={{ zIndex: 0 }}
                           transition={{
                             type: "spring",
@@ -270,7 +282,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                         />
                       )}
                       <div
-                        className={`absolute inset-0 bg-[#111111] rounded-full shadow-sm transition-opacity duration-150 ease-out ${
+                        className={`absolute inset-0 bg-neutral-100 rounded-full transition-opacity duration-150 ease-out ${
                           isHovered ? "opacity-100" : "opacity-0"
                         }`}
                         style={{ zIndex: 0 }}
@@ -286,11 +298,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
               </div>
             </div>
           </div>
-        </section>
-      )}
-
-      {/* ── 2. ASYMMETRICAL LUXURY EDITORIAL BENTO GRID ─────────── */}
-      <section className="w-full max-w-[1536px] mx-auto px-5 sm:px-8 lg:px-14 py-12 sm:py-16">
+        )}
         <div className="grid grid-cols-12 gap-6 lg:gap-8">
           {!isMounted
             ? COLLECTIONS.map((col) => (
