@@ -927,7 +927,7 @@ export function CollectionsShowcase() {
         {/* ── STICKY VIEWPORT CONTAINER (Fits neatly inside viewport below sticky Navbar) ── */}
         <div
           ref={stageRef}
-          className="sticky top-[74px] sm:top-[78px] lg:top-[82px] h-[calc(100vh-108px)] min-h-[460px] max-h-[calc(100dvh-104px)] w-full overflow-hidden flex flex-col justify-between pt-1 pb-1.5 sm:pb-2.5 px-3 sm:px-6 select-none touch-pan-y"
+          className="sticky top-[74px] sm:top-[78px] lg:top-[82px] h-[calc(100vh-108px)] min-h-[460px] max-h-[calc(100dvh-104px)] w-full overflow-hidden relative flex flex-col justify-between pt-1 pb-1.5 sm:pb-2.5 px-3 sm:px-6 select-none touch-pan-y"
         >
           {/* Subtle Ambient Studio Light */}
           <div
@@ -1166,8 +1166,9 @@ export function CollectionsShowcase() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className="relative flex-1 w-full max-w-5xl mx-auto flex flex-col justify-center p-2 sm:p-4 my-auto z-30"
+          className="absolute inset-0 w-full h-full z-30 bg-[#fafaf8] flex flex-col p-2 sm:p-4 pointer-events-auto overflow-y-auto"
         >
+          <div className="w-full max-w-5xl mx-auto my-auto flex flex-col justify-center">
           {/* Top Navigation Bar: Back to Collection & Close */}
           <div className="w-full flex items-center justify-between pb-2 sm:pb-3 mb-1">
             <button
@@ -1334,7 +1335,8 @@ export function CollectionsShowcase() {
               </button>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
+      </motion.div>
       ) : null}
     </AnimatePresence>
   </div>

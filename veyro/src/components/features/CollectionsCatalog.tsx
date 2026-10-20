@@ -70,10 +70,11 @@ const COLLECTIONS: CollectionItem[] = [
     category: "tees",
     tag: "LIMITED EDITION",
     itemCount: "6 Graphic Drops",
-    image: "/hero/panel-graphic-tee.webp",
+    image: "/images/graphic-streetwear-bento.webp",
+    imagePosition: "object-[center_top]",
     href: "/clothing?fit=Graphic",
     ctaText: "Shop Graphic Series",
-    bentoSpan: "col-span-12 md:col-span-6 lg:col-span-4",
+    bentoSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
   },
   {
     id: "resort-linen",
@@ -89,7 +90,7 @@ const COLLECTIONS: CollectionItem[] = [
     image: "/hero/panel-linen-shirt.webp",
     href: "/clothing",
     ctaText: "Shop Resort Linen",
-    bentoSpan: "col-span-12 md:col-span-6 lg:col-span-4",
+    bentoSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
   },
   {
     id: "vip-bundle-pass",
@@ -102,10 +103,11 @@ const COLLECTIONS: CollectionItem[] = [
     category: "tees",
     tag: "BUNDLE · ₹1,199",
     itemCount: "Any 3 for ₹1,199",
-    image: "/images/bundle-pass-campaign.jpg",
+    image: "/images/bundle-pass-trio.webp",
+    imagePosition: "object-[58%_15%] sm:object-[58%_center]",
     href: "/clothing",
     ctaText: "Build Your 3-T-Shirt Bundle",
-    bentoSpan: "col-span-12 md:col-span-12 lg:col-span-4",
+    bentoSpan: "col-span-12 sm:col-span-12 lg:col-span-4",
   },
 ];
 
@@ -369,14 +371,20 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                   </div>
 
                   {/* Bottom Editorial Content */}
-                  <div className="relative z-10 p-5 sm:p-7 space-y-2">
+                  <div className="relative z-10 p-5 sm:p-6 lg:p-7 space-y-1.5 sm:space-y-2">
                     <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#fcd017] block">
                       {col.tag}
                     </span>
-                    <h2 className="text-xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-sm">
+                    <h2
+                      className={`font-black uppercase tracking-tight text-white leading-tight drop-shadow-sm ${
+                        isHeroWide
+                          ? "text-2xl sm:text-3xl lg:text-4xl"
+                          : "text-xl sm:text-2xl lg:text-[1.65rem] xl:text-3xl"
+                      }`}
+                    >
                       {col.title}
                     </h2>
-                    <p className="hidden sm:block text-xs sm:text-sm text-neutral-300 leading-relaxed font-light mt-2 line-clamp-2 max-w-xl">
+                    <p className="hidden sm:block text-xs sm:text-sm text-neutral-300 leading-relaxed font-light mt-1.5 line-clamp-2 max-w-xl">
                       {col.description}
                     </p>
                   </div>
