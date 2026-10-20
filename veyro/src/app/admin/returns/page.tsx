@@ -365,7 +365,7 @@ export default function AdminReturnsPage() {
     link.download = `Veyro_Returns_Report_${dateFilter.label.replace(/[^a-zA-Z0-9]/g, "_")}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    triggerToast(`📥 Exported ${filteredReturns.length} return claims as CSV`, "success");
+    triggerToast(`Exported ${filteredReturns.length} return claims as CSV`, "success");
   };
 
   // Print Slip

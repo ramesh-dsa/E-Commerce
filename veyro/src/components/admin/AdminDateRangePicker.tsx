@@ -622,7 +622,7 @@ export function AdminDateRangePicker({
               <div className="pt-2 border-t border-neutral-100 flex items-center justify-between gap-2">
                 <span className="text-[11px] text-neutral-500 truncate">
                   {customStart && customEnd
-                    ? `${customStart} ➔ ${customEnd}`
+                    ? `${customStart} → ${customEnd}`
                     : customStart
                     ? `1 day: ${customStart}`
                     : "Select 2 dates for range"}

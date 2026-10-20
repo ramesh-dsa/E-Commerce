@@ -74,6 +74,10 @@ import {
   Copy,
   FileText,
   Truck,
+  RefreshCw,
+  XCircle,
+  PackageCheck,
+  PhoneCall,
 } from "lucide-react";
 
 // ─── STATIC DATA & ASSETS MATCHING TARGET DESIGN ──────────────────────────────
@@ -1774,7 +1778,7 @@ function ReturnRequestsReviewModal({
   const [activeTab, setActiveTab] = useState<"pending" | "resolved">("pending");
   const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "reject" | "exchange" } | null>(null);
 
   // Keyboard Escape listener
   useEffect(() => {
@@ -1856,8 +1860,8 @@ function ReturnRequestsReviewModal({
     return list;
   }, [orders]);
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
+  const showToast = (text: string, type: "success" | "reject" | "exchange" = "success") => {
+    setToastMessage({ text, type });
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
@@ -1865,12 +1869,12 @@ function ReturnRequestsReviewModal({
 
   const handleApproveRefund = (orderId: string, customerName: string, amount: number) => {
     onReviewReturn(orderId, "approved", `Full refund of ₹${amount.toLocaleString("en-IN")} initiated to original payment method.`);
-    showToast(`✅ Approved refund of ₹${amount.toLocaleString("en-IN")} for ${customerName}`);
+    showToast(`Approved refund of ₹${amount.toLocaleString("en-IN")} for ${customerName}`, "success");
   };
 
   const handleApproveExchange = (orderId: string, customerName: string) => {
     onReviewReturn(orderId, "approved", "Exchange approved. Replacement order queued for warehouse fulfillment.");
-    showToast(`🔄 Exchange approved for ${customerName}. Replacement order initiated.`);
+    showToast(`Exchange approved for ${customerName}. Replacement order initiated.`, "exchange");
   };
 
   const handleConfirmReject = (orderId: string, customerName: string) => {
@@ -1878,7 +1882,7 @@ function ReturnRequestsReviewModal({
     onReviewReturn(orderId, "rejected", finalReason);
     setRejectingOrderId(null);
     setRejectReason("");
-    showToast(`✕ Return request for ${customerName} was rejected.`);
+    showToast(`Return request for ${customerName} was rejected.`, "reject");
   };
 
   const totalRefundExposure = pendingRequests.reduce((sum, r) => sum + r.item.price, 0);
@@ -1908,7 +1912,14 @@ function ReturnRequestsReviewModal({
         {/* Toast Alert */}
         {toastMessage && (
           <div className="bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold text-center flex items-center justify-center gap-2 animate-in slide-in-from-top duration-200">
-            <span>{toastMessage}</span>
+            {toastMessage.type === "success" ? (
+              <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+            ) : toastMessage.type === "exchange" ? (
+              <RefreshCw size={14} className="text-amber-400 shrink-0" />
+            ) : (
+              <XCircle size={14} className="text-rose-400 shrink-0" />
+            )}
+            <span>{toastMessage.text}</span>
           </div>
         )}
 
@@ -2250,13 +2261,23 @@ function ReturnRequestsReviewModal({
                         </span>
                       </div>
                       <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
                           isApproved
                             ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
                             : "bg-rose-50 text-rose-800 border border-rose-200"
                         }`}
                       >
-                        {isApproved ? "✓ Approved" : "✕ Rejected"}
+                        {isApproved ? (
+                          <>
+                            <CheckCircle2 size={12} className="text-emerald-600" />
+                            <span>Approved</span>
+                          </>
+                        ) : (
+                          <>
+                            <XCircle size={12} className="text-rose-600" />
+                            <span>Rejected</span>
+                          </>
+                        )}
                       </span>
                     </div>
 
@@ -2528,17 +2549,17 @@ function ProductPerformanceModal({
 
   const handleStockSave = () => {
     onUpdateStock(product.id, stockInput);
-    showToast(`✅ Stock updated to ${stockInput} units for ${product.name}`);
+    showToast(`Stock updated to ${stockInput} units for ${product.name}`);
   };
 
   const handlePriceSave = () => {
     onUpdatePrice(product.id, priceInput);
-    showToast(`✅ Retail price set to ₹${priceInput.toLocaleString("en-IN")} (${simulatedMargin}% margin)`);
+    showToast(`Retail price set to ₹${priceInput.toLocaleString("en-IN")} (${simulatedMargin}% margin)`);
   };
 
   const handleDownloadCSV = () => {
     downloadProductCSV(product);
-    showToast(`📥 Performance report downloaded for ${product.name}`);
+    showToast(`Performance report downloaded for ${product.name}`);
   };
 
   return (
@@ -2760,8 +2781,9 @@ function ProductPerformanceModal({
                           <td className="py-3 px-4 font-semibold text-neutral-900 flex items-center gap-2">
                             <span>{v.size}</span>
                             {v.isBestseller && (
-                              <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded-md">
-                                ★ Bestseller Size
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded-md">
+                                <Sparkles size={10} className="text-amber-700" />
+                                <span>Bestseller Size</span>
                               </span>
                             )}
                           </td>
@@ -4394,11 +4416,11 @@ function OrderDeepInspectionModal({
   };
 
   const quickTags = [
-    "✅ Address Verified",
-    "📦 Priority Packing",
-    "⭐ VIP Customer",
-    "📞 Phone Confirmed",
-    "🔁 Return/Swap Req",
+    { label: "Address Verified", icon: CheckCircle2, text: "[Address Verified]" },
+    { label: "Priority Packing", icon: PackageCheck, text: "[Priority Packing]" },
+    { label: "VIP Customer", icon: Sparkles, text: "[VIP Customer]" },
+    { label: "Phone Confirmed", icon: PhoneCall, text: "[Phone Confirmed]" },
+    { label: "Return/Swap Req", icon: RefreshCw, text: "[Return/Swap Req]" },
   ];
 
   return (
@@ -4686,19 +4708,23 @@ function OrderDeepInspectionModal({
                 />
 
                 <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                  {quickTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => {
-                        const noteWithTag = adminNote ? `${adminNote} • ${tag}` : tag;
-                        setAdminNote(noteWithTag);
-                      }}
-                      className="text-[10px] px-2 py-1 rounded-lg bg-neutral-100 hover:bg-amber-100 text-neutral-600 hover:text-amber-900 transition-colors cursor-pointer"
-                    >
-                      {tag}
-                    </button>
-                  ))}
+                  {quickTags.map((tag) => {
+                    const TagIcon = tag.icon;
+                    return (
+                      <button
+                        key={tag.label}
+                        type="button"
+                        onClick={() => {
+                          const noteWithTag = adminNote ? `${adminNote} • ${tag.text}` : tag.text;
+                          setAdminNote(noteWithTag);
+                        }}
+                        className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg bg-neutral-100 hover:bg-amber-100 text-neutral-700 hover:text-amber-900 font-medium transition-colors cursor-pointer"
+                      >
+                        <TagIcon size={12} className="text-amber-600 shrink-0" />
+                        <span>{tag.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <div className="flex justify-end mt-3">
@@ -7169,9 +7195,10 @@ export default function AdminDashboard() {
                       });
                       triggerToast("Restored store orders accumulated Till Date", "info");
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-white border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 font-semibold cursor-pointer transition-all shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 font-semibold cursor-pointer transition-all shadow-2xs text-xs"
                   >
-                    View All Orders (Till Date) ➔
+                    <span>View All Orders (Till Date)</span>
+                    <ArrowRight size={13} className="text-neutral-500" />
                   </button>
                 </div>
               </div>
@@ -7669,7 +7696,7 @@ export default function AdminDashboard() {
               onSelectProduct={(p) => setSelectedTopProduct(p)}
               onExportAllCSV={() => {
                 downloadAllProductsCSV(activeTopProducts, topProductsTimeframe);
-                triggerToast("📥 Full catalog leaderboard downloaded as CSV");
+                triggerToast("Full catalog leaderboard downloaded as CSV");
               }}
               timeframe={
                 dateFilter.type === "day"
