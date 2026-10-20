@@ -471,15 +471,6 @@ export function Footer() {
             <Link href="/collections" className="hover:text-white transition-colors">
               Sitemap
             </Link>
-            <Link
-              href="/admin/login"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-500 hover:text-[#fcd017] transition-colors font-mono font-medium flex items-center gap-1"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017]" />
-              Admin Portal
-            </Link>
           </div>
         </div>
       </Container>

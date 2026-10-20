@@ -19,7 +19,6 @@ import {
   ChevronRight,
   Check,
   User as LucideUser,
-  Shield,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { Toast } from "@/components/ui/Toast";
@@ -434,34 +433,6 @@ export function Navbar() {
                     <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
                   </Link>
 
-                  {/* Menu Item 3: Admin Portal */}
-                  <Link
-                    href="/admin"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    role="menuitem"
-                    onClick={() => setIsProfileDropdownOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 rounded-lg transition-colors group"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-[#fcd017]/20 flex items-center justify-center text-neutral-900 group-hover:bg-[#fcd017] transition-colors shrink-0">
-                        <Shield size={15} />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-neutral-900 flex items-center gap-1.5">
-                          Admin Portal
-                          <span className="text-[9px] bg-neutral-900 text-[#fcd017] px-1.5 py-0.2 rounded font-mono font-bold">
-                            STAFF
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-neutral-500 truncate">
-                          Manage products, orders & sales
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                  </Link>
-
                   {/* Divider */}
                   <div className="my-1 border-t border-neutral-100" />
 
@@ -706,26 +677,6 @@ export function Navbar() {
                   </button>
                 </>
               )}
-
-              {/* Admin Portal Shortcut (Opens in new tab) */}
-              <div className="pt-2 mt-2 border-t border-neutral-100">
-                <Link
-                  href="/admin"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between w-full text-xs font-semibold text-neutral-600 hover:text-neutral-900 py-1.5 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017]" />
-                    <span>Admin Portal</span>
-                    <span className="text-[9px] bg-neutral-900 text-[#fcd017] px-1.5 py-0.2 rounded font-mono font-bold">
-                      STAFF
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-neutral-400">Open ↗</span>
-                </Link>
-              </div>
             </div>
           </div>
         </div>
