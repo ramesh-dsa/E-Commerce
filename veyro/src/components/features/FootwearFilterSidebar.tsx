@@ -9,7 +9,6 @@ import {
   Palette,
   Tag,
   Layers,
-  Info,
 } from "lucide-react";
 
 export interface FootwearFilterState {
@@ -30,7 +29,7 @@ export interface FootwearFilterSidebarProps {
   onToggleColor: (colorKey: string) => void;
   onChangePriceRange: (min: number, max: number, isFinal?: boolean) => void;
   onClearAll: () => void;
-  onOpenSizeGuide: () => void;
+  onOpenSizeGuide?: () => void;
   activeFilterCount: number;
   totalFilteredCount: number;
   itemCounts?: {
@@ -837,16 +836,6 @@ export function FootwearFilterSidebar({
         icon={<Ruler size={15} strokeWidth={1.8} className="shrink-0" />}
         isOpen={openSections.includes("sizes")}
         onToggle={() => toggleSection("sizes")}
-        rightAction={
-          <button
-            type="button"
-            onClick={onOpenSizeGuide}
-            className="flex items-center gap-1 text-[11px] font-normal text-[#999999] hover:text-[#555555] transition-colors duration-150 cursor-pointer mr-1"
-          >
-            <Info size={10} strokeWidth={1.8} />
-            <span className="underline underline-offset-2 decoration-[#CCCCCC]">Size Guide</span>
-          </button>
-        }
       >
         <div className="grid grid-cols-3 gap-[6px] pt-0.5">
           {FOOTWEAR_SIZES.map((item) => {

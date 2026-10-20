@@ -87,7 +87,7 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-6 hide-scrollbar"
+          className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pt-4 pb-6 -mt-4 hide-scrollbar"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {products.map((product) => (

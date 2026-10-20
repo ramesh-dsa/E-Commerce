@@ -9,18 +9,18 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const baseStyles =
-    "inline-flex items-center justify-center uppercase font-semibold select-none leading-none";
+    "inline-flex items-center justify-center uppercase font-bold select-none leading-none rounded-full backdrop-blur-md shadow-2xs border border-white/20";
 
   const variantStyles = {
-    default: "bg-veyro-surface-alt text-veyro-black",
-    dark: "bg-veyro-black text-white",
-    sale: "bg-veyro-accent text-white",
-    outline: "border border-veyro-black text-veyro-black bg-transparent",
+    default: "bg-white/95 text-neutral-900 border-black/5",
+    dark: "bg-neutral-950/90 text-white border-white/15",
+    sale: "bg-veyro-accent text-white border-white/20",
+    outline: "border border-neutral-900 text-neutral-900 bg-white/80",
   };
 
   const sizeStyles = {
-    sm: "text-[10px] px-2 py-1 tracking-wider",
-    md: "text-[11px] px-2.5 py-1.5 tracking-widest",
+    sm: "text-[9.5px] px-2.5 py-1 tracking-wider",
+    md: "text-[10.5px] px-3 py-1.5 tracking-widest",
   };
 
   return (

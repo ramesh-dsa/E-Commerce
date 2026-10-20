@@ -13,6 +13,7 @@ import {
   CheckIcon,
   ArrowUpRightIcon,
 } from "@/components/ui/Icons";
+
 import {
   Ruler,
   ChevronDown,
@@ -66,6 +67,64 @@ const APPAREL_SIZING_ROWS: ApparelSizingRow[] = [
   { size: "XXL", chestIn: "50", chestCm: "127", lengthIn: "32", lengthCm: "81", shoulderIn: "24", shoulderCm: "61" },
 ];
 
+interface WatchSizingRow {
+  caseDiameter: string;
+  lugToLug: string;
+  thickness: string;
+  strapWidth: string;
+  wristIn: string;
+  wristCm: string;
+  profile: string;
+}
+
+const WATCH_SIZING_ROWS: WatchSizingRow[] = [
+  {
+    caseDiameter: "32mm",
+    lugToLug: "38mm",
+    thickness: "7.0mm",
+    strapWidth: "14mm",
+    wristIn: "5.5\" – 6.2\"",
+    wristCm: "14 – 16 cm",
+    profile: "Petite & Elegant / Dress",
+  },
+  {
+    caseDiameter: "36mm",
+    lugToLug: "42mm",
+    thickness: "8.5mm",
+    strapWidth: "18mm",
+    wristIn: "6.0\" – 6.8\"",
+    wristCm: "15 – 17.5 cm",
+    profile: "Classic Vintage / Unisex",
+  },
+  {
+    caseDiameter: "40mm",
+    lugToLug: "47mm",
+    thickness: "9.5mm",
+    strapWidth: "20mm",
+    wristIn: "6.3\" – 7.6\"",
+    wristCm: "16 – 19 cm",
+    profile: "Universal Golden Ratio",
+  },
+  {
+    caseDiameter: "42mm",
+    lugToLug: "49mm",
+    thickness: "11.0mm",
+    strapWidth: "22mm",
+    wristIn: "6.9\" – 8.2\"",
+    wristCm: "17.5 – 21 cm",
+    profile: "Bold Sports / Chronograph",
+  },
+  {
+    caseDiameter: "44mm – 45mm",
+    lugToLug: "52mm",
+    thickness: "13.5mm",
+    strapWidth: "22mm – 24mm",
+    wristIn: "7.2\" – 8.8\"",
+    wristCm: "18.5 – 22.5 cm",
+    profile: "Commanding Diver Profile",
+  },
+];
+
 interface ProductBuyBoxProps {
   product: Product;
 }
@@ -117,7 +176,10 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
     product.category?.toLowerCase() === "footwear" ||
     product.subcategory?.toLowerCase() === "shoes" ||
     product.id.startsWith("vey-ftw");
-  const isWatch = product.category === "Watches";
+  const isWatch =
+    product.category?.toLowerCase() === "watches" ||
+    product.subcategory?.toLowerCase() === "timepieces" ||
+    product.id.startsWith("vey-wtc");
 
   // If item is already wishlisted with a saved size and user has not manually picked a size yet, prefill from wishlist
   useEffect(() => {
@@ -216,20 +278,24 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   return (
     <div className="w-full flex flex-col select-none max-w-[540px]">
       {/* 1. Availability Status & Merchandising Badges */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-3.5">
         {isOutOfStock ? (
-          <span className="inline-flex items-center gap-1.5 bg-neutral-950 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+          <span className="inline-flex items-center justify-center bg-neutral-900 text-white text-[11px] font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase shadow-2xs">
             Sold Out
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full tracking-wider uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center justify-center bg-neutral-100 text-neutral-800 border border-neutral-200/90 text-[11px] font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase">
             In Stock
           </span>
         )}
         {product.badge && (
-          <span className="inline-block bg-neutral-100 text-neutral-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full tracking-wider uppercase border border-neutral-200">
+          <span
+            className={`inline-flex items-center justify-center text-[11px] font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase ${
+              product.badge === "SALE"
+                ? "bg-red-50 text-red-700 border border-red-200"
+                : "bg-neutral-100 text-neutral-800 border border-neutral-200/90"
+            }`}
+          >
             {product.badge}
           </span>
         )}
@@ -282,7 +348,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         </span>
 
         {discountPercent && (
-          <span className="bg-veyro-yellow text-veyro-black text-[11px] font-black px-2 py-0.5 rounded-[2px] tracking-wider uppercase">
+          <span className="bg-veyro-yellow text-veyro-black text-[11px] font-black px-2.5 py-0.5 rounded-full tracking-wider uppercase shadow-2xs">
             {discountPercent}% OFF
           </span>
         )}
@@ -608,11 +674,11 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
             value={pincode}
             onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
             placeholder="Enter 6-digit Pincode"
-            className="flex-1 bg-veyro-surface border border-veyro-border rounded-[2px] px-3.5 py-2.5 text-xs text-veyro-black placeholder:text-veyro-muted focus:outline-none focus:border-veyro-black transition-colors"
+            className="flex-1 bg-neutral-50/80 border border-neutral-300 rounded-full px-4 py-2.5 text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-black transition-colors"
           />
           <button
             type="submit"
-            className="px-5 py-2.5 bg-veyro-surface-alt hover:bg-veyro-border text-veyro-black text-xs font-bold uppercase tracking-wider rounded-[2px] transition-colors cursor-pointer"
+            className="px-6 py-2.5 bg-[#111111] hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-2xs"
           >
             Check
           </button>
@@ -794,53 +860,66 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
       {/* 11. Editorial Size & Measurement Guide Modal */}
       {isSizeGuideOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5"
           role="dialog"
           aria-modal="true"
           aria-labelledby="size-guide-modal-title"
         >
           <div
-            className="fixed inset-0 bg-black/65 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => setIsSizeGuideOpen(false)}
           />
-          <div className="relative z-10 w-full max-w-xl bg-white p-6 sm:p-8 rounded-[2px] shadow-2xl border border-veyro-border flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative z-10 w-full max-w-2xl bg-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-neutral-200/80 flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-veyro-border mb-4">
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-4">
               <div>
-                <span className="text-[10px] font-mono tracking-widest text-veyro-muted uppercase block">
-                  {isWatch ? "[ VEYRO HOROLOGY // CASE SPEC ]" : isFootwear ? "[ VEYRO FOOTWEAR // SIZE & CONVERSION SPEC ]" : "[ VEYRO ATELIER // FIT REFERENCE ]"}
+                <span className="text-[10px] font-bold tracking-widest text-neutral-600 uppercase block font-mono">
+                  {isWatch
+                    ? "Horology Fit & Case Proportions"
+                    : isFootwear
+                    ? "Footwear Sizing & Conversion Spec"
+                    : "Atelier Garment Measurements"}
                 </span>
-                <h3 id="size-guide-modal-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-veyro-black mt-0.5">
-                  {isWatch ? "Case Size Guide" : isFootwear ? "Footwear Sizing & Conversion Guide" : "Size & Measurement Guide"}
+                <h3
+                  id="size-guide-modal-title"
+                  className="text-lg sm:text-xl font-black uppercase tracking-tight text-neutral-950 mt-0.5"
+                >
+                  {isWatch
+                    ? "Watch Case Diameter & Wrist Scale Guide"
+                    : isFootwear
+                    ? "Footwear Sizing & Conversion Guide"
+                    : "T-Shirt Size & Measurement Guide"}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
                 aria-label="Close size guide"
-                className="p-1.5 rounded-full text-neutral-400 hover:text-black hover:bg-neutral-100 transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-all cursor-pointer"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Scrollable Content Body */}
-            <div className="overflow-y-auto space-y-5 pr-1">
+            <div className="overflow-y-auto space-y-5 pr-1 text-neutral-950">
               {/* Unit switcher */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-veyro-subtle font-medium">
-                  {isFootwear
+                <span className="text-xs text-neutral-700 font-medium">
+                  {isWatch
+                    ? "Measurements in millimeters (mm) & wrist circumference"
+                    : isFootwear
                     ? "Standard foot length measured heel-to-toe"
                     : "Garment measurements laid flat"}
                 </span>
-                <div className="flex border border-veyro-border rounded-[2px] overflow-hidden text-xs">
+                <div className="inline-flex items-center bg-neutral-100 p-1 rounded-full border border-neutral-200 text-xs">
                   <button
                     type="button"
                     onClick={() => setUnitMode("in")}
-                    className={`px-3 py-1 font-bold ${
+                    className={`px-3.5 py-1 font-bold rounded-full transition-all cursor-pointer ${
                       unitMode === "in"
-                        ? "bg-veyro-black text-white"
-                        : "bg-white text-veyro-black hover:bg-neutral-50"
+                        ? "bg-neutral-950 text-white shadow-xs"
+                        : "text-neutral-600 hover:text-black"
                     }`}
                   >
                     INCHES
@@ -848,10 +927,10 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                   <button
                     type="button"
                     onClick={() => setUnitMode("cm")}
-                    className={`px-3 py-1 font-bold ${
+                    className={`px-3.5 py-1 font-bold rounded-full transition-all cursor-pointer ${
                       unitMode === "cm"
-                        ? "bg-veyro-black text-white"
-                        : "bg-white text-veyro-black hover:bg-neutral-50"
+                        ? "bg-neutral-950 text-white shadow-xs"
+                        : "text-neutral-600 hover:text-black"
                     }`}
                   >
                     CM
@@ -860,18 +939,73 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               </div>
 
               {/* Sizing Table */}
-              <div className="border border-veyro-border rounded-[2px] overflow-hidden">
-                {isFootwear ? (
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-veyro-surface text-veyro-muted font-bold uppercase text-[10px] tracking-wider border-b border-veyro-border">
+              <div className="border border-neutral-200/90 rounded-2xl overflow-hidden shadow-xs bg-white">
+                {isWatch ? (
+                  <table className="w-full text-xs">
+                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-[11px] tracking-wider border-b border-neutral-200">
                       <tr>
-                        <th className="p-3">UK (India)</th>
-                        <th className="p-3">US Men</th>
-                        <th className="p-3">EU</th>
-                        <th className="p-3">Foot Length ({unitMode === "in" ? "IN" : "CM"})</th>
+                        <th className="py-3 px-3.5 text-left">Case Size</th>
+                        <th className="py-3 px-3 text-center">Lug-to-Lug</th>
+                        <th className="py-3 px-3 text-center">Thickness</th>
+                        <th className="py-3 px-3 text-center">Strap Width</th>
+                        <th className="py-3 px-3 text-center">Wrist Fit ({unitMode.toUpperCase()})</th>
+                        <th className="py-3 px-3.5 text-left">Aesthetic Profile</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-veyro-border-light text-veyro-black font-medium">
+                    <tbody className="divide-y divide-neutral-100 text-neutral-950 font-medium">
+                      {WATCH_SIZING_ROWS.map((row) => {
+                        const isCurrentModel =
+                          (product.caseDiameter &&
+                            row.caseDiameter.toLowerCase().includes(
+                              product.caseDiameter.toLowerCase().replace(/\s+/g, "")
+                            )) ||
+                          (product.sizeGuide &&
+                            product.sizeGuide
+                              .toLowerCase()
+                              .includes(row.caseDiameter.split(" ")[0].toLowerCase()));
+                        return (
+                          <tr
+                            key={row.caseDiameter}
+                            className={`transition-colors ${
+                              isCurrentModel
+                                ? "bg-neutral-100/90 font-bold text-neutral-950"
+                                : "hover:bg-neutral-50/80 text-neutral-800"
+                            }`}
+                          >
+                            <td className="py-3.5 px-3.5 text-left">
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-sm text-neutral-950">{row.caseDiameter}</span>
+                                {isCurrentModel && (
+                                  <span className="inline-flex items-center gap-1 bg-neutral-950 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                    <Check size={9} strokeWidth={3} />
+                                    Current Model
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-3.5 px-3 text-center font-medium text-neutral-800">{row.lugToLug}</td>
+                            <td className="py-3.5 px-3 text-center font-medium text-neutral-800">{row.thickness}</td>
+                            <td className="py-3.5 px-3 text-center font-medium text-neutral-800">{row.strapWidth}</td>
+                            <td className="py-3.5 px-3 text-center font-bold text-neutral-950">
+                              {unitMode === "in" ? row.wristIn : row.wristCm}
+                            </td>
+                            <td className="py-3.5 px-3.5 text-left font-medium text-neutral-700 text-[11px]">{row.profile}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                ) : isFootwear ? (
+                  <table className="w-full text-xs">
+                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-[11px] tracking-wider border-b border-neutral-200">
+                      <tr>
+                        <th className="py-3 px-4 text-left w-1/4">UK (India)</th>
+                        <th className="py-3 px-4 text-center w-1/4">US Men</th>
+                        <th className="py-3 px-4 text-center w-1/4">EU</th>
+                        <th className="py-3 px-4 text-center w-1/4">Foot Length ({unitMode === "in" ? "IN" : "CM"})</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-100 text-neutral-950 font-medium">
                       {FOOTWEAR_SIZING_ROWS.map((row) => {
                         const isRowSelected = selectedSize === row.uk;
                         return (
@@ -880,21 +1014,24 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                             onClick={() => handleSizeSelect(row.uk)}
                             className={`cursor-pointer transition-colors ${
                               isRowSelected
-                                ? "bg-amber-50/70 font-bold border-l-2 border-veyro-black"
-                                : "hover:bg-neutral-50"
+                                ? "bg-neutral-100/90 font-bold text-neutral-950"
+                                : "hover:bg-neutral-50/80 text-neutral-800"
                             }`}
                           >
-                            <td className="p-3 flex items-center gap-2">
-                              <span className="font-bold">{row.uk}</span>
-                              {isRowSelected && (
-                                <span className="bg-veyro-black text-white text-[9px] font-black px-1.5 py-0.5 rounded-[2px] uppercase">
-                                  Selected
-                                </span>
-                              )}
+                            <td className="py-3.5 px-4 text-left">
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-sm text-neutral-950">{row.uk}</span>
+                                {isRowSelected && (
+                                  <span className="inline-flex items-center gap-1 bg-neutral-950 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                    <Check size={9} strokeWidth={3} />
+                                    Selected
+                                  </span>
+                                )}
+                              </div>
                             </td>
-                            <td className="p-3 text-veyro-subtle">{row.us}</td>
-                            <td className="p-3 text-veyro-subtle">{row.eu}</td>
-                            <td className="p-3 font-semibold">
+                            <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">{row.us}</td>
+                            <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">{row.eu}</td>
+                            <td className="py-3.5 px-4 text-center font-bold text-neutral-950">
                               {unitMode === "in" ? `${row.lengthIn} in` : `${row.lengthCm} cm`}
                             </td>
                           </tr>
@@ -903,16 +1040,16 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                     </tbody>
                   </table>
                 ) : (
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-veyro-surface text-veyro-muted font-bold uppercase text-[10px] tracking-wider border-b border-veyro-border">
+                  <table className="w-full text-xs">
+                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-[11px] tracking-wider border-b border-neutral-200">
                       <tr>
-                        <th className="p-3">Size</th>
-                        <th className="p-3">Chest ({unitMode})</th>
-                        <th className="p-3">Length ({unitMode})</th>
-                        <th className="p-3">Shoulder ({unitMode})</th>
+                        <th className="py-3 px-4 text-left w-1/4">Size</th>
+                        <th className="py-3 px-4 text-center w-1/4">Chest ({unitMode.toUpperCase()})</th>
+                        <th className="py-3 px-4 text-center w-1/4">Length ({unitMode.toUpperCase()})</th>
+                        <th className="py-3 px-4 text-center w-1/4">Shoulder ({unitMode.toUpperCase()})</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-veyro-border-light text-veyro-black font-medium">
+                    <tbody className="divide-y divide-neutral-100 text-neutral-950 font-medium">
                       {APPAREL_SIZING_ROWS.map((row) => {
                         const isRowSelected = selectedSize === row.size;
                         return (
@@ -921,21 +1058,30 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                             onClick={() => handleSizeSelect(row.size)}
                             className={`cursor-pointer transition-colors ${
                               isRowSelected
-                                ? "bg-amber-50/70 font-bold border-l-2 border-veyro-black"
-                                : "hover:bg-neutral-50"
+                                ? "bg-neutral-100/90 font-bold text-neutral-950"
+                                : "hover:bg-neutral-50/80 text-neutral-800"
                             }`}
                           >
-                            <td className="p-3 flex items-center gap-2">
-                              <span className="font-bold">{row.size}</span>
-                              {isRowSelected && (
-                                <span className="bg-veyro-black text-white text-[9px] font-black px-1.5 py-0.5 rounded-[2px] uppercase">
-                                  Selected
-                                </span>
-                              )}
+                            <td className="py-3.5 px-4 text-left">
+                              <div className="flex items-center gap-2">
+                                <span className="font-extrabold text-sm text-neutral-950">{row.size}</span>
+                                {isRowSelected && (
+                                  <span className="inline-flex items-center gap-1 bg-neutral-950 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                    <Check size={9} strokeWidth={3} />
+                                    Selected
+                                  </span>
+                                )}
+                              </div>
                             </td>
-                            <td className="p-3">{unitMode === "in" ? row.chestIn : row.chestCm}</td>
-                            <td className="p-3">{unitMode === "in" ? row.lengthIn : row.lengthCm}</td>
-                            <td className="p-3">{unitMode === "in" ? row.shoulderIn : row.shoulderCm}</td>
+                            <td className="py-3.5 px-4 text-center font-semibold text-neutral-900">
+                              {unitMode === "in" ? row.chestIn : row.chestCm}
+                            </td>
+                            <td className="py-3.5 px-4 text-center font-semibold text-neutral-900">
+                              {unitMode === "in" ? row.lengthIn : row.lengthCm}
+                            </td>
+                            <td className="py-3.5 px-4 text-center font-semibold text-neutral-900">
+                              {unitMode === "in" ? row.shoulderIn : row.shoulderCm}
+                            </td>
                           </tr>
                         );
                       })}
@@ -945,74 +1091,99 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               </div>
 
               {/* How to measure and fit advice */}
-              {isFootwear ? (
-                <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-veyro-black">
+              {isWatch ? (
+                <div className="space-y-3.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-950">
+                    How to Choose Your Watch Proportion
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">1. Wrist Circumference</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
+                        Wrap a flexible tailor&apos;s tape or paper strip just below your wrist bone where your watch will sit.
+                      </p>
+                    </div>
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">2. Lug Overhang Check</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
+                        Ensure the watch&apos;s lug-to-lug distance does not exceed your wrist width for a flush, balanced drape.
+                      </p>
+                    </div>
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">3. Dial &amp; Cuff Clearance</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
+                        36mm–40mm slides effortlessly under formal cuffs; 42mm–45mm delivers commanding wrist presence.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl text-xs text-neutral-800 leading-relaxed">
+                    <p>
+                      <strong className="text-neutral-950 font-bold">Fit &amp; Horology Note:</strong> {product.sizeGuide || "Precision engineered Swiss & Japanese mechanical calibres. Micro-adjustable strap clasp and extra links provided for a custom bespoke fit."}
+                    </p>
+                  </div>
+                </div>
+              ) : isFootwear ? (
+                <div className="space-y-3.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-950">
                     How to Measure Your Foot Length
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                    <div className="p-2.5 bg-veyro-surface border border-veyro-border rounded-[2px]">
-                      <span className="font-bold text-veyro-black block mb-0.5">1. Stand on Paper</span>
-                      <p className="text-veyro-muted">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">1. Stand on Paper</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
                         Tape paper against a wall. Stand flat with your heel touching the wall.
                       </p>
                     </div>
-                    <div className="p-2.5 bg-veyro-surface border border-veyro-border rounded-[2px]">
-                      <span className="font-bold text-veyro-black block mb-0.5">2. Mark Longest Toe</span>
-                      <p className="text-veyro-muted">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">2. Mark Longest Toe</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
                         With a vertical pencil, draw a line at the tip of your longest toe.
                       </p>
                     </div>
-                    <div className="p-2.5 bg-veyro-surface border border-veyro-border rounded-[2px]">
-                      <span className="font-bold text-veyro-black block mb-0.5">3. Measure &amp; Match</span>
-                      <p className="text-veyro-muted">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">3. Measure &amp; Match</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
                         Measure from paper edge to the mark and match with the table above.
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-neutral-50 border border-veyro-border-light rounded-[2px] space-y-1 text-xs text-veyro-charcoal">
+                  <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl space-y-1 text-xs text-neutral-800 leading-relaxed">
                     <p>
-                      <strong>Fit Guidance:</strong> VEYRO sneakers fit true to standard UK athletic and lifestyle sizing. If you wear half sizes (e.g. UK 8.5) or have wider feet, we recommend ordering one size up (UK 9).
+                      <strong className="text-neutral-950 font-bold">Fit Guidance:</strong> VEYRO sneakers fit true to standard UK athletic and lifestyle sizing. If you wear half sizes (e.g. UK 8.5) or have wider feet, we recommend ordering one size up (UK 9).
                     </p>
-                  </div>
-
-                  <div className="p-3 bg-veyro-surface-alt border border-veyro-border rounded-[2px] flex items-center gap-2.5 text-xs text-veyro-black">
-                    <ShieldCheck size={18} className="text-emerald-700 shrink-0" />
-                    <span>
-                      <strong>Guaranteed Doorstep Fit:</strong> 7-day complimentary doorstep returns if you need a different size.
-                    </span>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-veyro-black">
+                <div className="space-y-3.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-950">
                     How to Measure Your Garment
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                    <div className="p-2.5 bg-veyro-surface border border-veyro-border rounded-[2px]">
-                      <span className="font-bold text-veyro-black block mb-0.5">Chest Width</span>
-                      <p className="text-veyro-muted">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">Chest Width</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
                         Armpit-to-armpit seam across the fullest part, doubled for circumference.
                       </p>
                     </div>
-                    <div className="p-2.5 bg-veyro-surface border border-veyro-border rounded-[2px]">
-                      <span className="font-bold text-veyro-black block mb-0.5">Body Length</span>
-                      <p className="text-veyro-muted">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">Body Length</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
                         From the highest point of the neck ribbing straight down to the bottom hem.
                       </p>
                     </div>
-                    <div className="p-2.5 bg-veyro-surface border border-veyro-border rounded-[2px]">
-                      <span className="font-bold text-veyro-black block mb-0.5">Shoulder Span</span>
-                      <p className="text-veyro-muted">
+                    <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl">
+                      <span className="font-bold text-neutral-950 block mb-1">Shoulder Span</span>
+                      <p className="text-neutral-800 leading-relaxed font-normal">
                         Straight across the back yoke from left shoulder point to right shoulder point.
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-neutral-50 border border-veyro-border-light rounded-[2px] text-xs text-veyro-charcoal">
+                  <div className="p-3.5 bg-neutral-50/80 border border-neutral-200/80 rounded-2xl text-xs text-neutral-800 leading-relaxed">
                     <p>
-                      <strong>Fit Silhouette:</strong> {product.fit === "Oversized" ? "Deliberate drop-shoulder drape with generous chest volume. Take your true size for the oversized streetwear silhouette, or size down one for a regular fit." : "Designed with classic structured proportions. Fits true to size."}
+                      <strong className="text-neutral-950 font-bold">Fit Silhouette:</strong> {product.fit === "Oversized" ? "Deliberate drop-shoulder drape with generous chest volume. Take your true size for the oversized streetwear silhouette, or size down one for a regular fit." : "Designed with classic structured proportions. Fits true to size."}
                     </p>
                   </div>
                 </div>
@@ -1020,11 +1191,11 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
             </div>
 
             {/* Modal Footer */}
-            <div className="pt-4 border-t border-veyro-border mt-4 flex gap-3">
+            <div className="pt-4 border-t border-neutral-100 mt-4 flex gap-3">
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="w-full bg-veyro-black text-white py-3 text-xs font-bold uppercase tracking-widest rounded-[2px] hover:bg-veyro-charcoal transition-colors cursor-pointer"
+                className="w-full bg-[#111111] hover:bg-neutral-800 active:scale-[0.99] text-white py-3.5 text-xs font-bold uppercase tracking-wider rounded-full shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 {selectedSize ? `Continue with ${selectedSize}` : "Back to Product"}
               </button>

@@ -490,9 +490,9 @@ export function FootwearCatalog() {
                   )}
 
                   {/* Standard Footwear Card */}
-                  <article className="group flex flex-col relative card-hover-lift rounded-lg">
+                  <article className="group flex flex-col relative transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl">
                     {/* Image Stage Container */}
-                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-lg bg-[#f4f2ee] transition-all duration-300 group-hover:shadow-xl">
+                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-[#f4f2ee] transition-all duration-300">
                       <Link
                         href={`/product/${product.slug}`}
                         className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
@@ -663,86 +663,86 @@ export function FootwearCatalog() {
 
       {/* ── 6. INTERACTIVE SHOE SIZING & FIT GUIDE MODAL ────────────────────── */}
       {isSizeGuideOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="shoe-guide-title"
-            className="w-full max-w-2xl bg-white rounded-xs border border-[#e8e8e5] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-2xl bg-white rounded-3xl border border-neutral-200/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e8e5] bg-[#fafaf8]">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-neutral-50/70">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8e8e8e] block">
-                  VEYRO SNEAKER ARCHIVE
+                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-600 block font-mono">
+                  Footwear Sizing &amp; Conversion Spec
                 </span>
-                <h3 id="shoe-guide-title" className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#111111]">
+                <h3 id="shoe-guide-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
                   Footwear Size Conversion &amp; Fit Guide
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="p-1.5 text-[#555555] hover:text-[#111111] hover:bg-[#eeeeea] rounded-xs transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-all cursor-pointer"
                 aria-label="Close fit guide"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="overflow-y-auto p-6 space-y-6">
+            <div className="overflow-y-auto p-6 sm:p-8 space-y-6 text-neutral-950">
               {/* Sizing Table */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-950 mb-2.5">
                   Official Size Conversion Chart (Standard Indian/UK Scale)
                 </h4>
-                <div className="overflow-x-auto border border-neutral-200 rounded-xs">
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-neutral-100 text-neutral-700 uppercase font-mono text-[10px]">
+                <div className="overflow-x-auto border border-neutral-200/90 rounded-2xl shadow-xs bg-white">
+                  <table className="w-full text-xs">
+                    <thead className="bg-neutral-100/90 text-neutral-900 uppercase font-extrabold text-[11px] tracking-wider border-b border-neutral-200">
                       <tr>
-                        <th className="px-3 py-2">UK (India)</th>
-                        <th className="px-3 py-2">US Men</th>
-                        <th className="px-3 py-2">EU</th>
-                        <th className="px-3 py-2">Foot Length (CM)</th>
+                        <th className="py-3 px-4 text-left w-1/4">UK (India)</th>
+                        <th className="py-3 px-4 text-center w-1/4">US Men</th>
+                        <th className="py-3 px-4 text-center w-1/4">EU</th>
+                        <th className="py-3 px-4 text-center w-1/4">Foot Length (CM)</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-200 font-mono">
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">UK 6</td>
-                        <td className="px-3 py-2 text-neutral-600">US 7</td>
-                        <td className="px-3 py-2 text-neutral-600">EU 40</td>
-                        <td className="px-3 py-2 text-neutral-600">25.0 cm</td>
+                    <tbody className="divide-y divide-neutral-100 text-neutral-950">
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">UK 6</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">US 7</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">EU 40</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-neutral-950">25.0 cm</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">UK 7</td>
-                        <td className="px-3 py-2 text-neutral-600">US 8</td>
-                        <td className="px-3 py-2 text-neutral-600">EU 41</td>
-                        <td className="px-3 py-2 text-neutral-600">26.0 cm</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">UK 7</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">US 8</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">EU 41</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-neutral-950">26.0 cm</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">UK 8</td>
-                        <td className="px-3 py-2 text-neutral-600">US 9</td>
-                        <td className="px-3 py-2 text-neutral-600">EU 42</td>
-                        <td className="px-3 py-2 text-neutral-600">27.0 cm</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">UK 8</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">US 9</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">EU 42</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-neutral-950">27.0 cm</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">UK 9</td>
-                        <td className="px-3 py-2 text-neutral-600">US 10</td>
-                        <td className="px-3 py-2 text-neutral-600">EU 43</td>
-                        <td className="px-3 py-2 text-neutral-600">28.0 cm</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">UK 9</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">US 10</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">EU 43</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-neutral-950">28.0 cm</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">UK 10</td>
-                        <td className="px-3 py-2 text-neutral-600">US 11</td>
-                        <td className="px-3 py-2 text-neutral-600">EU 44</td>
-                        <td className="px-3 py-2 text-neutral-600">29.0 cm</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">UK 10</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">US 11</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">EU 44</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-neutral-950">29.0 cm</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">UK 11</td>
-                        <td className="px-3 py-2 text-neutral-600">US 12</td>
-                        <td className="px-3 py-2 text-neutral-600">EU 45</td>
-                        <td className="px-3 py-2 text-neutral-600">30.0 cm</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">UK 11</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">US 12</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">EU 45</td>
+                        <td className="py-3.5 px-4 text-center font-bold text-neutral-950">30.0 cm</td>
                       </tr>
                     </tbody>
                   </table>
@@ -751,43 +751,35 @@ export function FootwearCatalog() {
 
               {/* Silhouette Profiles */}
               <div className="space-y-3">
-                <div className="p-3.5 bg-neutral-50 rounded-xs border border-neutral-200">
-                  <div className="text-xs font-bold uppercase text-black">1. Minimal Court Lows</div>
-                  <p className="text-xs text-neutral-600 mt-1">
+                <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
+                  <div className="text-xs font-bold uppercase text-neutral-950">1. Minimal Court Lows</div>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-normal">
                     True to size. Features a tapered toe profile with medium volume. If you have wide feet, we recommend ordering one size up.
                   </p>
                 </div>
-                <div className="p-3.5 bg-neutral-50 rounded-xs border border-neutral-200">
-                  <div className="text-xs font-bold uppercase text-black">2. Retro Runners &amp; Suede</div>
-                  <p className="text-xs text-neutral-600 mt-1">
+                <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
+                  <div className="text-xs font-bold uppercase text-neutral-950">2. Retro Runners &amp; Suede</div>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-normal">
                     Snug ergonomic hold. Features an EVA midsole wedge that hugs the heel. Fits true to size with socks.
                   </p>
                 </div>
-                <div className="p-3.5 bg-neutral-50 rounded-xs border border-neutral-200">
-                  <div className="text-xs font-bold uppercase text-black">3. Chunky Soles &amp; Platforms</div>
-                  <p className="text-xs text-neutral-600 mt-1">
+                <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
+                  <div className="text-xs font-bold uppercase text-neutral-950">3. Chunky Soles &amp; Platforms</div>
+                  <p className="text-xs text-neutral-800 mt-1 leading-relaxed font-normal">
                     Generous interior volume with deep heel cup. Order your standard UK sneaker size.
                   </p>
                 </div>
               </div>
-
-              {/* Quality Guarantee Note */}
-              <div className="p-3 bg-[#111111] text-white rounded-xs flex items-center gap-3">
-                <ShieldCheck size={24} className="text-[#fcd017] shrink-0" />
-                <p className="text-xs text-[#cccccc]">
-                  All VEYRO footwear comes with doorstep returns. If the size doesn&apos;t fit 100%, we pick it up for free within 7 days.
-                </p>
-              </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-3 border-t border-[#e8e8e5] bg-[#fafaf8] flex justify-end">
+            <div className="px-6 sm:px-8 py-4 border-t border-neutral-100 bg-neutral-50/70 flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="px-5 py-2 bg-[#111111] hover:bg-[#333333] text-white text-xs font-bold uppercase tracking-wider rounded-xs transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-7 py-3 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md"
               >
-                Got It, Return to Vault
+                Got It, Return to Footwear Vault
               </button>
             </div>
           </div>

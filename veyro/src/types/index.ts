@@ -187,6 +187,30 @@ export interface OrderAddress {
   pincode: string;
 }
 
+export type GiftTheme = "atelier-bone" | "brutalist-noir" | "heritage-kraft";
+
+export interface GiftRecipientAddress {
+  phone?: string;
+  street?: string;
+  apartment?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}
+
+export interface GiftPackagingDetails {
+  enabled: boolean;
+  fee: number; // ₹99
+  theme: GiftTheme;
+  recipientName: string;
+  senderName: string;
+  message: string;
+  hidePriceTag: boolean;
+  stealthOuterBox: boolean;
+  shipDirectlyToRecipient?: boolean;
+  recipientAddress?: GiftRecipientAddress;
+}
+
 export interface OrderRecord {
   id: string;
   date: string;
@@ -202,6 +226,8 @@ export interface OrderRecord {
   estimatedDelivery: string;
   timeline: OrderTimeline[];
   shippingAddress: OrderAddress;
+  billingAddress?: OrderAddress; // [E.6] Billing address selection
+  isGiftOrder?: boolean;
   paymentMethod: string;
   deliveredDate?: string; // ISO format date string to track return window
   returnRequest?: {
@@ -210,6 +236,8 @@ export interface OrderRecord {
     status: "pending" | "approved" | "rejected";
     details?: string;
   };
+  giftPackaging?: GiftPackagingDetails;
   /** @deprecated Legacy compat — use items[] instead */
   itemNames: string[];
 }
+

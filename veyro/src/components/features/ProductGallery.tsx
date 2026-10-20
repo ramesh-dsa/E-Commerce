@@ -3,8 +3,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { Product } from "@/types";
-import { Badge } from "@/components/ui/Badge";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Star } from "lucide-react";
+
 import { useReviews } from "@/context/ReviewsContext";
 
 interface ProductGalleryProps {
@@ -143,30 +143,6 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               transform: isZoomed ? "scale(2.2)" : "scale(1)",
             }}
           />
-
-          {/* Minimalist Merchandising Badge / Sold Out Pill */}
-          {!product.inStock ? (
-            <div className="absolute top-4 left-4 z-10 pointer-events-none">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-neutral-950/90 text-white backdrop-blur-md shadow-md border border-white/15">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                Sold Out
-              </span>
-            </div>
-          ) : product.badge ? (
-            <div className="absolute top-4 left-4 z-10 pointer-events-none">
-              <Badge
-                variant={
-                  product.badge === "SALE"
-                    ? "sale"
-                    : product.badge === "NEW"
-                    ? "dark"
-                    : "default"
-                }
-              >
-                {product.badge}
-              </Badge>
-            </div>
-          ) : null}
 
           {/* Rating Pill */}
           {reviewsCount > 0 && (

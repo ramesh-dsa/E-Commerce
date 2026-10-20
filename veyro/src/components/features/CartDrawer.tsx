@@ -24,7 +24,9 @@ import {
   Package,
   AlertCircle,
   RotateCcw,
+  Gift,
 } from "lucide-react";
+import { AtelierGiftSuite } from "./AtelierGiftSuite";
 
 export function CartDrawer() {
   const { products } = useProducts();
@@ -42,6 +44,8 @@ export function CartDrawer() {
     closeCart,
     updateQuantity,
     removeFromCart,
+    giftPackaging,
+    giftPackagingFee,
   } = useCart();
 
   const { addOrder } = useUser();
@@ -326,11 +330,12 @@ export function CartDrawer() {
       100,
       Math.round((finalSubtotal / freeShippingThreshold) * 100)
     );
+    const packagingFee = giftPackaging.enabled ? giftPackagingFee : 0;
     const finalTotal = count === 0
       ? 0
       : Math.max(
           0,
-          (hasFreeShipping ? finalSubtotal : finalSubtotal + 99) - couponDiscount
+          (hasFreeShipping ? finalSubtotal : finalSubtotal + 99) - couponDiscount + packagingFee
         );
 
     return {
@@ -345,7 +350,7 @@ export function CartDrawer() {
       selectedProgressPercent: progressPercent,
       selectedFinalTotal: finalTotal,
     };
-  }, [selectedItems, appliedCoupon, freeShippingThreshold]);
+  }, [selectedItems, appliedCoupon, freeShippingThreshold, giftPackaging.enabled, giftPackagingFee]);
 
   const handleProceedToCheckout = () => {
     if (selectedCount === 0 || isTruckDriving) return;
@@ -462,6 +467,7 @@ export function CartDrawer() {
         couponDiscount: selectedCouponDiscount,
         couponCode: appliedCoupon,
         shippingCost,
+        giftPackaging: giftPackaging.enabled ? giftPackaging : undefined,
         itemsCount: selectedCount,
         items: selectedItems.map((i) => ({
           productId: i.product.id,
@@ -842,6 +848,11 @@ export function CartDrawer() {
                         </div>
                       );
                     })}
+
+                    {/* Atelier Haute-Couture Gift Suite (Compact Drawer Mode) */}
+                    <div className="pt-2 pb-1">
+                      <AtelierGiftSuite compact />
+                    </div>
                   </>
                 )}
               </div>
@@ -907,6 +918,15 @@ export function CartDrawer() {
                       )}
                     </span>
                   </div>
+                  {giftPackaging.enabled && (
+                    <div className="flex justify-between text-neutral-800 font-medium">
+                      <span className="flex items-center gap-1.5">
+                        <Gift size={13} className="text-slate-400 shrink-0" />
+                        <span>Signature Gift Packaging</span>
+                      </span>
+                      <span className="font-bold tabular-nums">+{formatPrice(giftPackagingFee)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-neutral-600">
                     <span>Taxes</span>
                     <span className="text-neutral-500">Included</span>
@@ -1029,6 +1049,15 @@ export function CartDrawer() {
                   <span>Shipping:</span>
                   <span>{selectedHasFreeShipping ? "FREE EXPRESS DELIVERY" : "₹99"}</span>
                 </div>
+                {giftPackaging.enabled && (
+                  <div className="mt-1.5 pt-1.5 border-t border-neutral-200/80 flex items-center justify-between text-[11px] text-[#111111] font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <Gift size={13} className="text-slate-400 shrink-0" />
+                      <span>Signature Gift Packaging:</span>
+                    </span>
+                    <span>+{formatPrice(giftPackagingFee)}</span>
+                  </div>
+                )}
 
                 {/* Promo Code */}
                 {!appliedCoupon && (

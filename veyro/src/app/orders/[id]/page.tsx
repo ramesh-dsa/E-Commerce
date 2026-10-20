@@ -30,7 +30,8 @@ import {
   RotateCw,
   Undo2,
   ChevronRight,
-  ReceiptText
+  ReceiptText,
+  Gift,
 } from "lucide-react";
 import { CancelOrderModal, isOrderCancellable } from "@/components/features/CancelOrderModal";
 import { Toast } from "@/components/ui/Toast";
@@ -654,6 +655,111 @@ export default function OrderDetailPage() {
                 )}
               </motion.div>
             </motion.section>
+
+            {/* ATELIER KEEPSAKE & LUXURY PACKAGING CARD */}
+            {order.giftPackaging?.enabled && (
+              <motion.section
+                variants={fadeUp}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04]"
+              >
+                <div className="px-6 sm:px-8 py-5 border-b border-black/[0.04] flex items-center justify-between bg-neutral-50/50">
+                  <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                    <Gift size={14} className="text-[#fcd017]" /> ATELIER KEEPSAKE & LUXURY PACKAGING
+                  </h2>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 font-semibold bg-neutral-100 px-2.5 py-1 rounded-full">
+                    {order.giftPackaging.theme === "atelier-bone"
+                      ? "Atelier Bone • Italian Cotton"
+                      : order.giftPackaging.theme === "brutalist-noir"
+                      ? "Brutalist Noir • Carbon Matte"
+                      : "Heritage Kraft • Fibrous Raw"}
+                  </span>
+                </div>
+
+                <div className="p-6 sm:p-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    {/* Left: Real Luxury Packaging Box Visual */}
+                    <div className="lg:col-span-5 relative min-h-[220px] rounded-xl overflow-hidden border border-neutral-200/80 bg-neutral-100 shadow-2xs">
+                      <Image
+                        src="/images/gift-packaging.jpg"
+                        alt="VEYRO Signature Atelier Gift Packaging"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 360px"
+                      />
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3.5 text-white">
+                        <p className="text-xs font-semibold tracking-wide">
+                          Hand-packed in Tirupur Atelier
+                        </p>
+                        <p className="text-[10px] text-neutral-300">
+                          Gold debossed seal • Archival tissue • Wax seal envelope
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right: Keepsake Note Enclosure */}
+                    <div className="lg:col-span-7 relative rounded-xl p-6 border border-[#E8E2D5] bg-[#FAF7F2] text-[#2C2723] shadow-xs overflow-hidden flex flex-col justify-between">
+                      {/* Debossed Gold Wax Seal Stamp in Top Right */}
+                      <div className="absolute top-4 right-4 sm:top-5 sm:right-5">
+                        <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-[#c99738] via-[#e2b755] to-[#8c651a] shadow-[0_4px_12px_rgba(140,101,26,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] flex items-center justify-center border border-[#e8c878]">
+                          <div className="w-7 h-7 rounded-full border border-[#8c651a]/40 flex items-center justify-center">
+                            <span className="font-serif font-black text-xs tracking-widest text-[#422e06] select-none">
+                              V
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="text-[10px] uppercase font-bold tracking-[0.2em] opacity-60">
+                          Keepsake Letterpress Note
+                        </div>
+
+                        <div className="flex items-center gap-2 text-xs font-semibold">
+                          <span className="opacity-60">To:</span>
+                          <span className="underline underline-offset-4 decoration-amber-500/40">
+                            {order.giftPackaging.recipientName || "Valued Recipient"}
+                          </span>
+                        </div>
+
+                        {order.giftPackaging.message ? (
+                          <p className="font-serif italic text-lg sm:text-xl leading-relaxed tracking-wide pt-1 pb-2 opacity-95 break-words">
+                            &ldquo;{order.giftPackaging.message}&rdquo;
+                          </p>
+                        ) : (
+                          <p className="font-serif italic text-base sm:text-lg leading-relaxed tracking-wide pt-1 pb-2 opacity-75 italic">
+                            &ldquo;Crafted with care, presented with elegance.&rdquo;
+                          </p>
+                        )}
+
+                        <div className="flex items-center gap-2 text-xs font-semibold pt-1">
+                          <span className="opacity-60">From:</span>
+                          <span className="underline underline-offset-4 decoration-amber-500/40">
+                            {order.giftPackaging.senderName || "A Gift of Distinction"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Privacy Badges Footer */}
+                      <div className="mt-5 pt-3.5 border-t border-black/10 flex flex-wrap items-center gap-2 text-[10px] font-mono tracking-wider opacity-75">
+                        {order.giftPackaging.hidePriceTag && (
+                          <span className="inline-flex items-center gap-1 bg-black/5 px-2 py-0.5 rounded">
+                            ✓ MRP Redacted on Dispatch
+                          </span>
+                        )}
+                        {order.giftPackaging.stealthOuterBox && (
+                          <span className="inline-flex items-center gap-1 bg-black/5 px-2 py-0.5 rounded">
+                            ✓ Discreet Outer Transit Carton
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 bg-black/5 px-2 py-0.5 rounded">
+                          ✓ Magnetic Luxury Gift Box
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.section>
+            )}
           </div>
 
           {/* RIGHT COLUMN: Summary & Details */}
@@ -696,6 +802,16 @@ export default function OrderDetailPage() {
                     {order.shippingCost === 0 ? <span className="text-[#fcd017] uppercase tracking-wider text-xs">Free</span> : <span className="text-neutral-900 tabular-nums">{formatPrice(order.shippingCost)}</span>}
                   </span>
                 </motion.div>
+
+                {order.giftPackaging?.enabled && (
+                  <motion.div variants={listItem} className="flex justify-between text-neutral-800 font-medium">
+                    <span className="flex items-center gap-1.5">
+                      <Gift size={13} className="text-slate-400 shrink-0" />
+                      <span>Signature Gift Packaging</span>
+                    </span>
+                    <span className="font-bold tabular-nums">+{formatPrice(order.giftPackaging.fee)}</span>
+                  </motion.div>
+                )}
                 
                 <motion.div variants={listItem} className="flex justify-between text-neutral-600 font-medium pb-4 border-b border-dashed border-neutral-200">
                   <span>Taxes</span>
@@ -720,18 +836,58 @@ export default function OrderDetailPage() {
                 </h2>
               </div>
               <div className="p-6 divide-y divide-black/[0.04]">
+                {/* 1. SHIPPING / FRIEND'S DOORSTEP ADDRESS */}
                 {order.shippingAddress && (
                   <div className="pb-6">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-[10px] font-black tracking-widest text-neutral-400 uppercase">
+                        {order.isGiftOrder ? "Friend's Delivery Destination" : "Shipping Destination"}
+                      </span>
+                      {order.isGiftOrder && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-neutral-900 border border-amber-500/30">
+                          <Gift size={10} className="text-[#c99738]" /> Surprise Gift Parcel
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm font-black text-[#111111]">{order.shippingAddress.name}</p>
-                    <p className="text-sm text-neutral-600 mt-2 leading-relaxed">{order.shippingAddress.address}</p>
+                    <p className="text-sm text-neutral-600 mt-1.5 leading-relaxed">{order.shippingAddress.address}</p>
                     <p className="text-sm text-neutral-600 mt-1">PIN: {order.shippingAddress.pincode}</p>
+                    <div className="mt-3 flex items-center gap-2 flex-wrap">
+                      <div className="inline-flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 border border-black/[0.04]">
+                        <Smartphone size={12} className="text-neutral-400" />
+                        {order.shippingAddress.phone}
+                      </div>
+                      {order.isGiftOrder && (
+                        <span className="text-[10px] text-neutral-400 font-medium">
+                          (Courier doorstep OTP verification)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. OFFICIAL BILLING & TAX INVOICE ADDRESS (E.6) */}
+                {order.billingAddress && (
+                  <div className="py-6">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-[10px] font-black tracking-widest text-neutral-400 uppercase flex items-center gap-1.5">
+                        <ReceiptText size={12} className="text-neutral-500" /> Official Billing Address
+                      </span>
+                      <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded">
+                        Digital GST Invoice
+                      </span>
+                    </div>
+                    <p className="text-sm font-black text-[#111111]">{order.billingAddress.name}</p>
+                    <p className="text-sm text-neutral-600 mt-1.5 leading-relaxed">{order.billingAddress.address}</p>
+                    <p className="text-sm text-neutral-600 mt-1">PIN: {order.billingAddress.pincode}</p>
                     <div className="mt-3 inline-flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 border border-black/[0.04]">
                       <Smartphone size={12} className="text-neutral-400" />
-                      {order.shippingAddress.phone}
+                      {order.billingAddress.phone}
                     </div>
                   </div>
                 )}
                 
+                {/* 3. PAYMENT METHOD */}
                 <div className="pt-6 flex items-center gap-4">
                   <motion.div whileHover={{ rotate: 10, scale: 1.1 }} className="w-12 h-12 rounded-xl bg-neutral-50 border border-black/[0.04] flex items-center justify-center text-[#111111]">
                     {paymentInfo.icon}

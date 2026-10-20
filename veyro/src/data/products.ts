@@ -548,7 +548,58 @@ const tshirts: Product[] = [
     ],
   },
 
-  
+  {
+    id: "vey-tsh-gfx-003",
+    sku: "VEY-TSH-GFX-003",
+    slug: "urban-fragment-graphic-tee-charcoal",
+    name: "Urban Fragment Graphic Tee",
+    category: "Clothing",
+    subcategory: "T-Shirts",
+    subcategoryTag: "Graphic",
+    fit: "Oversized",
+    colorName: "Washed Charcoal",
+    colorHex: "#2C2C2C",
+    material: "100% Combed Cotton, 240gsm",
+    price: 1299,
+    originalPrice: 1699,
+    badge: "NEW",
+    imageUrl: "/products/tshirts/gemini-enhanced.webp",
+    secondaryImageUrl: "/products/tshirts/urban-fragment-tee-front.webp",
+    sizes: TEE_SIZES,
+    isNewArrival: true,
+    inStock: true,
+    shortDescription:
+      "Modernist geometric architectural graphics screen-printed on heavy 240gsm combed cotton jersey in washed charcoal.",
+    longDescription:
+      "The Urban Fragment Graphic Tee draws inspiration from brutalist architecture and urban geometry. Screen-printed with high-density pigments onto our signature 240gsm combed cotton jersey in washed charcoal, it features an effortless drop-shoulder oversized silhouette and high-durability ribbed collar.",
+    features: [
+      "High-density urban architectural graphics — brutalist geometric line and tone artwork",
+      "Heavyweight 240gsm combed cotton — structured drape and lasting shape",
+      "Effortless drop-shoulder silhouette — relaxed streetwear proportions",
+      "Washed charcoal finish — vintage luxury aesthetic with soft hand-feel",
+      "Reinforced crewneck collar — holds its shape wash after wash",
+    ],
+    care: TEE_CARE,
+    sizeGuide: "Oversized fit — true to size for intended relaxed silhouette",
+    collections: ["Essentials", "New Season"],
+    tags: [
+      "graphic",
+      "urban-fragment",
+      "charcoal",
+      "oversized",
+      "heavyweight",
+      "cotton",
+      "streetwear",
+      "new-arrival",
+    ],
+    relatedProducts: [
+      "vey-tsh-ovr-001",
+      "vey-tsh-gfx-001",
+      "vey-tsh-gfx-002",
+      "vey-ftw-ret-001",
+    ],
+  },
+
   // ── TEXTURED & PREMIUM ────────────────────────────────────────────────
 
   {

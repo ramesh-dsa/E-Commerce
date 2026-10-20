@@ -196,10 +196,11 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             </h2>
           </div>
 
+          {/* Write a Review CTA Button */}
           <button
             type="button"
             onClick={() => setIsWriteModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-veyro-black text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-[2px] transition-all duration-200 cursor-pointer shadow-sm hover:shadow active:scale-[0.99] w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#111111] text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer shadow-sm hover:shadow active:scale-[0.98] w-full sm:w-auto"
           >
             <Plus size={15} />
             <span>Write a Review</span>
@@ -207,15 +208,15 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
         </div>
 
         {/* ── SUMMARY DASHBOARD (Prominent average, bar chart, fit breakdown) ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-veyro-surface border border-veyro-border p-6 sm:p-8 rounded-[3px] mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-neutral-50/70 border border-neutral-200/80 p-6 sm:p-8 rounded-3xl mb-12 shadow-xs">
           {/* Col 1: Overall Average & Recommendation */}
-          <div className="lg:col-span-4 flex flex-col justify-between pr-0 lg:pr-6 lg:border-r lg:border-veyro-border">
+          <div className="lg:col-span-4 flex flex-col justify-between pr-0 lg:pr-6 lg:border-r lg:border-neutral-200/80">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-veyro-muted">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono">
                 Overall Rating
               </span>
               <div className="flex items-baseline gap-3 mt-2">
-                <span className="text-5xl sm:text-6xl font-black tracking-tight text-veyro-black">
+                <span className="text-5xl sm:text-6xl font-black tracking-tight text-[#111111]">
                   {stats.averageRating.toFixed(1)}
                 </span>
                 <div className="flex flex-col">
@@ -232,27 +233,27 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                       />
                     ))}
                   </div>
-                  <span className="text-xs text-veyro-muted mt-1 font-medium">
+                  <span className="text-xs text-neutral-500 mt-1 font-medium">
                     Based on {stats.totalCount} verified reviews
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-veyro-border/60">
-              <div className="flex items-center gap-2 text-xs font-bold text-veyro-black">
-                <CheckCircle2 size={16} className="text-[#10b981]" />
+            <div className="mt-6 pt-6 border-t border-neutral-200/60">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#111111]">
+                <CheckCircle2 size={16} className="text-neutral-900" />
                 <span>{stats.recommendationPercentage}% of buyers recommend this product</span>
               </div>
-              <p className="text-[11px] text-veyro-subtle mt-1">
-                Authentic reviews from verified buyers across India.
+              <p className="text-[11px] text-neutral-500 mt-1">
+                Authentic reviews from verified owners across India.
               </p>
             </div>
           </div>
 
           {/* Col 2: Interactive Rating Distribution Bar Chart */}
           <div className="lg:col-span-5 flex flex-col justify-center">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-veyro-muted mb-3 block">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono mb-3 block">
               Rating Distribution
             </span>
             <div className="space-y-2.5">
@@ -278,21 +279,21 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                     }`}
                     aria-label={`Filter by ${star} star reviews (${count} reviews, ${percent} percent)`}
                   >
-                    <span className="w-11 font-mono font-bold text-veyro-black flex items-center gap-1">
+                    <span className="w-11 font-mono font-bold text-[#111111] flex items-center gap-1">
                       {star} <Star size={11} className="fill-veyro-yellow text-veyro-yellow inline" />
                     </span>
 
                     {/* Progress Bar Container */}
-                    <div className="flex-1 h-2 bg-neutral-200/80 rounded-[1px] overflow-hidden relative">
+                    <div className="flex-1 h-2.5 bg-neutral-200/80 rounded-full overflow-hidden relative">
                       <div
-                        className={`h-full transition-all duration-500 rounded-[1px] ${
-                          isSelected ? "bg-veyro-black" : "bg-veyro-yellow"
+                        className={`h-full transition-all duration-500 rounded-full ${
+                          isSelected ? "bg-[#111111]" : "bg-veyro-yellow"
                         }`}
                         style={{ width: `${percent}%` }}
                       />
                     </div>
 
-                    <span className="w-10 font-mono text-[11px] text-right font-medium text-veyro-muted group-hover:text-veyro-black transition-colors">
+                    <span className="w-10 font-mono text-[11px] text-right font-medium text-neutral-500 group-hover:text-black transition-colors">
                       {count}
                     </span>
                   </button>
@@ -302,20 +303,20 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
           </div>
 
           {/* Col 3: Fit & Sizing Feedback */}
-          <div className="lg:col-span-3 flex flex-col justify-between pl-0 lg:pl-6 lg:border-l lg:border-veyro-border">
+          <div className="lg:col-span-3 flex flex-col justify-between pl-0 lg:pl-6 lg:border-l lg:border-neutral-200/80">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-veyro-muted block mb-3">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono block mb-3">
                 Customer Fit Gauge
               </span>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-veyro-black">True to Size</span>
-                    <span className="font-mono text-veyro-muted">{stats.fitBreakdown.trueToSize}%</span>
+                    <span className="text-[#111111]">True to Size</span>
+                    <span className="font-mono text-neutral-500">{stats.fitBreakdown.trueToSize}%</span>
                   </div>
-                  <div className="h-1.5 bg-neutral-200 rounded-[1px] overflow-hidden">
+                  <div className="h-2 bg-neutral-200/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-veyro-black rounded-[1px]"
+                      className="h-full bg-[#111111] rounded-full"
                       style={{ width: `${stats.fitBreakdown.trueToSize}%` }}
                     />
                   </div>
@@ -323,12 +324,12 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-veyro-subtle">Runs Large</span>
-                    <span className="font-mono text-veyro-muted">{stats.fitBreakdown.runsLarge}%</span>
+                    <span className="text-neutral-600">Runs Large</span>
+                    <span className="font-mono text-neutral-500">{stats.fitBreakdown.runsLarge}%</span>
                   </div>
-                  <div className="h-1.5 bg-neutral-200 rounded-[1px] overflow-hidden">
+                  <div className="h-2 bg-neutral-200/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-neutral-400 rounded-[1px]"
+                      className="h-full bg-neutral-400 rounded-full"
                       style={{ width: `${stats.fitBreakdown.runsLarge}%` }}
                     />
                   </div>
@@ -336,12 +337,12 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-veyro-subtle">Runs Small</span>
-                    <span className="font-mono text-veyro-muted">{stats.fitBreakdown.runsSmall}%</span>
+                    <span className="text-neutral-600">Runs Small</span>
+                    <span className="font-mono text-neutral-500">{stats.fitBreakdown.runsSmall}%</span>
                   </div>
-                  <div className="h-1.5 bg-neutral-200 rounded-[1px] overflow-hidden">
+                  <div className="h-2 bg-neutral-200/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-neutral-400 rounded-[1px]"
+                      className="h-full bg-neutral-400 rounded-full"
                       style={{ width: `${stats.fitBreakdown.runsSmall}%` }}
                     />
                   </div>
@@ -349,7 +350,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               </div>
             </div>
 
-            <p className="text-[10px] text-veyro-subtle mt-4 uppercase tracking-wider">
+            <p className="text-[10px] text-neutral-400 mt-4 uppercase tracking-wider font-mono">
               {stats.fitBreakdown.trueToSize >= 75
                 ? "Most customers advise ordering your regular size."
                 : "Refer to sizing guide before ordering."}
@@ -363,19 +364,19 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
           <div
             role="toolbar"
             aria-label="Filter reviews by rating"
-            className="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none"
+            className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none"
           >
-            <span className="text-[11px] font-bold text-veyro-muted uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1">
+            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1.5 font-mono">
               <Filter size={12} /> Filter:
             </span>
 
             <button
               type="button"
               onClick={() => setSelectedRatingFilter("ALL")}
-              className={`px-3 py-1.5 rounded-[2px] text-xs font-bold tracking-tight transition-all duration-200 shrink-0 cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-200 shrink-0 cursor-pointer ${
                 selectedRatingFilter === "ALL"
-                  ? "bg-veyro-black text-white shadow-xs"
-                  : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700"
+                  ? "bg-[#111111] text-white shadow-xs"
+                  : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80"
               }`}
             >
               All ({allReviews.length})
@@ -390,10 +391,10 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   key={star}
                   type="button"
                   onClick={() => setSelectedRatingFilter(isSelected ? "ALL" : star)}
-                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-[2px] text-xs font-bold tracking-tight transition-all duration-200 shrink-0 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-200 shrink-0 cursor-pointer ${
                     isSelected
-                      ? "bg-veyro-black text-white shadow-xs"
-                      : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700"
+                      ? "bg-[#111111] text-white shadow-xs"
+                      : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80"
                   }`}
                 >
                   <span>{star}</span>
@@ -414,16 +415,23 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               <button
                 type="button"
                 onClick={() => setSelectedRatingFilter("ALL")}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-veyro-muted hover:text-veyro-black ml-2 underline underline-offset-2 cursor-pointer shrink-0"
+                className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300/80 hover:border-neutral-900 rounded-full text-xs font-semibold tracking-tight transition-all duration-300 cursor-pointer shadow-2xs hover:shadow-sm active:scale-95 shrink-0 ml-1.5 animate-in fade-in slide-in-from-left-2 duration-300"
+                aria-label="Clear active rating filter"
               >
-                <X size={11} /> Clear
+                <span className="w-4 h-4 rounded-full bg-neutral-200 group-hover:bg-neutral-800 flex items-center justify-center transition-colors duration-300">
+                  <X
+                    size={10}
+                    className="stroke-[2.5] text-neutral-700 group-hover:text-white transition-transform duration-300 group-hover:rotate-90"
+                  />
+                </span>
+                <span>Clear Filter</span>
               </button>
             )}
           </div>
 
           {/* Sort Dropdown */}
           <div ref={sortRef} className="relative shrink-0 flex items-center justify-between md:justify-end gap-2">
-            <span className="text-[11px] font-bold text-veyro-muted uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider font-mono">
               Sort by:
             </span>
 
@@ -432,7 +440,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               onClick={() => setSortDropdownOpen((prev) => !prev)}
               aria-haspopup="listbox"
               aria-expanded={sortDropdownOpen}
-              className="inline-flex items-center justify-between gap-3 bg-white border border-veyro-border hover:border-veyro-black text-xs font-bold text-veyro-black px-3.5 py-1.5 rounded-[2px] transition-colors cursor-pointer select-none min-w-[150px]"
+              className="inline-flex items-center justify-between gap-3 bg-white border border-neutral-200/80 hover:border-black text-xs font-bold text-[#111111] px-4 py-2 rounded-full transition-colors cursor-pointer select-none min-w-[150px] shadow-2xs"
             >
               <span>
                 {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
@@ -448,7 +456,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             {sortDropdownOpen && (
               <div
                 role="listbox"
-                className="absolute right-0 top-full mt-1.5 w-48 bg-white border border-veyro-border rounded-[2px] shadow-xl py-1 z-40 animate-in fade-in zoom-in-95 duration-100"
+                className="absolute right-0 top-full mt-2 w-48 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 z-40 animate-in fade-in zoom-in-95 duration-100"
               >
                 {SORT_OPTIONS.map((opt) => {
                   const isSelected = opt.value === sortBy;
@@ -462,14 +470,14 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         setSortBy(opt.value);
                         setSortDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                      className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between rounded-xl cursor-pointer transition-colors ${
                         isSelected
-                          ? "font-bold text-veyro-black bg-veyro-surface"
-                          : "font-medium text-neutral-600 hover:text-veyro-black hover:bg-neutral-50"
+                          ? "font-bold text-black bg-neutral-100"
+                          : "font-medium text-neutral-600 hover:text-black hover:bg-neutral-50"
                       }`}
                     >
                       <span>{opt.label}</span>
-                      {isSelected && <Check size={13} className="text-veyro-black" />}
+                      {isSelected && <Check size={13} className="text-black" />}
                     </button>
                   );
                 })}
@@ -480,17 +488,17 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
         {/* ── REVIEWS CARDS LIST ── */}
         {filteredAndSortedReviews.length === 0 ? (
-          <div className="py-16 text-center border border-dashed border-veyro-border rounded-[3px] bg-veyro-surface/40">
-            <p className="text-sm font-bold uppercase tracking-wider text-veyro-black mb-1">
+          <div className="py-16 text-center border border-dashed border-neutral-200 rounded-3xl bg-neutral-50/50">
+            <p className="text-sm font-bold uppercase tracking-wider text-black mb-1">
               No reviews match your selected filter
             </p>
-            <p className="text-xs text-veyro-muted mb-4">
+            <p className="text-xs text-neutral-500 mb-4">
               Try selecting another star rating or reset filters to view all reviews.
             </p>
             <button
               type="button"
               onClick={() => setSelectedRatingFilter("ALL")}
-              className="px-4 py-2 bg-veyro-black text-white text-xs font-bold uppercase tracking-wider rounded-[2px] cursor-pointer hover:bg-neutral-800 transition-colors"
+              className="px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-wider rounded-full cursor-pointer hover:bg-neutral-800 transition-colors shadow-xs"
             >
               Reset Filters
             </button>
@@ -506,29 +514,29 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               return (
                 <article
                   key={review.id}
-                  className="bg-white border border-veyro-border p-5 sm:p-6 rounded-[2px] transition-all duration-200 hover:border-neutral-400 hover:shadow-xs"
+                  className="bg-white border border-neutral-200/80 p-6 sm:p-7 rounded-2xl transition-all duration-200 hover:border-neutral-300 hover:shadow-xs"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 mb-3">
                     {/* Reviewer Meta */}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm text-veyro-black">
+                        <span className="font-bold text-sm text-[#111111]">
                           {review.author}
                         </span>
 
                         {review.verified && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 px-2 py-0.5 rounded-[2px] tracking-wide">
-                            <Check size={11} className="stroke-[2.5]" /> Verified Buyer
+                          <span className="inline-flex items-center gap-1 text-[9.5px] font-bold uppercase tracking-wider text-neutral-800 bg-neutral-100 border border-neutral-200/90 px-2.5 py-0.5 rounded-full">
+                            <Check size={10} className="stroke-[3] text-neutral-800" /> Verified Buyer
                           </span>
                         )}
 
                         {review.sizePurchased && (
-                          <span className="text-[10px] font-mono text-veyro-muted">
+                          <span className="text-[10px] font-mono text-neutral-400">
                             • Size {review.sizePurchased}
                           </span>
                         )}
 
-                        <span className="text-[10px] font-medium text-veyro-subtle">
+                        <span className="text-[10px] font-medium text-neutral-500">
                           • {review.fit}
                         </span>
                       </div>
@@ -555,7 +563,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
                       <time
                         dateTime={review.date}
-                        className="text-[11px] font-mono text-veyro-muted"
+                        className="text-[11px] font-mono text-neutral-400"
                       >
                         {review.date}
                       </time>
@@ -563,7 +571,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   </div>
 
                   {/* Review Title */}
-                  <h3 className="text-sm sm:text-base font-bold text-veyro-black mb-2 leading-snug">
+                  <h3 className="text-sm sm:text-base font-bold text-[#111111] mb-2 leading-snug">
                     {review.title}
                   </h3>
 
@@ -573,8 +581,8 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   </p>
 
                   {/* Review Card Footer: Helpful Voting Buttons with Duplicate-Vote Prevention */}
-                  <div className="pt-3 border-t border-veyro-border/60 flex items-center justify-between text-xs">
-                    <span className="text-[11px] text-veyro-subtle">
+                  <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-neutral-400">
                       Was this review helpful?
                     </span>
 
@@ -585,9 +593,9 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         disabled={isLocked}
                         onClick={() => voteReview(review.id, "helpful")}
                         aria-label={`Mark as helpful. Currently ${review.helpfulCount} votes`}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-[2px] text-xs font-semibold transition-all duration-200 ${
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                           isHelpfulActive
-                            ? "bg-veyro-black text-white cursor-default"
+                            ? "bg-[#111111] text-white cursor-default"
                             : isLocked
                             ? "opacity-50 cursor-not-allowed text-neutral-400 bg-neutral-100"
                             : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700 cursor-pointer active:scale-95"
@@ -603,7 +611,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         disabled={isLocked}
                         onClick={() => voteReview(review.id, "unhelpful")}
                         aria-label={`Mark as unhelpful. Currently ${review.unhelpfulCount} votes`}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-[2px] text-xs font-semibold transition-all duration-200 ${
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                           isUnhelpfulActive
                             ? "bg-neutral-800 text-white cursor-default"
                             : isLocked
@@ -628,7 +636,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             <button
               type="button"
               onClick={() => setVisibleCount((prev) => prev + 4)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-veyro-black text-veyro-black hover:bg-veyro-black hover:text-white text-xs font-bold uppercase tracking-wider rounded-[2px] transition-all duration-200 cursor-pointer shadow-xs hover:shadow"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-neutral-300 hover:border-black text-[#111111] hover:bg-[#111111] hover:text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer shadow-xs hover:shadow"
             >
               <span>
                 Load More Reviews (
@@ -646,21 +654,21 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
           role="dialog"
           aria-modal="true"
           aria-labelledby="write-review-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
         >
           <div
-            className="w-full max-w-xl bg-white border border-veyro-border rounded-[3px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-xl bg-white border border-neutral-200/80 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-veyro-border bg-veyro-surface">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-[#fafaf8]">
               <div>
-                <span className="text-[10px] font-mono tracking-widest text-veyro-muted uppercase block">
-                  AUTHENTIC FEEDBACK
+                <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase block font-semibold">
+                  [ AUTHENTIC FEEDBACK ARCHIVE ]
                 </span>
                 <h3
                   id="write-review-title"
-                  className="text-lg font-black uppercase tracking-tight text-veyro-black"
+                  className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#111111] mt-0.5"
                 >
                   Review: {product.name}
                 </h3>
@@ -670,7 +678,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 type="button"
                 onClick={() => setIsWriteModalOpen(false)}
                 aria-label="Close review dialog"
-                className="p-1.5 text-neutral-500 hover:text-veyro-black hover:bg-neutral-200/60 rounded-[2px] transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center transition-all cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -679,24 +687,24 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             {/* Modal Body / Success State */}
             {submitSuccess ? (
               <div className="p-10 text-center flex flex-col items-center justify-center animate-in zoom-in-95 duration-200">
-                <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-[2px] flex items-center justify-center mb-4">
-                  <Check size={28} className="stroke-[2.5]" />
+                <div className="w-14 h-14 bg-neutral-900 text-white rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                  <Check size={26} className="stroke-[2.5] text-[#fcd017]" />
                 </div>
-                <h4 className="text-xl font-black uppercase tracking-tight text-veyro-black mb-1">
+                <h4 className="text-xl font-black uppercase tracking-tight text-[#111111] mb-1">
                   Review Published
                 </h4>
-                <p className="text-xs text-veyro-muted max-w-sm">
+                <p className="text-xs text-neutral-500 max-w-sm">
                   Your verified review has been recorded and added to the top of the archival feed.
                 </p>
               </div>
             ) : (
               <form
                 onSubmit={handleSubmitReview}
-                className="p-6 overflow-y-auto space-y-5"
+                className="p-6 sm:p-8 overflow-y-auto space-y-5"
               >
                 {/* 1. Interactive Star Rating Selector with Smooth Hover-Preview */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono">
                     Your Rating <span className="text-red-500">*</span>
                   </label>
 
@@ -723,7 +731,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                             onFocus={() => setHoverRating(star)}
                             onBlur={() => setHoverRating(0)}
                             aria-label={`Rate ${star} out of 5 stars — ${STAR_LABELS[star]}`}
-                            className="p-1 hover:scale-120 active:scale-95 transition-transform duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-xs"
+                            className="p-1 hover:scale-120 active:scale-95 transition-transform duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-full"
                           >
                             <Star
                               size={24}
@@ -738,7 +746,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                       })}
                     </div>
 
-                    <span className="text-xs font-medium text-veyro-muted ml-2">
+                    <span className="text-xs font-medium text-neutral-500 ml-2">
                       {hoverRating > 0
                         ? STAR_LABELS[hoverRating]
                         : formRating > 0
@@ -756,20 +764,20 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
                 {/* 2. Fit Feedback */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono">
                     How does it fit?
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-2.5">
                     {(["Runs Small", "True to Size", "Runs Large"] as ReviewFit[]).map(
                       (fitOption) => (
                         <button
                           key={fitOption}
                           type="button"
                           onClick={() => setFormFit(fitOption)}
-                          className={`py-2 px-3 text-xs font-bold rounded-[2px] border transition-all cursor-pointer text-center ${
+                          className={`py-2.5 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer text-center ${
                             formFit === fitOption
-                              ? "bg-veyro-black text-white border-veyro-black shadow-xs"
-                              : "bg-white text-neutral-700 border-veyro-border hover:border-neutral-400"
+                              ? "bg-[#111111] text-white border-[#111111] shadow-xs"
+                              : "bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400"
                           }`}
                         >
                           {fitOption}
@@ -783,7 +791,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 <div>
                   <label
                     htmlFor="review-title"
-                    className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5"
+                    className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
                   >
                     Review Headline <span className="text-red-500">*</span>
                   </label>
@@ -799,10 +807,10 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                       }
                     }}
                     placeholder="e.g. Unmatched collar construction and perfect drape"
-                    className={`w-full px-3.5 py-2.5 text-xs bg-white border rounded-[2px] focus:outline-none transition-colors ${
+                    className={`w-full px-4 py-2.5 text-xs bg-white border rounded-xl focus:outline-none transition-colors ${
                       formErrors.title
                         ? "border-red-500 focus:border-red-600"
-                        : "border-veyro-border focus:border-veyro-black"
+                        : "border-neutral-200/80 focus:border-black"
                     }`}
                   />
                   {formErrors.title && (
@@ -816,7 +824,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 <div>
                   <label
                     htmlFor="review-content"
-                    className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5"
+                    className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
                   >
                     Your Experience <span className="text-red-500">*</span>
                   </label>
@@ -832,10 +840,10 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                       }
                     }}
                     placeholder="Describe the fabric feel, drape, longevity after wash, and overall styling tips..."
-                    className={`w-full px-3.5 py-2.5 text-xs bg-white border rounded-[2px] focus:outline-none transition-colors resize-none ${
+                    className={`w-full px-4 py-2.5 text-xs bg-white border rounded-xl focus:outline-none transition-colors resize-none ${
                       formErrors.content
                         ? "border-red-500 focus:border-red-600"
-                        : "border-veyro-border focus:border-veyro-black"
+                        : "border-neutral-200/80 focus:border-black"
                     }`}
                   />
                   {formErrors.content && (
@@ -850,7 +858,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   <div>
                     <label
                       htmlFor="review-author"
-                      className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5"
+                      className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
                     >
                       Your Name / Handle
                     </label>
@@ -860,14 +868,14 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                       value={formAuthor}
                       onChange={(e) => setFormAuthor(e.target.value)}
                       placeholder="e.g. Yash S. (or leave blank for Verified Buyer)"
-                      className="w-full px-3.5 py-2 text-xs bg-white border border-veyro-border rounded-[2px] focus:outline-none focus:border-veyro-black transition-colors"
+                      className="w-full px-4 py-2.5 text-xs bg-white border border-neutral-200/80 rounded-xl focus:outline-none focus:border-black transition-colors"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="review-size"
-                      className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5"
+                      className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
                     >
                       Purchased Size
                     </label>
@@ -875,7 +883,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                       id="review-size"
                       value={formSize}
                       onChange={(e) => setFormSize(e.target.value)}
-                      className="w-full px-3 py-2 text-xs bg-white border border-veyro-border rounded-[2px] focus:outline-none focus:border-veyro-black transition-colors"
+                      className="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-200/80 rounded-xl focus:outline-none focus:border-black transition-colors"
                     >
                       {product.sizes?.map((size) => (
                         <option key={size} value={size}>
@@ -887,11 +895,11 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 </div>
 
                 {/* Form Footer */}
-                <div className="pt-4 border-t border-veyro-border flex items-center justify-end gap-3">
+                <div className="pt-4 border-t border-neutral-100 flex items-center justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setIsWriteModalOpen(false)}
-                    className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-veyro-black transition-colors cursor-pointer"
+                    className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-500 hover:text-black rounded-full transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -899,7 +907,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2.5 bg-veyro-black text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-[2px] transition-all duration-200 cursor-pointer shadow-sm hover:shadow active:scale-95 disabled:opacity-50"
+                    className="px-7 py-3 bg-[#111111] text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Review"}
                   </button>

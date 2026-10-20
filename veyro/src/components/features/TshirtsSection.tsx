@@ -17,9 +17,9 @@ export function TshirtsSection() {
 
   const displayedTees = (
     selectedFit === "ALL"
-      ? tshirts
+      ? tshirts.slice(0, 9)
       : tshirts.filter((p) => p.subcategoryTag.toLowerCase() === selectedFit.toLowerCase())
-  ).slice(0, 8);
+  );
 
   return (
     <section id="clothing" className="w-full py-16 sm:py-24 bg-white border-t border-[#f0f0ed]">
@@ -76,7 +76,7 @@ export function TshirtsSection() {
         {/* Asymmetric Product Gallery */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr">
           {!isHydrated
-            ? Array.from({ length: 4 }).map((_, index) => {
+            ? Array.from({ length: 9 }).map((_, index) => {
                 const isFirst = index === 0;
                 return (
                   <div
@@ -91,8 +91,8 @@ export function TshirtsSection() {
                 );
               })
             : displayedTees.map((product, index) => {
-                // First item gets massive focal treatment
-                const isFirst = index === 0;
+                // First item gets massive focal treatment on ALL silhouettes view
+                const isFirst = selectedFit === "ALL" && index === 0;
                 return (
                   <div 
                     key={product.id} 

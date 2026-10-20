@@ -15,7 +15,7 @@ interface CollectionItem {
   subtitle: string;
   scriptAccent: string;
   description: string;
-  category: "all" | "tees" | "shoes" | "resort";
+  category: "all" | "tees" | "shoes" | "watches";
   tag: string;
   itemCount: string;
   image: string;
@@ -77,19 +77,20 @@ const COLLECTIONS: CollectionItem[] = [
     bentoSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
   },
   {
-    id: "resort-linen",
-    volNumber: "VOL. 04 // SEASONAL DRAPE",
-    title: "SUMMER RESORT LINEN",
-    subtitle: "Pure French Flax Camp Collars",
-    scriptAccent: "breeze easy",
+    id: "horology-vault",
+    volNumber: "VOL. 04 // HOROLOGY ARCHIVE",
+    title: "THE HOROLOGY & CHRONO VAULT",
+    subtitle: "Automatic & Precision Quartz Movements",
+    scriptAccent: "the ticking art",
     description:
-      "Airy open-weave French flax linen shirts with cuban camp collars, crafted for tropical coastal heat and elevated weekend tailoring.",
-    category: "resort",
-    tag: "SEASONAL EDIT",
-    itemCount: "4 Colorways",
-    image: "/hero/panel-linen-shirt.webp",
-    href: "/clothing",
-    ctaText: "Shop Resort Linen",
+      "Hand-finished stainless steel cases, scratch-resistant sapphire crystals, and exhibition casebacks housing precision Swiss & Japanese calibres.",
+    category: "watches",
+    tag: "SWISS & JAPANESE CALIBRES",
+    itemCount: "8 Curated Timepieces",
+    image: "/images/watches-carousel/watch_banner_1_1790157500911.jpg",
+    imagePosition: "object-center",
+    href: "/watches",
+    ctaText: "Explore Horology Vault",
     bentoSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
   },
   {
@@ -116,7 +117,7 @@ export interface CollectionsCatalogProps {
 }
 
 export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalogProps = {}) {
-  const [activeCategory, setActiveCategory] = useState<"all" | "tees" | "shoes" | "resort">("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "tees" | "shoes" | "watches">("all");
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -161,7 +162,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                 { key: "all", desktop: "ALL EDITIONS", mobile: "ALL" },
                 { key: "tees", desktop: "T-SHIRTS & APPAREL", mobile: "APPAREL" },
                 { key: "shoes", desktop: "SNEAKERS & SHOES", mobile: "FOOTWEAR" },
-                { key: "resort", desktop: "SUMMER RESORT", mobile: "RESORT" },
+                { key: "watches", desktop: "TIMEPIECES & WATCHES", mobile: "WATCHES" },
               ].map((tab) => {
                 const isActive = activeCategory === tab.key;
                 const isHovered = hoveredTab === tab.key && !isActive;
@@ -251,7 +252,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                   { key: "all", desktop: "ALL EDITIONS", mobile: "ALL" },
                   { key: "tees", desktop: "T-SHIRTS & APPAREL", mobile: "APPAREL" },
                   { key: "shoes", desktop: "SNEAKERS & SHOES", mobile: "FOOTWEAR" },
-                  { key: "resort", desktop: "SUMMER RESORT", mobile: "RESORT" },
+                  { key: "watches", desktop: "TIMEPIECES & WATCHES", mobile: "WATCHES" },
                 ].map((tab) => {
                   const isActive = activeCategory === tab.key;
                   const isHovered = hoveredTab === tab.key && !isActive;

@@ -28,3 +28,6 @@ export * from "./ProductReviewsSection";
 export * from "./CancelOrderModal";
 export * from "./ProductCardSkeleton";
 export * from "./ProductDetailSkeleton";
+export * from "./AtelierGiftSuite";
+export * from "./AllProductsCatalog";
+export * from "./ArchiveFilterSidebar";

@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ProductCard } from "@/components/features/ProductCard";
+import { AtelierGiftSuite } from "@/components/features/AtelierGiftSuite";
 import { useProducts } from "@/context/ProductsContext";
 import { formatPrice } from "@/lib/utils";
 import {
@@ -17,15 +18,14 @@ import {
   ArrowRight,
   ChevronRight,
   ShieldCheck,
-  Truck,
   RotateCcw,
   Sparkles,
   Tag,
   Check,
   Minus,
   Plus,
-  CheckCircle2,
   PackageX,
+  Gift,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -49,8 +49,6 @@ export default function CartPage() {
     bundleDiscount,
     finalSubtotal,
     hasFreeShipping,
-    amountUntilFreeShipping,
-    freeShippingThreshold,
     hasOosItems,
     appliedCoupon,
     couponDiscount,
@@ -60,6 +58,8 @@ export default function CartPage() {
     removeFromCart,
     removeOosItems,
     clearCart,
+    giftPackaging,
+    giftPackagingFee,
   } = useCart();
 
   const { addToWishlist } = useWishlist();
@@ -129,16 +129,11 @@ export default function CartPage() {
     }, 200);
   };
 
-  // Grand total calculation based on available in-stock items
+  // Grand total calculation based on available in-stock items + gift packaging
   const deliveryFee = inStockCount === 0 ? 0 : hasFreeShipping ? 0 : 99;
-  const grandTotal = Math.max(0, finalSubtotal - couponDiscount + deliveryFee);
+  const grandTotal = Math.max(0, finalSubtotal - couponDiscount + deliveryFee + giftPackagingFee);
   const totalSavings = bundleDiscount + couponDiscount;
 
-  // Free shipping progress percentage
-  const shippingProgress = Math.min(
-    100,
-    Math.round((finalSubtotal / freeShippingThreshold) * 100)
-  );
 
   // Recommendations for empty state or below cart
   const recommendedProducts = products.slice(0, 4);
@@ -263,39 +258,6 @@ export default function CartPage() {
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* ── LEFT COLUMN: ITEMS LIST & OFFERS ── */}
             <div className="lg:col-span-8 space-y-6">
-              {/* Free Express Delivery Progress Banner (No Emojis) */}
-              <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-2xs">
-                <div className="flex items-center justify-between text-xs mb-2">
-                  <div className="flex items-center gap-2">
-                    {hasFreeShipping ? (
-                      <div className="flex items-center gap-1.5 text-emerald-800 font-semibold">
-                        <CheckCircle2 size={15} className="text-emerald-600 shrink-0 transition-transform duration-200 ease-out motion-reduce:transform-none scale-100" />
-                        <span>Complimentary Express Delivery Unlocked</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-neutral-700">
-                        <Truck size={15} className="text-neutral-800 shrink-0" />
-                        <span>
-                          Add <strong className="text-neutral-950 font-bold">{formatPrice(amountUntilFreeShipping)}</strong> more for Complimentary Express Delivery
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-[11px] text-neutral-400 font-mono">
-                    ₹{freeShippingThreshold} Target
-                  </span>
-                </div>
-
-                <div className="w-full bg-neutral-100 rounded-full h-1.5 overflow-hidden">
-                  <div
-                    className={`h-full transition-[width,background-color] duration-300 ease-out motion-reduce:transition-none ${
-                      hasFreeShipping ? "bg-emerald-600" : "bg-neutral-900"
-                    }`}
-                    style={{ width: `${shippingProgress}%` }}
-                  />
-                </div>
-              </div>
-
               {/* Out of Stock Notice Banner */}
               {hasOosItems && (
                 <div
@@ -566,6 +528,9 @@ export default function CartPage() {
                   <ArrowRight size={13} className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transform-none" />
                 </Link>
               </div>
+
+              {/* Atelier Haute-Couture Gift Suite & Keepsake Note */}
+              <AtelierGiftSuite />
             </div>
 
             {/* ── RIGHT COLUMN: ORDER SUMMARY & CHECKOUT ── */}
@@ -695,6 +660,16 @@ export default function CartPage() {
                       )}
                     </span>
                   </div>
+
+                  {giftPackaging.enabled && (
+                    <div className="flex justify-between text-neutral-600">
+                      <span className="flex items-center gap-1.5 text-neutral-900 font-medium">
+                        <Gift size={13} className="text-slate-400 shrink-0" />
+                        <span>Signature Gift Packaging</span>
+                      </span>
+                      <span className="font-semibold text-neutral-900 tabular-nums">+{formatPrice(giftPackagingFee)}</span>
+                    </div>
+                  )}
 
                   {totalSavings > 0 && (
                     <div className="flex items-center justify-between bg-emerald-50/80 border border-emerald-200/60 px-3 py-2 rounded-lg text-xs mt-1">

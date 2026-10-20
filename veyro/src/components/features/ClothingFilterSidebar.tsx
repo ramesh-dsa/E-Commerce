@@ -33,6 +33,7 @@ export interface ClothingFilterSidebarProps {
   };
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onOpenFitGuide?: () => void;
 }
 
 // ── Filter Definitions ────────────────────────────────────────────────────────
@@ -155,39 +156,44 @@ function AccordionSection({
   isOpen,
   onToggle,
   activeCount = 0,
+  rightAction,
   children,
 }: {
   title: string;
   isOpen: boolean;
   onToggle: () => void;
   activeCount?: number;
+  rightAction?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <div className="py-1">
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={isOpen}
-        className="w-full flex items-center gap-2.5 py-1.5 text-left cursor-pointer group transition-colors"
-      >
-        <ChevronDown
-          size={13}
-          strokeWidth={1.8}
-          className={`text-[#111111] transition-transform duration-200 motion-reduce:transition-none shrink-0 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-          aria-hidden="true"
-        />
-        <span className="font-luxury text-[12px] font-medium uppercase tracking-[0.08em] text-[#111111] group-hover:text-[#555555] transition-colors">
-          {title}
-        </span>
-        {activeCount > 0 && (
-          <span className="ml-auto text-[10px] font-mono font-medium text-[#111111] bg-[#f0f0ed] px-1.5 py-0.5 rounded-[2px]">
-            {activeCount}
+      <div className="w-full flex items-center justify-between py-1.5">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={isOpen}
+          className="flex items-center gap-2.5 text-left cursor-pointer group transition-colors flex-1"
+        >
+          <ChevronDown
+            size={13}
+            strokeWidth={1.8}
+            className={`text-[#111111] transition-transform duration-200 motion-reduce:transition-none shrink-0 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            aria-hidden="true"
+          />
+          <span className="font-luxury text-[12px] font-medium uppercase tracking-[0.08em] text-[#111111] group-hover:text-[#555555] transition-colors">
+            {title}
           </span>
-        )}
-      </button>
+          {activeCount > 0 && (
+            <span className="ml-2 text-[10px] font-mono font-medium text-[#111111] bg-[#f0f0ed] px-1.5 py-0.5 rounded-[2px]">
+              {activeCount}
+            </span>
+          )}
+        </button>
+        {rightAction && <div className="shrink-0">{rightAction}</div>}
+      </div>
 
       {isOpen && (
         <div className="pt-1.5 pb-2 pl-5 flex flex-col gap-0.5">
@@ -214,6 +220,7 @@ export function ClothingFilterSidebar({
   itemCounts,
   isMobileOpen = false,
   onCloseMobile,
+  onOpenFitGuide,
 }: ClothingFilterSidebarProps) {
   // Lock background website scrolling when mobile filter drawer is open
   useEffect(() => {

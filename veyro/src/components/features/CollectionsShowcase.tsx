@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   motion,
   AnimatePresence,
@@ -1133,15 +1134,14 @@ export function CollectionsShowcase() {
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <button
-                  type="button"
-                  onClick={handleResetRailOrScrollToFan}
-                  aria-label={carouselIndex > 0 ? "Reset to first products" : "Return to collection fan"}
-                  className="px-7 py-3 bg-[#111111] hover:bg-neutral-800 active:scale-98 text-white rounded-full text-xs sm:text-[14px] font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 font-[family-name:var(--font-outfit)]"
+                <Link
+                  href="/collections/all"
+                  aria-label="View all products in complete Veyro archive"
+                  className="px-7 py-3 bg-[#111111] hover:bg-neutral-800 active:scale-98 text-white rounded-full text-xs sm:text-[14px] font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 font-[family-name:var(--font-outfit)] group"
                 >
                   <span>See All Product</span>
-                  <RotateCcw className="w-4 h-4" />
-                </button>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                </Link>
                 <button
                   type="button"
                   onClick={() => handleRailScroll("right")}

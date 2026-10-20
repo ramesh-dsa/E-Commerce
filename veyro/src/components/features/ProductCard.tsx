@@ -42,12 +42,12 @@ export function ProductCard({
 
   return (
     <article
-      className={`group flex flex-col card-hover-lift rounded-lg ${className}`}
+      className={`group flex flex-col transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container */}
-      <div className={`relative w-full overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-xl ${theme === 'dark' ? 'bg-[#121212] border border-white/[0.08] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.9)]' : 'bg-[#f4f2ee]'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
+      <div className={`relative w-full overflow-hidden rounded-2xl transition-all duration-300 ${theme === 'dark' ? 'bg-[#121212] border border-white/[0.08]' : 'bg-[#f4f2ee]'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
         <Link
           href={`/product/${product.slug}`}
           className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
@@ -63,7 +63,7 @@ export function ProductCard({
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
             className={`object-cover object-center ${
-              isWatch ? "" : "transition-transform duration-500 ease-out group-hover:scale-108"
+              isWatch ? "" : "transition-transform duration-500 ease-out group-hover:scale-105"
             } ${imageLoaded ? "opacity-100" : "opacity-90"}`}
           />
 
@@ -117,7 +117,7 @@ export function ProductCard({
         {reviewsCount > 0 && (
           <div className="absolute bottom-2.5 left-2.5 pointer-events-none z-10 flex items-center gap-1 bg-white/90 backdrop-blur-md px-2 py-1 rounded-full shadow-sm border border-black/5">
             <span className="text-[10px] sm:text-xs font-bold text-veyro-black leading-none">{rating.toFixed(1)}</span>
-            <Star size={10} className="fill-emerald-600 text-emerald-600" />
+            <Star size={10} className="fill-veyro-yellow text-veyro-yellow" />
             <span className="text-[10px] sm:text-xs font-medium text-veyro-muted leading-none">({reviewsCount})</span>
           </div>
         )}

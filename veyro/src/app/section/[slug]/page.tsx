@@ -36,12 +36,12 @@ function CustomProductCard({ product }: { product: CustomSectionProduct }) {
 
   return (
     <article
-      className="group flex flex-col card-hover-lift rounded-lg"
+      className="group flex flex-col transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
         {/* Product Image Container */}
-        <div className="relative w-full overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-xl bg-[#f4f2ee] aspect-[3/4]">
+        <div className="relative w-full overflow-hidden rounded-2xl transition-all duration-300 bg-[#f4f2ee] aspect-[3/4]">
           <Link
             href={`/product/${product.slug}`}
             className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"

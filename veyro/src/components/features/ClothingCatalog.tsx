@@ -372,6 +372,7 @@ export function ClothingCatalog() {
             itemCounts={itemCounts}
             isMobileOpen={isMobileFilterOpen}
             onCloseMobile={() => setIsMobileFilterOpen(false)}
+            onOpenFitGuide={() => setIsFitGuideOpen(true)}
           />
 
           {/* Right Product Grid Column */}
@@ -475,9 +476,9 @@ export function ClothingCatalog() {
                   )}
 
                   {/* Standard Clothing Product Card */}
-                  <article className="group flex flex-col relative card-hover-lift rounded-lg">
+                  <article className="group flex flex-col relative transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl">
                     {/* Image Stage Container */}
-                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-lg bg-[#f4f2ee] transition-all duration-300 group-hover:shadow-xl">
+                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-[#f4f2ee] transition-all duration-300">
                       <Link
                         href={`/product/${product.slug}`}
                         className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
@@ -657,110 +658,110 @@ export function ClothingCatalog() {
 
       {/* ── 6. INTERACTIVE FIT & SILHOUETTE GUIDE SLIDE-OVER MODAL ─────────── */}
       {isFitGuideOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="fit-guide-title"
-            className="w-full max-w-2xl bg-white rounded-xs border border-[#e8e8e5] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-2xl bg-white rounded-3xl border border-neutral-200/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e8e5] bg-[#fafaf8]">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-[#fafaf8]">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8e8e8e] block">
-                  VEYRO BESPOKE SIZING ARCHIVE
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 block font-mono">
+                  [ VEYRO BESPOKE SIZING ARCHIVE ]
                 </span>
-                <h3 id="fit-guide-title" className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#111111]">
+                <h3 id="fit-guide-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#111111] mt-0.5">
                   Silhouette &amp; Fit Visualizer
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsFitGuideOpen(false)}
-                className="p-1.5 text-[#555555] hover:text-[#111111] hover:bg-[#eeeeea] rounded-xs transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center transition-all cursor-pointer"
                 aria-label="Close fit guide"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="overflow-y-auto p-6 space-y-6">
+            <div className="overflow-y-auto p-6 sm:p-8 space-y-6 text-[#111111]">
               {/* Fit Comparison Matrix */}
               <div className="space-y-4">
                 {/* Oversized Fit */}
-                <div className="p-4 rounded-xs border border-[#111111] bg-[#fafaf8]">
+                <div className="p-5 rounded-2xl border-2 border-[#111111] bg-[#fafaf8] shadow-xs">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
                       1. The Oversized Silhouette (240 GSM)
                     </h4>
-                    <span className="px-2 py-0.5 rounded-xs bg-[#111111] text-[#fcd017] text-[10px] font-bold uppercase">
+                    <span className="px-3 py-1 rounded-full bg-[#111111] text-[#fcd017] text-[10px] font-bold uppercase tracking-wider">
                       Signature Cut
                     </span>
                   </div>
-                  <p className="text-xs text-[#666666] leading-relaxed mb-3">
+                  <p className="text-xs text-neutral-600 leading-relaxed mb-3">
                     Engineered with extended drop shoulders, extra width through the chest, and a structured vertical fall that does not cling.
                   </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-medium text-[#444444]">
-                    <li className="bg-white p-2 rounded-xs border border-[#e8e8e5]">
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-medium text-neutral-700">
+                    <li className="bg-white p-3 rounded-xl border border-neutral-200/80">
                       <strong className="block text-[#111111]">Shoulder:</strong> +4.5cm Drop
                     </li>
-                    <li className="bg-white p-2 rounded-xs border border-[#e8e8e5]">
+                    <li className="bg-white p-3 rounded-xl border border-neutral-200/80">
                       <strong className="block text-[#111111]">Chest:</strong> Boxy / Relaxed
                     </li>
-                    <li className="bg-white p-2 rounded-xs border border-[#e8e8e5]">
+                    <li className="bg-white p-3 rounded-xl border border-neutral-200/80">
                       <strong className="block text-[#111111]">Sleeve:</strong> Reaches Elbow
                     </li>
                   </ul>
                 </div>
 
                 {/* Regular Fit */}
-                <div className="p-4 rounded-xs border border-[#e8e8e5] bg-white">
+                <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
                       2. The Daily Regular Cut (180 GSM)
                     </h4>
-                    <span className="px-2 py-0.5 rounded-xs bg-[#f4f2ee] text-[#555555] text-[10px] font-bold uppercase">
+                    <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider">
                       Classic Fit
                     </span>
                   </div>
-                  <p className="text-xs text-[#666666] leading-relaxed mb-3">
+                  <p className="text-xs text-neutral-600 leading-relaxed mb-3">
                     Clean, traditional proportions that sit perfectly on your natural shoulder seam. Great for tucking into trousers or layering under overshirts.
                   </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-medium text-[#444444]">
-                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-medium text-neutral-700">
+                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
                       <strong className="block text-[#111111]">Shoulder:</strong> Natural Seam
                     </li>
-                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
                       <strong className="block text-[#111111]">Chest:</strong> Tailored Straight
                     </li>
-                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
                       <strong className="block text-[#111111]">Sleeve:</strong> Mid-Bicep
                     </li>
                   </ul>
                 </div>
 
                 {/* Relaxed Fit */}
-                <div className="p-4 rounded-xs border border-[#e8e8e5] bg-white">
+                <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
                       3. The Relaxed Weekend Cut (220 GSM)
                     </h4>
-                    <span className="px-2 py-0.5 rounded-xs bg-[#f4f2ee] text-[#555555] text-[10px] font-bold uppercase">
+                    <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider">
                       Comfort Fit
                     </span>
                   </div>
-                  <p className="text-xs text-[#666666] leading-relaxed mb-3">
+                  <p className="text-xs text-neutral-600 leading-relaxed mb-3">
                     The midpoint between Regular and Oversized. Gives extra breathing room around the torso without extreme drop-shoulders.
                   </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-medium text-[#444444]">
-                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-medium text-neutral-700">
+                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
                       <strong className="block text-[#111111]">Shoulder:</strong> +1.5cm Soft Drop
                     </li>
-                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
                       <strong className="block text-[#111111]">Chest:</strong> Eased 2cm
                     </li>
-                    <li className="bg-[#fafaf8] p-2 rounded-xs border border-[#e8e8e5]">
+                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
                       <strong className="block text-[#111111]">Sleeve:</strong> Lower Bicep
                     </li>
                   </ul>
@@ -768,22 +769,22 @@ export function ClothingCatalog() {
               </div>
 
               {/* Sizing Recommendation Banner */}
-              <div className="p-3 bg-[#111111] text-white rounded-xs flex items-center gap-3">
-                <ShieldCheck size={24} className="text-[#fcd017] shrink-0" />
-                <p className="text-xs text-[#cccccc]">
-                  All VEYRO t-shirts are pre-shrunk via bio-wash. Order your true size for the intended silhouette, or size down one if you prefer a standard tailored fit.
+              <div className="p-4 bg-[#111111] text-white rounded-2xl flex items-center gap-3 text-xs">
+                <ShieldCheck size={22} className="text-[#fcd017] shrink-0" />
+                <p className="text-neutral-300">
+                  <strong className="text-white">Pre-Shrunk Bio-Wash:</strong> All VEYRO garments are pre-shrunk via double bio-wash. Order your true size for the intended silhouette, or size down one if you prefer a standard tailored fit.
                 </p>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-3 border-t border-[#e8e8e5] bg-[#fafaf8] flex justify-end">
+            <div className="px-6 sm:px-8 py-4 border-t border-neutral-100 bg-[#fafaf8] flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsFitGuideOpen(false)}
-                className="px-5 py-2 bg-[#111111] hover:bg-[#333333] text-white text-xs font-bold uppercase tracking-wider rounded-xs transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-7 py-3 bg-[#111111] hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md"
               >
-                Got It, Return to Archive
+                Got It, Return to Atelier Archive
               </button>
             </div>
           </div>

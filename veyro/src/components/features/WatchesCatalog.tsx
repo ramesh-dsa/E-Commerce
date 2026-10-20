@@ -529,6 +529,7 @@ export function WatchesCatalog() {
             itemCounts={itemCounts}
             isMobileOpen={isMobileFilterOpen}
             onCloseMobile={() => setIsMobileFilterOpen(false)}
+            onOpenSizeGuide={() => setIsSizeGuideOpen(true)}
           />
 
           {/* Right Product Grid Column */}
@@ -590,9 +591,9 @@ export function WatchesCatalog() {
                     <React.Fragment key={product.id}>
 
                       {/* Minimalist Watch Card */}
-                      <article className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-xl">
+                      <article className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-2xl">
                         {/* Image Stage Container */}
-                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-xl bg-[#f8f8f6] transition-all duration-300 group-hover:shadow-xl">
+                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-[#f8f8f6] transition-all duration-300">
                           <Link
                             href={`/product/${product.slug}`}
                             className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
@@ -734,68 +735,68 @@ export function WatchesCatalog() {
 
       {/* ── 5. INTERACTIVE WATCH CASE SIZING MODAL ──────────────────────── */}
       {isSizeGuideOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="watch-guide-title"
-            className="w-full max-w-2xl bg-white rounded-[2px] border border-[#e8e8e5] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-2xl bg-white rounded-3xl border border-neutral-200/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#e8e8e5] bg-[#fafaf8]">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-neutral-50/70">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8e8e8e] block">
-                  VEYRO HOROLOGY FIT GUIDE
+                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-600 block font-mono">
+                  Horology Fit &amp; Case Proportions
                 </span>
-                <h3 id="watch-guide-title" className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#111111]">
+                <h3 id="watch-guide-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
                   Watch Case Diameter &amp; Wrist Scale Guide
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="p-1.5 text-[#555555] hover:text-[#111111] hover:bg-[#eeeeea] rounded-[2px] transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-all cursor-pointer"
                 aria-label="Close fit guide"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="overflow-y-auto p-6 space-y-6">
+            <div className="overflow-y-auto p-6 sm:p-8 space-y-6 text-neutral-950">
               {/* Sizing Matrix */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-950 mb-2.5">
                   Case Diameter vs. Wrist Circumference Matrix
                 </h4>
-                <div className="overflow-x-auto border border-neutral-200 rounded-[2px]">
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-neutral-100 text-neutral-700 uppercase font-mono text-[10px]">
+                <div className="overflow-x-auto border border-neutral-200/90 rounded-2xl shadow-xs bg-white">
+                  <table className="w-full text-xs">
+                    <thead className="bg-neutral-100/90 text-neutral-900 uppercase font-extrabold text-[11px] tracking-wider border-b border-neutral-200">
                       <tr>
-                        <th className="px-3 py-2">Case Diameter</th>
-                        <th className="px-3 py-2">Recommended Wrist Size</th>
-                        <th className="px-3 py-2">Lug-to-Lug Distance</th>
-                        <th className="px-3 py-2">Aesthetic Profile</th>
+                        <th className="py-3 px-4 text-left">Case Diameter</th>
+                        <th className="py-3 px-4 text-center">Recommended Wrist Size</th>
+                        <th className="py-3 px-4 text-center">Lug-to-Lug Distance</th>
+                        <th className="py-3 px-4 text-left">Aesthetic Profile</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-200 font-mono">
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">38mm</td>
-                        <td className="px-3 py-2 text-neutral-600">5.8 – 6.8 inches (15–17 cm)</td>
-                        <td className="px-3 py-2 text-neutral-600">44mm</td>
-                        <td className="px-3 py-2 text-neutral-600">Classic Dress / Slim Vintage</td>
+                    <tbody className="divide-y divide-neutral-100 text-neutral-950">
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">38mm</td>
+                        <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">5.8 – 6.8 inches (15–17 cm)</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">44mm</td>
+                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-[11px]">Classic Dress / Slim Vintage</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">40mm</td>
-                        <td className="px-3 py-2 text-neutral-600">6.3 – 7.6 inches (16–19 cm)</td>
-                        <td className="px-3 py-2 text-neutral-600">47mm</td>
-                        <td className="px-3 py-2 text-neutral-600">Universal Golden Ratio</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">40mm</td>
+                        <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">6.3 – 7.6 inches (16–19 cm)</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">47mm</td>
+                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-[11px]">Universal Golden Ratio</td>
                       </tr>
-                      <tr>
-                        <td className="px-3 py-2 font-bold text-black">42mm</td>
-                        <td className="px-3 py-2 text-neutral-600">6.9 – 8.2 inches (17.5–21 cm)</td>
-                        <td className="px-3 py-2 text-neutral-600">49.5mm</td>
-                        <td className="px-3 py-2 text-neutral-600">Commanding Diver / Sports Chrono</td>
+                      <tr className="hover:bg-neutral-50/80 transition-colors">
+                        <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">42mm</td>
+                        <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">6.9 – 8.2 inches (17.5–21 cm)</td>
+                        <td className="py-3.5 px-4 text-center font-medium text-neutral-800">49.5mm</td>
+                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-[11px]">Commanding Diver / Sports Chrono</td>
                       </tr>
                     </tbody>
                   </table>
@@ -804,30 +805,41 @@ export function WatchesCatalog() {
 
               {/* Water Resistance Scale */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-950 mb-2.5">
                   Official Depth Rating Scale
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="p-3 bg-neutral-50 rounded-[2px] border border-neutral-200">
-                    <div className="font-bold text-black uppercase">50M (5 ATM)</div>
-                    <p className="text-neutral-600 mt-1 text-[11px]">
+                  <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
+                    <div className="font-bold text-neutral-950 uppercase">50M (5 ATM)</div>
+                    <p className="text-neutral-800 mt-1 text-[11px] leading-relaxed font-normal">
                       Rain, hand washing, light splashes. Not suitable for swimming or diving.
                     </p>
                   </div>
-                  <div className="p-3 bg-neutral-50 rounded-[2px] border border-neutral-200">
-                    <div className="font-bold text-black uppercase">100M (10 ATM)</div>
-                    <p className="text-neutral-600 mt-1 text-[11px]">
+                  <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
+                    <div className="font-bold text-neutral-950 uppercase">100M (10 ATM)</div>
+                    <p className="text-neutral-800 mt-1 text-[11px] leading-relaxed font-normal">
                       Swimming, snorkeling, watersports. Screw-down crown equipped.
                     </p>
                   </div>
-                  <div className="p-3 bg-neutral-50 rounded-[2px] border border-neutral-200">
-                    <div className="font-bold text-black uppercase">200M (20 ATM)</div>
-                    <p className="text-neutral-600 mt-1 text-[11px]">
+                  <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
+                    <div className="font-bold text-neutral-950 uppercase">200M (20 ATM)</div>
+                    <p className="text-neutral-800 mt-1 text-[11px] leading-relaxed font-normal">
                       Saturation scuba diving, high-impact aquatic sports, pressure certified.
                     </p>
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 sm:px-8 py-4 border-t border-neutral-100 bg-neutral-50/70 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsSizeGuideOpen(false)}
+                className="w-full sm:w-auto px-7 py-3 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md"
+              >
+                Got It, Return to Horology Vault
+              </button>
             </div>
           </div>
         </div>

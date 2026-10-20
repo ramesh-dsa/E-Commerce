@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { Product } from "@/types";
+import { Product, GiftPackagingDetails } from "@/types";
 import { useProducts } from "@/context/ProductsContext";
 
 export interface CartItem {
@@ -61,18 +61,36 @@ interface CartContextType {
   applyCoupon: (code: string) => { success: boolean; message: string };
   removeCoupon: () => void;
   clearCart: () => void;
+  giftPackaging: GiftPackagingDetails;
+  giftPackagingFee: number;
+  toggleGiftPackaging: () => void;
+  updateGiftPackaging: (details: Partial<GiftPackagingDetails>) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = "veyro_cart_v1";
 const COUPON_STORAGE_KEY = "veyro_applied_coupon";
+const GIFT_STORAGE_KEY = "veyro_gift_packaging_v1";
 const FREE_SHIPPING_THRESHOLD = 999;
+
+export const DEFAULT_GIFT_PACKAGING: GiftPackagingDetails = {
+  enabled: false,
+  fee: 99,
+  theme: "heritage-kraft",
+  recipientName: "",
+  senderName: "",
+  message: "",
+  hidePriceTag: true,
+  stealthOuterBox: true,
+  shipDirectlyToRecipient: true,
+};
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { products } = useProducts();
   const [items, setItems] = useState<CartItem[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [giftPackaging, setGiftPackaging] = useState<GiftPackagingDetails>(DEFAULT_GIFT_PACKAGING);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartView, setCartView] = useState<CartViewMode>("bag");
   const [isHydrated, setIsHydrated] = useState(false);
@@ -82,6 +100,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       const savedCoupon = localStorage.getItem(COUPON_STORAGE_KEY);
+      const savedGift = localStorage.getItem(GIFT_STORAGE_KEY);
       queueMicrotask(() => {
         if (saved) {
           try {
@@ -95,6 +114,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
         if (savedCoupon) {
           setAppliedCoupon(savedCoupon);
+        }
+        if (savedGift) {
+          try {
+            const parsedGift = JSON.parse(savedGift);
+            if (parsedGift && typeof parsedGift === "object") {
+              setGiftPackaging({ ...DEFAULT_GIFT_PACKAGING, ...parsedGift });
+            }
+          } catch (e) {
+            console.warn("Failed to parse gift packaging from localStorage", e);
+          }
         }
         setIsHydrated(true);
       });
@@ -356,6 +385,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, []);
 
+  // Persist gift packaging settings
+  useEffect(() => {
+    if (!isHydrated) return;
+    try {
+      localStorage.setItem(GIFT_STORAGE_KEY, JSON.stringify(giftPackaging));
+    } catch (e) {
+      console.warn("Failed to persist gift packaging to localStorage", e);
+    }
+  }, [giftPackaging, isHydrated]);
+
+  const toggleGiftPackaging = useCallback(() => {
+    setGiftPackaging((prev) => ({
+      ...prev,
+      enabled: !prev.enabled,
+    }));
+  }, []);
+
+  const updateGiftPackaging = useCallback((details: Partial<GiftPackagingDetails>) => {
+    setGiftPackaging((prev) => ({
+      ...prev,
+      ...details,
+    }));
+  }, []);
+
   const contextValue = useMemo<CartContextType>(
     () => ({
       isHydrated,
@@ -394,6 +447,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       applyCoupon,
       removeCoupon,
       clearCart,
+      giftPackaging,
+      giftPackagingFee: giftPackaging.enabled ? giftPackaging.fee : 0,
+      toggleGiftPackaging,
+      updateGiftPackaging,
     }),
     [
       isHydrated,
@@ -430,8 +487,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       applyCoupon,
       removeCoupon,
       clearCart,
+      giftPackaging,
+      toggleGiftPackaging,
+      updateGiftPackaging,
     ]
   );
+
 
   return (
     <CartContext.Provider value={contextValue}>

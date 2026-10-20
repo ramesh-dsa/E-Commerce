@@ -35,6 +35,8 @@ import {
   ArrowUpRight,
   Clock,
   Loader2,
+  Gift,
+  EyeOff,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -196,6 +198,8 @@ export default function CheckoutPage() {
     clearCart,
     hasFreeShipping,
     hasOosItems: cartHasOosItems,
+    giftPackaging,
+    giftPackagingFee,
   } = useCart();
 
   const { user, addOrder } = useUser();
@@ -288,8 +292,11 @@ export default function CheckoutPage() {
     };
   }, [user, phone]);
 
-  // Delivery address selection: "saved" (profile address) | "custom" (entered or live location)
-  const [addressMode, setAddressMode] = useState<"saved" | "custom">("saved");
+  // Delivery address selection: "recipient" (friend's address) | "saved" (profile address) | "custom" (entered or live location)
+  type AddressMode = "recipient" | "saved" | "custom";
+  const [addressMode, setAddressMode] = useState<AddressMode>(() => {
+    return giftPackaging.enabled ? "recipient" : "saved";
+  });
 
   // Live Location Auto-Detect states
   const [isLocating, setIsLocating] = useState(false);
@@ -304,6 +311,76 @@ export default function CheckoutPage() {
     accuracy?: number;
     source?: "live_gps" | "network_ip";
   } | null>(null);
+
+  // Friend Recipient Address State (for surprise gift orders)
+  const [recipientFullName, setRecipientFullName] = useState(() => giftPackaging.recipientName || "Ramesh");
+  const [recipientPhone, setRecipientPhone] = useState(() => giftPackaging.recipientAddress?.phone || "");
+  const [recipientStreet, setRecipientStreet] = useState(() => giftPackaging.recipientAddress?.street || "");
+  const [recipientApartment, setRecipientApartment] = useState(() => giftPackaging.recipientAddress?.apartment || "");
+  const [recipientCity, setRecipientCity] = useState(() => giftPackaging.recipientAddress?.city || "");
+  const [recipientState, setRecipientState] = useState(() => giftPackaging.recipientAddress?.state || "");
+  const [recipientPincode, setRecipientPincode] = useState(() => giftPackaging.recipientAddress?.pincode || "");
+
+  // [E.6] Billing Address Selection State
+  // For gift orders sending to friend, billing address defaults to separate (false) so buyer receives tax invoice
+  const [billingSameAsShipping, setBillingSameAsShipping] = useState<boolean>(() => {
+    return !giftPackaging.enabled;
+  });
+  const [billingMode, setBillingMode] = useState<"profile" | "custom">("profile");
+  const [billingFullName, setBillingFullName] = useState(() => user?.name || (giftPackaging.senderName || "Santhosh"));
+  const [billingPhone, setBillingPhone] = useState(() => user?.phone || "+91 98765 43210");
+  const [billingStreetAddress, setBillingStreetAddress] = useState(() => user?.address?.line1 || "Flat 402, Prestige Tower, Indiranagar");
+  const [billingApartment, setBillingApartment] = useState("");
+  const [billingCity, setBillingCity] = useState(() => user?.address?.city || "Bengaluru");
+  const [billingStateName, setBillingStateName] = useState(() => user?.address?.state || "Karnataka");
+  const [billingPincode, setBillingPincode] = useState(() => user?.address?.pincode || "560038");
+
+  // Keep recipient fields in sync if hydrated from Cart Context
+  useEffect(() => {
+    if (giftPackaging.enabled) {
+      if (giftPackaging.recipientName) {
+        setRecipientFullName(giftPackaging.recipientName);
+        if (addressMode === "recipient") setFullName(giftPackaging.recipientName);
+      }
+      if (giftPackaging.recipientAddress?.phone) {
+        setRecipientPhone(giftPackaging.recipientAddress.phone);
+      }
+      if (giftPackaging.recipientAddress?.street) {
+        setRecipientStreet(giftPackaging.recipientAddress.street);
+        if (addressMode === "recipient") setStreetAddress(giftPackaging.recipientAddress.street);
+      }
+      if (giftPackaging.recipientAddress?.apartment) {
+        setRecipientApartment(giftPackaging.recipientAddress.apartment);
+        if (addressMode === "recipient") setApartment(giftPackaging.recipientAddress.apartment);
+      }
+      if (giftPackaging.recipientAddress?.city) {
+        setRecipientCity(giftPackaging.recipientAddress.city);
+        if (addressMode === "recipient") setCity(giftPackaging.recipientAddress.city);
+      }
+      if (giftPackaging.recipientAddress?.state) {
+        setRecipientState(giftPackaging.recipientAddress.state);
+        if (addressMode === "recipient") setStateName(giftPackaging.recipientAddress.state);
+      }
+      if (giftPackaging.recipientAddress?.pincode) {
+        setRecipientPincode(giftPackaging.recipientAddress.pincode);
+        if (addressMode === "recipient") setPincode(giftPackaging.recipientAddress.pincode);
+      }
+      if (giftPackaging.senderName && !user?.name) {
+        setBillingFullName(giftPackaging.senderName);
+      }
+    }
+  }, [giftPackaging, addressMode, user]);
+
+  const handleSelectRecipientAddress = () => {
+    setAddressMode("recipient");
+    setFullName(recipientFullName || giftPackaging.recipientName || "");
+    setStreetAddress(recipientStreet || giftPackaging.recipientAddress?.street || "");
+    setApartment(recipientApartment || giftPackaging.recipientAddress?.apartment || "");
+    setCity(recipientCity || giftPackaging.recipientAddress?.city || "");
+    setStateName(recipientState || giftPackaging.recipientAddress?.state || "");
+    setPincode(recipientPincode || giftPackaging.recipientAddress?.pincode || "");
+    setLocationError(null);
+  };
 
   const handleSelectSavedAddress = () => {
     setAddressMode("saved");
@@ -517,7 +594,7 @@ export default function CheckoutPage() {
 
   // Delivery calculation
   const shippingFee = shippingMethod === "express" ? 149 : hasFreeShipping ? 0 : 99;
-  const grandTotal = Math.max(0, finalSubtotal - couponDiscount + shippingFee);
+  const grandTotal = Math.max(0, finalSubtotal - couponDiscount + shippingFee + giftPackagingFee);
   const totalSavings = bundleDiscount + couponDiscount;
 
   // Coupon handling
@@ -608,6 +685,11 @@ export default function CheckoutPage() {
     if (!phone.trim() || phone.replace(/\D/g, "").length < 10) {
       errors.phone = "Please enter a valid 10-digit mobile number.";
     }
+    if (addressMode === "recipient") {
+      if (!recipientPhone.trim() || recipientPhone.replace(/\D/g, "").length < 10) {
+        errors.recipientPhone = "Please enter friend's 10-digit mobile number for courier OTP.";
+      }
+    }
     if (!fullName.trim()) {
       errors.fullName = "Please enter the recipient full name.";
     }
@@ -640,6 +722,25 @@ export default function CheckoutPage() {
       const expectedCvv = brand === "amex" ? 4 : 3;
       if (!cardCvv || cardCvv.length < expectedCvv) {
         errors.cardCvv = `Valid ${expectedCvv}-digit CVV is required.`;
+      }
+    }
+
+    // [E.6] Validate Separate Billing Address if uncoupled
+    if (!billingSameAsShipping && billingMode === "custom") {
+      if (!billingFullName.trim()) {
+        errors.billingFullName = "Please enter billing contact name.";
+      }
+      if (!billingStreetAddress.trim()) {
+        errors.billingStreetAddress = "Please enter billing street address.";
+      }
+      if (!billingCity.trim()) {
+        errors.billingCity = "Please enter billing city.";
+      }
+      if (!billingStateName.trim()) {
+        errors.billingStateName = "Please enter billing state.";
+      }
+      if (!billingPincode.trim() || billingPincode.replace(/\D/g, "").length !== 6) {
+        errors.billingPincode = "Please enter a valid 6-digit billing PIN code.";
       }
     }
 
@@ -715,6 +816,17 @@ export default function CheckoutPage() {
         .filter(Boolean)
         .join(", ");
 
+      const fullBillingAddressString = billingSameAsShipping
+        ? fullAddressString
+        : [
+            billingFullName,
+            billingStreetAddress,
+            billingApartment,
+            `${billingCity}, ${billingStateName} - ${billingPincode}`,
+          ]
+            .filter(Boolean)
+            .join(", ");
+
       const newOrder: OrderRecord = {
         id: generatedOrderId,
         date: timestamp,
@@ -724,6 +836,8 @@ export default function CheckoutPage() {
         couponDiscount,
         couponCode: appliedCoupon,
         shippingCost: shippingFee,
+        giftPackaging: giftPackaging.enabled ? giftPackaging : undefined,
+        isGiftOrder: giftPackaging.enabled && addressMode === "recipient",
         itemsCount: inStockCount,
         items: inStockItems.map((i) => ({
           productId: i.product.id,
@@ -761,9 +875,15 @@ export default function CheckoutPage() {
         ],
         shippingAddress: {
           name: fullName,
-          phone: phone,
+          phone: addressMode === "recipient" && recipientPhone ? recipientPhone : phone,
           address: fullAddressString,
           pincode: pincode,
+        },
+        billingAddress: {
+          name: billingSameAsShipping ? fullName : billingFullName,
+          phone: billingSameAsShipping ? phone : billingPhone,
+          address: fullBillingAddressString,
+          pincode: billingSameAsShipping ? pincode : billingPincode,
         },
         paymentMethod: paymentMethod,
       };
@@ -1008,7 +1128,9 @@ export default function CheckoutPage() {
                       Shipping & Delivery Address
                     </h2>
                     <p className="text-[11px] text-neutral-500">
-                      Choose saved profile address or auto-detect with live GPS
+                      {giftPackaging.enabled
+                        ? "Choose friend's doorstep or deliver to your address first"
+                        : "Choose saved profile address or auto-detect with live GPS"}
                     </p>
                   </div>
                 </div>
@@ -1018,57 +1140,316 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Address Mode Selection Tabs */}
-              <div
-                role="tablist"
-                aria-label="Address mode selection"
-                className="relative grid grid-cols-2 p-1 mb-5 bg-neutral-100/90 rounded-xl border border-neutral-200/70 select-none"
-              >
-                {/* Sliding Active Pill Background - GPU accelerated transform only */}
+              {/* Address Mode Selection Tabs (Unified Sliding Pill Segmented Controls) */}
+              {giftPackaging.enabled ? (
                 <div
-                  aria-hidden="true"
-                  className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
-                  style={{
-                    transform: addressMode === "saved" ? "translateX(0%)" : "translateX(100%)",
-                  }}
-                />
-
-                <button
-                  type="button"
-                  role="tab"
-                  id="tab-saved-address"
-                  aria-selected={addressMode === "saved"}
-                  aria-controls="panel-saved-address"
-                  onClick={handleSelectSavedAddress}
-                  className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
-                    addressMode === "saved"
-                      ? "text-neutral-950 font-bold"
-                      : "text-neutral-500 hover:text-neutral-800"
-                  }`}
+                  role="tablist"
+                  aria-label="Delivery destination selection"
+                  className="relative grid grid-cols-3 p-1 mb-5 bg-neutral-100/90 rounded-xl border border-neutral-200/70 select-none text-center"
                 >
-                  <Home size={13} className={`transition-colors duration-200 ${addressMode === "saved" ? "text-neutral-950" : "text-neutral-400"}`} />
-                  <span>Saved Profile Address</span>
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  id="tab-custom-address"
-                  aria-selected={addressMode === "custom"}
-                  aria-controls="panel-custom-address"
-                  onClick={handleSelectCustomAddress}
-                  className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
-                    addressMode === "custom"
-                      ? "text-neutral-950 font-bold"
-                      : "text-neutral-500 hover:text-neutral-800"
-                  }`}
-                >
-                  <MapPin size={13} className={`transition-colors duration-200 ${addressMode === "custom" ? "text-neutral-950" : "text-neutral-400"}`} />
-                  <span>Different / Live Location</span>
-                </button>
-              </div>
+                  {/* Sliding Active Pill Background - GPU accelerated transform only */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute top-1 bottom-1 left-1 w-[calc(33.333%-3px)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+                    style={{
+                      transform:
+                        addressMode === "recipient"
+                          ? "translateX(0%)"
+                          : addressMode === "saved"
+                          ? "translateX(100%)"
+                          : "translateX(200%)",
+                    }}
+                  />
 
-              {/* ── MODE A: SAVED PROFILE ADDRESS ── */}
-              {addressMode === "saved" ? (
+                  <button
+                    type="button"
+                    role="tab"
+                    id="tab-recipient-address"
+                    aria-selected={addressMode === "recipient"}
+                    aria-controls="panel-recipient-address"
+                    onClick={handleSelectRecipientAddress}
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      addressMode === "recipient"
+                        ? "text-neutral-950 font-bold"
+                        : "text-neutral-500 hover:text-neutral-800"
+                    }`}
+                  >
+                    <Gift size={13} className={`transition-colors duration-200 ${addressMode === "recipient" ? "text-neutral-950" : "text-neutral-400"}`} />
+                    <span className="truncate">Friend&apos;s Doorstep</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="tab"
+                    id="tab-saved-address"
+                    aria-selected={addressMode === "saved"}
+                    aria-controls="panel-saved-address"
+                    onClick={handleSelectSavedAddress}
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      addressMode === "saved"
+                        ? "text-neutral-950 font-bold"
+                        : "text-neutral-500 hover:text-neutral-800"
+                    }`}
+                  >
+                    <Home size={13} className={`transition-colors duration-200 ${addressMode === "saved" ? "text-neutral-950" : "text-neutral-400"}`} />
+                    <span className="truncate">Deliver to Me</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="tab"
+                    id="tab-custom-address"
+                    aria-selected={addressMode === "custom"}
+                    aria-controls="panel-custom-address"
+                    onClick={handleSelectCustomAddress}
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      addressMode === "custom"
+                        ? "text-neutral-950 font-bold"
+                        : "text-neutral-500 hover:text-neutral-800"
+                    }`}
+                  >
+                    <MapPin size={13} className={`transition-colors duration-200 ${addressMode === "custom" ? "text-neutral-950" : "text-neutral-400"}`} />
+                    <span className="truncate">Other / GPS</span>
+                  </button>
+                </div>
+              ) : (
+                <div
+                  role="tablist"
+                  aria-label="Address mode selection"
+                  className="relative grid grid-cols-2 p-1 mb-5 bg-neutral-100/90 rounded-xl border border-neutral-200/70 select-none"
+                >
+                  {/* Sliding Active Pill Background - GPU accelerated transform only */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-lg bg-white shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+                    style={{
+                      transform: addressMode === "saved" ? "translateX(0%)" : "translateX(100%)",
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    role="tab"
+                    id="tab-saved-address"
+                    aria-selected={addressMode === "saved"}
+                    aria-controls="panel-saved-address"
+                    onClick={handleSelectSavedAddress}
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      addressMode === "saved"
+                        ? "text-neutral-950 font-bold"
+                        : "text-neutral-500 hover:text-neutral-800"
+                    }`}
+                  >
+                    <Home size={13} className={`transition-colors duration-200 ${addressMode === "saved" ? "text-neutral-950" : "text-neutral-400"}`} />
+                    <span>Saved Profile Address</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    id="tab-custom-address"
+                    aria-selected={addressMode === "custom"}
+                    aria-controls="panel-custom-address"
+                    onClick={handleSelectCustomAddress}
+                    className={`relative z-10 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      addressMode === "custom"
+                        ? "text-neutral-950 font-bold"
+                        : "text-neutral-500 hover:text-neutral-800"
+                    }`}
+                  >
+                    <MapPin size={13} className={`transition-colors duration-200 ${addressMode === "custom" ? "text-neutral-950" : "text-neutral-400"}`} />
+                    <span>Different / Live Location</span>
+                  </button>
+                </div>
+              )}
+
+              {/* ── MODE 1: FRIEND'S RECIPIENT ADDRESS (When in Gift Mode) ── */}
+              {giftPackaging.enabled && addressMode === "recipient" ? (
+                <div
+                  key="recipient-panel"
+                  id="panel-recipient-address"
+                  role="tabpanel"
+                  className="animate-tab-panel-enter space-y-4"
+                >
+                  <div className="rounded-xl border border-neutral-200/90 bg-neutral-50/40 p-4 sm:p-5 transition-all space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-neutral-200/70 flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <Gift size={14} className="text-neutral-700" />
+                        <h3 className="text-xs font-bold text-neutral-950">
+                          Friend&apos;s Doorstep Delivery Address
+                        </h3>
+                      </div>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold text-neutral-600 bg-white border border-neutral-200">
+                        <EyeOff size={11} className="text-neutral-500" />
+                        Invoices &amp; Prices Redacted
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          Friend&apos;s Full Name (Recipient) <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={recipientFullName}
+                          onChange={(e) => {
+                            setRecipientFullName(e.target.value);
+                            setFullName(e.target.value);
+                          }}
+                          placeholder="e.g. Ramesh Kumar"
+                          className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                            formErrors.fullName ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                          }`}
+                        />
+                        {formErrors.fullName && (
+                          <p className="text-[11px] text-red-600 mt-1">{formErrors.fullName}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          Friend&apos;s Mobile Number <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          maxLength={10}
+                          value={recipientPhone}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "");
+                            setRecipientPhone(val);
+                            if (formErrors.recipientPhone) {
+                              setFormErrors((prev) => {
+                                const next = { ...prev };
+                                delete next.recipientPhone;
+                                return next;
+                              });
+                            }
+                          }}
+                          placeholder="10-digit mobile number"
+                          className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                            formErrors.recipientPhone ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                          }`}
+                        />
+                        {formErrors.recipientPhone && (
+                          <p className="text-[11px] text-red-600 mt-1">{formErrors.recipientPhone}</p>
+                        )}
+                        <p className="text-[10px] text-neutral-500 mt-1">
+                          Used strictly for courier delivery OTP upon arrival at their door.
+                        </p>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          Friend&apos;s Street Address / Flat / Floor <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={recipientStreet}
+                          onChange={(e) => {
+                            setRecipientStreet(e.target.value);
+                            setStreetAddress(e.target.value);
+                          }}
+                          placeholder="Flat 402, Prestige Tower, 12th Main Road"
+                          className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                            formErrors.streetAddress ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                          }`}
+                        />
+                        {formErrors.streetAddress && (
+                          <p className="text-[11px] text-red-600 mt-1">{formErrors.streetAddress}</p>
+                        )}
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          Apartment, Suite, Landmark (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={recipientApartment}
+                          onChange={(e) => {
+                            setRecipientApartment(e.target.value);
+                            setApartment(e.target.value);
+                          }}
+                          placeholder="Near Indiranagar Metro Station"
+                          className="w-full text-xs px-3.5 py-2.5 rounded-lg border border-neutral-300 bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          City <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={recipientCity}
+                          onChange={(e) => {
+                            setRecipientCity(e.target.value);
+                            setCity(e.target.value);
+                          }}
+                          placeholder="e.g. Bengaluru"
+                          className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                            formErrors.city ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                          }`}
+                        />
+                        {formErrors.city && (
+                          <p className="text-[11px] text-red-600 mt-1">{formErrors.city}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          State <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={recipientState}
+                          onChange={(e) => {
+                            setRecipientState(e.target.value);
+                            setStateName(e.target.value);
+                          }}
+                          placeholder="e.g. Karnataka"
+                          className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black ${
+                            formErrors.stateName ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                          }`}
+                        />
+                        {formErrors.stateName && (
+                          <p className="text-[11px] text-red-600 mt-1">{formErrors.stateName}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-800 mb-1">
+                          PIN Code <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={recipientPincode}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "");
+                            setRecipientPincode(val);
+                            setPincode(val);
+                          }}
+                          placeholder="560038"
+                          className={`w-full text-xs px-3.5 py-2.5 rounded-lg border bg-white transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black font-mono ${
+                            formErrors.pincode ? "border-red-400 bg-red-50/20" : "border-neutral-300"
+                          }`}
+                        />
+                        {formErrors.pincode && (
+                          <p className="text-[11px] text-red-600 mt-1">{formErrors.pincode}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-neutral-200/80 flex items-center justify-between text-[11px] text-neutral-600">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldCheck size={14} className="text-emerald-600" />
+                        <span>Direct doorstep dispatch. Unmarked exterior stealth carton.</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : addressMode === "saved" ? (
                 <div
                   key="saved-panel"
                   id="panel-saved-address"
@@ -1487,12 +1868,188 @@ export default function CheckoutPage() {
                 </div>
             </section>
 
-            {/* Section 3: Payment Method */}
-            <section ref={paymentSectionRef} className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs">
+            {/* Section 03: Billing Address ([E.6] Requirement) */}
+            <section
+              id="section-billing-address"
+              className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs scroll-mt-24"
+            >
               <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-5">
                 <div className="flex items-center gap-3">
                   <span className="w-7 h-7 rounded-full bg-neutral-100 text-neutral-900 text-xs font-bold flex items-center justify-center">
                     03
+                  </span>
+                  <div>
+                    <h2 className="text-sm sm:text-base font-bold text-neutral-950 tracking-tight">
+                      Billing Address
+                    </h2>
+                    <p className="text-[11px] text-neutral-500">
+                      Official digital GST tax invoice &amp; payment receipt will be registered to this profile
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">
+                  <ShieldCheck size={13} />
+                  <span>GST Ready</span>
+                </div>
+              </div>
+
+              {/* Same as Delivery Checkbox Toggle */}
+              <div className="space-y-4">
+                <label className="flex items-start gap-3 p-4 rounded-xl border border-neutral-200/90 bg-neutral-50/70 hover:bg-neutral-50 cursor-pointer select-none transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={billingSameAsShipping}
+                    onChange={(e) => setBillingSameAsShipping(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded-sm accent-[#111111] cursor-pointer"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs font-bold text-neutral-950 block">
+                      Billing address is same as delivery address
+                    </span>
+                    <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                      {giftPackaging.enabled && addressMode === "recipient"
+                        ? "Recommended for gifts: Keep unchecked to register the official tax invoice to your name rather than your friend."
+                        : "Use the destination address for digital tax invoices and bookkeeping."}
+                    </p>
+                  </div>
+                </label>
+
+                {/* When Unchecked: Choose Saved Profile or Custom Billing Address */}
+                {!billingSameAsShipping && (
+                  <div className="animate-tab-panel-enter space-y-4 pt-1">
+                    <div className="flex items-center gap-2 p-1 bg-neutral-100/90 rounded-xl border border-neutral-200/70 select-none">
+                      <button
+                        type="button"
+                        onClick={() => setBillingMode("profile")}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+                          billingMode === "profile"
+                            ? "bg-white text-neutral-950 font-bold shadow-xs"
+                            : "text-neutral-500 hover:text-neutral-800"
+                        }`}
+                      >
+                        <Home size={13} />
+                        <span>My Account Profile ({user?.name || (giftPackaging.senderName || savedProfileAddress.name)})</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBillingMode("custom")}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+                          billingMode === "custom"
+                            ? "bg-white text-neutral-950 font-bold shadow-xs"
+                            : "text-neutral-500 hover:text-neutral-800"
+                        }`}
+                      >
+                        <Pencil size={13} />
+                        <span>Different Billing Address</span>
+                      </button>
+                    </div>
+
+                    {billingMode === "profile" ? (
+                      <div className="rounded-xl border-2 border-neutral-900 bg-neutral-50/70 p-4 sm:p-5">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-bold text-neutral-900 flex items-center gap-1.5">
+                            <ShieldCheck size={14} className="text-neutral-900" />
+                            Official Billing &amp; Tax Invoice Destination
+                          </span>
+                          <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                            Buyer Account
+                          </span>
+                        </div>
+                        <p className="text-sm font-bold text-neutral-950">{billingFullName}</p>
+                        <p className="text-xs text-neutral-600 mt-1">{billingStreetAddress}</p>
+                        <p className="text-xs text-neutral-600">{billingCity}, {billingStateName} - {billingPincode}</p>
+                        <p className="text-[11px] text-neutral-500 mt-2 font-mono">Contact: {billingPhone}</p>
+                      </div>
+                    ) : (
+                      /* Custom Billing Form Fields */
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 bg-neutral-50/50 p-4 rounded-xl border border-neutral-200/80">
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700 mb-1">
+                            Billing Contact Name *
+                          </label>
+                          <input
+                            type="text"
+                            value={billingFullName}
+                            onChange={(e) => setBillingFullName(e.target.value)}
+                            placeholder="Full name or company name"
+                            className="w-full text-xs bg-white rounded-lg px-3 py-2 border border-neutral-300 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-black"
+                          />
+                          {formErrors.billingFullName && (
+                            <p className="text-[11px] text-red-600 mt-1">{formErrors.billingFullName}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700 mb-1">
+                            Billing Mobile Number *
+                          </label>
+                          <input
+                            type="tel"
+                            maxLength={10}
+                            value={billingPhone}
+                            onChange={(e) => setBillingPhone(e.target.value.replace(/\D/g, ""))}
+                            placeholder="10-digit mobile number"
+                            className="w-full text-xs bg-white rounded-lg px-3 py-2 border border-neutral-300 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-black"
+                          />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-bold text-neutral-700 mb-1">
+                            Billing Street Address *
+                          </label>
+                          <input
+                            type="text"
+                            value={billingStreetAddress}
+                            onChange={(e) => setBillingStreetAddress(e.target.value)}
+                            placeholder="Building, Street, Locality"
+                            className="w-full text-xs bg-white rounded-lg px-3 py-2 border border-neutral-300 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-black"
+                          />
+                          {formErrors.billingStreetAddress && (
+                            <p className="text-[11px] text-red-600 mt-1">{formErrors.billingStreetAddress}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700 mb-1">
+                            City *
+                          </label>
+                          <input
+                            type="text"
+                            value={billingCity}
+                            onChange={(e) => setBillingCity(e.target.value)}
+                            placeholder="City"
+                            className="w-full text-xs bg-white rounded-lg px-3 py-2 border border-neutral-300 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-black"
+                          />
+                          {formErrors.billingCity && (
+                            <p className="text-[11px] text-red-600 mt-1">{formErrors.billingCity}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700 mb-1">
+                            PIN Code *
+                          </label>
+                          <input
+                            type="text"
+                            maxLength={6}
+                            value={billingPincode}
+                            onChange={(e) => setBillingPincode(e.target.value.replace(/\D/g, ""))}
+                            placeholder="6-digit PIN"
+                            className="w-full text-xs bg-white rounded-lg px-3 py-2 border border-neutral-300 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-black font-mono"
+                          />
+                          {formErrors.billingPincode && (
+                            <p className="text-[11px] text-red-600 mt-1">{formErrors.billingPincode}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Section 04: Payment Method */}
+            <section ref={paymentSectionRef} className="bg-white border border-neutral-200/90 rounded-2xl p-6 sm:p-7 shadow-xs">
+              <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-5">
+                <div className="flex items-center gap-3">
+                  <span className="w-7 h-7 rounded-full bg-neutral-100 text-neutral-900 text-xs font-bold flex items-center justify-center">
+                    04
                   </span>
                   <h2 className="text-sm sm:text-base font-bold text-neutral-950 tracking-tight">
                     Payment Method
@@ -2209,7 +2766,12 @@ export default function CheckoutPage() {
                       <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
                         Delivering Order To
                       </span>
-                      {addressMode === "saved" ? (
+                      {giftPackaging.enabled && addressMode === "recipient" ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-900 text-white">
+                          <Gift size={11} className="text-amber-300" />
+                          Friend&apos;s Doorstep ({recipientFullName || "Recipient"})
+                        </span>
+                      ) : addressMode === "saved" ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-200/80 text-neutral-700">
                           Saved Profile Address
                         </span>
@@ -2396,7 +2958,11 @@ export default function CheckoutPage() {
                   <div className="flex items-center justify-between text-neutral-900 font-semibold mb-1">
                     <div className="flex items-center gap-1.5">
                       <MapPin size={13} className="text-neutral-700 shrink-0" />
-                      <span>Delivery Destination</span>
+                      <span>
+                        {giftPackaging.enabled && addressMode === "recipient"
+                          ? `Friend&apos;s Doorstep (${recipientFullName || "Recipient"})`
+                          : "Delivery Destination"}
+                      </span>
                     </div>
                     <span className="text-[10px] font-mono text-neutral-500 font-semibold">
                       {pincode || "560038"}
@@ -2494,6 +3060,16 @@ export default function CheckoutPage() {
                       )}
                     </span>
                   </div>
+
+                  {giftPackaging.enabled && (
+                    <div className="flex justify-between text-neutral-800 font-medium">
+                      <span className="flex items-center gap-1.5">
+                        <Gift size={13} className="text-slate-400 shrink-0" />
+                        <span>Signature Gift Packaging</span>
+                      </span>
+                      <span className="font-mono font-semibold">+{formatPrice(giftPackagingFee)}</span>
+                    </div>
+                  )}
 
                   {totalSavings > 0 && (
                     <div className="bg-emerald-50/80 p-2.5 rounded-lg text-[11px] text-emerald-800 font-medium">

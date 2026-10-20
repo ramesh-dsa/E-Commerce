@@ -177,7 +177,7 @@ export function Navbar() {
       setActiveNav("SHOES");
     } else if (pathname === "/watches" || isWatchProduct) {
       setActiveNav("WATCHES");
-    } else if (pathname === "/collections") {
+    } else if (pathname === "/collections" || pathname.startsWith("/collections/")) {
       setActiveNav("COLLECTIONS");
     } else {
       // Check custom sections catalog page (/section/[slug])
@@ -237,7 +237,9 @@ export function Navbar() {
       href: "/collections",
       isActive:
         !matchingCustomSection &&
-        (pathname === "/collections" || (pathname === "/" && activeNav === "COLLECTIONS")),
+        (pathname === "/collections" ||
+          pathname.startsWith("/collections/") ||
+          (pathname === "/" && activeNav === "COLLECTIONS")),
     },
   ];
 

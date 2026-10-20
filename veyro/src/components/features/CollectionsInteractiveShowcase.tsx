@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
   ChevronLeft,
@@ -744,14 +745,13 @@ export function CollectionsInteractiveShowcase() {
 
             {/* Bottom CTA: See All Product */}
             <div className="mt-8 flex items-center justify-center">
-              <button
-                type="button"
-                onClick={() => setStage("fan")}
-                className="px-8 py-3 bg-[#111111] hover:bg-neutral-800 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2"
+              <Link
+                href="/collections/all"
+                className="px-8 py-3 bg-[#111111] hover:bg-neutral-800 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 group"
               >
                 <span>See All Product</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         )}
