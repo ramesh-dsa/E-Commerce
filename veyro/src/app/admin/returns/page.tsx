@@ -907,18 +907,18 @@ export default function AdminReturnsPage() {
 
       {/* ── RETURNS MASTER TABLE CARD ── */}
       <div className="bg-white rounded-[22px] border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse table-fixed min-w-[1240px]" role="table">
+        <div className="overflow-x-auto admin-scroll-container">
+          <table className="w-full text-left border-collapse" role="table">
             <thead>
-              <tr className="border-b border-neutral-100 text-[11px] font-bold uppercase tracking-wider text-neutral-500 bg-[#faf9f6]/90">
-                <th className="pl-6 pr-3 py-4 w-[11%]">Return ID</th>
-                <th className="px-5 py-4 w-[14%]">Customer &amp; City</th>
-                <th className="px-5 py-4 w-[19%]">Product Claimed</th>
-                <th className="px-5 py-4 w-[19%]">Reason &amp; Feedback</th>
-                <th className="px-5 py-4 w-[10%]">Refund Value</th>
-                <th className="px-5 py-4 w-[12%]">Status</th>
-                <th className="px-5 py-4 w-[11%]">Date Requested</th>
-                <th className="pl-3 pr-6 py-4 w-[14%] text-right">Actions</th>
+              <tr className="border-b border-neutral-100 text-[11px] font-bold uppercase tracking-wider text-neutral-500 bg-[#faf9f6]/90 font-mono">
+                <th className="pl-6 pr-4 py-4 min-w-[170px]">Return ID</th>
+                <th className="px-5 py-4 min-w-[200px]">Customer &amp; City</th>
+                <th className="px-5 py-4 min-w-[250px]">Product Claimed</th>
+                <th className="px-5 py-4 min-w-[260px]">Reason &amp; Feedback</th>
+                <th className="px-5 py-4 min-w-[180px]">Refund Value</th>
+                <th className="px-5 py-4 min-w-[160px]">Status</th>
+                <th className="px-5 py-4 min-w-[160px]">Date Requested</th>
+                <th className="pl-3 pr-6 py-4 min-w-[180px] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
@@ -961,7 +961,7 @@ export default function AdminReturnsPage() {
                       title="Click to inspect return claim"
                     >
                       {/* Return ID & Order ID */}
-                      <td className="pl-6 pr-3 py-4.5 align-middle whitespace-nowrap">
+                      <td className="pl-6 pr-4 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="text-xs font-mono font-bold text-neutral-900 group-hover:text-amber-800">
                             {ret.id}
@@ -975,11 +975,11 @@ export default function AdminReturnsPage() {
                       {/* Customer */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="text-xs sm:text-sm font-semibold text-neutral-900 truncate">
+                          <span className="text-xs sm:text-sm font-semibold text-neutral-900">
                             {ret.customerName}
                           </span>
-                          <span className="text-[11px] text-neutral-400 flex items-center gap-1 mt-0.5 truncate">
-                            <Phone size={10} className="shrink-0" />
+                          <span className="text-[11px] text-neutral-400 flex items-center gap-1 mt-0.5 font-mono">
+                            <Phone size={10} className="shrink-0 text-neutral-400" />
                             {ret.customerPhone} • {ret.customerCity}
                           </span>
                         </div>
@@ -998,10 +998,10 @@ export default function AdminReturnsPage() {
                             />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-semibold text-neutral-900 truncate max-w-[170px]" title={ret.item.productName}>
+                            <span className="text-xs font-semibold text-neutral-900 truncate max-w-[200px]" title={ret.item.productName}>
                               {ret.item.productName}
                             </span>
-                            <span className="text-[11px] text-neutral-400 mt-0.5 truncate max-w-[170px]">
+                            <span className="text-[11px] text-neutral-400 mt-0.5 truncate max-w-[200px]">
                               {ret.item.colorName} • Size {ret.item.selectedSize} (x{ret.item.quantity})
                             </span>
                           </div>
@@ -1010,16 +1010,16 @@ export default function AdminReturnsPage() {
 
                       {/* Reason & Comments */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
-                        <div className="flex flex-col max-w-[210px]">
+                        <div className="flex flex-col max-w-[260px]">
                           <span
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10.5px] font-bold bg-amber-50 text-amber-900 border border-amber-200/70 w-fit truncate max-w-[200px]"
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10.5px] font-bold bg-amber-50 text-amber-900 border border-amber-200/70 w-fit truncate max-w-[250px]"
                             title={ret.reason}
                           >
                             {ret.reason}
                           </span>
                           {ret.details ? (
                             <span
-                              className="text-[11px] text-neutral-500 italic mt-1 truncate max-w-[200px] block"
+                              className="text-[11px] text-neutral-500 italic mt-1 truncate max-w-[250px] block"
                               title={ret.details}
                             >
                               &ldquo;{ret.details}&rdquo;
@@ -1033,10 +1033,10 @@ export default function AdminReturnsPage() {
                       {/* Refund Amount */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="text-xs sm:text-sm font-bold text-neutral-900">
+                          <span className="text-xs sm:text-sm font-bold text-neutral-900 font-mono">
                             ₹{ret.refundAmount.toLocaleString("en-IN")}
                           </span>
-                          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider flex items-center gap-1.5 mt-0.5 whitespace-nowrap">
                             {ret.status === "rejected" ? (
                               <span className="text-neutral-400 font-normal">Claim Void</span>
                             ) : (
