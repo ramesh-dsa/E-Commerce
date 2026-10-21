@@ -1,3 +1,10 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 /**
  * Formats a numeric price into an Indian Rupee string (e.g. ₹1,499)
  */
@@ -19,3 +26,4 @@ export function calculateDiscountPercentage(
   if (originalPrice <= price) return 0;
   return Math.round(((originalPrice - price) / originalPrice) * 100);
 }
+

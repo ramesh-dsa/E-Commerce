@@ -736,11 +736,14 @@ export default function AdminOrdersPage() {
                 </h3>
               </div>
               <span className="text-[11px] text-neutral-400 font-mono">
-                11 Recorded Days • Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}
+                {availableOrderDays.length} Recorded Days • Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}
               </span>
             </div>
 
-            <div className="grid grid-cols-11 gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60">
+            <div
+              className="grid gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60"
+              style={{ gridTemplateColumns: `repeat(${availableOrderDays.length || 1}, minmax(0, 1fr))` }}
+            >
               {availableOrderDays
                 .slice()
                 .reverse()
@@ -947,10 +950,15 @@ export default function AdminOrdersPage() {
                 <BarChart3 size={13} className="text-amber-500" />
                 Daily Sales Timeline Visualizer (Click any bar to inspect day)
               </span>
-              <span className="text-[11px] text-neutral-400">Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}</span>
+              <span className="text-[11px] text-neutral-400 font-mono">
+                {availableOrderDays.length} Recorded Days • Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}
+              </span>
             </div>
 
-            <div className="grid grid-cols-11 gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60">
+            <div
+              className="grid gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60"
+              style={{ gridTemplateColumns: `repeat(${availableOrderDays.length || 1}, minmax(0, 1fr))` }}
+            >
               {availableOrderDays
                 .slice()
                 .reverse()

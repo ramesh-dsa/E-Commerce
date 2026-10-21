@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useProducts } from "@/context/ProductsContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -183,49 +182,7 @@ export function AllProductsCatalog() {
 
   return (
     <div className="w-full bg-[#fbfbf9] text-[#111111] min-h-screen">
-      {/* ── 1. CINEMATIC LOOKBOOK HERO BANNER ─────────────────────────── */}
-      <section className="relative w-full h-[280px] sm:h-[340px] lg:h-[400px] overflow-hidden bg-[#0d0d10]">
-        <Image
-          src="/images/clothing-hero-banner.jpg"
-          alt="VEYRO Complete Product Archive"
-          fill
-          priority
-          quality={85}
-          className="object-cover object-[center_35%] opacity-55"
-          sizes="100vw"
-        />
-
-        {/* High-fashion subtle directional scrim */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d10] via-[#0d0d10]/85 to-transparent pointer-events-none z-1" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d10] via-transparent to-black/30 pointer-events-none z-1" />
-
-        {/* Editorial Content Stage */}
-        <div className="absolute inset-y-0 left-0 z-10 flex flex-col justify-center px-6 sm:px-10 lg:px-16 max-w-2xl">
-          <span className="font-script text-3xl sm:text-4xl lg:text-5xl text-[#fcd017] tracking-normal font-normal drop-shadow-md select-none -mb-1">
-            the complete archive
-          </span>
-
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-[-0.03em] uppercase text-white leading-[0.92] drop-shadow-md font-[family-name:var(--font-outfit)]">
-            FULL REPERTOIRE ARCHIVE
-          </h1>
-
-          <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
-            <span className="inline-block px-3 py-1 bg-[#fcd017] text-[#111111] text-xs sm:text-sm font-black tracking-wider uppercase rounded-full shadow-sm">
-              ALL 35 SILHOUETTES
-            </span>
-            <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.15em] text-white/90">
-              HEAVYWEIGHT COTTON · VULCANIZED SOLES · SWISS CALIBRES
-            </span>
-          </div>
-
-          <p className="mt-3 text-xs sm:text-sm text-neutral-300 font-light leading-relaxed max-w-lg hidden sm:block">
-            Explore every silhouette, stitch density, and mechanical movement across VEYRO&apos;s
-            three foundational pillars — presented in complete runway sequence.
-          </p>
-        </div>
-      </section>
-
-      {/* ── 2. STICKY RUNWAY DOCK: BREADCRUMBS, JUMP ANCHORS & CONTROLS ── */}
+      {/* ── STICKY RUNWAY DOCK: BREADCRUMBS, JUMP ANCHORS & CONTROLS ── */}
       <section className="w-full bg-white/95 border-b border-[#e8e8e5] py-2.5 sm:py-3 px-5 sm:px-8 lg:px-12 sticky top-[74px] sm:top-[78px] lg:top-[82px] z-30 backdrop-blur-md shadow-xs transition-all">
         <div className="mx-auto max-w-[1536px] flex items-center justify-between gap-4 flex-wrap">
           {/* Left: Breadcrumbs & Chapter Jump Links */}
