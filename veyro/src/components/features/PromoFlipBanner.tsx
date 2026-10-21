@@ -27,7 +27,7 @@ export function PromoFlipBanner() {
       onBlurCapture={() => setIsPaused(false)}
     >
       {/* Aligned Header Row with Context & Switch */}
-      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto mb-3 flex items-center justify-between px-1">
+      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto mb-4 sm:mb-5 flex items-center justify-between px-1 relative z-30">
         <span className="text-[10px] sm:text-[11px] font-mono tracking-widest text-[#888] uppercase">
           EXCLUSIVE OFFERS
         </span>
@@ -180,14 +180,14 @@ export function PromoFlipBanner() {
             </div>
 
             {/* The Floating T-Shirt (OUTSIDE MASK & LINK) */}
-            <div className="absolute right-2 sm:right-[-4%] md:right-[2%] top-[75%] sm:top-1/2 -translate-y-1/2 sm:-translate-y-[60%] w-[40%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-6 z-20 drop-shadow-2xl">
+            <div className="absolute right-2 sm:right-[-4%] md:right-[2%] top-[75%] sm:top-1/2 -translate-y-1/2 sm:-translate-y-[54%] w-[40%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-3 z-20 drop-shadow-2xl">
               <Image 
                 src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
                 alt="Premium Classic Fit T-Shirt" 
                 fill
                 quality={80}
                 sizes="(max-width: 640px) 240px, 320px"
-                className="object-contain object-center scale-110 sm:scale-105 md:scale-[1.25] rotate-[-5deg]"
+                className="object-contain object-center scale-110 sm:scale-105 md:scale-[1.16] rotate-[-5deg]"
               />
             </div>
           </div>
