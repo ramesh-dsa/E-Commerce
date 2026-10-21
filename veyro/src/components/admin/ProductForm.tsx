@@ -781,10 +781,10 @@ export function ProductForm({
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
                         form.galleryImages.length >= 4
                           ? "bg-amber-50 text-amber-800 border-amber-200"
-                          : "bg-neutral-50 text-neutral-700 border-neutral-200"
+                          : "bg-neutral-50 text-neutral-600 border-neutral-200"
                       }`}
                     >
                       <span
@@ -792,7 +792,9 @@ export function ProductForm({
                           form.galleryImages.length >= 4 ? "bg-amber-500" : "bg-emerald-500"
                         }`}
                       />
-                      {form.galleryImages.length} / 4 Gallery Shots · {totalActiveImages} / 6 Total
+                      <span>{form.galleryImages.length} / 4 Gallery Shots</span>
+                      <span className="text-neutral-300">·</span>
+                      <span className="text-neutral-500">{totalActiveImages} / 6 Total</span>
                     </span>
                   </div>
                 </div>
@@ -1691,7 +1693,7 @@ function GalleryImageCard({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="rounded-xl border border-neutral-200 overflow-hidden bg-neutral-50/70 p-2.5 space-y-2">
+    <div className="rounded-xl border border-neutral-200 overflow-hidden bg-neutral-50/60 p-2.5 space-y-2 group/card transition-all duration-200 hover:border-neutral-300 hover:shadow-2xs">
       <input
         ref={fileInputRef}
         type="file"
@@ -1715,8 +1717,8 @@ function GalleryImageCard({
 
         {/* Top Badges & Controls */}
         <div className="absolute top-2 left-2 z-10">
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-neutral-900/80 text-white backdrop-blur-xs">
-            Angle #{index + 3}
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-neutral-900/80 text-white backdrop-blur-xs">
+            Angle {index + 3}
           </span>
         </div>
 
@@ -1733,7 +1735,7 @@ function GalleryImageCard({
           <button
             type="button"
             onClick={onRemove}
-            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md transition-colors shadow-md cursor-pointer hover:scale-105 active:scale-95"
+            className="p-1.5 bg-neutral-900/80 hover:bg-rose-600 text-white rounded-md transition-colors shadow-md cursor-pointer hover:scale-105 active:scale-95"
             title="Remove image"
             aria-label="Remove image"
           >
@@ -1746,7 +1748,7 @@ function GalleryImageCard({
         <button
           type="button"
           onClick={onAdjustCrop}
-          className="flex-1 flex items-center justify-center gap-1 text-[11px] font-bold text-neutral-800 bg-white border border-neutral-200 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors shadow-2xs cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-neutral-800 hover:text-neutral-950 bg-white border border-neutral-200 hover:border-neutral-300 py-1.5 rounded-lg hover:bg-neutral-50 transition-all shadow-2xs cursor-pointer active:scale-95"
         >
           <Crop size={12} className="text-amber-500" />
           <span>Crop</span>
@@ -1754,7 +1756,7 @@ function GalleryImageCard({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="text-[11px] font-semibold text-neutral-600 bg-white border border-neutral-200 px-2 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer"
+          className="text-[11px] font-medium text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-200 hover:border-neutral-300 px-2.5 py-1.5 rounded-lg hover:bg-neutral-50 transition-all cursor-pointer active:scale-95"
         >
           Replace
         </button>
@@ -1786,6 +1788,10 @@ function GalleryImageAddCard({
     }
   };
 
+  const openPicker = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div
       onDragOver={(e) => {
@@ -1794,10 +1800,15 @@ function GalleryImageAddCard({
       }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
-      className={`relative aspect-[3/4] flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl transition-all duration-200 text-center ${
+      onClick={() => {
+        if (!showUrlInput) {
+          openPicker();
+        }
+      }}
+      className={`group relative aspect-[3/4] flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl transition-all duration-200 text-center cursor-pointer select-none overflow-hidden ${
         isDragging
-          ? "border-amber-500 bg-amber-50/20 scale-[1.01]"
-          : "border-neutral-300 hover:border-neutral-400 bg-neutral-50/40"
+          ? "border-neutral-900 bg-neutral-100/80 scale-[1.01] shadow-sm"
+          : "border-neutral-200 hover:border-neutral-400 bg-neutral-50/40 hover:bg-neutral-50/80"
       }`}
     >
       <input
@@ -1814,26 +1825,48 @@ function GalleryImageAddCard({
       />
 
       {showUrlInput ? (
-        <div className="w-full space-y-2 p-1">
-          <p className="text-[11px] font-bold text-neutral-800">Paste Image URL</p>
-          <input
-            type="url"
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (urlInput.trim()) {
-                  onUrlSubmit(urlInput.trim());
-                  setUrlInput("");
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="w-full h-full flex flex-col justify-between p-2 z-10"
+        >
+          <div className="space-y-2">
+            <div className="flex items-center justify-between pb-1.5 border-b border-neutral-100">
+              <span className="text-xs font-semibold text-neutral-800">
+                Paste Image URL
+              </span>
+              <button
+                type="button"
+                onClick={() => {
                   setShowUrlInput(false);
+                  setUrlInput("");
+                }}
+                className="text-neutral-400 hover:text-neutral-700 p-0.5 rounded transition-colors cursor-pointer"
+                title="Cancel"
+              >
+                <X size={13} />
+              </button>
+            </div>
+            <input
+              type="url"
+              autoFocus
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (urlInput.trim()) {
+                    onUrlSubmit(urlInput.trim());
+                    setUrlInput("");
+                    setShowUrlInput(false);
+                  }
                 }
-              }
-            }}
-            placeholder="https://..."
-            className="w-full px-2 py-1.5 text-[11px] border border-neutral-300 rounded-lg bg-white font-mono focus:outline-none focus:border-neutral-900"
-          />
-          <div className="flex items-center gap-1.5">
+              }}
+              placeholder="https://..."
+              className="w-full px-2.5 py-1.5 text-xs border border-neutral-200 rounded-lg bg-white focus:outline-none focus:border-neutral-900 transition-colors placeholder:text-neutral-400"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5 pt-2">
             <button
               type="button"
               disabled={!urlInput.trim()}
@@ -1844,9 +1877,9 @@ function GalleryImageAddCard({
                   setShowUrlInput(false);
                 }
               }}
-              className="flex-1 py-1 bg-neutral-900 text-white rounded-md text-[10px] font-bold hover:bg-neutral-800 disabled:opacity-40 transition-colors cursor-pointer"
+              className="w-full py-1.5 bg-neutral-900 text-white rounded-lg text-xs font-medium hover:bg-neutral-800 disabled:opacity-40 transition-all cursor-pointer active:scale-95"
             >
-              Set &amp; Crop
+              Crop &amp; Set
             </button>
             <button
               type="button"
@@ -1854,7 +1887,7 @@ function GalleryImageAddCard({
                 setShowUrlInput(false);
                 setUrlInput("");
               }}
-              className="px-2 py-1 bg-neutral-200 text-neutral-700 rounded-md text-[10px] font-semibold hover:bg-neutral-300 transition-colors cursor-pointer"
+              className="w-full py-1 text-neutral-500 hover:text-neutral-800 text-xs font-normal transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -1862,29 +1895,33 @@ function GalleryImageAddCard({
         </div>
       ) : (
         <>
-          <div className="w-9 h-9 bg-white rounded-full shadow-2xs border border-neutral-200 flex items-center justify-center mb-2 text-neutral-500">
-            <Plus size={16} />
+          {/* Centered Minimal Plus Icon */}
+          <div className="w-10 h-10 rounded-full bg-white border border-neutral-200 shadow-2xs flex items-center justify-center text-neutral-500 group-hover:text-neutral-900 group-hover:border-neutral-300 group-hover:scale-105 active:scale-95 transition-all">
+            <Plus size={18} strokeWidth={2} />
           </div>
-          <p className="text-xs font-bold text-neutral-800 mb-0.5">+ Add Angle</p>
-          <p className="text-[10px] text-neutral-400 mb-2.5">
+
+          {/* Clean Title & Subtitle */}
+          <p className="text-xs font-semibold text-neutral-800 mt-2.5 group-hover:text-neutral-950 transition-colors">
+            Add angle
+          </p>
+          <p className="text-[11px] text-neutral-400 mt-0.5">
+            Click or drag image
+          </p>
+          <p className="text-[10px] text-neutral-400/80 mt-1">
             {remainingSlots} {remainingSlots === 1 ? "slot" : "slots"} left
           </p>
-          <div className="flex flex-col gap-1.5 w-full">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="text-[11px] font-bold text-neutral-900 bg-white border border-neutral-200 shadow-2xs px-2.5 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors inline-flex items-center justify-center gap-1 cursor-pointer active:scale-95"
-            >
-              <Upload size={12} /> Upload
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowUrlInput(true)}
-              className="text-[10px] font-semibold text-neutral-500 hover:text-neutral-800 hover:underline cursor-pointer"
-            >
-              or paste URL
-            </button>
-          </div>
+
+          {/* Clean URL link */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowUrlInput(true);
+            }}
+            className="mt-3 text-[11px] text-neutral-400 hover:text-neutral-700 hover:underline transition-colors cursor-pointer"
+          >
+            or paste image URL
+          </button>
         </>
       )}
     </div>
