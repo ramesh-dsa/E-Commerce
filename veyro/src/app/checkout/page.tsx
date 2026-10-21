@@ -1066,13 +1066,6 @@ export default function CheckoutPage() {
                       <CheckCircle2 size={12} className="text-emerald-600" />
                       Signed in as {user.name}
                     </span>
-                    <button
-                      type="button"
-                      onClick={openAccountModal}
-                      className="text-[11px] font-semibold text-neutral-500 hover:text-black underline underline-offset-2 transition-colors cursor-pointer ml-1"
-                    >
-                      Switch
-                    </button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
