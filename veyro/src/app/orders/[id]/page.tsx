@@ -32,6 +32,7 @@ import {
   ChevronRight,
   ReceiptText,
   Gift,
+  Sparkles,
 } from "lucide-react";
 import { CancelOrderModal, isOrderCancellable } from "@/components/features/CancelOrderModal";
 import { Toast } from "@/components/ui/Toast";
@@ -311,6 +312,33 @@ export default function OrderDetailPage() {
           {/* LEFT COLUMN: Hero + Timeline + Items */}
           <div className="lg:col-span-8 space-y-6 lg:space-y-8">
             
+            {/* GUEST ORDER CLAIM / SIGN IN BANNER (Only shown if user is guest) */}
+            {!user && (
+              <motion.div
+                variants={fadeUp}
+                className="bg-neutral-900 text-white rounded-xl border border-neutral-800 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm"
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-amber-400">
+                    <Sparkles size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">Guest Order Placed</h3>
+                    <p className="text-xs text-neutral-300 mt-0.5">
+                      Sign in or create a Veyro account to link this order and get 1-click doorstep delivery tracking.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={openAccountModal}
+                  className="px-4 py-2 bg-white text-black hover:bg-neutral-100 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
+                >
+                  Sign In / Save Order
+                </button>
+              </motion.div>
+            )}
+
             {/* HERO CONFIRMATION */}
             <AnimatePresence>
               {isJustConfirmed && order.status !== "Cancelled" && (

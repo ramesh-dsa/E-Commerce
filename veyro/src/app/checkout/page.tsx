@@ -37,6 +37,7 @@ import {
   Loader2,
   Gift,
   EyeOff,
+  Sparkles,
 } from "lucide-react";
 
 const emptySubscribe = () => () => {};
@@ -202,7 +203,7 @@ export default function CheckoutPage() {
     giftPackagingFee,
   } = useCart();
 
-  const { user, addOrder } = useUser();
+  const { user, openAccountModal, addOrder } = useUser();
   const isMounted = useMounted();
   
   // Payment lifecycle state (E9)
@@ -221,17 +222,17 @@ export default function CheckoutPage() {
     }
   }, [paymentStatus]);
 
-  // Form State - Contact
-  const [email, setEmail] = useState("ramesh.kumar@example.com");
-  const [phone, setPhone] = useState("+91 98765 43210");
+  // Form State - Contact (Populate from active user session or clean empty for guest)
+  const [email, setEmail] = useState(() => user?.email || "");
+  const [phone, setPhone] = useState(() => user?.phone || "");
 
-  // Form State - Shipping Address
-  const [fullName, setFullName] = useState("Ramesh Kumar");
-  const [streetAddress, setStreetAddress] = useState("Flat 402, Prestige Tower, Indiranagar");
+  // Form State - Shipping Address (Populate from user profile if signed in, or clean empty for guest)
+  const [fullName, setFullName] = useState(() => user?.name || "");
+  const [streetAddress, setStreetAddress] = useState(() => user?.address?.line1 || "");
   const [apartment, setApartment] = useState("");
-  const [city, setCity] = useState("Bengaluru");
-  const [stateName, setStateName] = useState("Karnataka");
-  const [pincode, setPincode] = useState("560038");
+  const [city, setCity] = useState(() => user?.address?.city || "");
+  const [stateName, setStateName] = useState(() => user?.address?.state || "");
+  const [pincode, setPincode] = useState(() => user?.address?.pincode || "");
   const [shippingMethod, setShippingMethod] = useState<"standard" | "express">("standard");
 
   // Form State - Payment
@@ -270,8 +271,8 @@ export default function CheckoutPage() {
   const savedProfileAddress = useMemo(() => {
     if (user?.address?.line1) {
       return {
-        name: user.name || "Ramesh Kumar",
-        phone: user.phone || phone || "+91 98765 43210",
+        name: user.name || "Valued Member",
+        phone: user.phone || phone || "",
         line1: user.address.line1,
         city: user.address.city || "Bengaluru",
         state: user.address.state || "Karnataka",
@@ -280,22 +281,14 @@ export default function CheckoutPage() {
         isCustomUser: true,
       };
     }
-    return {
-      name: "Ramesh Kumar",
-      phone: "+91 98765 43210",
-      line1: "Flat 402, Prestige Tower, Indiranagar",
-      city: "Bengaluru",
-      state: "Karnataka",
-      pincode: "560038",
-      label: "Saved Profile Address (Home)",
-      isCustomUser: false,
-    };
+    return null;
   }, [user, phone]);
 
   // Delivery address selection: "recipient" (friend's address) | "saved" (profile address) | "custom" (entered or live location)
   type AddressMode = "recipient" | "saved" | "custom";
   const [addressMode, setAddressMode] = useState<AddressMode>(() => {
-    return giftPackaging.enabled ? "recipient" : "saved";
+    if (giftPackaging.enabled) return "recipient";
+    return user?.address?.line1 ? "saved" : "custom";
   });
 
   // Live Location Auto-Detect states
@@ -383,13 +376,19 @@ export default function CheckoutPage() {
   };
 
   const handleSelectSavedAddress = () => {
+    if (!user) {
+      openAccountModal();
+      return;
+    }
     setAddressMode("saved");
-    setFullName(savedProfileAddress.name);
-    setStreetAddress(savedProfileAddress.line1);
-    setApartment("");
-    setCity(savedProfileAddress.city);
-    setStateName(savedProfileAddress.state);
-    setPincode(savedProfileAddress.pincode);
+    if (savedProfileAddress) {
+      setFullName(savedProfileAddress.name);
+      setStreetAddress(savedProfileAddress.line1);
+      setApartment("");
+      setCity(savedProfileAddress.city);
+      setStateName(savedProfileAddress.state);
+      setPincode(savedProfileAddress.pincode);
+    }
     setLocationError(null);
     setFormErrors((prev) => {
       const copy = { ...prev };
@@ -838,6 +837,8 @@ export default function CheckoutPage() {
         shippingCost: shippingFee,
         giftPackaging: giftPackaging.enabled ? giftPackaging : undefined,
         isGiftOrder: giftPackaging.enabled && addressMode === "recipient",
+        isGuestOrder: !user,
+        guestEmail: !user ? email : undefined,
         itemsCount: inStockCount,
         items: inStockItems.map((i) => ({
           productId: i.product.id,
@@ -1060,13 +1061,57 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
                 {user ? (
-                  <span className="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                    Signed in as {user.name}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                      <CheckCircle2 size={12} className="text-emerald-600" />
+                      Signed in as {user.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={openAccountModal}
+                      className="text-[11px] font-semibold text-neutral-500 hover:text-black underline underline-offset-2 transition-colors cursor-pointer ml-1"
+                    >
+                      Switch
+                    </button>
+                  </div>
                 ) : (
-                  <span className="text-[11px] text-neutral-400">Guest Checkout</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-semibold text-neutral-600 bg-neutral-100 px-2.5 py-1 rounded-full">
+                      Guest Checkout
+                    </span>
+                    <button
+                      type="button"
+                      onClick={openAccountModal}
+                      className="text-[11px] font-bold text-neutral-900 hover:text-black underline underline-offset-2 transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      <span>Sign In</span>
+                      <ArrowRight size={11} />
+                    </button>
+                  </div>
                 )}
               </div>
+
+              {/* Guest Sign-In Prompt Card (Only shown if user is NOT logged in) */}
+              {!user && (
+                <div className="mb-5 p-3.5 sm:p-4 rounded-xl bg-neutral-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0 text-amber-400">
+                      <Sparkles size={15} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-white tracking-tight">Already have a Veyro account?</p>
+                      <p className="text-[11px] text-neutral-300">Sign in to load your saved delivery addresses and track your order live.</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={openAccountModal}
+                    className="px-3.5 py-1.5 bg-white text-black hover:bg-neutral-100 text-xs font-bold rounded-lg transition-colors cursor-pointer shrink-0 shadow-xs"
+                  >
+                    Sign In / Log In
+                  </button>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -1241,7 +1286,7 @@ export default function CheckoutPage() {
                     }`}
                   >
                     <Home size={13} className={`transition-colors duration-200 ${addressMode === "saved" ? "text-neutral-950" : "text-neutral-400"}`} />
-                    <span>Saved Profile Address</span>
+                    <span>{user ? "Saved Profile Address" : "Saved Address (Sign In)"}</span>
                   </button>
                   <button
                     type="button"
@@ -1257,7 +1302,7 @@ export default function CheckoutPage() {
                     }`}
                   >
                     <MapPin size={13} className={`transition-colors duration-200 ${addressMode === "custom" ? "text-neutral-950" : "text-neutral-400"}`} />
-                    <span>Different / Live Location</span>
+                    <span>{user ? "Different / Live Location" : "Enter Shipping Address"}</span>
                   </button>
                 </div>
               )}
@@ -1457,77 +1502,107 @@ export default function CheckoutPage() {
                   aria-labelledby="tab-saved-address"
                   className="animate-tab-panel-enter space-y-4"
                 >
-                  <div className="relative rounded-xl border-2 border-neutral-900 bg-neutral-50/70 p-4 sm:p-5 transition-all">
-                    {/* Top Row: Badge + Status */}
-                    <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
-                        <Home size={14} className="text-neutral-900" />
-                        <span>{savedProfileAddress.label}</span>
+                  {savedProfileAddress ? (
+                    <div className="relative rounded-xl border-2 border-neutral-900 bg-neutral-50/70 p-4 sm:p-5 transition-all">
+                      {/* Top Row: Badge + Status */}
+                      <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
+                          <Home size={14} className="text-neutral-900" />
+                          <span>{savedProfileAddress.label}</span>
+                        </div>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100/80 text-emerald-800 border border-emerald-200">
+                          <CheckCircle2 size={11} className="text-emerald-700" />
+                          Active Destination
+                        </span>
                       </div>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100/80 text-emerald-800 border border-emerald-200">
-                        <CheckCircle2 size={11} className="text-emerald-700" />
-                        Active Destination
-                      </span>
-                    </div>
 
-                    {/* Address details */}
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-neutral-950">
-                          {savedProfileAddress.name}
-                        </span>
-                        <span className="text-xs text-neutral-500 font-mono">
-                          • {savedProfileAddress.phone}
-                        </span>
+                      {/* Address details */}
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-neutral-950">
+                            {savedProfileAddress.name}
+                          </span>
+                          <span className="text-xs text-neutral-500 font-mono">
+                            • {savedProfileAddress.phone}
+                          </span>
+                        </div>
+                        <p className="text-xs text-neutral-700 leading-relaxed font-medium">
+                          {savedProfileAddress.line1}
+                        </p>
+                        <p className="text-xs text-neutral-700 font-medium">
+                          {savedProfileAddress.city}, {savedProfileAddress.state} -{" "}
+                          <span className="font-mono font-bold text-neutral-950">
+                            {savedProfileAddress.pincode}
+                          </span>
+                        </p>
                       </div>
-                      <p className="text-xs text-neutral-700 leading-relaxed font-medium">
-                        {savedProfileAddress.line1}
+
+                      {/* Courier trust note */}
+                      <div className="mt-3.5 pt-3 border-t border-neutral-200/80 flex items-center justify-between gap-2 text-[11px] text-neutral-600">
+                        <div className="flex items-center gap-1.5">
+                          <ShieldCheck size={13} className="text-emerald-600" />
+                          <span>Verified shipping destination. OTP verification upon doorstep delivery.</span>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="mt-4 pt-3.5 border-t border-neutral-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-950 text-white text-xs font-semibold cursor-default select-none shrink-0 self-start sm:self-auto">
+                          <Check size={12} className="stroke-[3]" />
+                          <span>Delivering to this Address</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={handleSelectCustomAddress}
+                            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-white text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
+                          >
+                            <Plus size={13} className="text-neutral-600" />
+                            <span>Different Address</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleDetectLiveLocation}
+                            disabled={isLocating}
+                            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-xs font-semibold text-neutral-800 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group active:scale-[0.98]"
+                          >
+                            <Navigation size={13} className="text-neutral-700 transition-transform group-hover:scale-110" />
+                            <span>Use Live Location</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-neutral-300 p-6 text-center bg-neutral-50/50">
+                      <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-2 text-neutral-400">
+                        <Lock size={18} />
+                      </div>
+                      <h3 className="text-xs font-bold text-neutral-900 mb-1">
+                        Sign In to Access Saved Addresses
+                      </h3>
+                      <p className="text-[11px] text-neutral-500 mb-4 max-w-sm mx-auto">
+                        Log in to your Veyro account to automatically pull your home address or enter a delivery address below.
                       </p>
-                      <p className="text-xs text-neutral-700 font-medium">
-                        {savedProfileAddress.city}, {savedProfileAddress.state} -{" "}
-                        <span className="font-mono font-bold text-neutral-950">
-                          {savedProfileAddress.pincode}
-                        </span>
-                      </p>
-                    </div>
-
-                    {/* Courier trust note */}
-                    <div className="mt-3.5 pt-3 border-t border-neutral-200/80 flex items-center justify-between gap-2 text-[11px] text-neutral-600">
-                      <div className="flex items-center gap-1.5">
-                        <ShieldCheck size={13} className="text-emerald-600" />
-                        <span>Verified shipping destination. OTP verification upon doorstep delivery.</span>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="mt-4 pt-3.5 border-t border-neutral-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-950 text-white text-xs font-semibold cursor-default select-none shrink-0 self-start sm:self-auto">
-                        <Check size={12} className="stroke-[3]" />
-                        <span>Delivering to this Address</span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 shrink-0">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={openAccountModal}
+                          className="px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors cursor-pointer"
+                        >
+                          Sign In / Log In
+                        </button>
                         <button
                           type="button"
                           onClick={handleSelectCustomAddress}
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-white text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
+                          className="px-4 py-2 bg-white border border-neutral-200 text-neutral-700 rounded-lg text-xs font-semibold hover:bg-neutral-50 transition-colors cursor-pointer"
                         >
-                          <Plus size={13} className="text-neutral-600" />
-                          <span>Different Address</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={handleDetectLiveLocation}
-                          disabled={isLocating}
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50 text-xs font-semibold text-neutral-800 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group active:scale-[0.98]"
-                        >
-                          <Navigation size={13} className="text-neutral-700 transition-transform group-hover:scale-110" />
-                          <span>Use Live Location</span>
+                          Enter Address Manually
                         </button>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 /* ── MODE B: CUSTOM / LIVE LOCATION ADDRESS ── */
@@ -1540,17 +1615,28 @@ export default function CheckoutPage() {
                 >
                   {/* Top Bar inside Custom Mode */}
                   <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-3.5 rounded-xl bg-neutral-50/90 border border-neutral-200/90 shadow-2xs">
-                    <button
-                      type="button"
-                      onClick={handleSelectSavedAddress}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-700 hover:text-black hover:bg-neutral-200/60 transition-all cursor-pointer group"
-                    >
-                      <ArrowLeft size={13} className="text-neutral-500 group-hover:text-black transition-transform group-hover:-translate-x-0.5" />
-                      <span>
-                        Back to Saved Profile Address{" "}
-                        <span className="text-neutral-500 font-normal">({savedProfileAddress.city})</span>
-                      </span>
-                    </button>
+                    {savedProfileAddress ? (
+                      <button
+                        type="button"
+                        onClick={handleSelectSavedAddress}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-700 hover:text-black hover:bg-neutral-200/60 transition-all cursor-pointer group"
+                      >
+                        <ArrowLeft size={13} className="text-neutral-500 group-hover:text-black transition-transform group-hover:-translate-x-0.5" />
+                        <span>
+                          Back to Saved Profile Address{" "}
+                          <span className="text-neutral-500 font-normal">({savedProfileAddress.city})</span>
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={openAccountModal}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-700 hover:text-black hover:bg-neutral-200/60 transition-all cursor-pointer group"
+                      >
+                        <Sparkles size={13} className="text-amber-500" />
+                        <span>Have an account? Sign In for saved address</span>
+                      </button>
+                    )}
 
                     <button
                       type="button"
@@ -1928,7 +2014,7 @@ export default function CheckoutPage() {
                         }`}
                       >
                         <Home size={13} />
-                        <span>My Account Profile ({user?.name || (giftPackaging.senderName || savedProfileAddress.name)})</span>
+                        <span>My Account Profile ({user?.name || giftPackaging.senderName || savedProfileAddress?.name || "Customer"})</span>
                       </button>
                       <button
                         type="button"

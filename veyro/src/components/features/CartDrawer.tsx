@@ -48,7 +48,7 @@ export function CartDrawer() {
     giftPackagingFee,
   } = useCart();
 
-  const { addOrder } = useUser();
+  const { user, openAccountModal, addOrder } = useUser();
   const router = useRouter();
 
   const [couponInput, setCouponInput] = useState("");
@@ -56,6 +56,9 @@ export function CartDrawer() {
   const [isTruckDriving, setIsTruckDriving] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [viewTransitionDir, setViewTransitionDir] = useState<"forward" | "back">("forward");
+
+  // If user signs in via AccountModal while attempting checkout, automatically redirect to checkout
+  const waitingForDrawerLoginRef = useRef(false);
 
   // ── OUT OF STOCK DETECTION ─────────────────────────────────────────────
   const hasOosItems = useMemo(
@@ -119,6 +122,14 @@ export function CartDrawer() {
       }
     });
   }, [optimisticQuantities, updateQuantity]);
+
+  // If user signs in via AccountModal while waiting, proceed to checkout
+  useEffect(() => {
+    if (user && waitingForDrawerLoginRef.current) {
+      waitingForDrawerLoginRef.current = false;
+      router.push("/checkout");
+    }
+  }, [user, router]);
 
   // Buttery-smooth animated item removal (no jarring instant jump)
   const handleSmoothRemove = useCallback(
@@ -354,13 +365,21 @@ export function CartDrawer() {
 
   const handleProceedToCheckout = () => {
     if (selectedCount === 0 || isTruckDriving) return;
-    flushPendingDebounces();
-    setIsTruckDriving(true);
-    setTimeout(() => {
-      setViewTransitionDir("forward");
-      setCartView("checkout");
-      setIsTruckDriving(false);
-    }, 1050);
+    if (user) {
+      // User is already logged in: Never ask, proceed directly
+      flushPendingDebounces();
+      setIsTruckDriving(true);
+      setTimeout(() => {
+        setViewTransitionDir("forward");
+        setCartView("checkout");
+        setIsTruckDriving(false);
+      }, 1050);
+    } else {
+      // User is not logged in: Directly open the login modal (AccountModal)
+      waitingForDrawerLoginRef.current = true;
+      closeCart();
+      openAccountModal();
+    }
   };
 
   const handleClose = useCallback(() => {

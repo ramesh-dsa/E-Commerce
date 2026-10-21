@@ -228,6 +228,8 @@ export interface OrderRecord {
   shippingAddress: OrderAddress;
   billingAddress?: OrderAddress; // [E.6] Billing address selection
   isGiftOrder?: boolean;
+  isGuestOrder?: boolean;
+  guestEmail?: string;
   paymentMethod: string;
   deliveredDate?: string; // ISO format date string to track return window
   returnRequest?: {

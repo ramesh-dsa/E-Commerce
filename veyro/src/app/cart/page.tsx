@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useUser } from "@/context/UserContext";
 import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -62,8 +64,32 @@ export default function CartPage() {
     giftPackagingFee,
   } = useCart();
 
+  const router = useRouter();
+  const { user, openAccountModal } = useUser();
   const { addToWishlist } = useWishlist();
   const isMounted = useMounted();
+
+  // If user is prompted to sign in when attempting to checkout, automatically redirect to checkout upon login
+  const waitingForLoginRef = useRef(false);
+
+  useEffect(() => {
+    if (user && waitingForLoginRef.current) {
+      waitingForLoginRef.current = false;
+      router.push("/checkout");
+    }
+  }, [user, router]);
+
+  const handleProceedToCheckout = () => {
+    if (inStockCount === 0) return;
+    if (user) {
+      // User is already logged in: Never ask, proceed directly to checkout
+      router.push("/checkout");
+    } else {
+      // User is not logged in: Open the login/account modal directly
+      waitingForLoginRef.current = true;
+      openAccountModal();
+    }
+  };
 
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -718,8 +744,9 @@ export default function CartPage() {
                     </div>
                   </>
                 ) : (
-                  <Link
-                    href="/checkout"
+                  <button
+                    type="button"
+                    onClick={handleProceedToCheckout}
                     className="w-full bg-neutral-900 text-white hover:bg-black active:scale-[0.98] py-3.5 px-4 rounded-xl text-xs font-bold uppercase tracking-[0.12em] flex items-center justify-center gap-2 transition-[background-color,transform] duration-200 ease-out motion-reduce:transform-none cursor-pointer shadow-sm text-center group select-none"
                   >
                     <span>
@@ -728,7 +755,7 @@ export default function CartPage() {
                         : "Proceed to Checkout"}
                     </span>
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-200 ease-out motion-reduce:transform-none" />
-                  </Link>
+                  </button>
                 )}
 
                 {/* Trust Badges - Symmetrical Grid */}
