@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef, useSyncExternalStore } fro
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
@@ -212,6 +213,7 @@ export default function CheckoutPage() {
   const [failureReason, setFailureReason] = useState<string>("");
   const [retryCount, setRetryCount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const orderPlacedRef = useRef(false);
 
   const failureBannerRef = useRef<HTMLDivElement>(null);
   const paymentSectionRef = useRef<HTMLElement>(null);
@@ -586,10 +588,11 @@ export default function CheckoutPage() {
   // Guard: redirect to /cart only AFTER cart has hydrated from localStorage and there are truly 0 in-stock items
   useEffect(() => {
     if (!isMounted || !isHydrated) return;
+    if (orderPlacedRef.current || paymentStatus === "success" || isSubmitting) return;
     if (items.length === 0 || inStockCount === 0) {
       router.replace("/cart");
     }
-  }, [isMounted, isHydrated, items.length, inStockCount, router]);
+  }, [isMounted, isHydrated, items.length, inStockCount, router, paymentStatus, isSubmitting]);
 
   // Delivery calculation
   const shippingFee = shippingMethod === "express" ? 149 : hasFreeShipping ? 0 : 99;
@@ -889,6 +892,7 @@ export default function CheckoutPage() {
         paymentMethod: paymentMethod,
       };
 
+      orderPlacedRef.current = true;
       addOrder(newOrder);
       // Remove only the purchased in-stock items from bag, preserving out-of-stock items
       removePurchasedItems(
@@ -934,6 +938,27 @@ export default function CheckoutPage() {
 
   // Empty cart or no available items fallback
   if (items.length === 0 || inStockCount === 0) {
+    if (orderPlacedRef.current || paymentStatus === "success") {
+      return (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-neutral-100 space-y-4"
+          >
+            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 animate-pulse">
+              <CheckCircle2 size={32} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-neutral-900">Payment Verified</h3>
+              <p className="text-xs text-neutral-500 font-mono mt-1">Opening your order confirmation...</p>
+            </div>
+          </motion.div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-[80vh] bg-neutral-50/50 flex items-center justify-center px-4 py-16">
         <div className="max-w-md w-full bg-white border border-neutral-200/90 rounded-2xl p-8 sm:p-10 text-center shadow-xs">
@@ -3207,6 +3232,26 @@ export default function CheckoutPage() {
           </div>
         </form>
       </main>
+
+      {/* LUXURY ORDER CONFIRMATION TRANSITION OVERLAY */}
+      {(orderPlacedRef.current || paymentStatus === "success") && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-neutral-100 space-y-4"
+          >
+            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 animate-pulse">
+              <CheckCircle2 size={32} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-neutral-900">Payment Verified</h3>
+              <p className="text-xs text-neutral-500 font-mono mt-1">Opening your order confirmation...</p>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

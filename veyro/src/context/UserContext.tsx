@@ -23,6 +23,7 @@ export type { OrderRecord };
 interface UserContextType {
   user: UserProfile | null;
   orders: OrderRecord[];
+  isHydrated: boolean;
   isAccountModalOpen: boolean;
   openAccountModal: () => void;
   closeAccountModal: () => void;
@@ -42,6 +43,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 const USER_STORAGE_KEY = "veyro_user_v1";
 const ORDERS_STORAGE_KEY = "veyro_orders_v6";
+const LAST_ORDER_KEY = "veyro_last_placed_order";
 
 const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
   {
@@ -597,7 +599,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       try {
         const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
         if (savedOrders) {
-          setOrders(JSON.parse(savedOrders));
+          const parsed = JSON.parse(savedOrders);
+          if (Array.isArray(parsed)) {
+            setOrders((current) => {
+              // Smart merge: retain all active in-memory orders and merge any new ones from storage
+              const currentIds = new Set(current.map((o) => o.id));
+              const missingFromCurrent = parsed.filter((o: OrderRecord) => !currentIds.has(o.id));
+              if (missingFromCurrent.length === 0) return current;
+              return [...current, ...missingFromCurrent];
+            });
+          }
         }
         const savedUser = localStorage.getItem(USER_STORAGE_KEY);
         if (savedUser) {
@@ -666,7 +677,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addOrder = useCallback((order: OrderRecord) => {
+    // 1. Always save a dedicated standalone copy of the last placed order for fail-safe retrieval
+    try {
+      localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order));
+    } catch (e) {
+      console.warn("Failed to save last placed order fallback", e);
+    }
+
+    // 2. Add to active orders state & sync to storage
     setOrders((prev) => {
+      if (prev.some((o) => o.id === order.id)) return prev;
       const updated = [order, ...prev];
       try {
         localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updated));
@@ -889,6 +909,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         orders,
+        isHydrated,
         isAccountModalOpen,
         openAccountModal,
         closeAccountModal,

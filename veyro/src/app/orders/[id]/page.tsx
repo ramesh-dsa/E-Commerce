@@ -9,7 +9,7 @@ import { useUser } from "@/context/UserContext";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
 import { useProducts } from "@/context/ProductsContext";
-import type { OrderStatus } from "@/types";
+import type { OrderRecord, OrderStatus } from "@/types";
 import {
   ArrowLeft,
   Package,
@@ -74,9 +74,14 @@ const fadeUp: any = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 350, damping: 30 } }
 };
 
-const scaleIn: any = {
-  hidden: { opacity: 0, scale: 0.95 },
-  show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 350, damping: 30 } }
+const luxuryHeroEntry: any = {
+  hidden: { opacity: 0, y: 16, scale: 0.99 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] }
+  }
 };
 
 const listStagger: any = {
@@ -93,7 +98,7 @@ export default function OrderDetailPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, orders, openAccountModal, cancelOrder } = useUser();
+  const { user, orders, isHydrated, openAccountModal, cancelOrder } = useUser();
   const { addToCart } = useCart();
   const { products } = useProducts();
 
@@ -103,8 +108,34 @@ export default function OrderDetailPage() {
   const orderId = typeof params.id === "string" ? params.id : params.id?.[0] || "";
   const isJustConfirmed = searchParams?.get("new") === "1" || searchParams?.get("confirmed") === "true";
 
-  const order = useMemo(() => {
-    return orders.find((o) => o.id === orderId) || null;
+  const order = useMemo<OrderRecord | null>(() => {
+    // 1. Primary in-memory lookup
+    const match = orders.find((o) => o.id === orderId);
+    if (match) return match;
+
+    // 2. Direct resilient fallback lookup from localStorage
+    if (typeof window !== "undefined") {
+      try {
+        const lastRaw = localStorage.getItem("veyro_last_placed_order");
+        if (lastRaw) {
+          const last = JSON.parse(lastRaw);
+          if (last?.id === orderId) return last;
+        }
+
+        const allRaw = localStorage.getItem("veyro_orders_v6");
+        if (allRaw) {
+          const all = JSON.parse(allRaw);
+          if (Array.isArray(all)) {
+            const found = all.find((o: OrderRecord) => o.id === orderId);
+            if (found) return found;
+          }
+        }
+      } catch (err) {
+        console.warn("Fallback order lookup failed", err);
+      }
+    }
+
+    return null;
   }, [orders, orderId]);
 
   const cancelledTimelineEntry = useMemo(() => {
@@ -114,6 +145,20 @@ export default function OrderDetailPage() {
   const handleCancelDismiss = () => {
     setIsCancelModalOpen(false);
   };
+
+  // Wait for client-side storage hydration before determining order status
+  if (!isHydrated) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4 bg-[#FAFAFA]">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-mono uppercase tracking-widest text-neutral-400">
+            Loading order details...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!order && !user) {
     return (
@@ -343,13 +388,16 @@ export default function OrderDetailPage() {
             <AnimatePresence>
               {isJustConfirmed && order.status !== "Cancelled" && (
                 <motion.div 
-                  variants={scaleIn} 
+                  variants={luxuryHeroEntry} 
                   className="bg-[#0a0a0c] text-white rounded-xl border border-neutral-800/80 p-5 sm:p-7 shadow-[0_20px_40px_rgba(0,0,0,0.35)] relative overflow-hidden"
                 >
                   {/* Top Meta Bar */}
                   <div className="flex items-center justify-between gap-3 flex-wrap">
                     <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-white/10 text-neutral-200 border border-white/15">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+                      <span className="relative flex h-2 w-2 shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
                       <span>Order Confirmed</span>
                     </div>
                     <span className="text-xs text-neutral-400 font-mono">
@@ -620,59 +668,64 @@ export default function OrderDetailPage() {
               </motion.section>
             )}
 
-            {/* ORDER ITEMS */}
+            {/* ORDER ITEMS (COMPACT SCROLLABLE VIEW) */}
             <motion.section 
               variants={fadeUp} 
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04]"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04] flex flex-col"
             >
-              <div className="px-6 sm:px-8 py-5 border-b border-black/[0.04] flex items-center justify-between">
+              <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-black/[0.04] flex items-center justify-between bg-white z-10 shrink-0">
                 <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                   <ShoppingBag size={14} /> ITEMS ({order.itemsCount})
                 </h2>
+                {order.items && order.items.length > 3 && (
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 bg-neutral-100 px-2.5 py-1 rounded-full font-semibold">
+                    Scroll to view all {order.items.length} items ↓
+                  </span>
+                )}
               </div>
-              <motion.div variants={listStagger} initial="hidden" animate="show" className="divide-y divide-black/[0.04]">
+              <div className="max-h-[490px] overflow-y-auto overscroll-contain divide-y divide-black/[0.04] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300">
                 {order.items && order.items.length > 0 ? (
                   order.items.map((item, idx) => (
                     <motion.div 
                       key={`${item.productId}-${item.selectedSize}-${idx}`} 
                       variants={listItem}
-                      className="flex items-center gap-5 sm:gap-6 p-6 sm:p-8 group hover:bg-neutral-50/50 transition-colors"
+                      className="flex items-center gap-5 sm:gap-6 p-5 sm:p-6 group hover:bg-neutral-50/60 transition-colors"
                     >
                       <Link
                         href={`/product/${item.productSlug}`}
-                        className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-[#F5F5F5] shrink-0"
+                        className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-[#F5F5F5] shrink-0 border border-black/[0.03]"
                       >
-                        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.4, ease: "easeOut" }} className="w-full h-full">
+                        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }} className="w-full h-full">
                           <Image
                             src={item.imageUrl}
                             alt={item.productName}
                             fill
                             className="object-cover mix-blend-multiply"
-                            sizes="112px"
+                            sizes="96px"
                           />
                         </motion.div>
                       </Link>
                       <div className="flex-1 min-w-0">
                         <Link
                           href={`/product/${item.productSlug}`}
-                          className="text-base sm:text-lg font-black text-[#111111] hover:text-neutral-600 transition-colors block truncate"
+                          className="text-sm sm:text-base font-black text-[#111111] hover:text-neutral-600 transition-colors block truncate"
                         >
                           {item.productName}
                         </Link>
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2.5 py-1 rounded-full">
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full">
                             Size {item.selectedSize}
                           </span>
-                          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2.5 py-1 rounded-full">
+                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full">
                             {item.colorName}
                           </span>
                         </div>
-                        <p className="text-sm text-neutral-500 mt-3 font-medium">
-                          Qty: <strong className="text-black">{item.quantity}</strong> <span className="mx-2 text-neutral-300">|</span> {formatPrice(item.unitPrice)}
+                        <p className="text-xs text-neutral-500 mt-2 font-medium">
+                          Qty: <strong className="text-black">{item.quantity}</strong> <span className="mx-2 text-neutral-300">•</span> {formatPrice(item.unitPrice)}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-lg sm:text-xl font-black text-[#111111] tabular-nums tracking-tight">
+                        <span className="text-base sm:text-lg font-black text-[#111111] tabular-nums tracking-tight">
                           {formatPrice(item.totalPrice)}
                         </span>
                       </div>
@@ -681,7 +734,7 @@ export default function OrderDetailPage() {
                 ) : (
                   <div className="p-8 text-center text-neutral-400 font-medium">Items details unavailable</div>
                 )}
-              </motion.div>
+              </div>
             </motion.section>
 
             {/* ATELIER KEEPSAKE & LUXURY PACKAGING CARD */}
