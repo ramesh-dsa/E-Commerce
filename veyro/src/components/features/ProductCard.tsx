@@ -42,7 +42,7 @@ export function ProductCard({
 
   return (
     <article
-      className={`group flex flex-col transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl ${className}`}
+      className={`group flex flex-col isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

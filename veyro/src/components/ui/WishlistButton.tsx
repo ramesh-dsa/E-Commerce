@@ -149,7 +149,7 @@ export function WishlistButton({
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`absolute top-2.5 right-2.5 z-20 flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.14)] transition-all duration-200 select-none cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] active:scale-90 ${
+      className={`absolute top-2.5 right-2.5 z-10 flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.14)] transition-all duration-200 select-none cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] active:scale-90 ${
         isPulsing ? "scale-110" : "scale-100"
       } ${className}`}
     >

@@ -578,7 +578,7 @@ export function WatchesCatalog() {
       </section>
 
       {/* ── 2. SUB-BAR: BREADCRUMBS, PRODUCT COUNT & SORT ───────────── */}
-      <section className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-20 backdrop-blur-md bg-white/95">
+      <section className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-md bg-white/95">
         <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
           {/* Left: Mobile Filter Button, Breadcrumbs, Product Count */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
@@ -752,7 +752,7 @@ export function WatchesCatalog() {
                     <React.Fragment key={product.id}>
 
                       {/* Minimalist Watch Card */}
-                      <article className="group flex flex-col relative transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-2xl">
+                      <article className="group flex flex-col relative isolate transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-2xl">
                         {/* Image Stage Container */}
                         <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-[#f8f8f6] transition-all duration-300">
                           <Link

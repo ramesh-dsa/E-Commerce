@@ -53,7 +53,7 @@ export function SortDropdown<T extends string = string>({
   }, [isOpen]);
 
   return (
-    <div ref={dropdownRef} className={`relative flex items-center gap-2 ${className}`}>
+    <div ref={dropdownRef} className={`relative flex items-center gap-2 ${isOpen ? "z-30" : ""} ${className}`}>
       {label && (
         <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 select-none">
           {label}
@@ -81,7 +81,7 @@ export function SortDropdown<T extends string = string>({
         {isOpen && (
           <div
             role="listbox"
-            className="absolute right-0 top-full mt-1.5 w-48 bg-white/95 backdrop-blur-md border border-neutral-200/90 rounded-2xl shadow-xl p-1 z-40 animate-in fade-in zoom-in-95 duration-100"
+            className="absolute right-0 top-full mt-1.5 w-48 bg-white/95 backdrop-blur-md border border-neutral-200/90 rounded-2xl shadow-xl p-1 z-50 animate-in fade-in zoom-in-95 duration-100"
           >
             {options.map((option) => {
               const isSelected = option.value === value;
