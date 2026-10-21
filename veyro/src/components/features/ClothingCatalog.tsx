@@ -21,6 +21,8 @@ import {
   CLOTHING_PRICE_RANGES,
   CLOTHING_CURATIONS,
 } from "./ClothingFilterSidebar";
+import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
+import { ActiveFilterChips, FilterChipItem } from "./ActiveFilterChips";
 import {
   SlidersHorizontal,
   ArrowRight,
@@ -28,10 +30,20 @@ import {
   ShieldCheck,
   Zap,
   X,
+  Grid2X2,
+  LayoutGrid,
 } from "lucide-react";
 
 // Filter options
-type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
+type SortOption = "featured" | "newest" | "price-asc" | "price-desc" | "discount";
+
+const CLOTHING_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
+  { value: "featured", label: "Archival Featured" },
+  { value: "newest", label: "New Arrivals" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "discount", label: "Biggest Savings" },
+];
 
 export function ClothingCatalog() {
   const { products, isHydrated } = useProducts();
@@ -262,6 +274,12 @@ export function ClothingCatalog() {
         return true;
       })
       .sort((a, b) => {
+        if (sortBy === "newest") {
+          const isNewA = a.isNewArrival || a.badge === "NEW" || a.badge === "NEW ARRIVAL" ? 1 : 0;
+          const isNewB = b.isNewArrival || b.badge === "NEW" || b.badge === "NEW ARRIVAL" ? 1 : 0;
+          if (isNewB !== isNewA) return isNewB - isNewA;
+          return 0;
+        }
         if (sortBy === "price-asc") return a.price - b.price;
         if (sortBy === "price-desc") return b.price - a.price;
         if (sortBy === "discount") {
@@ -272,6 +290,71 @@ export function ClothingCatalog() {
         return 0; // "featured" maintains archival order
       });
   }, [clothingProducts, filters, sortBy]);
+
+  // ── Active Filter Chips Construction ─────────────────────────────────────
+  const activeFilterChips = useMemo<FilterChipItem[]>(() => {
+    const chips: FilterChipItem[] = [];
+
+    // Fits
+    filters.fits.forEach((fit) => {
+      chips.push({
+        id: `fit-${fit}`,
+        label: fit,
+        onRemove: () => handleToggleFit(fit),
+      });
+    });
+
+    // GSM Weights
+    filters.gsmWeights.forEach((gsm) => {
+      const item = CLOTHING_GSM_WEIGHTS.find((g) => g.id === gsm);
+      chips.push({
+        id: `gsm-${gsm}`,
+        label: item ? item.label : `${gsm} GSM`,
+        onRemove: () => handleToggleGsm(gsm),
+      });
+    });
+
+    // Sizes
+    filters.sizes.forEach((size) => {
+      chips.push({
+        id: `size-${size}`,
+        label: `Size: ${size}`,
+        onRemove: () => handleToggleSize(size),
+      });
+    });
+
+    // Colors
+    filters.colors.forEach((colKey) => {
+      const swatch = CLOTHING_COLORS.find((c) => c.id === colKey);
+      chips.push({
+        id: `color-${colKey}`,
+        label: swatch ? swatch.label : colKey,
+        onRemove: () => handleToggleColor(colKey),
+      });
+    });
+
+    // Price Range
+    if (filters.priceRange && filters.priceRange !== "ALL") {
+      const range = CLOTHING_PRICE_RANGES.find((r) => r.id === filters.priceRange);
+      chips.push({
+        id: `price-${filters.priceRange}`,
+        label: `Price: ${range?.label || filters.priceRange}`,
+        onRemove: () => handleSelectPriceRange("ALL"),
+      });
+    }
+
+    // Curations
+    filters.curations.forEach((cur) => {
+      const curItem = CLOTHING_CURATIONS.find((c) => c.id === cur);
+      chips.push({
+        id: `curation-${cur}`,
+        label: curItem ? curItem.label : cur,
+        onRemove: () => handleToggleCuration(cur),
+      });
+    });
+
+    return chips;
+  }, [filters]);
 
   return (
     <div className="w-full max-w-full overflow-x-clip bg-white text-[#111111] selection:bg-[#111111] selection:text-white">
@@ -326,7 +409,7 @@ export function ClothingCatalog() {
       <section className="w-full max-w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-20 backdrop-blur-md bg-white/95">
         <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
           {/* Left: Mobile Filter Button & Breadcrumbs */}
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
@@ -350,7 +433,64 @@ export function ClothingCatalog() {
               <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
               <span className="text-[#111111] font-bold">CLOTHING</span>
             </nav>
+
+            <span className="hidden sm:inline-block text-[#555555] text-xs font-semibold pl-3 border-l border-[#dcdcd8]">
+              {filteredProducts.length} {filteredProducts.length === 1 ? "Piece" : "Pieces"} Available
+            </span>
           </div>
+
+          {/* Center: Active Filter Pills & Clear All (Desktop) */}
+          <div className="hidden lg:flex items-center justify-center flex-1 min-w-0 px-3 overflow-x-auto no-scrollbar">
+            <ActiveFilterChips
+              chips={activeFilterChips}
+              onClearAll={handleClearAll}
+            />
+          </div>
+
+          {/* Right: Sort By & Grid Density (Archival Featured, New Arrivals, etc.) */}
+          <div className="flex items-center gap-2.5 sm:gap-3 ml-auto lg:ml-0 shrink-0">
+            {/* Veyro Standard SortDropdown */}
+            <SortDropdown
+              value={sortBy}
+              onChange={setSortBy}
+              options={CLOTHING_SORT_OPTIONS}
+              className="text-xs"
+            />
+
+            {/* 4-col / 2-col Grid Toggle */}
+            <div className="hidden md:flex items-center h-9 p-1 bg-neutral-100/80 border border-neutral-200/60 rounded-xl shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setGridColumns(4)}
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                  gridColumns === 4 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
+                }`}
+                aria-label="4-column grid view"
+              >
+                <LayoutGrid size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setGridColumns(2)}
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                  gridColumns === 2 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
+                }`}
+                aria-label="2-column editorial view"
+              >
+                <Grid2X2 size={14} />
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Active Filter Chips Row */}
+          {activeFilterChips.length > 0 && (
+            <div className="lg:hidden w-full pt-2.5 border-t border-neutral-100 flex items-center justify-start overflow-x-auto no-scrollbar">
+              <ActiveFilterChips
+                chips={activeFilterChips}
+                onClearAll={handleClearAll}
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -509,8 +649,8 @@ export function ClothingCatalog() {
                       </Link>
 
                       {/* Top Badges (Left) */}
-                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 pointer-events-none z-10">
-                        {product.badge && (
+                      {product.badge && (
+                        <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
                           <Badge
                             variant={
                               product.badge === "SALE"
@@ -522,14 +662,8 @@ export function ClothingCatalog() {
                           >
                             {product.badge}
                           </Badge>
-                        )}
-                        {/* GSM Fabric Badge */}
-                        {product.material.includes("240gsm") && (
-                          <span className="px-2 py-0.5 rounded-xs bg-[#111111]/85 backdrop-blur-xs text-[#fcd017] text-[9px] font-extrabold uppercase tracking-wider">
-                            240 GSM
-                          </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {/* Wishlist Heart Button (Right) */}
                       <WishlistButton product={product} isWishlisted={isWishlisted} />
@@ -538,11 +672,18 @@ export function ClothingCatalog() {
 
                     {/* Product Details Block */}
                     <div className="pt-3 pb-1 flex flex-col flex-1">
-                      {/* Meta tag & Color Swatch */}
+                      {/* Meta tag, 240 GSM Pill & Color Swatch */}
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#8e8e8e]">
-                          {product.subcategoryTag || product.category} · {product.fit}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#8e8e8e]">
+                            {product.subcategoryTag || product.category}
+                          </span>
+                          {product.material.toLowerCase().includes("240gsm") && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-neutral-100 text-neutral-600 border border-neutral-200/90 shadow-2xs">
+                              240 GSM
+                            </span>
+                          )}
+                        </div>
                         {product.colorHex && (
                           <span
                             className="h-3 w-3 rounded-full border border-black/10 shrink-0"

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
+import { ActiveFilterChips, FilterChipItem } from "./ActiveFilterChips";
 import {
   WatchFilterSidebar,
   WatchFilterState,
@@ -20,8 +21,8 @@ import {
 } from "./WatchFilterSidebar";
 import {
   SlidersHorizontal,
-  Grid3X3,
-  Columns2,
+  Grid2X2,
+  LayoutGrid,
   X,
   Zap,
   ArrowRight,
@@ -34,10 +35,11 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
-type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
+type SortOption = "featured" | "newest" | "price-asc" | "price-desc" | "discount";
 
 const WATCH_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
   { value: "featured", label: "Archival Featured" },
+  { value: "newest", label: "New Arrivals" },
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
   { value: "discount", label: "Biggest Savings" },
@@ -87,7 +89,7 @@ export function WatchesCatalog() {
   });
 
   const [sortBy, setSortBy] = useState<SortOption>("featured");
-  const [gridColumns, setGridColumns] = useState<3 | 4>(4);
+  const [gridColumns, setGridColumns] = useState<2 | 4>(4);
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
@@ -295,6 +297,105 @@ export function WatchesCatalog() {
     return count;
   }, [filters]);
 
+  // ── Active Filter Chips Construction ─────────────────────────────────────
+  const activeFilterChips = useMemo<FilterChipItem[]>(() => {
+    const chips: FilterChipItem[] = [];
+
+    // Brands
+    (filters.brands || []).forEach((b) => {
+      chips.push({
+        id: `brand-${b}`,
+        label: b,
+        onRemove: () => handleToggleBrand(b),
+      });
+    });
+
+    // Collections
+    filters.collections.forEach((c) => {
+      chips.push({
+        id: `col-${c}`,
+        label: c,
+        onRemove: () => handleToggleCollection(c),
+      });
+    });
+
+    // Movements
+    filters.movements.forEach((m) => {
+      chips.push({
+        id: `mov-${m}`,
+        label: m,
+        onRemove: () => handleToggleMovement(m),
+      });
+    });
+
+    // Genders
+    filters.genders.forEach((g) => {
+      chips.push({
+        id: `gen-${g}`,
+        label: g,
+        onRemove: () => handleToggleGender(g),
+      });
+    });
+
+    // Price Range
+    if (filters.priceRange && filters.priceRange !== "ALL") {
+      const range = WATCH_PRICE_RANGES.find((r) => r.id === filters.priceRange);
+      chips.push({
+        id: `price-${filters.priceRange}`,
+        label: `Price: ${range?.label || filters.priceRange}`,
+        onRemove: () => handleSelectPriceRange("ALL"),
+      });
+    }
+
+    // Discounts
+    filters.discounts.forEach((d) => {
+      chips.push({
+        id: `disc-${d}`,
+        label: `Min ${d}% Off`,
+        onRemove: () => handleToggleDiscount(d),
+      });
+    });
+
+    // Case Sizes
+    filters.caseSizes.forEach((cs) => {
+      chips.push({
+        id: `size-${cs}`,
+        label: `Case: ${cs}`,
+        onRemove: () => handleToggleCaseSize(cs),
+      });
+    });
+
+    // Colors
+    filters.colors.forEach((colKey) => {
+      const swatch = WATCH_COLORS.find((c) => c.id === colKey);
+      chips.push({
+        id: `color-${colKey}`,
+        label: swatch ? swatch.label : colKey,
+        onRemove: () => handleToggleColor(colKey),
+      });
+    });
+
+    // Dial Types
+    filters.dialTypes.forEach((dt) => {
+      chips.push({
+        id: `dial-${dt}`,
+        label: dt,
+        onRemove: () => handleToggleDialType(dt),
+      });
+    });
+
+    // Straps
+    filters.straps.forEach((st) => {
+      chips.push({
+        id: `strap-${st}`,
+        label: st,
+        onRemove: () => handleToggleStrap(st),
+      });
+    });
+
+    return chips;
+  }, [filters]);
+
   // ── Filter & Sort Logic ───────────────────────────────────────────────────
   const filteredProducts = useMemo(() => {
     return watchProducts
@@ -388,6 +489,12 @@ export function WatchesCatalog() {
         return true;
       })
       .sort((a, b) => {
+        if (sortBy === "newest") {
+          const isNewA = a.isNewArrival || a.badge === "NEW" || a.badge === "NEW ARRIVAL" ? 1 : 0;
+          const isNewB = b.isNewArrival || b.badge === "NEW" || b.badge === "NEW ARRIVAL" ? 1 : 0;
+          if (isNewB !== isNewA) return isNewB - isNewA;
+          return 0;
+        }
         if (sortBy === "price-asc") return a.price - b.price;
         if (sortBy === "price-desc") return b.price - a.price;
         if (sortBy === "discount") {
@@ -474,7 +581,7 @@ export function WatchesCatalog() {
       <section className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-20 backdrop-blur-md bg-white/95">
         <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
           {/* Left: Mobile Filter Button, Breadcrumbs, Product Count */}
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             {/* Mobile Filter Drawer Trigger Button */}
             <button
               type="button"
@@ -499,11 +606,64 @@ export function WatchesCatalog() {
               <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
               <span className="text-[#111111] font-bold">WATCHES</span>
             </nav>
+
+            <span className="hidden sm:inline-block text-[#555555] text-xs font-semibold pl-3 border-l border-[#dcdcd8]">
+              {filteredProducts.length} {filteredProducts.length === 1 ? "Timepiece" : "Timepieces"} Available
+            </span>
           </div>
 
+          {/* Center: Active Filter Pills & Clear All in Sticky Sub-bar */}
+          <div className="hidden lg:flex items-center justify-center flex-1 min-w-0 px-3 overflow-x-auto no-scrollbar">
+            <ActiveFilterChips
+              chips={activeFilterChips}
+              onClearAll={handleClearAll}
+            />
+          </div>
 
+          {/* Right: Sort By & Grid Density (Archival Featured, New Arrivals, etc.) */}
+          <div className="flex items-center gap-2.5 sm:gap-3 ml-auto lg:ml-0 shrink-0">
+            {/* Veyro Standard SortDropdown */}
+            <SortDropdown
+              value={sortBy}
+              onChange={setSortBy}
+              options={WATCH_SORT_OPTIONS}
+              className="text-xs"
+            />
 
+            {/* 4-col / 2-col Grid Toggle */}
+            <div className="hidden md:flex items-center h-9 p-1 bg-neutral-100/80 border border-neutral-200/60 rounded-xl shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setGridColumns(4)}
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                  gridColumns === 4 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
+                }`}
+                aria-label="4-column grid view"
+              >
+                <LayoutGrid size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setGridColumns(2)}
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                  gridColumns === 2 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
+                }`}
+                aria-label="2-column editorial view"
+              >
+                <Grid2X2 size={14} />
+              </button>
+            </div>
+          </div>
 
+          {/* Mobile Active Filter Chips Row */}
+          {activeFilterChips.length > 0 && (
+            <div className="lg:hidden w-full pt-2.5 border-t border-neutral-100 flex items-center justify-start overflow-x-auto no-scrollbar">
+              <ActiveFilterChips
+                chips={activeFilterChips}
+                onClearAll={handleClearAll}
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -534,12 +694,13 @@ export function WatchesCatalog() {
 
           {/* Right Product Grid Column */}
           <div className="flex-1 min-w-0">
+
             {!isHydrated ? (
               <div
                 className={`grid gap-x-4 sm:gap-x-6 gap-y-10 ${
                   gridColumns === 4
                     ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-                    : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                    : "grid-cols-1 sm:grid-cols-2"
                 }`}
               >
                 {Array.from({ length: 8 }).map((_, i) => (
@@ -577,7 +738,7 @@ export function WatchesCatalog() {
                 className={`grid gap-x-4 sm:gap-x-6 gap-y-10 ${
                   gridColumns === 4
                     ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-                    : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3"
+                    : "grid-cols-1 sm:grid-cols-2"
                 }`}
               >
                 {filteredProducts.map((product, index) => {

@@ -18,11 +18,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-type SortOption = "featured" | "price-asc" | "price-desc" | "discount";
+type SortOption = "featured" | "newest" | "price-asc" | "price-desc" | "discount";
 type ViewLayout = "chapters" | "stream";
 
 const ARCHIVE_SORT_OPTIONS: SortOptionItem<SortOption>[] = [
   { value: "featured", label: "Archival Featured" },
+  { value: "newest", label: "New Arrivals" },
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
   { value: "discount", label: "Biggest Savings" },
@@ -68,6 +69,13 @@ export function AllProductsCatalog() {
   const sortProducts = (list: typeof products) => {
     const copy = [...list];
     switch (sortBy) {
+      case "newest":
+        return copy.sort((a, b) => {
+          const isNewA = a.isNewArrival || a.badge === "NEW" || a.badge === "NEW ARRIVAL" ? 1 : 0;
+          const isNewB = b.isNewArrival || b.badge === "NEW" || b.badge === "NEW ARRIVAL" ? 1 : 0;
+          if (isNewB !== isNewA) return isNewB - isNewA;
+          return 0;
+        });
       case "price-asc":
         return copy.sort((a, b) => a.price - b.price);
       case "price-desc":

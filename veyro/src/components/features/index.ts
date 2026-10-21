@@ -31,3 +31,4 @@ export * from "./ProductDetailSkeleton";
 export * from "./AtelierGiftSuite";
 export * from "./AllProductsCatalog";
 export * from "./ArchiveFilterSidebar";
+export * from "./ActiveFilterChips";
