@@ -159,13 +159,38 @@ export default function AdminProductsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
-                    <span
-                      className={`text-xs font-semibold ${
-                        product.inStock ? "text-green-600" : "text-red-500"
-                      }`}
-                    >
-                      {product.inStock ? "In Stock" : "Out of Stock"}
-                    </span>
+                    {product.stock !== undefined ? (
+                      <div className="flex flex-col">
+                        <span
+                          className={`text-xs font-semibold ${
+                            !product.inStock || product.stock === 0
+                              ? "text-red-500"
+                              : product.stock <= (product.lowStockThreshold || 10)
+                              ? "text-amber-600"
+                              : "text-green-600"
+                          }`}
+                        >
+                          {!product.inStock || product.stock === 0
+                            ? "Out of Stock"
+                            : product.stock <= (product.lowStockThreshold || 10)
+                            ? `Low Stock (${product.stock})`
+                            : `${product.stock} in stock`}
+                        </span>
+                        {product.inStock && product.stock > 0 && (
+                          <span className="text-[10px] text-veyro-muted">
+                            {product.sizes?.length ? `${product.sizes.length} sizes` : "Ready"}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span
+                        className={`text-xs font-semibold ${
+                          product.inStock ? "text-green-600" : "text-red-500"
+                        }`}
+                      >
+                        {product.inStock ? "In Stock" : "Out of Stock"}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
                     {product.badge && (

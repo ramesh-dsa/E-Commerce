@@ -79,6 +79,18 @@ import {
   PackageCheck,
   PhoneCall,
 } from "lucide-react";
+import { RingChart } from "@/components/charts/ring-chart";
+import { Ring } from "@/components/charts/ring";
+import { RingCenter } from "@/components/charts/ring-center";
+import {
+  Legend,
+  LegendItem,
+  LegendMarker,
+  LegendLabel,
+  LegendValue,
+  LegendProgress,
+} from "@/components/charts/legend";
+import type { RingData } from "@/components/charts/ring-context";
 
 // ─── STATIC DATA & ASSETS MATCHING TARGET DESIGN ──────────────────────────────
 
@@ -1390,15 +1402,7 @@ function RevenueOverviewChart({
   );
 }
 
-// ─── ORDER STATUS DONUT CHART COMPONENT ──────────────────────────────────────
-
-interface StatusCategory {
-  label: string;
-  count: number;
-  pct: string;
-  color: string;
-  dotClass: string;
-}
+// ─── ORDER STATUS BKLIT RING CHART COMPONENT ─────────────────────────────────
 
 function OrderStatusDonut({
   deliveredCount = 7,
@@ -1419,191 +1423,148 @@ function OrderStatusDonut({
   selectedStatus?: string | null;
   isSpinning?: boolean;
 }) {
-  const total = deliveredCount + processingCount + shippedCount + cancelledCount + returnedCount || 11;
-  const [hoveredCategory, setHoveredCategory] = useState<StatusCategory | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [animatedCount, setAnimatedCount] = useState(0);
+  const total =
+    deliveredCount +
+      processingCount +
+      shippedCount +
+      cancelledCount +
+      returnedCount || 14;
 
-  useEffect(() => {
-    setMounted(true);
-    let current = 0;
-    const step = () => {
-      current += 1;
-      setAnimatedCount(current);
-      if (current < total) {
-        requestAnimationFrame(step);
-      }
-    };
-    const timer = setTimeout(() => {
-      requestAnimationFrame(step);
-    }, 120);
-    return () => clearTimeout(timer);
-  }, [total]);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const categories: StatusCategory[] = [
-    {
-      label: "Delivered",
-      count: deliveredCount,
-      pct: `${((deliveredCount / total) * 100).toFixed(1)}%`,
-      color: "#00aa55", // Vivid Kelly/Emerald green matching Image 1
-      dotClass: "bg-[#00aa55]",
-    },
-    {
-      label: "Processing",
-      count: processingCount,
-      pct: `${((processingCount / total) * 100).toFixed(1)}%`,
-      color: "#facc15", // Warm golden yellow matching Image 1
-      dotClass: "bg-[#facc15]",
-    },
-    {
-      label: "Shipped",
-      count: shippedCount,
-      pct: `${((shippedCount / total) * 100).toFixed(1)}%`,
-      color: "#2563eb", // Royal blue matching Image 1
-      dotClass: "bg-[#2563eb]",
-    },
-    {
-      label: "Cancelled",
-      count: cancelledCount,
-      pct: `${((cancelledCount / total) * 100).toFixed(1)}%`,
-      color: "#ef4444", // Bright red matching Image 1
-      dotClass: "bg-[#ef4444]",
-    },
-    {
-      label: "Returned",
-      count: returnedCount,
-      pct: `${((returnedCount / total) * 100).toFixed(1)}%`,
-      color: "#9ca3af", // Neutral gray matching Image 1
-      dotClass: "bg-[#9ca3af]",
-    },
-  ];
+  // Modern Bklit UI color palette (emerald, amber, indigo, rose, slate)
+  const ringData: RingData[] = useMemo(
+    () => [
+      {
+        label: "Delivered",
+        value: deliveredCount,
+        maxValue: total,
+        color: "#10b981", // Emerald 500
+      },
+      {
+        label: "Processing",
+        value: processingCount,
+        maxValue: total,
+        color: "#f59e0b", // Amber 500
+      },
+      {
+        label: "Shipped",
+        value: shippedCount,
+        maxValue: total,
+        color: "#6366f1", // Indigo 500
+      },
+      {
+        label: "Cancelled",
+        value: cancelledCount,
+        maxValue: total,
+        color: "#f43f5e", // Rose 500
+      },
+      {
+        label: "Returned",
+        value: returnedCount,
+        maxValue: total,
+        color: "#94a3b8", // Slate 400
+      },
+    ],
+    [deliveredCount, processingCount, shippedCount, cancelledCount, returnedCount, total]
+  );
 
-  // SVG Donut calculation - 168px diameter, 25px stroke, 71.5px radius
-  const size = 168;
-  const baseStrokeWidth = 25;
-  const radius = (size - baseStrokeWidth) / 2; // 71.5
-  const circumference = 2 * Math.PI * radius; // 449.24
+  const selectedIndex = useMemo(() => {
+    if (!selectedStatus) return null;
+    const idx = ringData.findIndex((d) => d.label.toLowerCase() === selectedStatus.toLowerCase());
+    return idx === -1 ? null : idx;
+  }, [selectedStatus, ringData]);
 
-  // Start at exact 12 o'clock (-90 deg), sweep clockwise
-  let accumulatedAngle = -90;
+  const handleSelectItem = (idx: number | null) => {
+    if (idx === null) {
+      onSelectStatus?.(null);
+    } else {
+      const item = ringData[idx];
+      onSelectStatus?.(selectedStatus === item.label ? null : item.label);
+    }
+  };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-      {/* Donut graphic */}
-      <div className="relative w-[168px] h-[168px] shrink-0 flex items-center justify-center">
-        <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          className={`overflow-visible transition-transform duration-700 ease-out outline-none select-none ${
-            isSpinning ? "rotate-[360deg]" : ""
-          }`}
-          style={{ outline: "none" }}
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 w-full py-1">
+      {/* Left: Ring Chart */}
+      <div
+        className={`shrink-0 relative flex items-center justify-center select-none transition-transform duration-700 ease-out ${
+          isSpinning ? "rotate-[360deg] scale-95" : ""
+        }`}
+      >
+        <RingChart
+          data={ringData}
+          size={210}
+          strokeWidth={9}
+          ringGap={4}
+          baseInnerRadius={44}
+          hoveredIndex={hoveredIndex}
+          onHoverChange={setHoveredIndex}
+          className="overflow-visible"
         >
-          {categories.map((cat, i) => {
-            const segmentShare = cat.count / total;
-            const segmentLength = segmentShare * circumference;
-            const rotation = accumulatedAngle;
-            accumulatedAngle += segmentShare * 360;
-
-            if (segmentShare <= 0) return null;
-
-            const isHovered = hoveredCategory?.label === cat.label;
-            const isDimmed = hoveredCategory && !isHovered;
-            const isFilterActive = selectedStatus === cat.label;
-
-            return (
-              <circle
-                key={i}
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="transparent"
-                stroke={cat.color}
-                strokeWidth={isHovered ? baseStrokeWidth + 4 : baseStrokeWidth}
-                strokeDasharray={
-                  mounted ? `${segmentLength} ${circumference}` : `0 ${circumference}`
-                }
-                strokeDashoffset={0}
-                transform={`rotate(${rotation} ${size / 2} ${size / 2})`}
-                className="cursor-pointer transition-all duration-500 ease-out outline-none focus:outline-none"
-                style={{
-                  opacity: isDimmed ? 0.45 : 1,
-                  filter:
-                    isHovered || isFilterActive
-                      ? `drop-shadow(0 0 6px ${cat.color}99)`
-                      : "none",
-                  outline: "none",
-                }}
-                onMouseEnter={() => setHoveredCategory(cat)}
-                onMouseLeave={() => setHoveredCategory(null)}
-                onClick={() => onSelectStatus?.(selectedStatus === cat.label ? null : cat.label)}
-              />
-            );
-          })}
-        </svg>
-
-        {/* Center label with dynamic animation */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center select-none">
-          <span
-            className={`font-bold leading-none tracking-tight transition-all duration-200 ${
-              hoveredCategory ? "text-[30px] scale-105" : "text-[28px] text-neutral-900"
-            }`}
-            style={{ color: hoveredCategory ? hoveredCategory.color : "#111827" }}
+          {ringData.map((item, index) => (
+            <Ring
+              key={item.label}
+              index={index}
+              color={item.color}
+              showGlow={true}
+              lineCap="round"
+            />
+          ))}
+          <RingCenter
+            defaultLabel="Total Orders"
+            className="select-none"
+            valueClassName="text-[30px] font-black text-neutral-900 tracking-tight leading-none"
+            labelClassName="text-[10px] font-bold text-neutral-400 mt-1 uppercase tracking-widest"
           >
-            {hoveredCategory ? hoveredCategory.count : animatedCount}
-          </span>
-          <span
-            className="text-[13px] font-normal mt-1 leading-tight transition-colors duration-200"
-            style={{ color: hoveredCategory ? hoveredCategory.color : "#6b7280" }}
-          >
-            {hoveredCategory ? hoveredCategory.label : "Orders"}
-          </span>
-        </div>
+            {({ value, label, isHovered, data }) => (
+              <div className="flex flex-col items-center justify-center pointer-events-none select-none text-center px-1">
+                <span
+                  className="text-[30px] font-black tracking-tight leading-none transition-colors duration-200"
+                  style={{ color: isHovered && data?.color ? data.color : "#111827" }}
+                >
+                  {value}
+                </span>
+                <span
+                  className="text-[10px] font-bold mt-1 tracking-wider uppercase transition-colors duration-200 whitespace-nowrap"
+                  style={{ color: isHovered && data?.color ? data.color : "#9ca3af" }}
+                >
+                  {isHovered ? label : "Total Orders"}
+                </span>
+              </div>
+            )}
+          </RingCenter>
+        </RingChart>
       </div>
 
-      {/* Legend list on right matching Image 1 layout */}
-      <div className="flex-1 w-full space-y-3">
-        {categories.map((cat) => {
-          const isSelected = selectedStatus === cat.label;
-          const isHovered = hoveredCategory?.label === cat.label;
-
-          return (
-            <button
-              key={cat.label}
-              type="button"
-              onMouseEnter={() => setHoveredCategory(cat)}
-              onMouseLeave={() => setHoveredCategory(null)}
-              onClick={() => onSelectStatus?.(isSelected ? null : cat.label)}
-              className={`w-full flex items-center justify-between text-xs py-1 px-2 rounded-xl transition-all text-left cursor-pointer group outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-black/10 ${
-                isSelected
-                  ? "bg-neutral-100 font-bold shadow-2xs"
-                  : isHovered
-                  ? "bg-neutral-50 scale-[1.02]"
-                  : "hover:bg-neutral-50/70"
-              }`}
-            >
+      {/* Right: Legend with title and progress bars, exactly matching Bklit reference */}
+      <div className="flex-1 min-w-0 w-full">
+        <h3 className="text-[15px] font-bold text-neutral-900 mb-2.5 tracking-tight">
+          Orders by Status
+        </h3>
+        <Legend
+          items={ringData}
+          hoveredIndex={hoveredIndex}
+          onHoverChange={setHoveredIndex}
+          selectedIndex={selectedIndex}
+          onSelectItem={(idx) => handleSelectItem(idx)}
+          className="gap-2"
+        >
+          <LegendItem className="py-1.5 px-2 hover:bg-neutral-50/90 rounded-xl transition-all cursor-pointer border border-transparent hover:border-neutral-100">
+            <div className="flex items-center justify-between w-full mb-1">
               <div className="flex items-center gap-2.5 min-w-0">
-                <span
-                  className={`w-2.5 h-2.5 rounded-full ${cat.dotClass} shrink-0 transition-transform duration-200 ${
-                    isHovered ? "scale-125 ring-2 ring-offset-1 ring-black/10" : ""
-                  }`}
-                />
-                <span className="text-[13px] font-medium text-neutral-700 truncate group-hover:text-neutral-900">
-                  {cat.label}
-                </span>
+                <LegendMarker className="w-2.5 h-2.5 shrink-0" />
+                <LegendLabel className="text-[13.5px] font-semibold text-neutral-800" />
               </div>
-              <div className="flex items-center gap-5 shrink-0 text-[13px]">
-                <span className="text-neutral-900 font-bold w-4 text-right">
-                  {cat.count}
-                </span>
-                <span className="text-neutral-400 font-normal w-12 text-right">
-                  {cat.pct}
-                </span>
-              </div>
-            </button>
-          );
-        })}
+              <LegendValue
+                className="text-[13.5px] gap-4"
+                showPercentage={true}
+                percentageClassName="text-xs font-semibold text-neutral-400 w-12 text-right tabular-nums"
+              />
+            </div>
+            <LegendProgress height="h-1.5" trackClassName="bg-neutral-100" />
+          </LegendItem>
+        </Legend>
       </div>
     </div>
   );
@@ -6480,8 +6441,8 @@ export default function AdminDashboard() {
 
       {/* ── MIDDLE ROW: REVENUE OVERVIEW & ORDER STATUS ───────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Left: Revenue Overview (8 cols) */}
-        <div className="lg:col-span-8 bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        {/* Left: Revenue Overview (6 cols) */}
+        <div className="lg:col-span-6 bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
           {/* Header Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-3">
@@ -6619,8 +6580,8 @@ export default function AdminDashboard() {
           />
         </div>
 
-        {/* Right: Order Status (4 cols) - Matching Image 1 Target */}
-        <div className="lg:col-span-4 bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col">
+        {/* Right: Order Status (6 cols) - Exact Side-by-Side Bklit Layout */}
+        <div className="lg:col-span-6 bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] flex items-center justify-center text-amber-600 shadow-2xs shrink-0">

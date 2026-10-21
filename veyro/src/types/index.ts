@@ -51,6 +51,12 @@ export interface Product {
   isNewArrival: boolean;
   /** Stock availability */
   inStock: boolean;
+  /** Total warehouse inventory count in units */
+  stock?: number;
+  /** Low stock threshold trigger (default: 10) */
+  lowStockThreshold?: number;
+  /** Per-size variant inventory breakdown e.g. { "S": 10, "M": 15, "L": 0 } */
+  sizeStock?: Record<string, number>;
   /** 1–2 sentence above-fold description */
   shortDescription: string;
   /** 3–5 sentence detailed description */

@@ -7,6 +7,7 @@ import {
   X,
   Image as ImageIcon,
   Plus,
+  Minus,
   Sparkles,
   Tag,
   Info,
@@ -15,6 +16,7 @@ import {
   Crop,
   Check,
   RotateCcw,
+  Boxes,
 } from "lucide-react";
 import { ImageCropperModal } from "./ImageCropperModal";
 
@@ -37,6 +39,9 @@ interface ProductFormData {
   sizes: string;
   isNewArrival: boolean;
   inStock: boolean;
+  stock: string;
+  lowStockThreshold: string;
+  sizeStock: Record<string, number>;
   shortDescription: string;
   longDescription: string;
   features: string;
@@ -49,6 +54,23 @@ interface ProductFormData {
 
 /* ─── Converters ─────────────────────────────────────────────────────────── */
 function productToFormData(p: Product): ProductFormData {
+  const stockStr =
+    p.stock !== undefined ? p.stock.toString() : p.inStock ? "25" : "0";
+  const lowThresholdStr = (
+    p.lowStockThreshold !== undefined ? p.lowStockThreshold : 10
+  ).toString();
+
+  // If sizeStock mapping is absent, distribute stock evenly across sizes
+  const sizeStock: Record<string, number> = { ...(p.sizeStock || {}) };
+  if (p.sizes && p.sizes.length > 0 && Object.keys(sizeStock).length === 0) {
+    const total = parseInt(stockStr, 10) || 0;
+    const base = Math.floor(total / p.sizes.length);
+    const remainder = total % p.sizes.length;
+    p.sizes.forEach((sz, idx) => {
+      sizeStock[sz] = base + (idx < remainder ? 1 : 0);
+    });
+  }
+
   return {
     name: p.name,
     category: p.category,
@@ -67,6 +89,9 @@ function productToFormData(p: Product): ProductFormData {
     sizes: p.sizes.join(", "),
     isNewArrival: p.isNewArrival,
     inStock: p.inStock,
+    stock: stockStr,
+    lowStockThreshold: lowThresholdStr,
+    sizeStock,
     shortDescription: p.shortDescription,
     longDescription: p.longDescription || "",
     features: p.features.join("\n"),
@@ -87,6 +112,12 @@ function formDataToProduct(data: ProductFormData, existingProduct?: Product): Pr
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
+
+  const stockNum = parseInt(data.stock, 10);
+  const validStock = isNaN(stockNum) ? 0 : Math.max(0, stockNum);
+  const lowThreshold = parseInt(data.lowStockThreshold, 10) || 10;
+  // Logical inStock: true ONLY if inStock is checked AND warehouse stock is > 0
+  const effectiveInStock = data.inStock && validStock > 0;
 
   return {
     ...existingProduct,
@@ -113,7 +144,10 @@ function formDataToProduct(data: ProductFormData, existingProduct?: Product): Pr
       .map((s) => s.trim())
       .filter(Boolean),
     isNewArrival: data.isNewArrival,
-    inStock: data.inStock,
+    inStock: effectiveInStock,
+    stock: validStock,
+    lowStockThreshold: lowThreshold,
+    sizeStock: data.sizeStock,
     shortDescription: data.shortDescription.trim() || data.name,
     longDescription: data.longDescription.trim() || undefined,
     features: data.features
@@ -158,6 +192,9 @@ const DEFAULT_FORM: ProductFormData = {
   sizes: "S, M, L, XL, XXL",
   isNewArrival: true,
   inStock: true,
+  stock: "25",
+  lowStockThreshold: "10",
+  sizeStock: {},
   shortDescription: "",
   longDescription: "",
   features:
@@ -245,9 +282,17 @@ export function ProductForm({
     target: "primary",
   });
 
-  const update = (field: keyof ProductFormData, value: string | boolean) => {
+  const update = <K extends keyof ProductFormData>(
+    field: K,
+    value: ProductFormData[K]
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
+
+  const stockNum = parseInt(form.stock, 10) || 0;
+  const lowThreshold = parseInt(form.lowStockThreshold, 10) || 10;
+  const isOutOfStock = !form.inStock || stockNum === 0;
+  const isLowStock = !isOutOfStock && stockNum <= lowThreshold;
 
   // Auto-calculate discount label when price & originalPrice are typed
   useEffect(() => {
@@ -636,17 +681,47 @@ export function ProductForm({
 
             {/* 4. Sizes & Inventory */}
             <div className="bg-white rounded-2xl border border-neutral-200/80 p-6 sm:p-7 shadow-2xs space-y-5">
-              <div className="flex items-center gap-3 pb-3 border-b border-neutral-100">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 border border-purple-200/60 flex items-center justify-center shrink-0">
-                  <Layers size={16} />
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-100 flex-wrap gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 border border-purple-200/60 flex items-center justify-center shrink-0">
+                    <Layers size={16} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-900">
+                      Sizes &amp; Inventory Status
+                    </h2>
+                    <p className="text-xs text-neutral-400">
+                      Warehouse stock units, size variants, and fitting notes
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-900">
-                    Sizes &amp; Inventory Status
-                  </h2>
-                  <p className="text-xs text-neutral-400">
-                    Stock availability, size variants, and fitting notes
-                  </p>
+
+                {/* Dynamic Inventory Status Indicator Pill */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold tracking-wide border ${
+                      isOutOfStock
+                        ? "bg-neutral-100 text-neutral-600 border-neutral-200"
+                        : isLowStock
+                        ? "bg-amber-50 text-amber-800 border-amber-200"
+                        : "bg-neutral-900 text-[#fde047] border-neutral-900"
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isOutOfStock
+                          ? "bg-neutral-400"
+                          : isLowStock
+                          ? "bg-amber-500"
+                          : "bg-[#fde047] animate-pulse"
+                      }`}
+                    />
+                    {isOutOfStock
+                      ? "Out of Stock"
+                      : isLowStock
+                      ? `Low Stock · ${stockNum} units`
+                      : `In Stock · ${stockNum} units`}
+                  </span>
                 </div>
               </div>
 
@@ -656,7 +731,20 @@ export function ProductForm({
                     <FormChipInput
                       label="Available Sizes"
                       value={form.sizes}
-                      onChange={(v) => update("sizes", v)}
+                      onChange={(v) => {
+                        update("sizes", v);
+                        const newSizes = v.split(",").map((s) => s.trim()).filter(Boolean);
+                        const updatedSizeStock = { ...form.sizeStock };
+                        newSizes.forEach((sz) => {
+                          if (updatedSizeStock[sz] === undefined) {
+                            updatedSizeStock[sz] = Math.max(
+                              0,
+                              Math.floor(stockNum / (newSizes.length || 1))
+                            );
+                          }
+                        });
+                        update("sizeStock", updatedSizeStock);
+                      }}
                       placeholder="Type size and press Enter (e.g. XL)"
                     />
                     {/* Category Size Presets */}
@@ -672,7 +760,16 @@ export function ProductForm({
                               .map((s) => s.trim())
                               .filter(Boolean);
                             if (!existing.includes(sz)) {
-                              update("sizes", [...existing, sz].join(", "));
+                              const newSizesStr = [...existing, sz].join(", ");
+                              update("sizes", newSizesStr);
+                              const updatedSizeStock = { ...form.sizeStock };
+                              if (updatedSizeStock[sz] === undefined) {
+                                updatedSizeStock[sz] = Math.max(
+                                  0,
+                                  Math.floor(stockNum / (existing.length + 1))
+                                );
+                              }
+                              update("sizeStock", updatedSizeStock);
                             }
                           }}
                           className="text-[10px] px-2 py-0.5 rounded-md border bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600 transition-colors cursor-pointer"
@@ -691,13 +788,269 @@ export function ProductForm({
                   />
                 </div>
 
+                {/* Warehouse Inventory Management Box - Professional Luxury Layout */}
+                <div className="p-4 sm:p-5 rounded-xl border border-neutral-200/90 bg-neutral-50/40 space-y-4">
+                  {/* Header Row with Clean Actions */}
+                  <div className="flex items-center justify-between pb-2.5 border-b border-neutral-200/70 flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                        Warehouse Inventory
+                      </span>
+                      <span className="text-[11px] text-neutral-400 font-normal hidden sm:inline">
+                        · Live stock available for immediate checkout
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          update("stock", "0");
+                          update("inStock", false);
+                        }}
+                        className="font-medium text-neutral-400 hover:text-red-600 transition-colors cursor-pointer"
+                      >
+                        Mark Sold Out (0)
+                      </button>
+                      <span className="text-neutral-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const curr = parseInt(form.stock, 10) || 0;
+                          const next = curr === 0 ? 25 : curr;
+                          update("stock", next.toString());
+                          update("inStock", true);
+                        }}
+                        className="font-medium text-neutral-400 hover:text-neutral-900 transition-colors cursor-pointer"
+                      >
+                        Default Stock (25)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Master Units Input & Threshold Controls */}
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                    {/* Total Units Input + Stepper */}
+                    <div className="sm:col-span-7 flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-bold text-neutral-700 whitespace-nowrap">
+                        Total Units:
+                      </span>
+                      <div className="inline-flex items-center border border-neutral-300 rounded-lg bg-white overflow-hidden shadow-2xs focus-within:border-neutral-900 transition-colors">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const curr = parseInt(form.stock, 10) || 0;
+                            const next = Math.max(0, curr - 1);
+                            update("stock", next.toString());
+                            if (next === 0) update("inStock", false);
+                          }}
+                          className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100 border-r border-neutral-200 transition-colors cursor-pointer"
+                          aria-label="Decrease stock"
+                        >
+                          <Minus size={13} />
+                        </button>
+                        <input
+                          type="number"
+                          min={0}
+                          value={form.stock}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            update("stock", val);
+                            const num = parseInt(val, 10);
+                            if (!isNaN(num)) {
+                              if (num === 0) update("inStock", false);
+                              else if (!form.inStock && num > 0) update("inStock", true);
+                            }
+                          }}
+                          className="w-16 h-8 text-center text-xs font-mono font-bold text-neutral-900 outline-none tabular-nums bg-transparent"
+                          placeholder="0"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const curr = parseInt(form.stock, 10) || 0;
+                            const next = curr + 1;
+                            update("stock", next.toString());
+                            if (!form.inStock && next > 0) update("inStock", true);
+                          }}
+                          className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100 border-l border-neutral-200 transition-colors cursor-pointer"
+                          aria-label="Increase stock"
+                        >
+                          <Plus size={13} />
+                        </button>
+                      </div>
+
+                      {/* Quick Increments - Clean monochrome tags */}
+                      <div className="inline-flex items-center gap-1">
+                        {[5, 10, 25, 50].map((delta) => (
+                          <button
+                            key={delta}
+                            type="button"
+                            onClick={() => {
+                              const curr = parseInt(form.stock, 10) || 0;
+                              const next = curr + delta;
+                              update("stock", next.toString());
+                              if (!form.inStock && next > 0) update("inStock", true);
+                            }}
+                            className="px-2 py-1 rounded text-xs font-mono font-medium text-neutral-600 bg-white border border-neutral-200 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-colors cursor-pointer active:scale-95"
+                          >
+                            +{delta}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Low stock alert threshold - compact inline */}
+                    <div className="sm:col-span-5 flex items-center justify-start sm:justify-end gap-2">
+                      <span className="text-xs text-neutral-500 whitespace-nowrap">
+                        Low stock alert below:
+                      </span>
+                      <div className="inline-flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={1}
+                          max={100}
+                          value={form.lowStockThreshold}
+                          onChange={(e) => update("lowStockThreshold", e.target.value)}
+                          className="w-14 h-8 px-2 text-center text-xs font-mono font-semibold border border-neutral-300 rounded-lg outline-none focus:border-neutral-900 bg-white"
+                          placeholder="10"
+                        />
+                        <span className="text-xs text-neutral-400">units</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Size-Level Inventory Breakdown */}
+                  {form.sizes.trim().length > 0 && (() => {
+                    const sizeList = form.sizes
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean);
+                    const allocatedSum = sizeList.reduce(
+                      (acc, sz) => acc + (form.sizeStock[sz] ?? 0),
+                      0
+                    );
+                    const isBalanced = allocatedSum === stockNum;
+
+                    return (
+                      <div className="pt-3 border-t border-neutral-200/70 space-y-2.5">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                              Size Variant Allocation
+                            </span>
+                            <span
+                              className={`text-[11px] font-mono px-2 py-0.5 rounded ${
+                                isBalanced
+                                  ? "bg-neutral-200/60 text-neutral-700 font-semibold"
+                                  : "bg-amber-100/70 text-amber-800 font-semibold"
+                              }`}
+                            >
+                              Allocated: {allocatedSum} / {stockNum} units
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (sizeList.length === 0) return;
+                                const base = Math.floor(stockNum / sizeList.length);
+                                const remainder = stockNum % sizeList.length;
+                                const nextStock: Record<string, number> = {};
+                                sizeList.forEach((sz, idx) => {
+                                  nextStock[sz] = base + (idx < remainder ? 1 : 0);
+                                });
+                                update("sizeStock", nextStock);
+                              }}
+                              className="text-xs font-semibold text-neutral-700 bg-white hover:bg-neutral-100 border border-neutral-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                            >
+                              Distribute Evenly
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                let sum = 0;
+                                sizeList.forEach((sz) => {
+                                  sum += form.sizeStock[sz] || 0;
+                                });
+                                update("stock", sum.toString());
+                                if (sum === 0) update("inStock", false);
+                                else if (!form.inStock && sum > 0) update("inStock", true);
+                              }}
+                              className="text-xs font-semibold text-neutral-700 bg-white hover:bg-neutral-100 border border-neutral-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                            >
+                              Sync Total to Sizes
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Compact variant matrix tiles */}
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                          {sizeList.map((sz) => {
+                            const qty = form.sizeStock[sz] ?? 0;
+                            const isSoldOut = qty === 0;
+
+                            return (
+                              <div
+                                key={sz}
+                                className={`p-2.5 rounded-lg border transition-all ${
+                                  isSoldOut
+                                    ? "bg-neutral-100/60 border-neutral-200 text-neutral-400"
+                                    : "bg-white border-neutral-200 hover:border-neutral-300 text-neutral-900 shadow-2xs"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-xs font-black tracking-wider text-neutral-900 uppercase">
+                                    {sz}
+                                  </span>
+                                  {isSoldOut ? (
+                                    <span className="text-[9px] font-bold text-red-500 uppercase tracking-widest">
+                                      OOS
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-mono text-neutral-400">
+                                      units
+                                    </span>
+                                  )}
+                                </div>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  value={qty}
+                                  onChange={(e) => {
+                                    const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+                                    update("sizeStock", {
+                                      ...form.sizeStock,
+                                      [sz]: val,
+                                    });
+                                  }}
+                                  className="w-full text-center text-xs font-mono font-bold bg-neutral-50 border border-neutral-200 rounded-md py-1 outline-none focus:bg-white focus:border-neutral-900 transition-colors"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 {/* Toggles */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
                   <label className="flex items-center gap-3 p-3.5 rounded-xl border border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100/70 cursor-pointer select-none transition-colors">
                     <input
                       type="checkbox"
                       checked={form.inStock}
-                      onChange={(e) => update("inStock", e.target.checked)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        update("inStock", checked);
+                        if (checked) {
+                          const currentStockNum = parseInt(form.stock, 10) || 0;
+                          if (currentStockNum === 0) {
+                            update("stock", "25");
+                          }
+                        }
+                      }}
                       className="w-4.5 h-4.5 rounded text-amber-500 focus:ring-amber-400 cursor-pointer"
                     />
                     <div>
@@ -705,7 +1058,9 @@ export function ProductForm({
                         Mark as In Stock
                       </span>
                       <span className="block text-[11px] text-neutral-500">
-                        Product is available for immediate checkout
+                        {form.inStock
+                          ? "Product is available for immediate storefront checkout"
+                          : "Product marked Sold Out — storefront blocks checkout"}
                       </span>
                     </div>
                   </label>
@@ -903,11 +1258,28 @@ export function ProductForm({
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-500">Stock Availability:</span>
                   <span
-                    className={`font-semibold ${
-                      form.inStock ? "text-emerald-600" : "text-amber-600"
+                    className={`font-semibold flex items-center gap-1.5 ${
+                      isOutOfStock
+                        ? "text-rose-600"
+                        : isLowStock
+                        ? "text-amber-600"
+                        : "text-emerald-600"
                     }`}
                   >
-                    {form.inStock ? "In Stock" : "Out of Stock"}
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        isOutOfStock
+                          ? "bg-rose-500"
+                          : isLowStock
+                          ? "bg-amber-500"
+                          : "bg-emerald-500"
+                      }`}
+                    />
+                    {isOutOfStock
+                      ? "Out of Stock"
+                      : isLowStock
+                      ? `Low Stock (${stockNum})`
+                      : `In Stock (${stockNum})`}
                   </span>
                 </div>
                 {form.badge && (
