@@ -2985,7 +2985,12 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Items Mini List (Available In-Stock Items Only) */}
-                <div className="max-h-72 overflow-y-auto divide-y divide-neutral-100 pr-1 space-y-3">
+                <div
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Order items summary"
+                  className="max-h-72 sm:max-h-80 overflow-y-auto overscroll-contain divide-y divide-neutral-100 pr-2.5 space-y-3 luxury-visible-scrollbar focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-300 rounded-lg"
+                >
                   {inStockItems.map((item) => {
                     const primaryImg =
                       item.product.imageUrl ||
