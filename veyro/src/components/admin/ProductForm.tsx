@@ -35,6 +35,7 @@ interface ProductFormData {
   discount: string;
   imageUrl: string;
   secondaryImageUrl: string;
+  galleryImages: string[];
   badge: string;
   sizes: string;
   isNewArrival: boolean;
@@ -85,6 +86,7 @@ function productToFormData(p: Product): ProductFormData {
     discount: p.discount || "",
     imageUrl: p.imageUrl,
     secondaryImageUrl: p.secondaryImageUrl || "",
+    galleryImages: p.galleryImages ? [...p.galleryImages].slice(0, 4) : [],
     badge: p.badge || "",
     sizes: p.sizes.join(", "),
     isNewArrival: p.isNewArrival,
@@ -137,7 +139,7 @@ function formDataToProduct(data: ProductFormData, existingProduct?: Product): Pr
     discount: data.discount.trim() || undefined,
     imageUrl: data.imageUrl.trim() || "/products/tshirts/core-oversized-wolf-tee-front.webp",
     secondaryImageUrl: data.secondaryImageUrl.trim() || undefined,
-    galleryImages: existingProduct?.galleryImages || [],
+    galleryImages: (data.galleryImages || []).filter(Boolean).slice(0, 4),
     badge: (data.badge || undefined) as Product["badge"],
     sizes: data.sizes
       .split(",")
@@ -188,6 +190,7 @@ const DEFAULT_FORM: ProductFormData = {
   discount: "",
   imageUrl: "",
   secondaryImageUrl: "",
+  galleryImages: [],
   badge: "NEW",
   sizes: "S, M, L, XL, XXL",
   isNewArrival: true,
@@ -270,12 +273,15 @@ export function ProductForm({
   const [rawSecondaryImage, setRawSecondaryImage] = useState(
     form.secondaryImageUrl || ""
   );
+  const [rawGalleryImages, setRawGalleryImages] = useState<string[]>(
+    form.galleryImages || []
+  );
 
   // Image Cropper Modal State
   const [cropperModal, setCropperModal] = useState<{
     open: boolean;
     source: string;
-    target: "primary" | "secondary";
+    target: "primary" | "secondary" | { type: "gallery"; index: number };
   }>({
     open: false,
     source: "",
@@ -342,6 +348,83 @@ export function ProductForm({
     setCropperModal({ open: true, source: url.trim(), target });
   };
 
+  // Handle Gallery file select (opens cropper)
+  const handleGalleryFileSelect = (file: File, replaceIndex?: number) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file (JPEG, PNG, WEBP, etc.)");
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      alert("Image must be under 12MB");
+      return;
+    }
+
+    const currentCount = form.galleryImages?.length || 0;
+    const targetIdx = replaceIndex !== undefined ? replaceIndex : currentCount;
+    if (replaceIndex === undefined && currentCount >= 4) {
+      alert("Maximum 6 images reached (1 Hero + 1 Hover + 4 Gallery)");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setRawGalleryImages((prev) => {
+        const next = [...prev];
+        next[targetIdx] = result;
+        return next;
+      });
+      setCropperModal({
+        open: true,
+        source: result,
+        target: { type: "gallery", index: targetIdx },
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle Gallery URL submit (opens cropper)
+  const handleGalleryUrlSubmit = (url: string, replaceIndex?: number) => {
+    const trimmed = url.trim();
+    if (!trimmed) return;
+    const currentCount = form.galleryImages?.length || 0;
+    const targetIdx = replaceIndex !== undefined ? replaceIndex : currentCount;
+    if (replaceIndex === undefined && currentCount >= 4) {
+      alert("Maximum 6 images reached (1 Hero + 1 Hover + 4 Gallery)");
+      return;
+    }
+
+    setRawGalleryImages((prev) => {
+      const next = [...prev];
+      next[targetIdx] = trimmed;
+      return next;
+    });
+    setCropperModal({
+      open: true,
+      source: trimmed,
+      target: { type: "gallery", index: targetIdx },
+    });
+  };
+
+  const handleRemoveGalleryImage = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      galleryImages: prev.galleryImages.filter((_, i) => i !== index),
+    }));
+    setRawGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAdjustGalleryCrop = (index: number) => {
+    const rawSrc = rawGalleryImages[index] || form.galleryImages[index];
+    if (!rawSrc) return;
+    setCropperModal({
+      open: true,
+      source: rawSrc,
+      target: { type: "gallery", index },
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -364,6 +447,10 @@ export function ProductForm({
   const isCategoryValid = form.category.trim().length > 0;
   const isImageValid = form.imageUrl.trim().length > 0;
   const isFormComplete = isNameValid && isPriceValid && isCategoryValid;
+  const totalActiveImages =
+    (form.imageUrl.trim() ? 1 : 0) +
+    (form.secondaryImageUrl.trim() ? 1 : 0) +
+    (form.galleryImages ? form.galleryImages.length : 0);
 
   const currentPresets =
     CATEGORY_PRESETS[form.category] || CATEGORY_PRESETS["Clothing"];
@@ -627,7 +714,7 @@ export function ProductForm({
                       Product Photography &amp; Framing
                     </h2>
                     <p className="text-xs text-neutral-400">
-                      Studio primary hero and secondary hover preview with 3:4 / 1:1 image cropper
+                      Studio primary hero, hover preview &amp; up to 4 gallery angles (Max 6 images total)
                     </p>
                   </div>
                 </div>
@@ -676,6 +763,60 @@ export function ProductForm({
                     setRawSecondaryImage("");
                   }}
                 />
+              </div>
+
+              {/* Additional Gallery Angles (Up to 4 images, Total max 6 with Hero & Hover) */}
+              <div className="pt-5 border-t border-neutral-100 space-y-3.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 flex items-center gap-2">
+                      <span>Additional Gallery Angles &amp; Detail Shots</span>
+                      <span className="text-[10px] font-normal normal-case text-neutral-400">
+                        (PDP Gallery Rail)
+                      </span>
+                    </h3>
+                    <p className="text-[11px] text-neutral-400">
+                      Studio angles, close-up details, or styling frames (Max 4 additional · Total 6)
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
+                        form.galleryImages.length >= 4
+                          ? "bg-amber-50 text-amber-800 border-amber-200"
+                          : "bg-neutral-50 text-neutral-700 border-neutral-200"
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          form.galleryImages.length >= 4 ? "bg-amber-500" : "bg-emerald-500"
+                        }`}
+                      />
+                      {form.galleryImages.length} / 4 Gallery Shots · {totalActiveImages} / 6 Total
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-1">
+                  {form.galleryImages.map((imgUrl, idx) => (
+                    <GalleryImageCard
+                      key={idx}
+                      index={idx}
+                      imageUrl={imgUrl}
+                      onAdjustCrop={() => handleAdjustGalleryCrop(idx)}
+                      onReplace={(file) => handleGalleryFileSelect(file, idx)}
+                      onRemove={() => handleRemoveGalleryImage(idx)}
+                    />
+                  ))}
+
+                  {form.galleryImages.length < 4 && (
+                    <GalleryImageAddCard
+                      remainingSlots={4 - form.galleryImages.length}
+                      onFileDrop={(file) => handleGalleryFileSelect(file)}
+                      onUrlSubmit={(url) => handleGalleryUrlSubmit(url)}
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1235,6 +1376,12 @@ export function ProductForm({
                     {isImageValid ? "✓ Cropped & Set" : "Recommended"}
                   </span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-600">Media Kit:</span>
+                  <span className="text-neutral-800 font-semibold flex items-center gap-1">
+                    {totalActiveImages} / 6 Active
+                  </span>
+                </div>
               </div>
 
               {/* Concise Product Metrics Summary */}
@@ -1318,14 +1465,26 @@ export function ProductForm({
           title={
             cropperModal.target === "primary"
               ? "Crop Primary Hero Image"
-              : "Crop Secondary Hover Image"
+              : cropperModal.target === "secondary"
+              ? "Crop Secondary Hover Image"
+              : `Crop Gallery Image (Angle #${cropperModal.target.index + 3})`
           }
           initialAspect="3/4"
           onCrop={(croppedResult) => {
             if (cropperModal.target === "primary") {
               update("imageUrl", croppedResult);
-            } else {
+            } else if (cropperModal.target === "secondary") {
               update("secondaryImageUrl", croppedResult);
+            } else if (
+              typeof cropperModal.target === "object" &&
+              cropperModal.target.type === "gallery"
+            ) {
+              const targetIdx = cropperModal.target.index;
+              setForm((prev) => {
+                const next = [...(prev.galleryImages || [])];
+                next[targetIdx] = croppedResult;
+                return { ...prev, galleryImages: next };
+              });
             }
             setCropperModal({ open: false, source: "", target: "primary" });
           }}
@@ -1510,6 +1669,223 @@ function ImageUploadCropCard({
             </button>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Gallery Image Card Component ───────────────────────────────────────── */
+function GalleryImageCard({
+  index,
+  imageUrl,
+  onAdjustCrop,
+  onReplace,
+  onRemove,
+}: {
+  index: number;
+  imageUrl: string;
+  onAdjustCrop: () => void;
+  onReplace: (file: File) => void;
+  onRemove: () => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="rounded-xl border border-neutral-200 overflow-hidden bg-neutral-50/70 p-2.5 space-y-2">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          if (e.target.files?.[0]) {
+            onReplace(e.target.files[0]);
+          }
+          e.target.value = "";
+        }}
+        className="hidden"
+      />
+
+      <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden border border-neutral-200 bg-white group">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imageUrl}
+          alt={`Gallery Angle ${index + 3}`}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
+        />
+
+        {/* Top Badges & Controls */}
+        <div className="absolute top-2 left-2 z-10">
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-neutral-900/80 text-white backdrop-blur-xs">
+            Angle #{index + 3}
+          </span>
+        </div>
+
+        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+          <button
+            type="button"
+            onClick={onAdjustCrop}
+            className="p-1.5 bg-neutral-900/90 hover:bg-neutral-900 text-white rounded-md text-xs font-bold transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+            title="Adjust crop"
+            aria-label="Adjust crop"
+          >
+            <Crop size={12} className="text-[#fcd017]" />
+          </button>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md transition-colors shadow-md cursor-pointer hover:scale-105 active:scale-95"
+            title="Remove image"
+            aria-label="Remove image"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={onAdjustCrop}
+          className="flex-1 flex items-center justify-center gap-1 text-[11px] font-bold text-neutral-800 bg-white border border-neutral-200 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors shadow-2xs cursor-pointer"
+        >
+          <Crop size={12} className="text-amber-500" />
+          <span>Crop</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="text-[11px] font-semibold text-neutral-600 bg-white border border-neutral-200 px-2 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer"
+        >
+          Replace
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Gallery Image Add Card Component ───────────────────────────────────── */
+function GalleryImageAddCard({
+  remainingSlots,
+  onFileDrop,
+  onUrlSubmit,
+}: {
+  remainingSlots: number;
+  onFileDrop: (file: File) => void;
+  onUrlSubmit: (url: string) => void;
+}) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      onFileDrop(e.dataTransfer.files[0]);
+    }
+  };
+
+  return (
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
+      className={`relative aspect-[3/4] flex flex-col items-center justify-center p-3 border-2 border-dashed rounded-xl transition-all duration-200 text-center ${
+        isDragging
+          ? "border-amber-500 bg-amber-50/20 scale-[1.01]"
+          : "border-neutral-300 hover:border-neutral-400 bg-neutral-50/40"
+      }`}
+    >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          if (e.target.files?.[0]) {
+            onFileDrop(e.target.files[0]);
+          }
+          e.target.value = "";
+        }}
+        className="hidden"
+      />
+
+      {showUrlInput ? (
+        <div className="w-full space-y-2 p-1">
+          <p className="text-[11px] font-bold text-neutral-800">Paste Image URL</p>
+          <input
+            type="url"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (urlInput.trim()) {
+                  onUrlSubmit(urlInput.trim());
+                  setUrlInput("");
+                  setShowUrlInput(false);
+                }
+              }
+            }}
+            placeholder="https://..."
+            className="w-full px-2 py-1.5 text-[11px] border border-neutral-300 rounded-lg bg-white font-mono focus:outline-none focus:border-neutral-900"
+          />
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              disabled={!urlInput.trim()}
+              onClick={() => {
+                if (urlInput.trim()) {
+                  onUrlSubmit(urlInput.trim());
+                  setUrlInput("");
+                  setShowUrlInput(false);
+                }
+              }}
+              className="flex-1 py-1 bg-neutral-900 text-white rounded-md text-[10px] font-bold hover:bg-neutral-800 disabled:opacity-40 transition-colors cursor-pointer"
+            >
+              Set &amp; Crop
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowUrlInput(false);
+                setUrlInput("");
+              }}
+              className="px-2 py-1 bg-neutral-200 text-neutral-700 rounded-md text-[10px] font-semibold hover:bg-neutral-300 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="w-9 h-9 bg-white rounded-full shadow-2xs border border-neutral-200 flex items-center justify-center mb-2 text-neutral-500">
+            <Plus size={16} />
+          </div>
+          <p className="text-xs font-bold text-neutral-800 mb-0.5">+ Add Angle</p>
+          <p className="text-[10px] text-neutral-400 mb-2.5">
+            {remainingSlots} {remainingSlots === 1 ? "slot" : "slots"} left
+          </p>
+          <div className="flex flex-col gap-1.5 w-full">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-[11px] font-bold text-neutral-900 bg-white border border-neutral-200 shadow-2xs px-2.5 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors inline-flex items-center justify-center gap-1 cursor-pointer active:scale-95"
+            >
+              <Upload size={12} /> Upload
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowUrlInput(true)}
+              className="text-[10px] font-semibold text-neutral-500 hover:text-neutral-800 hover:underline cursor-pointer"
+            >
+              or paste URL
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
