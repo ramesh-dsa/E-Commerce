@@ -471,11 +471,11 @@ export default function AdminReturnsPage() {
       {/* Toast Notification */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-[9999] animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <div className="bg-neutral-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-2.5 text-xs font-semibold">
+          <div className="bg-[var(--admin-surface)] text-white px-4 py-3 rounded-full border border-white/10 flex items-center gap-2.5 text-xs font-semibold">
             {toast.type === "success" ? (
-              <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+              <CheckCircle2 size={16} className="text-[#00F59B] shrink-0" />
             ) : (
-              <Sparkles size={16} className="text-amber-400 shrink-0" />
+              <Sparkles size={16} className="text-[#F59E0B] shrink-0" />
             )}
             <span>{toast.message}</span>
           </div>
@@ -485,30 +485,30 @@ export default function AdminReturnsPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#fff8e7] text-amber-700 flex items-center justify-center shrink-0 border border-amber-200/60 shadow-2xs">
-            <RotateCcw size={22} className="text-amber-700" />
+          <div className="w-12 h-12 rounded-[14px] bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] flex items-center justify-center shrink-0 border border-[var(--admin-primary)]/30">
+            <RotateCcw size={22} className="text-[var(--admin-primary)]" />
           </div>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-2xl font-bold tracking-tight text-neutral-900 leading-tight">
+              <h1 className="text-2xl font-bold tracking-tight text-white font-heading leading-tight">
                 Returns &amp; Reverse Logistics
               </h1>
               <span
-                className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold tracking-tight border shadow-2xs flex items-center gap-1.5 ${
+                className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold tracking-tight border flex items-center gap-1.5 ${
                   dateFilter.type === "day"
-                    ? "bg-sky-50 text-sky-800 border-sky-300"
+                    ? "bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/30"
                     : dateFilter.type === "custom"
-                    ? "bg-purple-50 text-purple-800 border-purple-300"
-                    : "bg-amber-50 text-amber-900 border-amber-300"
+                    ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30"
+                    : "bg-[var(--admin-primary)]/15 text-white border-[var(--admin-primary)]/30"
                 }`}
               >
                 <span
                   className={`w-2 h-2 rounded-full ${
                     dateFilter.type === "day"
-                      ? "bg-sky-500 animate-pulse"
+                      ? "bg-[#38BDF8] animate-pulse"
                       : dateFilter.type === "custom"
-                      ? "bg-purple-500"
-                      : "bg-amber-500"
+                      ? "bg-[#F59E0B]"
+                      : "bg-[var(--admin-primary)]"
                   }`}
                 />
                 {dateFilter.type === "day"
@@ -518,7 +518,7 @@ export default function AdminReturnsPage() {
                   : "Till Date (All Time)"}
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-neutral-500 mt-1">
+            <p className="text-xs sm:text-sm text-[var(--admin-text-muted)] mt-1">
               End-to-end customer return triage, inspection approval, reverse courier dispatch &amp; instant refunds
             </p>
           </div>
@@ -529,15 +529,15 @@ export default function AdminReturnsPage() {
           <button
             type="button"
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[var(--admin-surface)] border border-white/10 hover:bg-[var(--admin-surface-2)] text-white text-xs font-semibold transition-all cursor-pointer"
             title="Download complete returns dataset as CSV"
           >
-            <Download size={13} className="text-neutral-500" />
+            <Download size={13} className="text-[var(--admin-text-muted)]" />
             <span>Export CSV</span>
           </button>
           <Link
             href="/admin"
-            className="flex items-center gap-1 text-xs font-semibold text-neutral-700 hover:text-black bg-neutral-100 hover:bg-neutral-200/80 px-3.5 py-2 rounded-xl transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-semibold text-white bg-[var(--admin-surface)] hover:bg-[var(--admin-surface-2)] border border-white/10 px-3.5 py-2 rounded-full transition-colors cursor-pointer"
           >
             <span>Overview Dashboard</span>
             <ExternalLink size={12} />
@@ -547,65 +547,85 @@ export default function AdminReturnsPage() {
 
       {/* ── HIGH-LEVEL 4-CARD FINANCIAL & OPERATIONAL RIBBON ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-[20px] bg-white border border-black/[0.05] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium">
-            <span>Total Return Value</span>
-            <IndianRupee size={15} className="text-amber-700" />
+        {/* Card 1: Total Return Value */}
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
+              Total Return Value
+            </span>
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#F59E0B] border border-white/5">
+              <IndianRupee size={18} />
+            </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-neutral-900 mt-1">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             ₹{returnMetrics.totalClaimValue.toLocaleString("en-IN")}
           </div>
-          <div className="text-[11px] text-neutral-400 mt-1">
+          <div className="text-xs text-[var(--admin-text-muted)] mt-2">
             {returnMetrics.totalClaims} claims in active date scope
           </div>
         </div>
 
-        <div className="p-4 rounded-[20px] bg-white border border-black/[0.05] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium">
-            <span>Pending Review</span>
-            <AlertTriangle size={15} className="text-amber-600" />
+        {/* Card 2: Pending Review */}
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
+              Pending Review
+            </span>
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#F59E0B] border border-white/5">
+              <AlertTriangle size={18} />
+            </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-amber-700 mt-1">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             {returnMetrics.pendingCount}
           </div>
-          <div className="text-[11px] text-amber-800 font-medium mt-1">
+          <div className="text-xs text-[#F59E0B] font-medium mt-2">
             {returnMetrics.pendingCount > 0 ? "Requires admin decision" : "Zero pending backlogs"}
           </div>
         </div>
 
-        <div className="p-4 rounded-[20px] bg-white border border-black/[0.05] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium">
-            <span>Approved &amp; Scheduled</span>
-            <Truck size={15} className="text-emerald-700" />
+        {/* Card 3: Approved & Scheduled */}
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
+              Approved &amp; Scheduled
+            </span>
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#00F59B] border border-white/5">
+              <Truck size={18} />
+            </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-emerald-700 mt-1">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             {returnMetrics.approvedCount}
           </div>
-          <div className="text-[11px] text-emerald-800 font-medium mt-1">
+          <div className="text-xs text-[#00F59B] font-medium mt-2">
             ₹{returnMetrics.approvedValue.toLocaleString("en-IN")} reverse dispatched
           </div>
         </div>
 
-        <div className="p-4 rounded-[20px] bg-white border border-black/[0.05] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center justify-between text-neutral-400 text-xs font-medium">
-            <span>Rejected Claims</span>
-            <XCircle size={15} className="text-rose-600" />
+        {/* Card 4: Rejected Claims */}
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
+              Rejected Claims
+            </span>
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#FF4B55] border border-white/5">
+              <XCircle size={18} />
+            </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-rose-700 mt-1">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             {returnMetrics.rejectedCount}
           </div>
-          <div className="text-[11px] text-neutral-400 mt-1">
+          <div className="text-xs text-[var(--admin-text-muted)] mt-2">
             Out of policy or damage mismatch
           </div>
         </div>
       </div>
 
       {/* ── UNIFIED DATE FILTER & SCOPE CONTROLS ── */}
-      <div className="bg-white rounded-[22px] border border-black/[0.04] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3.5">
+      <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 space-y-4">
         {/* Row 1: Status Tabs (Left) + 1-Click Till Date vs Day-Wise + Date Range Picker (Right) */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-black/[0.04]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/5">
           {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5 overflow-x-auto admin-scroll">
             {[
               { id: "all", label: "All Returns", count: dateFilteredReturns.length },
               {
@@ -629,16 +649,16 @@ export default function AdminReturnsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setStatusFilter(tab.id as typeof statusFilter)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                     active
-                      ? "bg-neutral-900 text-white shadow-2xs font-bold"
-                      : "bg-neutral-100 hover:bg-neutral-200/70 text-neutral-600 font-medium"
+                      ? "bg-[var(--admin-primary)] text-white font-bold"
+                      : "bg-[var(--admin-surface-2)] hover:bg-white/[0.04] text-[var(--admin-text-muted)] hover:text-white font-medium border border-white/10"
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
                     className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                      active ? "bg-white/20 text-white" : "bg-white text-neutral-700 border border-neutral-200"
+                      active ? "bg-white/20 text-white" : "bg-white/10 text-white"
                     }`}
                   >
                     {tab.count}
@@ -651,7 +671,7 @@ export default function AdminReturnsPage() {
           {/* Date Controls */}
           <div className="flex items-center gap-2">
             {/* 1-Click Switcher */}
-            <div className="flex items-center bg-neutral-100 p-0.5 rounded-lg border border-neutral-200/60 text-[10px] font-semibold shrink-0">
+            <div className="flex items-center bg-[var(--admin-surface-2)] p-1 rounded-full border border-white/10 text-[10px] font-semibold shrink-0">
               <button
                 type="button"
                 onClick={() => {
@@ -663,10 +683,10 @@ export default function AdminReturnsPage() {
                   });
                   triggerToast("Showing returns history accumulated Till Date (03 Oct 2026)", "info");
                 }}
-                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
                   dateFilter.type === "all"
-                    ? "bg-amber-500 text-white font-bold shadow-2xs"
-                    : "text-neutral-600 hover:text-neutral-950"
+                    ? "bg-[var(--admin-primary)] text-white font-bold"
+                    : "text-[var(--admin-text-muted)] hover:text-white"
                 }`}
                 title="View returns accumulated till date (03 Oct 2026)"
               >
@@ -684,10 +704,10 @@ export default function AdminReturnsPage() {
                   });
                   triggerToast("Showing single-day returns for Today (03 Oct 2026)", "info");
                 }}
-                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
                   dateFilter.type === "day"
-                    ? "bg-sky-600 text-white font-bold shadow-2xs"
-                    : "text-neutral-600 hover:text-neutral-950"
+                    ? "bg-[var(--admin-primary)] text-white font-bold"
+                    : "text-[var(--admin-text-muted)] hover:text-white"
                 }`}
                 title="View single-day returns"
               >
@@ -718,17 +738,17 @@ export default function AdminReturnsPage() {
 
         {/* Row 2: Date Scope Banner / Day-Wise Navigation Hub */}
         {dateFilter.type === "day" ? (
-          <div className="p-3 rounded-2xl bg-gradient-to-r from-sky-50 via-sky-50/70 to-indigo-50/40 border border-sky-200/80 shadow-2xs flex flex-col gap-2.5 animate-in fade-in duration-150">
+          <div className="p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-[#38BDF8]/20 flex flex-col gap-2.5 animate-in fade-in duration-150">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
-                <span className="text-xs text-sky-950 font-bold truncate">
+                <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-pulse shrink-0" />
+                <span className="text-xs text-white font-bold truncate">
                   Day-Wise Returns Breakdown:{" "}
-                  <span className="text-sky-900 underline decoration-sky-300 font-extrabold">
+                  <span className="text-white underline decoration-[var(--admin-primary)] decoration-2 font-extrabold">
                     {dateFilter.label}
                   </span>
                 </span>
-                <span className="text-[10px] text-sky-800 bg-sky-100 font-bold px-2 py-0.5 rounded-full border border-sky-300/60 shadow-2xs shrink-0">
+                <span className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/15 font-bold px-2.5 py-0.5 rounded-full border border-[#38BDF8]/30 shrink-0 font-heading tabular-nums">
                   {filteredReturns.length} {filteredReturns.length === 1 ? "return" : "returns"} • ₹{returnMetrics.totalClaimValue.toLocaleString("en-IN")}
                 </span>
               </div>
@@ -739,7 +759,7 @@ export default function AdminReturnsPage() {
                   type="button"
                   onClick={() => handleStepDay("prev")}
                   disabled={currentDayIndex >= availableReturnDays.length - 1}
-                  className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 hover:bg-sky-50 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+                  className="flex items-center gap-1 text-[11px] font-semibold px-3 py-1 rounded-full bg-[var(--admin-surface)] border border-white/10 text-white hover:bg-[var(--admin-elevated)] disabled:opacity-35 disabled:pointer-events-none cursor-pointer transition-all"
                   title="Step to earlier date with returns"
                 >
                   <ChevronLeft size={12} />
@@ -749,7 +769,7 @@ export default function AdminReturnsPage() {
                   type="button"
                   onClick={() => handleStepDay("next")}
                   disabled={currentDayIndex <= 0}
-                  className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 hover:bg-sky-50 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+                  className="flex items-center gap-1 text-[11px] font-semibold px-3 py-1 rounded-full bg-[var(--admin-surface)] border border-white/10 text-white hover:bg-[var(--admin-elevated)] disabled:opacity-35 disabled:pointer-events-none cursor-pointer transition-all"
                   title="Step to more recent date"
                 >
                   <span>Next Day</span>
@@ -766,7 +786,7 @@ export default function AdminReturnsPage() {
                     });
                     triggerToast("Restored returns history accumulated Till Date", "info");
                   }}
-                  className="ml-1 text-[11px] font-bold text-sky-800 hover:text-sky-950 hover:underline cursor-pointer"
+                  className="ml-1 text-[11px] font-bold text-[var(--admin-primary)] hover:underline cursor-pointer"
                 >
                   View All (Till Date)
                 </button>
@@ -774,8 +794,8 @@ export default function AdminReturnsPage() {
             </div>
 
             {/* Quick Day Selector Chips */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-              <span className="text-[10px] uppercase tracking-wider font-extrabold text-sky-900/60 shrink-0 mr-1">
+            <div className="flex items-center gap-1.5 overflow-x-auto admin-scroll pt-1 pb-1">
+              <span className="text-[10px] uppercase tracking-wider font-extrabold text-[var(--admin-text-muted)] shrink-0 mr-1">
                 Select Return Day:
               </span>
               {availableReturnDays.map((dayItem) => {
@@ -794,21 +814,21 @@ export default function AdminReturnsPage() {
                       });
                       triggerToast(`Selected ${dayItem.label} (${dayItem.count} ${dayItem.count === 1 ? "return" : "returns"})`, "info");
                     }}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                       isSelected
-                        ? "bg-sky-600 text-white font-bold border-sky-700 shadow-xs ring-2 ring-sky-300"
-                        : "bg-white/90 hover:bg-white text-neutral-700 border-sky-200/70 hover:border-sky-300"
+                        ? "bg-[var(--admin-primary)] text-white font-bold border border-[var(--admin-primary)]"
+                        : "bg-[var(--admin-surface)] hover:bg-white/[0.04] text-[var(--admin-text-muted)] hover:text-white border border-white/10"
                     }`}
                   >
                     <span>{dayItem.label}</span>
                     <span
                       className={`px-1.5 py-0.2 rounded-full text-[9.5px] font-extrabold ${
-                        isSelected ? "bg-white/20 text-white" : "bg-sky-100 text-sky-800"
+                        isSelected ? "bg-white/20 text-white" : "bg-white/10 text-white"
                       }`}
                     >
                       {dayItem.count}
                     </span>
-                    <span className={`text-[10px] ${isSelected ? "text-sky-100" : "text-neutral-400"}`}>
+                    <span className={`text-[10px] font-heading tabular-nums ${isSelected ? "text-white/90" : "text-[var(--admin-text-muted)]"}`}>
                       ₹{Math.round(dayItem.totalAmount).toLocaleString("en-IN")}
                     </span>
                   </button>
@@ -817,11 +837,11 @@ export default function AdminReturnsPage() {
             </div>
           </div>
         ) : dateFilter.type === "all" ? (
-          <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-50/90 via-amber-50/40 to-transparent border border-amber-200/70 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
+          <div className="p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
             <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-amber-600 shrink-0" />
+              <Sparkles size={14} className="text-[var(--admin-primary)] shrink-0" />
               <span>
-                <strong>Till Date Returns Scope:</strong> Displaying all {allMasterReturns.length} return claims recorded from store launch (18 Sep 2026) till today (03 Oct 2026). Total value: <strong>₹{returnMetrics.totalClaimValue.toLocaleString("en-IN")}</strong>
+                <strong className="text-white">Till Date Returns Scope:</strong> Displaying all {allMasterReturns.length} return claims recorded from store launch (18 Sep 2026) till today (03 Oct 2026). Total value: <strong className="text-white font-heading tabular-nums">₹{returnMetrics.totalClaimValue.toLocaleString("en-IN")}</strong>
               </span>
             </div>
             <button
@@ -836,18 +856,18 @@ export default function AdminReturnsPage() {
                 });
                 triggerToast("Switched to Day-Wise Breakdown for Today (03 Oct 2026)", "info");
               }}
-              className="text-amber-800 hover:text-amber-950 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+              className="text-[var(--admin-primary)] hover:underline font-bold cursor-pointer flex items-center gap-1 shrink-0 ml-2"
             >
               <span>Explore Day-Wise</span>
               <ArrowRight size={11} />
             </button>
           </div>
         ) : (
-          <div className="p-3 rounded-2xl bg-purple-50/80 border border-purple-200/70 flex items-center justify-between text-xs text-purple-950 animate-in fade-in duration-150">
+          <div className="p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
             <div className="flex items-center gap-2">
-              <CalendarDays size={14} className="text-purple-600 shrink-0" />
+              <CalendarDays size={14} className="text-[#38BDF8] shrink-0" />
               <span>
-                <strong>Custom Date Range:</strong> {dateFilter.startDate} → {dateFilter.endDate} ({filteredReturns.length} returns found • ₹{returnMetrics.totalClaimValue.toLocaleString("en-IN")})
+                <strong className="text-white">Custom Date Range:</strong> {dateFilter.startDate} → {dateFilter.endDate} ({filteredReturns.length} returns found • <span className="font-heading tabular-nums text-white">₹{returnMetrics.totalClaimValue.toLocaleString("en-IN")}</span>)
               </span>
             </div>
             <button
@@ -861,7 +881,7 @@ export default function AdminReturnsPage() {
                 });
                 triggerToast("Reset to All Time (Till Date)", "info");
               }}
-              className="text-purple-800 hover:text-purple-950 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+              className="text-[var(--admin-primary)] hover:underline font-bold cursor-pointer flex items-center gap-1 shrink-0 ml-2"
             >
               <span>Reset to Till Date</span>
               <RotateCcw size={11} />
@@ -872,18 +892,18 @@ export default function AdminReturnsPage() {
         {/* Row 3: Search Bar + Reason Filter */}
         <div className="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
           <div className="relative flex-1 w-full">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by Return ID, Order #, Customer, Phone, or Reason..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl bg-neutral-50/80 border border-neutral-200/80 text-xs text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
+              className="w-full pl-9 pr-8 py-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 text-xs text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)] hover:text-white"
               >
                 <X size={13} />
               </button>
@@ -894,7 +914,7 @@ export default function AdminReturnsPage() {
             <select
               value={reasonCategoryFilter}
               onChange={(e) => setReasonCategoryFilter(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-neutral-50/80 border border-neutral-200/80 text-xs font-medium text-neutral-700 focus:outline-none cursor-pointer"
+              className="px-3 py-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 text-xs font-medium text-white focus:outline-none focus:border-[var(--admin-primary)] cursor-pointer"
             >
               <option value="all">All Return Reasons</option>
               <option value="size">Size / Fit Mismatch</option>
@@ -906,11 +926,11 @@ export default function AdminReturnsPage() {
       </div>
 
       {/* ── RETURNS MASTER TABLE CARD ── */}
-      <div className="bg-white rounded-[22px] border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="overflow-x-auto admin-scroll-container">
+      <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 overflow-hidden">
+        <div className="overflow-x-auto admin-scroll">
           <table className="w-full text-left border-collapse" role="table">
             <thead>
-              <tr className="border-b border-neutral-100 text-[11px] font-bold uppercase tracking-wider text-neutral-500 bg-[#faf9f6]/90 font-mono">
+              <tr className="border-b border-white/5 text-[11px] font-semibold uppercase tracking-wider text-[var(--admin-text-muted)] bg-[var(--admin-surface-2)]">
                 <th className="pl-6 pr-4 py-4 min-w-[170px]">Return ID</th>
                 <th className="px-5 py-4 min-w-[200px]">Customer &amp; City</th>
                 <th className="px-5 py-4 min-w-[250px]">Product Claimed</th>
@@ -921,14 +941,14 @@ export default function AdminReturnsPage() {
                 <th className="pl-3 pr-6 py-4 min-w-[180px] text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-white/5">
               {displayedReturns.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-14 text-center text-xs text-neutral-400">
+                  <td colSpan={8} className="py-14 text-center text-xs text-[var(--admin-text-muted)]">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <RotateCcw size={28} className="text-neutral-300" />
-                      <span className="font-semibold text-neutral-600 text-sm">No return requests found</span>
-                      <p className="text-neutral-400 max-w-sm">
+                      <RotateCcw size={28} className="text-[var(--admin-text-muted)]" />
+                      <span className="font-semibold text-white text-sm">No return requests found</span>
+                      <p className="text-[var(--admin-text-muted)] max-w-sm">
                         No returns match your current active date scope and filter combination.
                       </p>
                       <button
@@ -944,7 +964,7 @@ export default function AdminReturnsPage() {
                             endDate: "2026-10-03",
                           });
                         }}
-                        className="text-amber-800 hover:underline font-bold text-xs mt-2 cursor-pointer"
+                        className="text-[var(--admin-primary)] hover:underline font-bold text-xs mt-2 cursor-pointer"
                       >
                         Reset all filters to All Time
                       </button>
@@ -956,17 +976,17 @@ export default function AdminReturnsPage() {
                   return (
                     <tr
                       key={ret.id}
-                      className="hover:bg-amber-50/40 transition-colors duration-150 group cursor-pointer border-b border-neutral-100/70"
+                      className="hover:bg-white/[0.03] transition-colors duration-150 group cursor-pointer border-b border-white/5"
                       onClick={() => setSelectedReturn(ret)}
                       title="Click to inspect return claim"
                     >
                       {/* Return ID & Order ID */}
                       <td className="pl-6 pr-4 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="text-xs font-mono font-bold text-neutral-900 group-hover:text-amber-800">
+                          <span className="text-xs font-mono font-bold text-white group-hover:text-[var(--admin-primary)] transition-colors">
                             {ret.id}
                           </span>
-                          <span className="text-[11px] font-mono text-neutral-400 mt-0.5">
+                          <span className="text-[11px] font-mono text-[var(--admin-text-muted)] mt-0.5">
                             Order #{ret.orderId}
                           </span>
                         </div>
@@ -975,11 +995,11 @@ export default function AdminReturnsPage() {
                       {/* Customer */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="text-xs sm:text-sm font-semibold text-neutral-900">
+                          <span className="text-xs sm:text-sm font-semibold text-white">
                             {ret.customerName}
                           </span>
-                          <span className="text-[11px] text-neutral-400 flex items-center gap-1 mt-0.5 font-mono">
-                            <Phone size={10} className="shrink-0 text-neutral-400" />
+                          <span className="text-[11px] text-[var(--admin-text-muted)] flex items-center gap-1 mt-0.5">
+                            <Phone size={10} className="shrink-0 text-[var(--admin-text-muted)]" />
                             {ret.customerPhone} • {ret.customerCity}
                           </span>
                         </div>
@@ -988,7 +1008,7 @@ export default function AdminReturnsPage() {
                       {/* Product */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-xl bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
+                          <div className="w-11 h-11 rounded-lg bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
                             <Image
                               src={ret.item.imageUrl}
                               alt={ret.item.productName}
@@ -998,10 +1018,10 @@ export default function AdminReturnsPage() {
                             />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-semibold text-neutral-900 truncate max-w-[200px]" title={ret.item.productName}>
+                            <span className="text-xs font-semibold text-white truncate max-w-[200px]" title={ret.item.productName}>
                               {ret.item.productName}
                             </span>
-                            <span className="text-[11px] text-neutral-400 mt-0.5 truncate max-w-[200px]">
+                            <span className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 truncate max-w-[200px]">
                               {ret.item.colorName} • Size {ret.item.selectedSize} (x{ret.item.quantity})
                             </span>
                           </div>
@@ -1012,20 +1032,20 @@ export default function AdminReturnsPage() {
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col max-w-[260px]">
                           <span
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10.5px] font-bold bg-amber-50 text-amber-900 border border-amber-200/70 w-fit truncate max-w-[250px]"
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-white/10 text-white border border-white/15 w-fit truncate max-w-[250px]"
                             title={ret.reason}
                           >
                             {ret.reason}
                           </span>
                           {ret.details ? (
                             <span
-                              className="text-[11px] text-neutral-500 italic mt-1 truncate max-w-[250px] block"
+                              className="text-[11px] text-[var(--admin-text-muted)] italic mt-1 truncate max-w-[250px] block"
                               title={ret.details}
                             >
                               &ldquo;{ret.details}&rdquo;
                             </span>
                           ) : (
-                            <span className="text-[11px] text-neutral-400 mt-1">No additional note</span>
+                            <span className="text-[11px] text-[var(--admin-text-muted)] mt-1">No additional note</span>
                           )}
                         </div>
                       </td>
@@ -1033,15 +1053,15 @@ export default function AdminReturnsPage() {
                       {/* Refund Amount */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="text-xs sm:text-sm font-bold text-neutral-900 font-mono">
+                          <span className="text-xs sm:text-sm font-bold text-white font-heading tabular-nums">
                             ₹{ret.refundAmount.toLocaleString("en-IN")}
                           </span>
-                          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider flex items-center gap-1.5 mt-0.5 whitespace-nowrap">
+                          <span className="text-[10px] text-[var(--admin-text-muted)] font-medium uppercase tracking-wider flex items-center gap-1.5 mt-0.5 whitespace-nowrap">
                             {ret.status === "rejected" ? (
-                              <span className="text-neutral-400 font-normal">Claim Void</span>
+                              <span className="text-[var(--admin-text-muted)] font-normal">Claim Void</span>
                             ) : (
                               <>
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] shrink-0" />
                                 {ret.paymentMethod === "upi"
                                   ? "UPI • Original"
                                   : ret.paymentMethod === "card"
@@ -1056,18 +1076,18 @@ export default function AdminReturnsPage() {
                       {/* Status */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         {ret.status === "pending" ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] animate-pulse" />
                             Pending Review
                           </span>
                         ) : ret.status === "approved" ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-900 border border-emerald-300 shadow-2xs">
-                            <CheckCircle2 size={12} className="text-emerald-600" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/30">
+                            <CheckCircle2 size={12} className="text-[#00F59B]" />
                             Approved
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-900 border border-rose-300 shadow-2xs">
-                            <XCircle size={12} className="text-rose-600" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FF4B55]/15 text-[#FF4B55] border border-[#FF4B55]/30">
+                            <XCircle size={12} className="text-[#FF4B55]" />
                             Rejected
                           </span>
                         )}
@@ -1076,15 +1096,15 @@ export default function AdminReturnsPage() {
                       {/* Date */}
                       <td className="px-5 py-4.5 align-middle whitespace-nowrap">
                         <div className="flex flex-col">
-                          <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900">
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
                             <span>{ret.requestedAt.includes(",") ? ret.requestedAt.split(",")[0].trim() : ret.requestedAt}</span>
                             {ret.dayString === "2026-10-03" ? (
-                              <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-[#00F59B]/20 text-[#00F59B] border border-[#00F59B]/30">
                                 Today
                               </span>
                             ) : null}
                           </div>
-                          <span className="text-[11px] text-neutral-400 flex items-center gap-1 mt-0.5">
+                          <span className="text-[11px] text-[var(--admin-text-muted)] flex items-center gap-1 mt-0.5">
                             <Clock size={10} className="shrink-0" />
                             {ret.requestedAt.includes(",") ? ret.requestedAt.split(",")[1].trim() : "Recorded"}
                           </span>
@@ -1099,7 +1119,7 @@ export default function AdminReturnsPage() {
                               <button
                                 type="button"
                                 onClick={() => handleApprove(ret)}
-                                className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition-all cursor-pointer flex items-center gap-1"
+                                className="px-3 py-1.5 rounded-full bg-[#00F59B] text-black hover:bg-[#00F59B]/90 font-bold text-xs transition-all cursor-pointer flex items-center gap-1"
                                 title="Approve return claim and schedule reverse pickup"
                               >
                                 <Check size={12} strokeWidth={2.5} />
@@ -1111,7 +1131,7 @@ export default function AdminReturnsPage() {
                                   setRejectingReturnId(ret.id);
                                   setSelectedReturn(ret);
                                 }}
-                                className="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 text-rose-700 font-semibold text-xs shadow-2xs transition-all cursor-pointer flex items-center gap-1"
+                                className="px-3 py-1.5 rounded-full bg-[#FF4B55]/15 text-[#FF4B55] border border-[#FF4B55]/30 hover:bg-[#FF4B55]/25 font-semibold text-xs transition-all cursor-pointer flex items-center gap-1"
                                 title="Reject return claim"
                               >
                                 <X size={12} strokeWidth={2.5} />
@@ -1122,7 +1142,7 @@ export default function AdminReturnsPage() {
                             <button
                               type="button"
                               onClick={() => handlePrintSlip(ret)}
-                              className="px-2.5 py-1.5 rounded-xl bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-semibold text-xs shadow-2xs transition-all cursor-pointer flex items-center gap-1"
+                              className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-[var(--admin-elevated)] text-white font-semibold text-xs transition-all cursor-pointer flex items-center gap-1"
                               title="Print reverse courier pickup voucher"
                             >
                               <Printer size={12} />
@@ -1132,7 +1152,7 @@ export default function AdminReturnsPage() {
                           <button
                             type="button"
                             onClick={() => setSelectedReturn(ret)}
-                            className="w-8 h-8 rounded-xl border border-neutral-200 hover:bg-neutral-100 text-neutral-500 hover:text-neutral-900 flex items-center justify-center transition-colors cursor-pointer"
+                            className="w-8 h-8 rounded-full border border-white/10 hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                             title="Inspect complete return dossier"
                           >
                             <Eye size={13} />
@@ -1148,18 +1168,18 @@ export default function AdminReturnsPage() {
         </div>
 
         {/* ── TABLE FOOTER WITH PAGINATION & BATCH OPERATIONS ── */}
-        <div className="p-4 sm:p-5 bg-gradient-to-b from-[#faf9f6] to-white border-t border-black/[0.05] flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs text-neutral-500">
+        <div className="p-4 sm:p-5 bg-[var(--admin-surface-2)] border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs text-[var(--admin-text-muted)]">
             <span>
               Showing{" "}
-              <strong className="text-neutral-900 font-bold">
+              <strong className="text-white font-heading font-bold tabular-nums">
                 {filteredReturns.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}
               </strong>
               –
-              <strong className="text-neutral-900 font-bold">
+              <strong className="text-white font-heading font-bold tabular-nums">
                 {Math.min(currentPage * PAGE_SIZE, filteredReturns.length)}
               </strong>{" "}
-              of <strong className="text-neutral-900 font-bold">{filteredReturns.length}</strong> return claims
+              of <strong className="text-white font-heading font-bold tabular-nums">{filteredReturns.length}</strong> return claims
             </span>
 
             {totalPages > 1 && (
@@ -1168,7 +1188,7 @@ export default function AdminReturnsPage() {
                   type="button"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-1 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                  className="p-1.5 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   title="Previous Page"
                 >
                   <ChevronLeft size={13} />
@@ -1180,10 +1200,10 @@ export default function AdminReturnsPage() {
                       key={pageNum}
                       type="button"
                       onClick={() => setCurrentPage(pageNum)}
-                      className={`w-6 h-6 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
+                      className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center transition-all cursor-pointer font-heading tabular-nums ${
                         currentPage === pageNum
-                          ? "bg-neutral-900 text-white shadow-2xs font-bold"
-                          : "text-neutral-600 hover:bg-neutral-100"
+                          ? "bg-[var(--admin-primary)] text-white font-bold"
+                          : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5"
                       }`}
                     >
                       {pageNum}
@@ -1194,7 +1214,7 @@ export default function AdminReturnsPage() {
                   type="button"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-1 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                  className="p-1.5 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   title="Next Page"
                 >
                   <ChevronRight size={13} />
@@ -1207,16 +1227,16 @@ export default function AdminReturnsPage() {
             <button
               type="button"
               onClick={handleExportCSV}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-[var(--admin-elevated)] text-white text-xs font-semibold transition-all cursor-pointer"
             >
-              <Download size={12} className="text-neutral-500" />
+              <Download size={12} className="text-[var(--admin-text-muted)]" />
               <span>Export Returns CSV</span>
             </button>
             {displayedReturns[0] && (
               <button
                 type="button"
                 onClick={() => handlePrintSlip(displayedReturns[0])}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-2xs transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
               >
                 <Printer size={12} />
                 <span>Print Return Slip</span>
@@ -1229,38 +1249,38 @@ export default function AdminReturnsPage() {
       {/* ── DEEP INSPECTION & REVIEW MODAL ── */}
       {selectedReturn && (
         <div
-          className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[10000] bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedReturn(null)}
         >
           <div
-            className="w-full max-w-2xl bg-white rounded-3xl border border-neutral-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="w-full max-w-2xl bg-[var(--admin-surface)] rounded-[28px] border border-white/10 overflow-hidden flex flex-col max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="p-6 pb-4 border-b border-neutral-100 flex items-center justify-between">
+            <div className="p-6 pb-4 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] text-amber-700 flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-full bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] flex items-center justify-center font-bold">
                   <RotateCcw size={18} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-neutral-900">
-                      Return Claim Dossier — {selectedReturn.id}
+                    <h3 className="text-lg font-heading font-bold text-white">
+                      Return Claim Dossier — <span className="font-mono text-white/90">{selectedReturn.id}</span>
                     </h3>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         selectedReturn.status === "pending"
-                          ? "bg-amber-100 text-amber-900 border border-amber-300"
+                          ? "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30"
                           : selectedReturn.status === "approved"
-                          ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
-                          : "bg-rose-100 text-rose-900 border border-rose-300"
+                          ? "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border border-[var(--admin-success)]/30"
+                          : "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30"
                       }`}
                     >
                       {selectedReturn.status.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    Order Ref: #{selectedReturn.orderId} • Requested on {selectedReturn.requestedAt}
+                  <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">
+                    Order Ref: <span className="font-mono text-white/80">#{selectedReturn.orderId}</span> • Requested on {selectedReturn.requestedAt}
                   </p>
                 </div>
               </div>
@@ -1269,17 +1289,17 @@ export default function AdminReturnsPage() {
                   setSelectedReturn(null);
                   setRejectingReturnId(null);
                 }}
-                className="w-8 h-8 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 flex items-center justify-center cursor-pointer transition-colors"
+                className="w-8 h-8 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center cursor-pointer transition-colors"
               >
                 <X size={16} />
               </button>
             </div>
 
             {/* Content Body */}
-            <div className="p-6 space-y-5 overflow-y-auto flex-1 admin-scroll-container text-xs">
+            <div className="p-6 space-y-5 overflow-y-auto flex-1 admin-scroll text-xs">
               {/* Product Info Card */}
-              <div className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/70 flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-white border border-neutral-200 overflow-hidden shrink-0 flex items-center justify-center">
+              <div className="p-4 rounded-[18px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center gap-4">
+                <div className="w-16 h-16 rounded-[12px] bg-black/40 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
                   <Image
                     src={selectedReturn.item.imageUrl}
                     alt={selectedReturn.item.productName}
@@ -1289,15 +1309,15 @@ export default function AdminReturnsPage() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-neutral-900 text-sm">{selectedReturn.item.productName}</h4>
-                  <div className="text-neutral-500 mt-1 flex items-center gap-2">
-                    <span>Color: <strong>{selectedReturn.item.colorName}</strong></span>
+                  <h4 className="font-bold text-white text-sm">{selectedReturn.item.productName}</h4>
+                  <div className="text-[var(--admin-text-muted)] mt-1 flex items-center gap-2">
+                    <span>Color: <strong className="text-white">{selectedReturn.item.colorName}</strong></span>
                     <span>•</span>
-                    <span>Size: <strong>{selectedReturn.item.selectedSize}</strong></span>
+                    <span>Size: <strong className="text-white">{selectedReturn.item.selectedSize}</strong></span>
                     <span>•</span>
-                    <span>Qty: <strong>{selectedReturn.item.quantity}</strong></span>
+                    <span>Qty: <strong className="text-white">{selectedReturn.item.quantity}</strong></span>
                   </div>
-                  <div className="text-amber-800 font-extrabold text-sm mt-1">
+                  <div className="text-[var(--admin-warning)] font-heading font-bold tabular-nums text-sm mt-1">
                     Refund Claim Amount: ₹{selectedReturn.refundAmount.toLocaleString("en-IN")}
                   </div>
                 </div>
@@ -1305,35 +1325,35 @@ export default function AdminReturnsPage() {
 
               {/* Customer & Address Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-2xl border border-neutral-200/80 bg-white">
-                  <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block mb-1">
+                <div className="p-3.5 rounded-[18px] border border-white/5 bg-[var(--admin-surface-2)]">
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-bold uppercase tracking-wider block mb-1">
                     Customer Information
                   </span>
-                  <div className="font-bold text-neutral-900">{selectedReturn.customerName}</div>
-                  <div className="text-neutral-500 mt-0.5">{selectedReturn.customerPhone}</div>
-                  <div className="text-neutral-400 text-[11px] mt-1">
-                    Payment Method: <strong>{selectedReturn.paymentMethod.toUpperCase()}</strong>
+                  <div className="font-bold text-white">{selectedReturn.customerName}</div>
+                  <div className="text-[var(--admin-text-muted)] mt-0.5">{selectedReturn.customerPhone}</div>
+                  <div className="text-[var(--admin-text-muted)] text-[11px] mt-1">
+                    Payment Method: <strong className="text-white">{selectedReturn.paymentMethod.toUpperCase()}</strong>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl border border-neutral-200/80 bg-white">
-                  <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block mb-1">
+                <div className="p-3.5 rounded-[18px] border border-white/5 bg-[var(--admin-surface-2)]">
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-bold uppercase tracking-wider block mb-1">
                     Reverse Pickup Address
                   </span>
-                  <div className="text-neutral-800 font-medium leading-relaxed">
+                  <div className="text-white/90 font-medium leading-relaxed">
                     {selectedReturn.customerAddress}
                   </div>
                 </div>
               </div>
 
               {/* Return Reason Box */}
-              <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/70">
-                <span className="text-[10.5px] font-bold text-amber-900 uppercase tracking-wider block mb-1">
+              <div className="p-4 rounded-[18px] bg-[var(--admin-warning)]/10 border border-[var(--admin-warning)]/20">
+                <span className="text-[10.5px] font-bold text-[var(--admin-warning)] uppercase tracking-wider block mb-1">
                   Customer Claim Reason
                 </span>
-                <div className="text-sm font-bold text-neutral-900">{selectedReturn.reason}</div>
+                <div className="text-sm font-bold text-white">{selectedReturn.reason}</div>
                 {selectedReturn.details && (
-                  <p className="text-neutral-600 italic mt-1 bg-white/70 p-2.5 rounded-xl border border-amber-100">
+                  <p className="text-white/80 italic mt-2 bg-black/20 p-2.5 rounded-[12px] border border-white/5">
                     &ldquo;{selectedReturn.details}&rdquo;
                   </p>
                 )}
@@ -1342,7 +1362,7 @@ export default function AdminReturnsPage() {
               {/* Courier Selection if approving */}
               {selectedReturn.status === "pending" && (
                 <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold text-neutral-800">
+                  <label className="block text-xs font-bold text-white">
                     Assign Reverse Logistics Courier:
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -1355,21 +1375,21 @@ export default function AdminReturnsPage() {
                         key={c}
                         type="button"
                         onClick={() => setSelectedCarrier(c)}
-                        className={`p-2.5 rounded-xl border text-center font-semibold cursor-pointer transition-all ${
+                        className={`p-2.5 rounded-[14px] border text-center font-semibold cursor-pointer transition-all ${
                           selectedCarrier === c
-                            ? "bg-amber-50 border-amber-500 text-amber-950 font-bold shadow-2xs"
-                            : "bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                            ? "bg-[var(--admin-primary)]/15 border-[var(--admin-primary)] text-white font-bold"
+                            : "bg-[var(--admin-surface-2)] border-white/5 text-[var(--admin-text-muted)] hover:bg-white/5 hover:text-white"
                         }`}
                       >
-                        <Truck size={14} className="mx-auto mb-1 text-neutral-500" />
+                        <Truck size={14} className="mx-auto mb-1 text-[var(--admin-text-muted)]" />
                         <span className="text-[11px] block">{c.split(" ")[0]}</span>
                       </button>
                     ))}
                   </div>
 
                   {rejectingReturnId === selectedReturn.id ? (
-                    <div className="space-y-2 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 animate-in fade-in">
-                      <label className="block text-xs font-bold text-rose-900">
+                    <div className="space-y-2 p-3.5 rounded-[18px] bg-[var(--admin-danger)]/10 border border-[var(--admin-danger)]/25 animate-in fade-in">
+                      <label className="block text-xs font-bold text-[var(--admin-danger)]">
                         Reason for Rejection (Customer will receive this note):
                       </label>
                       <textarea
@@ -1377,20 +1397,20 @@ export default function AdminReturnsPage() {
                         onChange={(e) => setRejectNote(e.target.value)}
                         placeholder="e.g. Return window expired, item tags removed, or normal wear and tear..."
                         rows={3}
-                        className="w-full p-2.5 rounded-xl bg-white border border-rose-200 text-xs text-neutral-900 focus:outline-none focus:ring-2 focus:ring-rose-400"
+                        className="w-full p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/10 text-xs text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-danger)]"
                       />
                       <div className="flex items-center justify-end gap-2 pt-1">
                         <button
                           type="button"
                           onClick={() => setRejectingReturnId(null)}
-                          className="px-3 py-1.5 rounded-xl border border-neutral-200 text-neutral-600 font-semibold cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 font-semibold cursor-pointer"
                         >
                           Cancel
                         </button>
                         <button
                           type="button"
                           onClick={() => handleReject(selectedReturn)}
-                          className="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer"
+                          className="px-4 py-1.5 rounded-full bg-[var(--admin-danger)] hover:bg-rose-600 text-white font-bold cursor-pointer"
                         >
                           Confirm Rejection
                         </button>
@@ -1402,11 +1422,11 @@ export default function AdminReturnsPage() {
             </div>
 
             {/* Modal Footer Actions */}
-            <div className="p-5 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/50">
+            <div className="p-5 border-t border-white/5 flex items-center justify-between gap-3 bg-[var(--admin-surface-2)]/50">
               <button
                 type="button"
                 onClick={() => handlePrintSlip(selectedReturn)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-neutral-200/80 hover:bg-neutral-100 text-neutral-700 font-semibold text-xs cursor-pointer shadow-2xs"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[var(--admin-surface)] border border-white/10 hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white font-semibold text-xs cursor-pointer"
               >
                 <Printer size={13} />
                 <span>Print Reverse Slip</span>
@@ -1417,14 +1437,14 @@ export default function AdminReturnsPage() {
                   <button
                     type="button"
                     onClick={() => setRejectingReturnId(selectedReturn.id)}
-                    className="px-4 py-2 rounded-xl bg-white border border-rose-200 text-rose-700 font-bold text-xs hover:bg-rose-50 cursor-pointer"
+                    className="px-4 py-2 rounded-full bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 text-[var(--admin-danger)] hover:bg-[var(--admin-danger)]/25 font-bold text-xs cursor-pointer"
                   >
                     Reject Claim
                   </button>
                   <button
                     type="button"
                     onClick={() => handleApprove(selectedReturn)}
-                    className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer shadow-2xs flex items-center gap-1.5"
+                    className="px-5 py-2 rounded-full bg-[var(--admin-success)] hover:brightness-110 text-black font-bold text-xs cursor-pointer flex items-center gap-1.5"
                   >
                     <Check size={14} strokeWidth={2.5} />
                     <span>Approve &amp; Dispatch Pickup</span>
@@ -1434,7 +1454,7 @@ export default function AdminReturnsPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedReturn(null)}
-                  className="px-4 py-2 rounded-xl bg-neutral-900 text-white font-semibold text-xs cursor-pointer hover:bg-black"
+                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 text-white font-semibold text-xs cursor-pointer"
                 >
                   Close Dossier
                 </button>

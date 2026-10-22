@@ -11,6 +11,8 @@ import { useCustomSections, type CustomSection } from "@/context/CustomSectionsC
 import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus, Product } from "@/types";
 import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay } from "@/components/admin/AdminDateRangePicker";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { StaggerGroup, StaggerItem, CountUp } from "@/components/admin/motion";
 import {
   searchProducts,
   searchOrders,
@@ -25,7 +27,6 @@ import {
   Calendar,
   CalendarDays,
   Bell,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
@@ -605,42 +606,42 @@ function getCustomerAvatar(name: string): { initial: string; bg: string; text: s
   if (AVATAR_COLORS[initial]) {
     return { initial, ...AVATAR_COLORS[initial] };
   }
-  return { initial, bg: "bg-neutral-100", text: "text-neutral-700" };
+  return { initial, bg: "bg-white/10", text: "text-white" };
 }
 
 // ─── STATUS PILL STYLING ──────────────────────────────────────────────────────
 
 function StatusPill({ status }: { status: OrderStatus | string }) {
   let display = status;
-  let pillClass = "bg-neutral-100 text-neutral-600";
+  let pillClass = "bg-white/10 text-white/70 border border-white/10";
 
   switch (status) {
     case "Delivered":
       display = "Delivered";
-      pillClass = "bg-[#eaf8f0] text-[#10b981]";
+      pillClass = "bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20";
       break;
     case "Processing":
     case "Confirmed":
     case "Packed":
       display = "Processing";
-      pillClass = "bg-[#fef9e7] text-[#eab308]";
+      pillClass = "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/20";
       break;
     case "Shipped":
     case "Out for Delivery":
       display = "Shipped";
-      pillClass = "bg-[#eff6ff] text-[#3b82f6]";
+      pillClass = "bg-[#7C3AED]/15 text-[#7C3AED] border border-[#7C3AED]/20";
       break;
     case "Cancelled":
       display = "Cancelled";
-      pillClass = "bg-[#fef2f2] text-[#ef4444]";
+      pillClass = "bg-[#FF4B55]/15 text-[#FF4B55] border border-[#FF4B55]/20";
       break;
     case "Return Requested":
       display = "Return Requested";
-      pillClass = "bg-[#fff7ed] text-[#ea580c]";
+      pillClass = "bg-[#FF4B55]/15 text-[#FF4B55] border border-[#FF4B55]/20";
       break;
     case "Returned":
       display = "Returned";
-      pillClass = "bg-[#f3f4f6] text-[#6b7280]";
+      pillClass = "bg-white/10 text-white/70 border border-white/10";
       break;
   }
 
@@ -819,18 +820,18 @@ function StatCardMenu({ title }: { title: string }) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-7 h-7 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
+        className="w-7 h-7 rounded-[14px] flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
         aria-label={`Options for ${title}`}
       >
         <MoreHorizontal size={15} />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-xl border border-neutral-200/80 shadow-lg py-1 z-30 text-xs font-medium text-neutral-700 animate-in fade-in duration-150">
+        <div className="absolute right-0 top-full mt-1.5 w-48 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 py-1 z-30 text-xs font-medium text-white animate-in fade-in duration-150">
           <button
             onClick={handleExportCSV}
-            className="w-full text-left px-3.5 py-2 hover:bg-neutral-50 flex items-center gap-2 cursor-pointer"
+            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white"
           >
-            <Download size={13} className="text-neutral-400" />
+            <Download size={13} className="text-[var(--admin-text-muted)]" />
             <span>Export CSV Report</span>
           </button>
           <button
@@ -838,9 +839,9 @@ function StatCardMenu({ title }: { title: string }) {
               window.print();
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-neutral-50 flex items-center gap-2 cursor-pointer"
+            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white"
           >
-            <Eye size={13} className="text-neutral-400" />
+            <Eye size={13} className="text-[var(--admin-text-muted)]" />
             <span>Print View</span>
           </button>
         </div>
@@ -911,15 +912,15 @@ function OrderStatusMenu({
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
+        className="w-8 h-8 rounded-[14px] flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
         aria-label="Order Status options"
       >
         <MoreHorizontal size={18} />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-2xl border border-neutral-200/80 shadow-xl py-2 z-40 text-xs font-medium text-neutral-700 animate-in fade-in zoom-in-95 duration-150">
-          <div className="px-3 py-1 text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+        <div className="absolute right-0 top-full mt-1.5 w-56 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 py-2 z-40 text-xs font-medium text-white animate-in fade-in zoom-in-95 duration-150">
+          <div className="px-3 py-1 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
             Filter View
           </div>
           <button
@@ -927,19 +928,19 @@ function OrderStatusMenu({
               onSelectStatus?.(null);
               setOpen(false);
             }}
-            className={`w-full text-left px-3 py-1.5 hover:bg-neutral-50 flex items-center justify-between cursor-pointer ${
-              !selectedStatus ? "bg-neutral-50 font-bold text-neutral-900" : ""
+            className={`w-full text-left px-3 py-1.5 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors ${
+              !selectedStatus ? "bg-white/[0.05] font-bold text-white" : "text-[var(--admin-text-muted)] hover:text-white"
             }`}
           >
             <span>All Statuses</span>
-            <span className="text-neutral-400 font-normal">{stats.totalOrd}</span>
+            <span className="text-[var(--admin-text-muted)] font-normal">{stats.totalOrd}</span>
           </button>
           {[
-            { label: "Delivered", count: stats.delivered, dot: "bg-[#00aa55]" },
-            { label: "Processing", count: stats.processing, dot: "bg-[#facc15]" },
-            { label: "Shipped", count: stats.shipped, dot: "bg-[#2563eb]" },
-            { label: "Cancelled", count: stats.cancelled, dot: "bg-[#ef4444]" },
-            { label: "Returned", count: stats.returned, dot: "bg-[#9ca3af]" },
+            { label: "Delivered", count: stats.delivered, dot: "bg-[#00F59B]" },
+            { label: "Processing", count: stats.processing, dot: "bg-[#F59E0B]" },
+            { label: "Shipped", count: stats.shipped, dot: "bg-[#7C3AED]" },
+            { label: "Cancelled", count: stats.cancelled, dot: "bg-[#FF4B55]" },
+            { label: "Returned", count: stats.returned, dot: "bg-white/40" },
           ].map((item) => (
             <button
               key={item.label}
@@ -947,28 +948,28 @@ function OrderStatusMenu({
                 onSelectStatus?.(selectedStatus === item.label ? null : item.label);
                 setOpen(false);
               }}
-              className={`w-full text-left px-3 py-1.5 hover:bg-neutral-50 flex items-center justify-between cursor-pointer ${
-                selectedStatus === item.label ? "bg-neutral-50 font-bold text-neutral-900" : ""
+              className={`w-full text-left px-3 py-1.5 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors ${
+                selectedStatus === item.label ? "bg-white/[0.05] font-bold text-white" : "text-[var(--admin-text-muted)] hover:text-white"
               }`}
             >
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${item.dot}`} />
                 <span>{item.label}</span>
               </div>
-              <span className="text-neutral-400 font-normal">{item.count}</span>
+              <span className="text-[var(--admin-text-muted)] font-normal">{item.count}</span>
             </button>
           ))}
 
-          <div className="my-1.5 border-t border-neutral-100" />
+          <div className="my-1.5 border-t border-white/5" />
 
-          <div className="px-3 py-1 text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+          <div className="px-3 py-1 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
             Actions
           </div>
           <button
             onClick={handleExportCSV}
-            className="w-full text-left px-3 py-2 hover:bg-neutral-50 flex items-center gap-2 cursor-pointer text-neutral-700 hover:text-black"
+            className="w-full text-left px-3 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
           >
-            <Download size={14} className="text-neutral-400" />
+            <Download size={14} className="text-[var(--admin-text-muted)]" />
             <span>Export Breakdown CSV</span>
           </button>
           <button
@@ -976,9 +977,9 @@ function OrderStatusMenu({
               onRefresh?.();
               setOpen(false);
             }}
-            className="w-full text-left px-3 py-2 hover:bg-neutral-50 flex items-center gap-2 cursor-pointer text-neutral-700 hover:text-black"
+            className="w-full text-left px-3 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
           >
-            <RotateCw size={14} className="text-neutral-400" />
+            <RotateCw size={14} className="text-[var(--admin-text-muted)]" />
             <span>Refresh Metrics</span>
           </button>
         </div>
@@ -1038,15 +1039,15 @@ function RevenueChartMenu({
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-8 h-8 rounded-xl flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer outline-none focus:outline-none"
+        className="w-8 h-8 rounded-[14px] flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer outline-none focus:outline-none"
         aria-label="Revenue chart options"
       >
         <MoreHorizontal size={16} />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-2xl border border-neutral-200/90 shadow-2xl py-1.5 z-40 text-xs font-medium text-neutral-700 animate-in fade-in duration-150">
-          <div className="px-3.5 py-1.5 text-[10px] text-neutral-400 font-semibold uppercase tracking-wider border-b border-neutral-100 mb-1">
+        <div className="absolute right-0 top-full mt-1.5 w-56 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 py-1.5 z-40 text-xs font-medium text-white animate-in fade-in duration-150">
+          <div className="px-3.5 py-1.5 text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider border-b border-white/5 mb-1">
             Chart View Options
           </div>
           <button
@@ -1054,35 +1055,35 @@ function RevenueChartMenu({
               setMetricMode(metricMode === "revenue" ? "orders" : "revenue");
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-neutral-50 flex items-center justify-between cursor-pointer"
+            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors text-[var(--admin-text-muted)] hover:text-white"
           >
             <div className="flex items-center gap-2">
-              <BarChart3 size={13} className="text-neutral-400" />
+              <BarChart3 size={13} className="text-[var(--admin-text-muted)]" />
               <span>Metric: {metricMode === "revenue" ? "Revenue (₹)" : "Orders (Units)"}</span>
             </div>
-            <span className="text-[10px] text-amber-600 font-bold uppercase">Toggle</span>
+            <span className="text-[10px] text-[var(--admin-primary)] font-bold uppercase">Toggle</span>
           </button>
           <button
             onClick={() => {
               setShowGridlines((prev) => !prev);
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-neutral-50 flex items-center justify-between cursor-pointer"
+            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors text-[var(--admin-text-muted)] hover:text-white"
           >
             <div className="flex items-center gap-2">
-              <SlidersHorizontal size={13} className="text-neutral-400" />
+              <SlidersHorizontal size={13} className="text-[var(--admin-text-muted)]" />
               <span>Reference Gridlines</span>
             </div>
-            <span className={`text-[10px] font-bold ${showGridlines ? "text-emerald-600" : "text-neutral-400"}`}>
+            <span className={`text-[10px] font-bold ${showGridlines ? "text-[#00F59B]" : "text-[var(--admin-text-muted)]"}`}>
               {showGridlines ? "ON" : "OFF"}
             </span>
           </button>
-          <div className="border-t border-neutral-100 my-1" />
+          <div className="border-t border-white/5 my-1" />
           <button
             onClick={handleExportCSV}
-            className="w-full text-left px-3.5 py-2 hover:bg-neutral-50 flex items-center gap-2 cursor-pointer text-neutral-900 font-semibold"
+            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-white font-semibold transition-colors"
           >
-            <Download size={13} className="text-neutral-500" />
+            <Download size={13} className="text-[var(--admin-text-muted)]" />
             <span>Export CSV Dataset</span>
           </button>
         </div>
@@ -1112,7 +1113,8 @@ function RevenueOverviewChart({
   const [dimensions, setDimensions] = useState({ width: 700, height: 260 });
 
   useEffect(() => {
-    const handleResize = () => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const updateDimensions = () => {
       if (containerRef.current) {
         setDimensions({
           width: containerRef.current.clientWidth || 700,
@@ -1120,9 +1122,29 @@ function RevenueOverviewChart({
         });
       }
     };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    updateDimensions();
+
+    // Debounce 250ms matching the sidebar transition duration so chart resizes once after animation finishes
+    const observer = new ResizeObserver(() => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateDimensions, 250);
+    });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    const handleWindowResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateDimensions, 250);
+    };
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+      window.removeEventListener("resize", handleWindowResize);
+    };
   }, []);
 
   const padding = { top: 35, right: 30, bottom: 40, left: 45 };
@@ -1219,7 +1241,7 @@ function RevenueOverviewChart({
     setHoverIndex(closestIdx);
   };
 
-  const primaryColor = metricMode === "revenue" ? "#eab308" : "#6366f1";
+  const primaryColor = "#7C3AED";
 
   return (
     <div
@@ -1249,13 +1271,9 @@ function RevenueOverviewChart({
       >
         <defs>
           <linearGradient id="revenueYellowGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={primaryColor} stopOpacity="0.28" />
-            <stop offset="65%" stopColor={primaryColor} stopOpacity="0.08" />
-            <stop offset="100%" stopColor={primaryColor} stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.0" />
           </linearGradient>
-          <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor={primaryColor} floodOpacity="0.25" />
-          </filter>
         </defs>
 
         {/* Horizontal gridlines */}
@@ -1269,14 +1287,14 @@ function RevenueOverviewChart({
                   y1={y}
                   x2={dimensions.width - padding.right}
                   y2={y}
-                  stroke="#f3f4f6"
+                  stroke="rgba(255, 255, 255, 0.05)"
                   strokeWidth="1"
                 />
                 <text
                   x={padding.left - 10}
                   y={y + 4}
                   textAnchor="end"
-                  fill="#9ca3af"
+                  fill="#71717A"
                   fontSize="11"
                   fontWeight="500"
                 >
@@ -1296,7 +1314,7 @@ function RevenueOverviewChart({
               x={pt.x}
               y={dimensions.height - 10}
               textAnchor="middle"
-              fill={isSelected ? "#111827" : "#9ca3af"}
+              fill={isSelected ? "#FFFFFF" : "#71717A"}
               fontSize="11"
               fontWeight={isSelected ? "700" : "500"}
               className="cursor-pointer transition-colors duration-150"
@@ -1310,7 +1328,7 @@ function RevenueOverviewChart({
         {/* Area fill */}
         <path d={areaPath} fill="url(#revenueYellowGradient)" />
 
-        {/* Thick golden-yellow curve with soft glow */}
+        {/* Violet curve */}
         <path
           d={curvePath}
           fill="none"
@@ -1318,7 +1336,6 @@ function RevenueOverviewChart({
           strokeWidth="3.2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          filter="url(#lineGlow)"
         />
 
         {/* Active Marker Dot & Crosshair Drop-line */}
@@ -1330,7 +1347,7 @@ function RevenueOverviewChart({
               y1={padding.top}
               x2={activePoint.x}
               y2={padding.top + chartH}
-              stroke="#e5e7eb"
+              stroke="rgba(255, 255, 255, 0.15)"
               strokeWidth="1.5"
               strokeDasharray="4 4"
             />
@@ -1341,24 +1358,24 @@ function RevenueOverviewChart({
               cy={activePoint.y}
               r="12"
               fill={primaryColor}
-              fillOpacity="0.22"
+              fillOpacity="0.25"
               className="animate-pulse"
             />
 
-            {/* Solid marker dot with black border matching Image 1 */}
+            {/* Solid marker dot with dark canvas border */}
             <circle
               cx={activePoint.x}
               cy={activePoint.y}
               r="5.5"
               fill={primaryColor}
-              stroke="#000000"
+              stroke="#17171C"
               strokeWidth="2.5"
             />
           </g>
         )}
       </svg>
 
-      {/* Floating HTML Tooltip matching Image 1 Target */}
+      {/* Floating HTML Tooltip in Elevated token with border-white/10 and rounded-[14px], no shadow */}
       {activePoint && (
         <div
           className="absolute pointer-events-none transition-all duration-150 ease-out z-20"
@@ -1368,17 +1385,17 @@ function RevenueOverviewChart({
             transform: "translate(-50%, -100%)",
           }}
         >
-          <div className="bg-white/95 backdrop-blur-md rounded-xl border border-neutral-200/90 shadow-[0_8px_20px_rgba(0,0,0,0.12)] px-3.5 py-2 text-center select-none min-w-[110px] animate-in fade-in zoom-in-95 duration-150">
-            <div className="text-[10px] font-semibold text-neutral-400 tracking-wide uppercase">
+          <div className="bg-[var(--admin-elevated)] border border-white/10 rounded-[14px] px-3.5 py-2 text-center select-none min-w-[110px] animate-in fade-in zoom-in-95 duration-150">
+            <div className="text-[10px] font-semibold text-[var(--admin-text-muted)] tracking-wide uppercase">
               {activePoint.dateStr}
             </div>
-            <div className="text-[15px] font-extrabold text-neutral-900 mt-0.5 leading-snug tracking-tight">
+            <div className="text-[15px] font-extrabold text-white mt-0.5 leading-snug tracking-tight font-heading tabular-nums">
               {metricMode === "revenue"
                 ? `₹${activePoint.value.toLocaleString("en-IN")}`
                 : `${activePoint.ordersCount} Orders`}
             </div>
             <div className="flex items-center justify-center gap-1.5 mt-0.5 text-[10px]">
-              <span className="text-neutral-500 font-medium">
+              <span className="text-[var(--admin-text-muted)] font-medium">
                 {metricMode === "revenue"
                   ? `${activePoint.ordersCount} ${activePoint.ordersCount === 1 ? "order" : "orders"}`
                   : `₹${activePoint.value.toLocaleString("en-IN")}`}
@@ -1386,7 +1403,7 @@ function RevenueOverviewChart({
               {activePoint.growthPct && (
                 <span
                   className={`font-semibold ${
-                    activePoint.growthPct.startsWith("-") ? "text-rose-600" : "text-emerald-600"
+                    activePoint.growthPct.startsWith("-") ? "text-[var(--admin-danger)]" : "text-[var(--admin-success)]"
                   }`}
                 >
                   {activePoint.growthPct}
@@ -1394,7 +1411,7 @@ function RevenueOverviewChart({
               )}
             </div>
             {/* Downward triangle caret */}
-            <div className="w-2.5 h-2.5 bg-white border-r border-b border-neutral-200/90 rotate-45 mx-auto -mb-3.5 mt-1" />
+            <div className="w-2.5 h-2.5 bg-[var(--admin-elevated)] border-r border-b border-white/10 rotate-45 mx-auto -mb-3.5 mt-1" />
           </div>
         </div>
       )}
@@ -1500,7 +1517,7 @@ function OrderStatusDonut({
           baseInnerRadius={44}
           hoveredIndex={hoveredIndex}
           onHoverChange={setHoveredIndex}
-          className="overflow-visible"
+          className="overflow-visible [--chart-track:rgba(255,255,255,0.05)]"
         >
           {ringData.map((item, index) => (
             <Ring
@@ -1514,20 +1531,20 @@ function OrderStatusDonut({
           <RingCenter
             defaultLabel="Total Orders"
             className="select-none"
-            valueClassName="text-[30px] font-black text-neutral-900 tracking-tight leading-none"
-            labelClassName="text-[10px] font-bold text-neutral-400 mt-1 uppercase tracking-widest"
+            valueClassName="text-[30px] font-black text-white tracking-tight leading-none font-heading tabular-nums"
+            labelClassName="text-[10px] font-bold text-[var(--admin-text-muted)] mt-1 uppercase tracking-widest"
           >
             {({ value, label, isHovered, data }) => (
               <div className="flex flex-col items-center justify-center pointer-events-none select-none text-center px-1">
                 <span
-                  className="text-[30px] font-black tracking-tight leading-none transition-colors duration-200"
-                  style={{ color: isHovered && data?.color ? data.color : "#111827" }}
+                  className="text-[30px] font-black tracking-tight leading-none transition-colors duration-200 font-heading tabular-nums"
+                  style={{ color: isHovered && data?.color ? data.color : "#FFFFFF" }}
                 >
                   {value}
                 </span>
                 <span
                   className="text-[10px] font-bold mt-1 tracking-wider uppercase transition-colors duration-200 whitespace-nowrap"
-                  style={{ color: isHovered && data?.color ? data.color : "#9ca3af" }}
+                  style={{ color: isHovered && data?.color ? data.color : "#71717A" }}
                 >
                   {isHovered ? label : "Total Orders"}
                 </span>
@@ -1539,7 +1556,7 @@ function OrderStatusDonut({
 
       {/* Right: Legend with title and progress bars, exactly matching Bklit reference */}
       <div className="flex-1 min-w-0 w-full">
-        <h3 className="text-[15px] font-bold text-neutral-900 mb-2.5 tracking-tight">
+        <h3 className="text-[15px] font-heading font-bold text-white mb-2.5 tracking-tight">
           Orders by Status
         </h3>
         <Legend
@@ -1550,19 +1567,22 @@ function OrderStatusDonut({
           onSelectItem={(idx) => handleSelectItem(idx)}
           className="gap-2"
         >
-          <LegendItem className="py-1.5 px-2 hover:bg-neutral-50/90 rounded-xl transition-all cursor-pointer border border-transparent hover:border-neutral-100">
+          <LegendItem
+            className="py-1.5 px-2 hover:bg-white/[0.03] rounded-[14px] transition-all cursor-pointer border border-transparent hover:border-white/5"
+            selectedClassName="bg-white/10 border-white/15 text-white"
+          >
             <div className="flex items-center justify-between w-full mb-1">
               <div className="flex items-center gap-2.5 min-w-0">
                 <LegendMarker className="w-2.5 h-2.5 shrink-0" />
-                <LegendLabel className="text-[13.5px] font-semibold text-neutral-800" />
+                <LegendLabel className="text-[13.5px] font-semibold text-white" />
               </div>
               <LegendValue
-                className="text-[13.5px] gap-4"
+                className="text-[13.5px] gap-4 text-white"
                 showPercentage={true}
-                percentageClassName="text-xs font-semibold text-neutral-400 w-12 text-right tabular-nums"
+                percentageClassName="text-xs font-semibold text-[var(--admin-text-muted)] w-12 text-right tabular-nums"
               />
             </div>
-            <LegendProgress height="h-1.5" trackClassName="bg-neutral-100" />
+            <LegendProgress height="h-1.5" trackClassName="bg-white/5" />
           </LegendItem>
         </Legend>
       </div>
@@ -1605,9 +1625,9 @@ function OrderRowMenu({
           e.stopPropagation();
           setOpen(!open);
         }}
-        className="w-8 h-8 rounded-lg border border-neutral-200/80 bg-white hover:bg-neutral-50
-          hover:border-neutral-300 flex items-center justify-center text-neutral-400 hover:text-neutral-700
-          transition-colors shadow-2xs cursor-pointer focus:outline-none"
+        className="w-8 h-8 rounded-[14px] border border-white/10 bg-[var(--admin-surface-2)] hover:bg-white/[0.05]
+          flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white
+          transition-colors cursor-pointer focus:outline-none"
         aria-label={`Actions for order ${order.id}`}
         aria-expanded={open}
       >
@@ -1616,8 +1636,8 @@ function OrderRowMenu({
 
       {open && (
         <div
-          className="absolute right-0 top-full mt-1.5 w-52 bg-white rounded-xl border
-            border-neutral-200 shadow-xl py-1.5 z-40 text-xs font-medium text-neutral-700"
+          className="absolute right-0 top-full mt-1.5 w-52 bg-[var(--admin-surface)] rounded-[14px] border
+            border-white/10 py-1.5 z-40 text-xs font-medium text-white animate-in fade-in duration-150"
           role="menu"
           onClick={(e) => e.stopPropagation()}
         >
@@ -1628,9 +1648,9 @@ function OrderRowMenu({
                 onInspectOrder(order);
               }
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-neutral-50 flex items-center gap-2 font-semibold text-neutral-900 cursor-pointer"
+            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 font-semibold text-white cursor-pointer transition-colors"
           >
-            <Eye size={13} className="text-amber-600" /> Deep Inspect Order
+            <Eye size={13} className="text-[var(--admin-primary)]" /> Deep Inspect Order
           </button>
 
           {onDownloadSlip && (
@@ -1639,9 +1659,9 @@ function OrderRowMenu({
                 setOpen(false);
                 onDownloadSlip(order);
               }}
-              className="w-full text-left px-3.5 py-1.5 hover:bg-neutral-50 flex items-center gap-2 text-neutral-700 cursor-pointer"
+              className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer transition-colors"
             >
-              <Download size={13} className="text-neutral-400" /> Download Invoice Slip
+              <Download size={13} className="text-[var(--admin-text-muted)]" /> Download Invoice Slip
             </button>
           )}
 
@@ -1651,14 +1671,14 @@ function OrderRowMenu({
                 setOpen(false);
                 onCopyId(order.id);
               }}
-              className="w-full text-left px-3.5 py-1.5 hover:bg-neutral-50 flex items-center gap-2 text-neutral-700 cursor-pointer"
+              className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer transition-colors"
             >
-              <FileSpreadsheet size={13} className="text-neutral-400" /> Copy Order ID
+              <FileSpreadsheet size={13} className="text-[var(--admin-text-muted)]" /> Copy Order ID
             </button>
           )}
 
-          <div className="my-1 border-t border-neutral-100" />
-          <div className="px-3 py-1 text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+          <div className="my-1 border-t border-white/5" />
+          <div className="px-3 py-1 text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">
             Quick Status Transition
           </div>
           <button
@@ -1666,7 +1686,7 @@ function OrderRowMenu({
               onUpdateStatus(order.id, "Delivered");
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-neutral-50 flex items-center gap-2 text-emerald-600 cursor-pointer"
+            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#00F59B] cursor-pointer transition-colors"
           >
             <CheckCircle size={13} /> Mark Delivered
           </button>
@@ -1675,7 +1695,7 @@ function OrderRowMenu({
               onUpdateStatus(order.id, "Processing");
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-neutral-50 flex items-center gap-2 text-amber-600 cursor-pointer"
+            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#F59E0B] cursor-pointer transition-colors"
           >
             <Clock size={13} /> Mark Processing
           </button>
@@ -1684,7 +1704,7 @@ function OrderRowMenu({
               onUpdateStatus(order.id, "Shipped");
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-neutral-50 flex items-center gap-2 text-blue-600 cursor-pointer"
+            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#7C3AED] cursor-pointer transition-colors"
           >
             <RotateCcw size={13} /> Mark Shipped
           </button>
@@ -1693,7 +1713,7 @@ function OrderRowMenu({
               onUpdateStatus(order.id, "Cancelled");
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-neutral-50 flex items-center gap-2 text-red-600 cursor-pointer"
+            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#FF4B55] cursor-pointer transition-colors"
           >
             <AlertTriangle size={13} /> Cancel Order
           </button>
@@ -1864,7 +1884,7 @@ function ReturnRequestsReviewModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white rounded-3xl max-w-2xl w-full my-auto shadow-2xl border border-black/10 overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-2xl w-full my-auto border border-white/10 overflow-hidden flex flex-col max-h-[90vh]"
         role="dialog"
         aria-modal="true"
         aria-label="Return Requests Review Modal"
@@ -1872,36 +1892,36 @@ function ReturnRequestsReviewModal({
       >
         {/* Toast Alert */}
         {toastMessage && (
-          <div className="bg-neutral-900 text-white px-4 py-2.5 text-xs font-semibold text-center flex items-center justify-center gap-2 animate-in slide-in-from-top duration-200">
+          <div className="bg-[var(--admin-surface)] text-white px-4 py-2.5 text-xs font-semibold text-center flex items-center justify-center gap-2 border-b border-white/5 animate-in slide-in-from-top duration-200">
             {toastMessage.type === "success" ? (
-              <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+              <CheckCircle2 size={14} className="text-[var(--admin-success)] shrink-0" />
             ) : toastMessage.type === "exchange" ? (
-              <RefreshCw size={14} className="text-amber-400 shrink-0" />
+              <RefreshCw size={14} className="text-[var(--admin-warning)] shrink-0" />
             ) : (
-              <XCircle size={14} className="text-rose-400 shrink-0" />
+              <XCircle size={14} className="text-[var(--admin-danger)] shrink-0" />
             )}
             <span>{toastMessage.text}</span>
           </div>
         )}
 
         {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/60">
+        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-[var(--admin-surface)]">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-amber-800 shrink-0 shadow-2xs">
+            <div className="w-11 h-11 rounded-[14px] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/25 flex items-center justify-center text-[var(--admin-warning)] shrink-0">
               <RotateCcw size={20} strokeWidth={2.2} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-neutral-900 tracking-tight leading-tight">
+                <h2 className="text-lg font-heading font-bold text-white tracking-tight leading-tight">
                   Return Requests Review
                 </h2>
                 {pendingRequests.length > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-200/80">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30">
                     {pendingRequests.length} Pending
                   </span>
                 )}
               </div>
-              <p className="text-xs text-neutral-500 font-normal mt-0.5">
+              <p className="text-xs text-[var(--admin-text-muted)] font-normal mt-0.5">
                 Review return reasons, approve instant refunds, or dispatch replacements
               </p>
             </div>
@@ -1909,7 +1929,7 @@ function ReturnRequestsReviewModal({
 
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-xl hover:bg-neutral-200/70 text-neutral-400 hover:text-neutral-700 flex items-center justify-center transition-colors cursor-pointer outline-none"
+            className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
             aria-label="Close modal"
           >
             <X size={18} />
@@ -1917,20 +1937,20 @@ function ReturnRequestsReviewModal({
         </div>
 
         {/* Modal Sub-Header Tabs */}
-        <div className="px-6 py-2.5 border-b border-neutral-100 bg-white flex items-center justify-between gap-3 text-xs">
+        <div className="px-6 py-2.5 border-b border-white/5 bg-[var(--admin-surface)] flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setActiveTab("pending")}
-              className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === "pending"
-                  ? "bg-amber-500 text-white shadow-xs"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/80"
+                  ? "bg-[var(--admin-primary)] text-white"
+                  : "bg-white/5 text-[var(--admin-text-muted)] hover:text-white"
               }`}
             >
               <span>Pending Review</span>
               <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                activeTab === "pending" ? "bg-amber-600 text-white" : "bg-neutral-200 text-neutral-800"
+                activeTab === "pending" ? "bg-white/20 text-white" : "bg-white/10 text-[var(--admin-text-muted)]"
               }`}>
                 {pendingRequests.length}
               </span>
@@ -1939,15 +1959,15 @@ function ReturnRequestsReviewModal({
             <button
               type="button"
               onClick={() => setActiveTab("resolved")}
-              className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === "resolved"
-                  ? "bg-neutral-900 text-white shadow-xs"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/80"
+                  ? "bg-[var(--admin-primary)] text-white"
+                  : "bg-white/5 text-[var(--admin-text-muted)] hover:text-white"
               }`}
             >
               <span>Resolved History</span>
               <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                activeTab === "resolved" ? "bg-neutral-800 text-white" : "bg-neutral-200 text-neutral-800"
+                activeTab === "resolved" ? "bg-white/20 text-white" : "bg-white/10 text-[var(--admin-text-muted)]"
               }`}>
                 {resolvedRequests.length}
               </span>
@@ -1955,24 +1975,24 @@ function ReturnRequestsReviewModal({
           </div>
 
           {activeTab === "pending" && pendingRequests.length > 0 && (
-            <div className="text-[11px] text-neutral-500 hidden sm:block">
-              Refund Exposure: <strong className="text-neutral-900 font-bold">₹{totalRefundExposure.toLocaleString("en-IN")}</strong>
+            <div className="text-[11px] text-[var(--admin-text-muted)] hidden sm:block">
+              Refund Exposure: <strong className="text-white font-heading font-bold tabular-nums">₹{totalRefundExposure.toLocaleString("en-IN")}</strong>
             </div>
           )}
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-5 flex-1 bg-neutral-50/30">
+        <div className="p-6 overflow-y-auto admin-scroll space-y-4 flex-1 bg-[var(--admin-surface-2)]">
           {activeTab === "pending" ? (
             pendingRequests.length === 0 ? (
               <div className="py-12 text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3 text-2xl shadow-xs">
+                <div className="w-16 h-16 rounded-full bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 text-[var(--admin-success)] flex items-center justify-center mx-auto mb-3 text-2xl">
                   ✓
                 </div>
-                <h3 className="text-base font-bold text-neutral-900">
+                <h3 className="text-base font-heading font-bold text-white">
                   All Return Requests Resolved!
                 </h3>
-                <p className="text-xs text-neutral-500 max-w-sm mx-auto mt-1 mb-5">
+                <p className="text-xs text-[var(--admin-text-muted)] max-w-sm mx-auto mt-1 mb-5">
                   You have reviewed and processed every customer return request. Your customer service queue is 100% up to date.
                 </p>
                 <div className="flex items-center justify-center gap-3">
@@ -1980,14 +2000,14 @@ function ReturnRequestsReviewModal({
                     <button
                       type="button"
                       onClick={() => setActiveTab("resolved")}
-                      className="px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-bold transition-all cursor-pointer"
+                      className="px-4 py-2 rounded-full bg-[var(--admin-surface)] hover:bg-white/5 border border-white/10 text-white text-xs font-bold transition-all cursor-pointer"
                     >
                       View Resolved History ({resolvedRequests.length})
                     </button>
                   )}
                   <button
                     onClick={onClose}
-                    className="px-5 py-2 rounded-xl bg-black text-white text-xs font-bold hover:bg-neutral-800 transition-all cursor-pointer shadow-xs"
+                    className="px-5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
                   >
                     Done & Return to Dashboard
                   </button>
@@ -2001,25 +2021,25 @@ function ReturnRequestsReviewModal({
                 return (
                   <div
                     key={req.orderId}
-                    className="bg-white rounded-2xl border border-neutral-200/90 shadow-2xs hover:shadow-xs transition-all overflow-hidden"
+                    className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 transition-colors overflow-hidden"
                   >
                     {/* Item Top Header */}
-                    <div className="px-5 py-3.5 bg-neutral-50/80 border-b border-neutral-100 flex flex-wrap items-center justify-between gap-2">
+                    <div className="px-5 py-3.5 bg-[var(--admin-surface-2)] border-b border-white/5 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-xs font-bold text-neutral-900 bg-white px-2.5 py-1 rounded-lg border border-neutral-200 shadow-2xs">
+                        <span className="font-mono text-xs font-bold text-white bg-white/5 px-2.5 py-1 rounded-[10px] border border-white/10">
                           {req.orderId}
                         </span>
-                        <span className="text-[11px] text-neutral-400">
-                          Requested: <strong className="text-neutral-600 font-medium">{req.requestedAt}</strong>
+                        <span className="text-[11px] text-[var(--admin-text-muted)]">
+                          Requested: <strong className="text-white/80 font-medium">{req.requestedAt}</strong>
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-warning)] animate-pulse" />
                           Pending Review
                         </span>
-                        <span className="text-sm font-extrabold text-neutral-900">
+                        <span className="text-sm font-heading font-extrabold text-white tabular-nums">
                           ₹{req.item.price.toLocaleString("en-IN")}
                         </span>
                       </div>
@@ -2027,16 +2047,16 @@ function ReturnRequestsReviewModal({
 
                     <div className="p-5 space-y-4">
                       {/* Customer Row */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-neutral-100">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
                         <div className="flex items-center gap-3">
                           <div className={`w-9 h-9 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center font-bold text-xs shrink-0`}>
                             {avatar.initial}
                           </div>
                           <div>
-                            <div className="text-xs font-bold text-neutral-900">
+                            <div className="text-xs font-bold text-white">
                               {req.customerName}
                             </div>
-                            <div className="text-[11px] text-neutral-400 truncate max-w-xs">
+                            <div className="text-[11px] text-[var(--admin-text-muted)] truncate max-w-xs">
                               {req.customerAddress}
                             </div>
                           </div>
@@ -2046,26 +2066,26 @@ function ReturnRequestsReviewModal({
                         <div className="flex items-center gap-2 shrink-0">
                           <a
                             href={`tel:${req.customerPhone.replace(/\s+/g, "")}`}
-                            className="px-2.5 py-1 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-[11px] font-semibold text-neutral-700 flex items-center gap-1 transition-colors"
+                            className="px-3 py-1 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-white/90 flex items-center gap-1 transition-colors"
                           >
-                            <Phone size={11} className="text-neutral-500" />
+                            <Phone size={11} className="text-[var(--admin-text-muted)]" />
                             <span>Call</span>
                           </a>
                           <a
                             href={`https://wa.me/${req.customerPhone.replace(/[^0-9]/g, "")}?text=Hi%20${encodeURIComponent(req.customerName)},%20this%20is%20VEYRO%20Support%20regarding%20your%20return%20request%20for%20order%20${req.orderId}.`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-2.5 py-1 rounded-lg border border-emerald-200 bg-emerald-50/80 hover:bg-emerald-100 text-[11px] font-semibold text-emerald-800 flex items-center gap-1 transition-colors"
+                            className="px-3 py-1 rounded-full border border-[var(--admin-success)]/30 bg-[var(--admin-success)]/15 hover:bg-[var(--admin-success)]/25 text-[11px] font-semibold text-[var(--admin-success)] flex items-center gap-1 transition-colors"
                           >
-                            <MessageSquare size={11} className="text-emerald-600" />
+                            <MessageSquare size={11} className="text-[var(--admin-success)]" />
                             <span>WhatsApp</span>
                           </a>
                         </div>
                       </div>
 
                       {/* Product Card Row */}
-                      <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3 rounded-xl border border-neutral-100">
-                        <div className="relative w-12 h-12 rounded-xl bg-white border border-neutral-200 overflow-hidden shrink-0">
+                      <div className="flex items-center gap-3.5 bg-[var(--admin-surface-2)] p-3 rounded-[14px] border border-white/5">
+                        <div className="relative w-12 h-12 rounded-[10px] bg-[var(--admin-surface)] border border-white/10 overflow-hidden shrink-0">
                           <Image
                             src={req.item.image}
                             alt={req.item.name}
@@ -2074,31 +2094,31 @@ function ReturnRequestsReviewModal({
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs font-bold text-neutral-900 truncate">
+                          <div className="text-xs font-bold text-white truncate">
                             {req.item.name}
                           </div>
-                          <div className="text-[11px] text-neutral-500 mt-0.5">
+                          <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
                             {req.item.details} • Qty: {req.item.quantity}
                           </div>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-xs font-bold text-neutral-900">
+                          <div className="text-xs font-heading font-bold text-white tabular-nums">
                             ₹{req.item.price.toLocaleString("en-IN")}
                           </div>
-                          <div className="text-[10px] text-neutral-400 capitalize">
+                          <div className="text-[10px] text-[var(--admin-text-muted)] capitalize">
                             {req.paymentMethod}
                           </div>
                         </div>
                       </div>
 
                       {/* Customer Return Reason Box */}
-                      <div className="bg-[#fffbeb] border border-[#fde68a] rounded-xl p-3.5 text-xs text-amber-950">
-                        <div className="flex items-center gap-1.5 font-bold text-amber-900 mb-1">
-                          <AlertTriangle size={13} className="text-amber-600 shrink-0" />
+                      <div className="bg-[var(--admin-warning)]/10 border border-[var(--admin-warning)]/20 rounded-[14px] p-3.5 text-xs text-[var(--admin-warning)]">
+                        <div className="flex items-center gap-1.5 font-bold text-[var(--admin-warning)] mb-1">
+                          <AlertTriangle size={13} className="text-[var(--admin-warning)] shrink-0" />
                           <span>Return Reason: {req.reason}</span>
                         </div>
                         {req.details && (
-                          <p className="text-[11px] text-amber-900/90 leading-relaxed pl-4 border-l-2 border-amber-400/80 ml-1 italic mt-1.5">
+                          <p className="text-[11px] text-white/80 leading-relaxed pl-4 border-l-2 border-[var(--admin-warning)]/60 ml-1 italic mt-1.5">
                             &quot;{req.details}&quot;
                           </p>
                         )}
@@ -2106,8 +2126,8 @@ function ReturnRequestsReviewModal({
 
                       {/* Reject Dialog Form */}
                       {isRejecting ? (
-                        <div className="bg-rose-50/70 border border-rose-200 rounded-xl p-3.5 space-y-3 animate-in fade-in duration-150">
-                          <div className="text-xs font-bold text-rose-900">
+                        <div className="bg-[var(--admin-danger)]/10 border border-[var(--admin-danger)]/20 rounded-[14px] p-3.5 space-y-3 animate-in fade-in duration-150">
+                          <div className="text-xs font-bold text-[var(--admin-danger)]">
                             Specify Rejection Reason:
                           </div>
                           <div className="flex flex-wrap gap-1.5">
@@ -2121,10 +2141,10 @@ function ReturnRequestsReviewModal({
                                 key={pre}
                                 type="button"
                                 onClick={() => setRejectReason(pre)}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+                                className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${
                                   rejectReason === pre
-                                    ? "bg-rose-600 text-white font-bold"
-                                    : "bg-white text-rose-800 border border-rose-200 hover:bg-rose-100"
+                                    ? "bg-[var(--admin-danger)] text-white font-bold"
+                                    : "bg-white/5 text-white/80 border border-white/10 hover:bg-white/10"
                                 }`}
                               >
                                 {pre}
@@ -2136,7 +2156,7 @@ function ReturnRequestsReviewModal({
                             value={rejectReason}
                             onChange={(e) => setRejectReason(e.target.value)}
                             placeholder="Or type a custom rejection note for customer..."
-                            className="w-full text-xs px-3 py-2 bg-white rounded-lg border border-rose-200 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                            className="w-full text-xs px-3 py-2 bg-[var(--admin-surface-2)] text-white placeholder-[var(--admin-text-muted)] rounded-[14px] border border-white/10 focus:outline-none focus:border-[var(--admin-danger)]"
                           />
                           <div className="flex items-center justify-end gap-2 pt-1">
                             <button
@@ -2145,14 +2165,14 @@ function ReturnRequestsReviewModal({
                                 setRejectingOrderId(null);
                                 setRejectReason("");
                               }}
-                              className="px-3 py-1.5 text-xs text-neutral-600 hover:text-neutral-900 font-semibold cursor-pointer"
+                              className="px-3 py-1.5 text-xs text-[var(--admin-text-muted)] hover:text-white font-semibold cursor-pointer"
                             >
                               Cancel
                             </button>
                             <button
                               type="button"
                               onClick={() => handleConfirmReject(req.orderId, req.customerName)}
-                              className="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-2xs transition-all cursor-pointer"
+                              className="px-4 py-1.5 bg-[var(--admin-danger)] hover:bg-[var(--admin-danger)]/80 text-white text-xs font-bold rounded-full transition-all cursor-pointer"
                             >
                               Confirm Rejection
                             </button>
@@ -2164,7 +2184,7 @@ function ReturnRequestsReviewModal({
                           <button
                             type="button"
                             onClick={() => handleApproveRefund(req.orderId, req.customerName, req.item.price)}
-                            className="flex-1 min-w-[170px] bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                            className="flex-1 min-w-[170px] bg-[var(--admin-success)] hover:brightness-110 text-black py-2.5 px-4 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                           >
                             <CheckCircle2 size={14} />
                             <span>Approve & Refund ₹{req.item.price.toLocaleString("en-IN")}</span>
@@ -2173,7 +2193,7 @@ function ReturnRequestsReviewModal({
                           <button
                             type="button"
                             onClick={() => handleApproveExchange(req.orderId, req.customerName)}
-                            className="bg-neutral-900 hover:bg-black text-white py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                            className="bg-[var(--admin-surface)] hover:bg-white/5 border border-white/10 text-white py-2.5 px-4 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                           >
                             <RotateCcw size={13} />
                             <span>Approve Exchange</span>
@@ -2185,7 +2205,7 @@ function ReturnRequestsReviewModal({
                               setRejectingOrderId(req.orderId);
                               setRejectReason("Item tags removed / worn");
                             }}
-                            className="bg-neutral-100 hover:bg-rose-50 hover:text-rose-700 text-neutral-600 py-2.5 px-3.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                            className="bg-[var(--admin-danger)]/15 hover:bg-[var(--admin-danger)]/25 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30 py-2.5 px-4 rounded-full text-xs font-semibold transition-colors cursor-pointer"
                           >
                             Reject
                           </button>
@@ -2199,7 +2219,7 @@ function ReturnRequestsReviewModal({
           ) : (
             /* Resolved History Tab */
             resolvedRequests.length === 0 ? (
-              <div className="py-12 text-center text-neutral-500 text-xs">
+              <div className="py-12 text-center text-[var(--admin-text-muted)] text-xs">
                 No processed returns in history yet. Review pending requests to populate audit log.
               </div>
             ) : (
@@ -2210,32 +2230,32 @@ function ReturnRequestsReviewModal({
                 return (
                   <div
                     key={req.orderId}
-                    className="bg-white rounded-2xl border border-neutral-200/90 shadow-2xs p-4 space-y-3"
+                    className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4 space-y-3"
                   >
-                    <div className="flex items-center justify-between gap-2 border-b border-neutral-100 pb-3">
+                    <div className="flex items-center justify-between gap-2 border-b border-white/5 pb-3">
                       <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-xs font-bold text-neutral-900 bg-neutral-50 px-2 py-0.5 rounded border border-neutral-200">
+                        <span className="font-mono text-xs font-bold text-white bg-white/5 px-2 py-0.5 rounded-[8px] border border-white/10">
                           {req.orderId}
                         </span>
-                        <span className="text-xs font-semibold text-neutral-900">
+                        <span className="text-xs font-semibold text-white">
                           {req.customerName}
                         </span>
                       </div>
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
                           isApproved
-                            ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                            : "bg-rose-50 text-rose-800 border border-rose-200"
+                            ? "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border border-[var(--admin-success)]/30"
+                            : "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30"
                         }`}
                       >
                         {isApproved ? (
                           <>
-                            <CheckCircle2 size={12} className="text-emerald-600" />
+                            <CheckCircle2 size={12} className="text-[var(--admin-success)]" />
                             <span>Approved</span>
                           </>
                         ) : (
                           <>
-                            <XCircle size={12} className="text-rose-600" />
+                            <XCircle size={12} className="text-[var(--admin-danger)]" />
                             <span>Rejected</span>
                           </>
                         )}
@@ -2243,17 +2263,17 @@ function ReturnRequestsReviewModal({
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-neutral-200">
+                      <div className="relative w-10 h-10 rounded-[10px] overflow-hidden bg-[var(--admin-surface-2)] shrink-0 border border-white/10">
                         <Image src={req.item.image} alt={req.item.name} fill className="object-cover" />
                       </div>
                       <div className="min-w-0 flex-1 text-xs">
-                        <div className="font-bold text-neutral-900 truncate">{req.item.name}</div>
-                        <div className="text-neutral-500 text-[11px]">{req.item.details} • ₹{req.item.price.toLocaleString("en-IN")}</div>
+                        <div className="font-bold text-white truncate">{req.item.name}</div>
+                        <div className="text-[var(--admin-text-muted)] text-[11px]">{req.item.details} • ₹{req.item.price.toLocaleString("en-IN")}</div>
                       </div>
                     </div>
 
-                    <div className="text-[11px] bg-neutral-50 p-2.5 rounded-xl border border-neutral-100 text-neutral-700">
-                      <span className="font-semibold text-neutral-900">Resolution Note: </span>
+                    <div className="text-[11px] bg-[var(--admin-surface-2)] p-2.5 rounded-[10px] border border-white/5 text-[var(--admin-text-muted)]">
+                      <span className="font-semibold text-white">Resolution Note: </span>
                       {req.details || "Processed by administrator"}
                     </div>
                   </div>
@@ -2264,18 +2284,18 @@ function ReturnRequestsReviewModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-neutral-100 bg-neutral-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="text-neutral-500">
+        <div className="px-6 py-4 border-t border-white/5 bg-[var(--admin-surface)] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="text-[var(--admin-text-muted)]">
             {pendingRequests.length > 0 ? (
               <>
                 Total pending refund exposure:{" "}
-                <strong className="text-neutral-900 font-bold">
+                <strong className="text-white font-heading font-bold tabular-nums">
                   ₹{totalRefundExposure.toLocaleString("en-IN")}
                 </strong>{" "}
                 across {pendingRequests.length} item{pendingRequests.length === 1 ? "" : "s"}
               </>
             ) : (
-              <span className="text-emerald-700 font-semibold">
+              <span className="text-[var(--admin-success)] font-semibold">
                 ✓ All customer returns processed &amp; synchronized.
               </span>
             )}
@@ -2283,7 +2303,7 @@ function ReturnRequestsReviewModal({
           <Link
             href="/admin/orders"
             onClick={onClose}
-            className="text-amber-800 hover:text-amber-950 font-bold flex items-center gap-1 hover:underline"
+            className="text-[var(--admin-primary)] hover:underline font-bold flex items-center gap-1"
           >
             <span>View Full Orders Manager</span>
             <ArrowRight size={13} />
@@ -2541,13 +2561,13 @@ function ProductPerformanceModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white rounded-[26px] shadow-2xl border border-black/[0.06] max-w-3xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
+        className="bg-[var(--admin-elevated)] rounded-[28px] border border-white/10 max-w-3xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-b from-neutral-50/80 to-white border-b border-black/[0.05] flex items-center justify-between gap-4">
+        <div className="p-5 sm:p-6 bg-[var(--admin-surface)] border-b border-white/5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
-            <div className="w-14 h-14 rounded-2xl bg-neutral-100 border border-neutral-200/80 overflow-hidden shrink-0 shadow-2xs relative">
+            <div className="w-14 h-14 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 overflow-hidden shrink-0 relative">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
@@ -2558,28 +2578,28 @@ function ProductPerformanceModal({
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">
+                <span className="text-[11px] font-black uppercase tracking-wider bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30 px-2.5 py-0.5 rounded-full">
                   #{product.rank} Best Seller
                 </span>
-                <span className="text-[11px] font-medium text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-md">
+                <span className="text-[11px] font-medium text-[var(--admin-text-muted)] bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">
                   {product.sku}
                 </span>
-                <span className="text-[11px] font-semibold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-md">
+                <span className="text-[11px] font-semibold text-white/90 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">
                   {product.category}
                 </span>
                 {product.stock <= 10 ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md">
-                    <AlertTriangle size={12} strokeWidth={2.4} className="text-amber-600 shrink-0" />
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--admin-danger)] bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 px-2.5 py-0.5 rounded-full">
+                    <AlertTriangle size={12} strokeWidth={2.4} className="text-[var(--admin-danger)] shrink-0" />
                     Low Stock ({product.stock} left)
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-md">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--admin-success)] bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 px-2.5 py-0.5 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-success)] shrink-0" />
                     {product.stock} in warehouse
                   </span>
                 )}
               </div>
-              <h2 className="text-lg sm:text-xl font-bold text-neutral-900 truncate">
+              <h2 className="text-lg sm:text-xl font-heading font-bold text-white truncate">
                 {product.name}
               </h2>
             </div>
@@ -2588,7 +2608,7 @@ function ProductPerformanceModal({
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={onClose}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold transition-all cursor-pointer"
               title="Return to Leaderboard (Esc)"
             >
               <ArrowLeft size={13} />
@@ -2599,7 +2619,7 @@ function ProductPerformanceModal({
               href={`/product/${liveStoreSlug || product.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-semibold transition-all cursor-pointer"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold transition-all cursor-pointer"
               title="Open customer view in store"
             >
               <span>Live Store</span>
@@ -2608,7 +2628,7 @@ function ProductPerformanceModal({
 
             <button
               onClick={handleDownloadCSV}
-              className="p-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition-colors cursor-pointer"
+              className="p-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
               title="Export CSV Report"
             >
               <FileSpreadsheet size={16} />
@@ -2616,7 +2636,7 @@ function ProductPerformanceModal({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 transition-colors cursor-pointer"
+              className="p-2 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
               title="Close (Esc)"
             >
               <X size={18} />
@@ -2625,69 +2645,69 @@ function ProductPerformanceModal({
         </div>
 
         {/* 4-Card Hero Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-5 sm:p-6 bg-[#faf9f6]/60 border-b border-black/[0.04]">
-          <div className="bg-white p-3.5 rounded-2xl border border-black/[0.04] shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 text-xs font-medium mb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-5 sm:p-6 bg-[var(--admin-surface-2)] border-b border-white/5">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
               <span>Gross Revenue</span>
-              <IndianRupee size={13} className="text-amber-600" />
+              <IndianRupee size={13} className="text-[var(--admin-warning)]" />
             </div>
-            <div className="text-base sm:text-lg font-bold text-neutral-900">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
               ₹{product.revenue.toLocaleString("en-IN")}
             </div>
-            <div className="text-[11px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-0.5">
+            <div className="text-[11px] text-[var(--admin-success)] font-semibold mt-0.5 flex items-center gap-0.5">
               <TrendingUp size={11} />
               <span>+{product.growth}% vs prev</span>
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-black/[0.04] shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 text-xs font-medium mb-1">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
               <span>Units Sold</span>
-              <Package size={13} className="text-blue-600" />
+              <Package size={13} className="text-[var(--admin-info)]" />
             </div>
-            <div className="text-base sm:text-lg font-bold text-neutral-900">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
               {product.soldCount} units
             </div>
-            <div className="text-[11px] text-neutral-500 font-normal mt-0.5">
+            <div className="text-[11px] text-[var(--admin-text-muted)] font-normal mt-0.5">
               ~{(product.soldCount / 30).toFixed(1)} units/day
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-black/[0.04] shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 text-xs font-medium mb-1">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
               <span>Unit Margin</span>
-              <Percent size={13} className="text-emerald-600" />
+              <Percent size={13} className="text-[var(--admin-success)]" />
             </div>
-            <div className="text-base sm:text-lg font-bold text-neutral-900">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
               {product.marginPercent}%
             </div>
-            <div className="text-[11px] text-neutral-500 font-normal mt-0.5">
+            <div className="text-[11px] text-[var(--admin-text-muted)] font-normal mt-0.5">
               Cost: ₹{product.cogs} • Price: ₹{product.unitPrice}
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-black/[0.04] shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 text-xs font-medium mb-1">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
               <span>Warehouse Stock</span>
-              <Boxes size={13} className="text-purple-600" />
+              <Boxes size={13} className="text-[var(--admin-primary)]" />
             </div>
-            <div className="text-base sm:text-lg font-bold text-neutral-900">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
               {product.stock} units
             </div>
-            <div className="text-[11px] text-neutral-500 font-normal mt-0.5">
+            <div className="text-[11px] text-[var(--admin-text-muted)] font-normal mt-0.5">
               ~{Math.max(4, Math.round(product.stock / 1.4))} days supply
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-black/[0.05] px-6 bg-white gap-2">
+        <div className="flex border-b border-white/5 px-6 bg-[var(--admin-surface)] gap-2">
           <button
             onClick={() => setActiveTab("variants")}
             className={`py-3 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "variants"
-                ? "border-amber-600 text-amber-900"
-                : "border-transparent text-neutral-400 hover:text-neutral-700"
+                ? "border-[var(--admin-primary)] text-white"
+                : "border-transparent text-[var(--admin-text-muted)] hover:text-white"
             }`}
           >
             <Layers size={13} />
@@ -2698,8 +2718,8 @@ function ProductPerformanceModal({
             onClick={() => setActiveTab("orders")}
             className={`py-3 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "orders"
-                ? "border-amber-600 text-amber-900"
-                : "border-transparent text-neutral-400 hover:text-neutral-700"
+                ? "border-[var(--admin-primary)] text-white"
+                : "border-transparent text-[var(--admin-text-muted)] hover:text-white"
             }`}
           >
             <ShoppingCart size={13} />
@@ -2710,8 +2730,8 @@ function ProductPerformanceModal({
             onClick={() => setActiveTab("actions")}
             className={`py-3 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "actions"
-                ? "border-amber-600 text-amber-900"
-                : "border-transparent text-neutral-400 hover:text-neutral-700"
+                ? "border-[var(--admin-primary)] text-white"
+                : "border-transparent text-[var(--admin-text-muted)] hover:text-white"
             }`}
           >
             <SlidersHorizontal size={13} />
@@ -2720,12 +2740,12 @@ function ProductPerformanceModal({
         </div>
 
         {/* Tab Content */}
-        <div className="p-5 sm:p-6 overflow-y-auto flex-1 min-h-0 bg-white space-y-4 overscroll-contain admin-scroll-container">
+        <div className="p-5 sm:p-6 overflow-y-auto admin-scroll flex-1 min-h-0 bg-[var(--admin-surface-2)] space-y-4 overscroll-contain">
           {activeTab === "variants" && (
             <div className="space-y-4">
-              <div className="border border-neutral-100 rounded-2xl overflow-hidden shadow-2xs">
+              <div className="border border-white/5 rounded-[14px] overflow-hidden bg-[var(--admin-surface)]">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-neutral-50/80 text-neutral-400 font-semibold border-b border-neutral-100">
+                  <thead className="bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] font-semibold border-b border-white/5">
                     <tr>
                       <th className="py-2.5 px-4">Variant / Size</th>
                       <th className="py-2.5 px-4 text-center">Share</th>
@@ -2734,45 +2754,45 @@ function ProductPerformanceModal({
                       <th className="py-2.5 px-4 text-right">Available Stock</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100">
+                  <tbody className="divide-y divide-white/5">
                     {product.variants.map((v) => {
                       const sharePct = product.soldCount > 0 ? Math.round((v.sold / product.soldCount) * 100) : 0;
                       return (
-                        <tr key={v.size} className="hover:bg-neutral-50/50 transition-colors">
-                          <td className="py-3 px-4 font-semibold text-neutral-900 flex items-center gap-2">
+                        <tr key={v.size} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3 px-4 font-semibold text-white flex items-center gap-2">
                             <span>{v.size}</span>
                             {v.isBestseller && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded-md">
-                                <Sparkles size={10} className="text-amber-700" />
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--admin-warning)] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 px-2 py-0.5 rounded-full">
+                                <Sparkles size={10} className="text-[var(--admin-warning)]" />
                                 <span>Bestseller Size</span>
                               </span>
                             )}
                           </td>
                           <td className="py-3 px-4 text-center">
                             <div className="flex items-center justify-center gap-1.5">
-                              <div className="w-16 bg-neutral-100 h-1.5 rounded-full overflow-hidden">
+                              <div className="w-16 bg-white/5 h-1.5 rounded-full overflow-hidden">
                                 <div
-                                  className="h-full bg-amber-500 rounded-full"
+                                  className="h-full bg-[var(--admin-warning)] rounded-full"
                                   style={{ width: `${sharePct}%` }}
                                 />
                               </div>
-                              <span className="text-[11px] text-neutral-500 font-medium">{sharePct}%</span>
+                              <span className="text-[11px] text-[var(--admin-text-muted)] font-medium tabular-nums">{sharePct}%</span>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-center font-bold text-neutral-800">
+                          <td className="py-3 px-4 text-center font-bold text-white tabular-nums">
                             {v.sold}
                           </td>
-                          <td className="py-3 px-4 text-right font-bold text-neutral-900">
+                          <td className="py-3 px-4 text-right font-bold text-white tabular-nums">
                             ₹{v.revenue.toLocaleString("en-IN")}
                           </td>
                           <td className="py-3 px-4 text-right">
                             <span
-                              className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${
+                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                                 v.stock <= 4
-                                  ? "bg-rose-50 text-rose-700 border border-rose-200/50"
+                                  ? "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30"
                                   : v.stock <= 8
-                                  ? "bg-amber-50 text-amber-700 border border-amber-200/50"
-                                  : "bg-emerald-50 text-emerald-700"
+                                  ? "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30"
+                                  : "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border border-[var(--admin-success)]/30"
                               }`}
                             >
                               {v.stock} in stock
@@ -2786,24 +2806,24 @@ function ProductPerformanceModal({
               </div>
 
               {/* Quality & Return benchmark pill */}
-              <div className="p-4 rounded-2xl bg-[#fff8e7]/70 border border-amber-200/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <div className="p-4 rounded-[14px] bg-[var(--admin-surface)] border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-[10px] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 text-[var(--admin-warning)] flex items-center justify-center shrink-0">
                     <ShieldCheck size={18} />
                   </div>
                   <div>
-                    <div className="font-bold text-neutral-900">
+                    <div className="font-heading font-bold text-white">
                       Exceptional Retail Quality Rating
                     </div>
-                    <div className="text-neutral-500 text-[11px] mt-0.5">
-                      Return Rate: <strong className="text-neutral-800">{product.returnRate}%</strong> (Standard apparel baseline: 8.5%) • Verified Rating: <strong className="text-neutral-800">★ {product.rating} / 5.0</strong> ({product.reviewCount} customer reviews)
+                    <div className="text-[var(--admin-text-muted)] text-[11px] mt-0.5">
+                      Return Rate: <strong className="text-white">{product.returnRate}%</strong> (Standard apparel baseline: 8.5%) • Verified Rating: <strong className="text-white">★ {product.rating} / 5.0</strong> ({product.reviewCount} customer reviews)
                     </div>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={handleDownloadCSV}
-                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-50 border border-amber-300 text-amber-900 font-semibold text-xs transition-all shadow-2xs cursor-pointer shrink-0"
+                  className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white font-semibold text-xs transition-all cursor-pointer shrink-0"
                 >
                   Export Size Metrics (CSV)
                 </button>
@@ -2817,46 +2837,46 @@ function ProductPerformanceModal({
                 matchingOrders.map((order) => (
                   <div
                     key={order.id}
-                    className="p-3.5 rounded-2xl border border-neutral-100 bg-neutral-50/40 hover:bg-neutral-50 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                    className="p-3.5 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] hover:border-white/10 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-neutral-900">
+                        <span className="font-mono text-xs font-bold text-white">
                           {order.id}
                         </span>
-                        <span className="text-[11px] text-neutral-500">
+                        <span className="text-[11px] text-[var(--admin-text-muted)]">
                           • {order.date}
                         </span>
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.2 rounded-md ${
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                             order.status === "Delivered"
-                              ? "bg-emerald-100 text-emerald-800"
+                              ? "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border border-[var(--admin-success)]/30"
                               : order.status === "Shipped"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-amber-100 text-amber-800"
+                              ? "bg-[var(--admin-info)]/15 text-[var(--admin-info)] border border-[var(--admin-info)]/30"
+                              : "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30"
                           }`}
                         >
                           {order.status}
                         </span>
                       </div>
-                      <div className="text-xs text-neutral-600 mt-1">
-                        Customer: <strong className="text-neutral-800">{order.shippingAddress?.name || "Verified Buyer"}</strong> • {order.shippingAddress?.address || "Chennai Hub"}
+                      <div className="text-xs text-[var(--admin-text-muted)] mt-1">
+                        Customer: <strong className="text-white">{order.shippingAddress?.name || "Verified Buyer"}</strong> • {order.shippingAddress?.address || "Chennai Hub"}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-3 self-end sm:self-center">
                       <div className="text-right">
-                        <span className="text-xs font-bold text-neutral-900 block">
+                        <span className="text-xs font-heading font-bold text-white block tabular-nums">
                           ₹{order.total.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-[10px] text-neutral-400">
+                        <span className="text-[10px] text-[var(--admin-text-muted)]">
                           {order.itemsCount} item{order.itemsCount === 1 ? "" : "s"}
                         </span>
                       </div>
                       <Link
                         href={`/orders/${order.id}`}
                         target="_blank"
-                        className="px-2.5 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold transition-colors"
+                        className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold transition-colors"
                       >
                         Inspect
                       </Link>
@@ -2864,12 +2884,12 @@ function ProductPerformanceModal({
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center bg-neutral-50/50 rounded-2xl border border-dashed border-neutral-200">
-                  <Package size={24} className="mx-auto text-neutral-300 mb-2" />
-                  <p className="text-xs font-semibold text-neutral-700">
+                <div className="py-8 text-center bg-[var(--admin-surface)] rounded-[14px] border border-dashed border-white/10">
+                  <Package size={24} className="mx-auto text-[var(--admin-text-muted)] mb-2" />
+                  <p className="text-xs font-semibold text-white">
                     No active demo order matching {product.name}
                   </p>
-                  <p className="text-[11px] text-neutral-400 max-w-sm mx-auto mt-0.5">
+                  <p className="text-[11px] text-[var(--admin-text-muted)] max-w-sm mx-auto mt-0.5">
                     Orders created in the storefront will automatically link and populate here in real-time.
                   </p>
                 </div>
@@ -2880,54 +2900,54 @@ function ProductPerformanceModal({
           {activeTab === "actions" && (
             <div className="space-y-5">
               {/* Quick Restock Tool */}
-              <div className="p-4 rounded-2xl border border-neutral-100 bg-neutral-50/50 space-y-3">
+              <div className="p-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="font-bold text-xs text-neutral-900 flex items-center gap-1.5">
-                    <Boxes size={14} className="text-amber-600" />
+                  <div className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
+                    <Boxes size={14} className="text-[var(--admin-warning)]" />
                     <span>Quick Warehouse Restock</span>
                   </div>
-                  <span className="text-[11px] text-neutral-500">
-                    Current Inventory: <strong>{product.stock} units</strong>
+                  <span className="text-[11px] text-[var(--admin-text-muted)]">
+                    Current Inventory: <strong className="text-white">{product.stock} units</strong>
                   </span>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1 bg-white border border-neutral-200 rounded-xl px-3 py-1.5 shadow-2xs">
-                    <span className="text-xs text-neutral-400 font-medium">New Stock:</span>
+                  <div className="flex items-center gap-1 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] px-3 py-1.5">
+                    <span className="text-xs text-[var(--admin-text-muted)] font-medium">New Stock:</span>
                     <input
                       type="number"
                       min={0}
                       value={stockInput}
                       onChange={(e) => setStockInput(Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-16 text-xs font-bold text-neutral-900 outline-none"
+                      className="w-16 text-xs font-bold text-white bg-transparent outline-none tabular-nums"
                     />
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setStockInput((s) => s + 10)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-xs font-semibold text-neutral-700 shadow-2xs cursor-pointer transition-all"
+                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
                   >
                     +10
                   </button>
                   <button
                     type="button"
                     onClick={() => setStockInput((s) => s + 25)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-xs font-semibold text-neutral-700 shadow-2xs cursor-pointer transition-all"
+                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
                   >
                     +25
                   </button>
                   <button
                     type="button"
                     onClick={() => setStockInput((s) => s + 50)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-xs font-semibold text-neutral-700 shadow-2xs cursor-pointer transition-all"
+                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
                   >
                     +50
                   </button>
                   <button
                     type="button"
                     onClick={() => setStockInput((s) => s + 100)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-xs font-semibold text-neutral-700 shadow-2xs cursor-pointer transition-all"
+                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
                   >
                     +100
                   </button>
@@ -2935,7 +2955,7 @@ function ProductPerformanceModal({
                   <button
                     type="button"
                     onClick={handleStockSave}
-                    className="ml-auto px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="ml-auto px-4 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
                   >
                     Save Stock Update
                   </button>
@@ -2943,44 +2963,44 @@ function ProductPerformanceModal({
               </div>
 
               {/* Price & Margin Adjustment */}
-              <div className="p-4 rounded-2xl border border-neutral-100 bg-neutral-50/50 space-y-3">
+              <div className="p-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="font-bold text-xs text-neutral-900 flex items-center gap-1.5">
-                    <Tag size={14} className="text-amber-600" />
+                  <div className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
+                    <Tag size={14} className="text-[var(--admin-warning)]" />
                     <span>Price &amp; Margin Optimizer</span>
                   </div>
-                  <span className="text-[11px] text-neutral-500">
-                    Unit Cost: <strong>₹{product.cogs}</strong>
+                  <span className="text-[11px] text-[var(--admin-text-muted)]">
+                    Unit Cost: <strong className="text-white">₹{product.cogs}</strong>
                   </span>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-1.5 bg-white border border-neutral-200 rounded-xl px-3 py-1.5 shadow-2xs">
-                    <span className="text-xs text-neutral-400 font-medium">₹</span>
+                  <div className="flex items-center gap-1.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] px-3 py-1.5">
+                    <span className="text-xs text-[var(--admin-text-muted)] font-medium">₹</span>
                     <input
                       type="number"
                       min={product.cogs}
                       step={50}
                       value={priceInput}
                       onChange={(e) => setPriceInput(Math.max(1, parseInt(e.target.value) || 0))}
-                      className="w-20 text-xs font-bold text-neutral-900 outline-none"
+                      className="w-20 text-xs font-bold text-white bg-transparent outline-none tabular-nums"
                     />
                   </div>
 
-                  <div className="text-xs text-neutral-600">
+                  <div className="text-xs text-[var(--admin-text-muted)]">
                     Gross Margin:{" "}
                     <strong
-                      className={`font-bold ${
+                      className={`font-bold tabular-nums ${
                         simulatedMargin >= 50
-                          ? "text-emerald-600"
+                          ? "text-[var(--admin-success)]"
                           : simulatedMargin >= 30
-                          ? "text-amber-600"
-                          : "text-rose-600"
+                          ? "text-[var(--admin-warning)]"
+                          : "text-[var(--admin-danger)]"
                       }`}
                     >
                       {simulatedMargin}%
                     </strong>
-                    <span className="text-neutral-400 text-[11px] ml-1">
+                    <span className="text-[var(--admin-text-muted)] text-[11px] ml-1">
                       (Profit: ₹{Math.max(0, priceInput - product.cogs)}/unit)
                     </span>
                   </div>
@@ -2988,7 +3008,7 @@ function ProductPerformanceModal({
                   <button
                     type="button"
                     onClick={handlePriceSave}
-                    className="ml-auto px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="ml-auto px-4 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
                   >
                     Apply New Price
                   </button>
@@ -2996,19 +3016,19 @@ function ProductPerformanceModal({
               </div>
 
               {/* Download Report button */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-amber-50/60 border border-amber-200/50">
+              <div className="flex items-center justify-between p-4 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
                 <div>
-                  <div className="text-xs font-bold text-amber-950">
+                  <div className="text-xs font-heading font-bold text-white">
                     Export Comprehensive Product Audit
                   </div>
-                  <div className="text-[11px] text-amber-800/80 mt-0.5">
+                  <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
                     Download full sales history, variant distributions, and inventory margins in CSV format.
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={handleDownloadCSV}
-                  className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <Download size={13} />
                   <span>Download .CSV</span>
@@ -3019,14 +3039,14 @@ function ProductPerformanceModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 sm:p-5 bg-neutral-50/80 border-t border-black/[0.05] flex items-center justify-between text-xs">
-          <span className="text-neutral-400">
+        <div className="p-4 sm:p-5 bg-[var(--admin-surface)] border-t border-white/5 flex items-center justify-between text-xs">
+          <span className="text-[var(--admin-text-muted)]">
             Last updated: Today, 04:00 PM • VEYRO Analytics Engine
           </span>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold transition-all cursor-pointer"
+            className="px-5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white font-bold transition-all cursor-pointer"
           >
             Done
           </button>
@@ -3123,25 +3143,25 @@ function AllTopProductsModal({
         }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white rounded-[26px] shadow-2xl border border-black/[0.06] max-w-5xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
+        className="bg-[var(--admin-elevated)] rounded-[28px] border border-white/10 max-w-5xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-b from-[#faf9f6] to-white border-b border-black/[0.05] flex items-center justify-between gap-4">
+        <div className="p-5 sm:p-6 bg-[var(--admin-surface)] border-b border-white/5 flex items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-[#fff8e7] text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
+            <div className="w-11 h-11 rounded-[14px] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 text-[var(--admin-warning)] flex items-center justify-center shrink-0">
               <Award size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl font-bold text-neutral-900 leading-tight">
+                <h2 className="text-lg sm:text-xl font-heading font-bold text-white leading-tight">
                   Top Products Leaderboard
                 </h2>
-                <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full capitalize">
+                <span className="text-[11px] font-bold text-[var(--admin-warning)] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 px-2.5 py-0.5 rounded-full capitalize">
                   {timeframe}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400 mt-0.5">
+              <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">
                 Complete retail performance, units moved, gross margin analysis, and stock health
               </p>
             </div>
@@ -3150,7 +3170,7 @@ function AllTopProductsModal({
           <div className="flex items-center gap-2">
             <button
               onClick={onExportAllCSV}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
             >
               <FileSpreadsheet size={14} />
               <span>Export CSV</span>
@@ -3158,7 +3178,8 @@ function AllTopProductsModal({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
+              aria-label="Close modal"
             >
               <X size={18} />
             </button>
@@ -3166,16 +3187,16 @@ function AllTopProductsModal({
         </div>
 
         {/* Filters Bar */}
-        <div className="p-4 sm:p-5 border-b border-black/[0.04] bg-neutral-50/50 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="p-4 sm:p-5 border-b border-white/5 bg-[var(--admin-surface-2)] flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
           {/* Search */}
           <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search product name, SKU, category..."
-              className="w-full pl-9 pr-3 py-2 bg-white rounded-xl border border-neutral-200 text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-amber-600 shadow-2xs"
+              className="w-full pl-9 pr-3 py-2 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 text-xs text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
             />
           </div>
 
@@ -3186,10 +3207,10 @@ function AllTopProductsModal({
                 key={cat}
                 type="button"
                 onClick={() => setCategoryFilter(cat)}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   categoryFilter === cat
-                    ? "bg-amber-100 text-amber-950 font-bold shadow-2xs"
-                    : "bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200/60"
+                    ? "bg-[var(--admin-primary)] text-white"
+                    : "bg-white/5 text-[var(--admin-text-muted)] hover:text-white border border-white/10 hover:bg-white/10"
                 }`}
               >
                 {cat === "all" ? "All Categories" : cat}
@@ -3201,8 +3222,8 @@ function AllTopProductsModal({
           <div className="flex items-center gap-2">
             <select
               value={stockFilter}
-              onChange={(e) => setStockFilter(e.target.value as any)}
-              className="px-2.5 py-1.5 bg-white border border-neutral-200 rounded-xl text-neutral-700 text-xs font-medium outline-none shadow-2xs"
+              onChange={(e) => setStockFilter(e.target.value as "all" | "in_stock" | "low_stock")}
+              className="px-3 py-1.5 bg-[var(--admin-surface)] border border-white/10 rounded-[14px] text-white text-xs font-medium outline-none focus:border-[var(--admin-primary)]"
             >
               <option value="all">All Inventory</option>
               <option value="in_stock">Healthy Stock (10+)</option>
@@ -3211,8 +3232,8 @@ function AllTopProductsModal({
 
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-2.5 py-1.5 bg-white border border-neutral-200 rounded-xl text-neutral-700 text-xs font-semibold outline-none shadow-2xs"
+              onChange={(e) => setSortBy(e.target.value as "revenue" | "units" | "margin" | "growth")}
+              className="px-3 py-1.5 bg-[var(--admin-surface)] border border-white/10 rounded-[14px] text-white text-xs font-semibold outline-none focus:border-[var(--admin-primary)]"
             >
               <option value="revenue">Sort: Highest Revenue</option>
               <option value="units">Sort: Most Units Sold</option>
@@ -3223,22 +3244,22 @@ function AllTopProductsModal({
         </div>
 
         {/* Leaderboard Table */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 admin-scroll-container overscroll-contain">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-neutral-50/80 text-neutral-400 font-semibold border-b border-neutral-100">
+        <div className="overflow-y-auto admin-scroll flex-1 min-h-0 overscroll-contain bg-[var(--admin-surface-2)]">
+          <table className="w-full text-left text-xs [border-collapse:separate] [border-spacing:0]" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+            <thead className="text-[var(--admin-text-muted)] font-semibold select-none">
               <tr>
-                <th className="py-2.5 px-3 w-12 text-center">Rank</th>
-                <th className="py-2.5 px-3">Product</th>
-                <th className="py-2.5 px-3">Category</th>
-                <th className="py-2.5 px-3 text-center">Units Sold</th>
-                <th className="py-2.5 px-3 text-right">Price / Cost</th>
-                <th className="py-2.5 px-3 text-right">Total Revenue</th>
-                <th className="py-2.5 px-3 text-center">Margin</th>
-                <th className="py-2.5 px-3 text-right">Stock</th>
-                <th className="py-2.5 px-3 text-center">Action</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 pl-6 pr-3 w-14 text-center">Rank</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3">Product</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3">Category</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-center">Units Sold</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-right">Price / Cost</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-right">Total Revenue</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-center">Margin</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-right">Stock</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 pl-3 pr-6 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-white/5">
               {filtered.map((item, idx) => {
                 const barWidth = Math.round((item.revenue / maxRevenue) * 100);
                 return (
@@ -3247,29 +3268,29 @@ function AllTopProductsModal({
                     onClick={() => {
                       onSelectProduct(item);
                     }}
-                    className="hover:bg-amber-50/70 transition-colors group cursor-pointer"
+                    className="hover:bg-white/[0.03] transition-colors group cursor-pointer border-b border-white/5"
                   >
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3 pl-6 pr-3 text-center">
                       {idx === 0 ? (
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 text-white inline-flex items-center justify-center font-black text-[11px] shadow-xs">
+                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white inline-flex items-center justify-center font-black text-[11px]">
                           1
                         </span>
                       ) : idx === 1 ? (
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-300 to-slate-500 text-white inline-flex items-center justify-center font-black text-[11px] shadow-xs">
+                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 text-white inline-flex items-center justify-center font-black text-[11px]">
                           2
                         </span>
                       ) : idx === 2 ? (
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-700 to-yellow-800 text-white inline-flex items-center justify-center font-black text-[11px] shadow-xs">
+                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 text-white inline-flex items-center justify-center font-black text-[11px]">
                           3
                         </span>
                       ) : (
-                        <span className="text-xs font-bold text-neutral-400">{idx + 1}</span>
+                        <span className="text-xs font-bold text-[var(--admin-text-muted)] tabular-nums">{idx + 1}</span>
                       )}
                     </td>
 
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-neutral-50 border border-neutral-100 overflow-hidden shrink-0">
+                        <div className="w-10 h-10 rounded-[10px] bg-[var(--admin-surface)] border border-white/10 overflow-hidden shrink-0">
                           <Image
                             src={item.imageUrl}
                             alt={item.name}
@@ -3279,10 +3300,10 @@ function AllTopProductsModal({
                           />
                         </div>
                         <div className="min-w-0">
-                          <div className="font-bold text-neutral-900 group-hover:text-amber-800 transition-colors truncate">
+                          <div className="font-bold text-white group-hover:text-[var(--admin-primary)] transition-colors truncate">
                             {item.name}
                           </div>
-                          <div className="text-[10px] text-neutral-400 font-mono">
+                          <div className="text-[10px] text-[var(--admin-text-muted)] font-mono">
                             {item.sku}
                           </div>
                         </div>
@@ -3290,63 +3311,63 @@ function AllTopProductsModal({
                     </td>
 
                     <td className="py-3 px-3">
-                      <span className="text-[11px] font-medium text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-md">
+                      <span className="text-[11px] font-medium text-white/80 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">
                         {item.category}
                       </span>
                     </td>
 
                     <td className="py-3 px-3 text-center">
-                      <div className="font-bold text-neutral-900">{item.soldCount}</div>
-                      <div className="w-16 bg-neutral-100 h-1 rounded-full mx-auto mt-1 overflow-hidden">
+                      <div className="font-heading font-bold text-white tabular-nums">{item.soldCount}</div>
+                      <div className="w-16 bg-white/10 h-1 rounded-full mx-auto mt-1 overflow-hidden">
                         <div
-                          className="h-full bg-amber-500 rounded-full"
+                          className="h-full bg-[var(--admin-primary)] rounded-full"
                           style={{ width: `${barWidth}%` }}
                         />
                       </div>
                     </td>
 
                     <td className="py-3 px-3 text-right">
-                      <div className="font-bold text-neutral-900">
+                      <div className="font-heading font-bold text-white tabular-nums">
                         ₹{item.unitPrice.toLocaleString("en-IN")}
                       </div>
-                      <div className="text-[10px] text-neutral-400">
+                      <div className="text-[10px] text-[var(--admin-text-muted)] tabular-nums">
                         Cost: ₹{item.cogs}
                       </div>
                     </td>
 
                     <td className="py-3 px-3 text-right">
-                      <div className="font-bold text-neutral-900">
+                      <div className="font-heading font-bold text-white tabular-nums">
                         ₹{item.revenue.toLocaleString("en-IN")}
                       </div>
-                      <div className="text-[10px] text-emerald-600 font-semibold">
+                      <div className="text-[10px] text-[var(--admin-success)] font-semibold tabular-nums">
                         +{item.growth}%
                       </div>
                     </td>
 
                     <td className="py-3 px-3 text-center">
-                      <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md text-[11px]">
+                      <span className="font-bold text-[var(--admin-success)] bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 px-2.5 py-0.5 rounded-full text-[11px] tabular-nums">
                         {item.marginPercent}%
                       </span>
                     </td>
 
                     <td className="py-3 px-3 text-right">
                       {item.stock <= 10 ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200/70 px-1.5 py-0.5 rounded-md">
-                          <AlertTriangle size={10} strokeWidth={2.4} className="text-amber-600 shrink-0" />
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--admin-danger)] bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 px-2 py-0.5 rounded-full tabular-nums">
+                          <AlertTriangle size={10} strokeWidth={2.4} className="text-[var(--admin-danger)] shrink-0" />
                           {item.stock} left
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/50 px-1.5 py-0.5 rounded-md">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-[var(--admin-success)] bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 px-2 py-0.5 rounded-full tabular-nums">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-success)] shrink-0" />
                           {item.stock} in stock
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3 pl-3 pr-6 text-center">
                       <button
                         type="button"
-                        className="px-2.5 py-1 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-[11px] font-bold transition-colors cursor-pointer group-hover:bg-amber-600 group-hover:text-white"
+                        className="px-3 py-1 rounded-full bg-[var(--admin-surface)] hover:bg-[var(--admin-primary)] text-white text-[11px] font-bold border border-white/10 transition-colors cursor-pointer"
                       >
                         Inspect
                       </button>
@@ -3359,21 +3380,21 @@ function AllTopProductsModal({
         </div>
 
         {/* Footer KPI Summary Bar */}
-        <div className="p-4 sm:p-5 bg-neutral-50/90 border-t border-black/[0.05] flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div className="p-4 sm:p-5 bg-[var(--admin-surface)] border-t border-white/5 flex flex-wrap items-center justify-between gap-4 text-xs shrink-0">
           <div className="flex items-center gap-6">
             <div>
-              <span className="text-neutral-400">Total Filtered Revenue:</span>{" "}
-              <strong className="text-neutral-900 font-bold text-sm">
+              <span className="text-[var(--admin-text-muted)]">Total Filtered Revenue:</span>{" "}
+              <strong className="text-white font-heading font-bold text-sm tabular-nums">
                 ₹{totalRev.toLocaleString("en-IN")}
               </strong>
             </div>
             <div>
-              <span className="text-neutral-400">Total Units:</span>{" "}
-              <strong className="text-neutral-900 font-bold">{totalUnits} items</strong>
+              <span className="text-[var(--admin-text-muted)]">Total Units:</span>{" "}
+              <strong className="text-white font-heading font-bold tabular-nums">{totalUnits} items</strong>
             </div>
             <div>
-              <span className="text-neutral-400">Average Margin:</span>{" "}
-              <strong className="text-neutral-900 font-bold text-emerald-600">{avgMargin}%</strong>
+              <span className="text-[var(--admin-text-muted)]">Average Margin:</span>{" "}
+              <strong className="text-[var(--admin-success)] font-heading font-bold tabular-nums">{avgMargin}%</strong>
             </div>
           </div>
 
@@ -3381,7 +3402,7 @@ function AllTopProductsModal({
             <button
               type="button"
               onClick={onExportAllCSV}
-              className="px-4 py-2 rounded-xl bg-white border border-neutral-200 hover:border-neutral-300 text-neutral-800 font-bold text-xs transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-white font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Download size={13} />
               <span>Export All ({filtered.length})</span>
@@ -3390,7 +3411,7 @@ function AllTopProductsModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-black text-white font-bold transition-all cursor-pointer"
+              className="px-5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white font-bold transition-all cursor-pointer"
             >
               Close
             </button>
@@ -3416,7 +3437,7 @@ function AdminGlobalSearchBar({
   orders: OrderRecord[];
   products: Product[];
   sections?: CustomSection[];
-  onSelectOrder?: (orderId: string) => void;
+  onSelectOrder?: (order: OrderRecord) => void;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -3556,9 +3577,9 @@ function AdminGlobalSearchBar({
       const currentItem = flattenedItems[selectedIndex];
       if (currentItem) {
         if (currentItem.type === "order") {
-          onSelectOrder?.(currentItem.data.id);
-          router.push(`/admin/orders`);
           setIsOpen(false);
+          inputRef.current?.blur();
+          onSelectOrder?.(currentItem.data);
         } else if (currentItem.type === "section") {
           router.push(`/admin/custom-sections`);
           setIsOpen(false);
@@ -3576,21 +3597,21 @@ function AdminGlobalSearchBar({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Delivered":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200/80";
+        return "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border-white/10";
       case "Processing":
       case "Confirmed":
       case "Packed":
-        return "bg-amber-50 text-amber-700 border-amber-200/80";
+        return "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border-white/10";
       case "Shipped":
       case "Out for Delivery":
-        return "bg-blue-50 text-blue-700 border-blue-200/80";
+        return "bg-[var(--admin-info)]/15 text-[var(--admin-info)] border-white/10";
       case "Cancelled":
-        return "bg-red-50 text-red-700 border-red-200/80";
+        return "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border-white/10";
       case "Returned":
       case "Return Requested":
-        return "bg-purple-50 text-purple-700 border-purple-200/80";
+        return "bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] border-white/10";
       default:
-        return "bg-neutral-50 text-neutral-700 border-neutral-200";
+        return "bg-white/5 text-[var(--admin-text-muted)] border-white/10";
     }
   };
 
@@ -3601,7 +3622,7 @@ function AdminGlobalSearchBar({
         <Search
           size={16}
           className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-150 ${
-            isOpen ? "text-amber-600" : "text-neutral-400"
+            isOpen ? "text-[var(--admin-primary)]" : "text-[var(--admin-text-muted)]"
           } pointer-events-none`}
         />
         <input
@@ -3615,10 +3636,10 @@ function AdminGlobalSearchBar({
           }}
           onKeyDown={handleKeyDownInInput}
           placeholder="Search orders, products, customers..."
-          className={`w-full text-xs sm:text-sm pl-10 pr-9 py-2 rounded-xl transition-all shadow-2xs ${
+          className={`w-full text-xs sm:text-sm pl-10 pr-9 py-2 rounded-[14px] transition-all ${
             isOpen
-              ? "bg-white text-neutral-900 border-neutral-300 ring-2 ring-black/5"
-              : "bg-[#f3f4f6]/80 hover:bg-[#eaebee] text-neutral-800 border-transparent placeholder-neutral-400"
+              ? "bg-[var(--admin-surface)] text-white border-white/20 ring-1 ring-white/10"
+              : "bg-[var(--admin-surface-2)] hover:bg-[var(--admin-surface)] text-white border-white/10 placeholder-[var(--admin-text-muted)]"
           } border focus:outline-none`}
         />
         {searchQuery ? (
@@ -3627,13 +3648,13 @@ function AdminGlobalSearchBar({
               setSearchQuery("");
               inputRef.current?.focus();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 cursor-pointer p-0.5"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer p-0.5"
             aria-label="Clear search"
           >
             <X size={14} />
           </button>
         ) : (
-          <kbd className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-mono text-neutral-400 bg-neutral-200/60 px-1.5 py-0.5 rounded pointer-events-none">
+          <kbd className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-mono text-[var(--admin-text-muted)] bg-white/5 px-1.5 py-0.5 rounded pointer-events-none">
             /
           </kbd>
         )}
@@ -3641,10 +3662,10 @@ function AdminGlobalSearchBar({
 
       {/* Live Search Results Dropdown Palette */}
       {isOpen && (
-        <div className="absolute left-0 top-full mt-2 w-full md:w-[480px] lg:w-[540px] bg-white rounded-2xl border border-neutral-200/90 shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-0 top-full mt-2 w-full md:w-[480px] lg:w-[540px] bg-[var(--admin-surface)] rounded-[14px] border border-white/10 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Top Filter Tabs when searching */}
           {searchQuery.trim() ? (
-            <div className="flex items-center gap-1 p-2 bg-neutral-50/70 border-b border-neutral-100 text-xs">
+            <div className="flex items-center gap-1 p-2 bg-[var(--admin-surface-2)] border-b border-white/5 text-xs">
               {(
                 [
                   { id: "all", label: "All", count: totalResults },
@@ -3656,16 +3677,16 @@ function AdminGlobalSearchBar({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-full font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                     activeTab === tab.id
-                      ? "bg-white text-neutral-900 font-semibold shadow-2xs border border-neutral-200/60"
-                      : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100/60"
+                      ? "bg-[var(--admin-elevated)] text-white font-semibold border border-white/10"
+                      : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.05]"
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      activeTab === tab.id ? "bg-neutral-100 text-neutral-800" : "bg-neutral-200/60 text-neutral-500"
+                      activeTab === tab.id ? "bg-white/10 text-white" : "bg-white/5 text-[var(--admin-text-muted)]"
                     }`}
                   >
                     {tab.count}
@@ -3674,20 +3695,20 @@ function AdminGlobalSearchBar({
               ))}
             </div>
           ) : (
-            <div className="px-4 py-2.5 bg-neutral-50/70 border-b border-neutral-100 text-xs font-semibold text-neutral-400 uppercase tracking-wider flex items-center justify-between">
+            <div className="px-4 py-2.5 bg-[var(--admin-surface-2)] border-b border-white/5 text-xs font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider flex items-center justify-between">
               <span>Quick Actions & Suggested Searches</span>
-              <span className="text-[10px] font-normal normal-case text-neutral-400">Press / to focus anytime</span>
+              <span className="text-[10px] font-normal normal-case text-[var(--admin-text-muted)]">Press / to focus anytime</span>
             </div>
           )}
 
           {/* Results Scrollable Area */}
-          <div className="max-h-[380px] overflow-y-auto divide-y divide-neutral-100 p-2 space-y-2">
+          <div className="max-h-[380px] overflow-y-auto admin-scroll divide-y divide-white/5 p-2 space-y-2">
             {/* Case A: Query is empty -> Quick Actions & Filter Pills */}
             {!searchQuery.trim() ? (
               <div className="space-y-4 py-1">
                 {/* Quick Navigation Links */}
                 <div>
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 mb-1.5">
+                  <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 mb-1.5">
                     Quick Navigation
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
@@ -3696,14 +3717,14 @@ function AdminGlobalSearchBar({
                         router.push("/admin/products/add");
                         setIsOpen(false);
                       }}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-neutral-50 transition-colors text-xs text-neutral-700 cursor-pointer group"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-[14px] text-left hover:bg-white/[0.05] transition-colors text-xs text-white cursor-pointer group"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-[10px] bg-[var(--admin-surface-2)] text-[var(--admin-warning)] border border-white/5 flex items-center justify-center shrink-0">
                         <Plus size={14} />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-neutral-900">Add New Product</div>
-                        <div className="text-[11px] text-neutral-400 truncate">Create catalog item</div>
+                        <div className="font-semibold text-white">Add New Product</div>
+                        <div className="text-[11px] text-[var(--admin-text-muted)] truncate">Create catalog item</div>
                       </div>
                     </button>
 
@@ -3712,14 +3733,14 @@ function AdminGlobalSearchBar({
                         router.push("/admin/orders");
                         setIsOpen(false);
                       }}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-neutral-50 transition-colors text-xs text-neutral-700 cursor-pointer group"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-[14px] text-left hover:bg-white/[0.05] transition-colors text-xs text-white cursor-pointer group"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-[10px] bg-[var(--admin-surface-2)] text-blue-400 border border-white/5 flex items-center justify-center shrink-0">
                         <ShoppingCart size={14} />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-neutral-900">All Orders ({orders.length})</div>
-                        <div className="text-[11px] text-neutral-400 truncate">Review fulfillment list</div>
+                        <div className="font-semibold text-white">All Orders ({orders.length})</div>
+                        <div className="text-[11px] text-[var(--admin-text-muted)] truncate">Review fulfillment list</div>
                       </div>
                     </button>
 
@@ -3728,14 +3749,14 @@ function AdminGlobalSearchBar({
                         router.push("/admin/products");
                         setIsOpen(false);
                       }}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-neutral-50 transition-colors text-xs text-neutral-700 cursor-pointer group"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-[14px] text-left hover:bg-white/[0.05] transition-colors text-xs text-white cursor-pointer group"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-[10px] bg-[var(--admin-surface-2)] text-emerald-400 border border-white/5 flex items-center justify-center shrink-0">
                         <Package size={14} />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-neutral-900">Manage Catalog ({products.length})</div>
-                        <div className="text-[11px] text-neutral-400 truncate">Inventory and pricing</div>
+                        <div className="font-semibold text-white">Manage Catalog ({products.length})</div>
+                        <div className="text-[11px] text-[var(--admin-text-muted)] truncate">Inventory and pricing</div>
                       </div>
                     </button>
 
@@ -3744,22 +3765,22 @@ function AdminGlobalSearchBar({
                         setSearchQuery("Return Requested");
                         setIsOpen(false);
                       }}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left hover:bg-neutral-50 transition-colors text-xs text-neutral-700 cursor-pointer group"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-[14px] text-left hover:bg-white/[0.05] transition-colors text-xs text-white cursor-pointer group"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-red-50 text-red-700 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-[10px] bg-[var(--admin-surface-2)] text-rose-400 border border-white/5 flex items-center justify-center shrink-0">
                         <RotateCcw size={14} />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-neutral-900">Pending Returns</div>
-                        <div className="text-[11px] text-neutral-400 truncate">2 items awaiting review</div>
+                        <div className="font-semibold text-white">Pending Returns</div>
+                        <div className="text-[11px] text-[var(--admin-text-muted)] truncate">2 items awaiting review</div>
                       </div>
                     </button>
                   </div>
                 </div>
 
                 {/* Popular Search Suggestions */}
-                <div className="pt-2 border-t border-neutral-100">
-                  <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 mb-2">
+                <div className="pt-2 border-t border-white/5">
+                  <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 mb-2">
                     Popular Searches
                   </div>
                   <div className="flex flex-wrap gap-1.5 px-2">
@@ -3778,9 +3799,9 @@ function AdminGlobalSearchBar({
                           setSearchQuery(chip);
                           inputRef.current?.focus();
                         }}
-                        className="px-2.5 py-1 rounded-lg bg-neutral-100 hover:bg-neutral-200/80 text-xs font-medium text-neutral-700 transition-colors cursor-pointer flex items-center gap-1"
+                        className="px-2.5 py-1 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/[0.05] border border-white/5 text-xs font-medium text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer flex items-center gap-1"
                       >
-                        <Search size={11} className="text-neutral-400" />
+                        <Search size={11} className="text-[var(--admin-text-muted)]" />
                         <span>{chip}</span>
                       </button>
                     ))}
@@ -3790,13 +3811,13 @@ function AdminGlobalSearchBar({
             ) : totalResults === 0 ? (
               /* Case B: Query entered but no matches */
               <div className="py-10 text-center px-4">
-                <div className="w-12 h-12 rounded-2xl bg-neutral-100 text-neutral-400 flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center mx-auto mb-3 border border-white/5">
                   <Search size={22} />
                 </div>
-                <div className="text-sm font-semibold text-neutral-900 mb-1">
+                <div className="text-sm font-semibold text-white mb-1">
                   No matches found for &quot;{searchQuery}&quot;
                 </div>
-                <p className="text-xs text-neutral-400 max-w-xs mx-auto mb-4">
+                <p className="text-xs text-[var(--admin-text-muted)] max-w-xs mx-auto mb-4">
                   Check the spelling or try searching by Order ID (e.g. VEY-2026), product name, customer name, or status.
                 </p>
                 <div className="flex flex-wrap justify-center gap-1.5">
@@ -3804,7 +3825,7 @@ function AdminGlobalSearchBar({
                     <button
                       key={chip}
                       onClick={() => setSearchQuery(chip)}
-                      className="px-2.5 py-1 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-xs text-neutral-600 font-medium cursor-pointer"
+                      className="px-2.5 py-1 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/[0.05] border border-white/5 text-xs text-[var(--admin-text-muted)] hover:text-white font-medium cursor-pointer"
                     >
                       {chip}
                     </button>
@@ -3817,9 +3838,9 @@ function AdminGlobalSearchBar({
                 {/* Orders Section */}
                 {(activeTab === "all" || activeTab === "orders") && matchingOrders.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                    <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <ShoppingCart size={12} className="text-neutral-500" /> Orders
+                        <ShoppingCart size={12} className="text-[var(--admin-text-muted)]" /> Orders
                       </span>
                       <span>{matchingOrders.length}</span>
                     </div>
@@ -3828,20 +3849,25 @@ function AdminGlobalSearchBar({
                         const customer = order.shippingAddress?.name || "Customer";
                         const firstItem = order.items?.[0]?.productName || "Items";
                         const extraItems = order.items && order.items.length > 1 ? ` +${order.items.length - 1} more` : "";
+                        const isSelected = flattenedItems[selectedIndex]?.data === order;
 
                         return (
                           <div
                             key={order.id}
                             onClick={() => {
-                              onSelectOrder?.(order.id);
-                              router.push(`/admin/orders`);
                               setIsOpen(false);
+                              inputRef.current?.blur();
+                              onSelectOrder?.(order);
                             }}
-                            className="p-2.5 rounded-xl hover:bg-neutral-50 border border-transparent hover:border-neutral-200/60 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
+                              isSelected
+                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
+                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
+                            }`}
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="font-bold text-xs text-neutral-900 group-hover:text-amber-800 transition-colors">
+                                <span className="font-bold text-xs text-white group-hover:text-white transition-colors">
                                   {order.id}
                                 </span>
                                 <span
@@ -3852,20 +3878,20 @@ function AdminGlobalSearchBar({
                                   {order.status}
                                 </span>
                               </div>
-                              <div className="text-xs text-neutral-600 truncate mt-0.5">
-                                <strong className="font-semibold text-neutral-800">{customer}</strong> • {firstItem}
+                              <div className="text-xs text-[var(--admin-text-muted)] truncate mt-0.5">
+                                <strong className="font-semibold text-white">{customer}</strong> • {firstItem}
                                 {extraItems}
                               </div>
-                              <div className="text-[11px] text-neutral-400 mt-0.5">
+                              <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
                                 {order.date} • {order.shippingAddress?.address ? order.shippingAddress.address.split(",").slice(-2).join(",").trim() : "India"}
                               </div>
                             </div>
 
                             <div className="text-right shrink-0 flex items-center gap-2">
-                              <span className="text-xs font-bold text-neutral-900">
+                              <span className="text-xs font-bold text-white">
                                 ₹{order.total.toLocaleString("en-IN")}
                               </span>
-                              <ChevronRight size={14} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+                              <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
                             </div>
                           </div>
                         );
@@ -3877,41 +3903,49 @@ function AdminGlobalSearchBar({
                 {/* Custom Sections Group */}
                 {(activeTab === "all" || activeTab === "products") && matchingSections.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                    <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <Layers size={12} className="text-amber-600" /> Custom Sections
+                        <Layers size={12} className="text-[var(--admin-text-muted)]" /> Custom Sections
                       </span>
                       <span>{matchingSections.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingSections.map((sec) => (
-                        <div
-                          key={sec.id}
-                          onClick={() => {
-                            router.push(`/admin/custom-sections`);
-                            setIsOpen(false);
-                          }}
-                          className="p-2.5 rounded-xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/15 transition-all cursor-pointer flex items-center justify-between gap-3 group"
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-700 font-bold text-xs flex items-center justify-center shrink-0">
-                              #
-                            </span>
-                            <div className="min-w-0">
-                              <div className="font-semibold text-xs text-neutral-900 group-hover:text-amber-800 truncate">
-                                {sec.name}
-                              </div>
-                              <div className="text-[11px] text-neutral-400 truncate mt-0.5">
-                                {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · /section/{sec.slug}
+                      {matchingSections.map((sec) => {
+                        const isSelected = flattenedItems[selectedIndex]?.data === sec;
+
+                        return (
+                          <div
+                            key={sec.id}
+                            onClick={() => {
+                              router.push(`/admin/custom-sections`);
+                              setIsOpen(false);
+                            }}
+                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
+                              isSelected
+                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
+                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <span className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                #
+                              </span>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-xs text-white group-hover:text-white truncate">
+                                  {sec.name}
+                                </div>
+                                <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+                                  {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · /section/{sec.slug}
+                                </div>
                               </div>
                             </div>
+                            <div className="text-right shrink-0 flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)] group-hover:text-white font-medium">
+                              <span>Manage</span>
+                              <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                            </div>
                           </div>
-                          <div className="text-right shrink-0 flex items-center gap-1.5 text-xs text-amber-700 font-medium">
-                            <span>Manage</span>
-                            <ChevronRight size={14} className="text-amber-600 group-hover:translate-x-0.5 transition-transform" />
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -3919,53 +3953,65 @@ function AdminGlobalSearchBar({
                 {/* Products Section */}
                 {(activeTab === "all" || activeTab === "products") && matchingProducts.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                    <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <Package size={12} className="text-neutral-500" /> Products
+                        <Package size={12} className="text-[var(--admin-text-muted)]" /> Products
                       </span>
                       <span>{matchingProducts.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingProducts.slice(0, activeTab === "products" ? 20 : 4).map((product) => (
-                        <div
-                          key={product.id}
-                          onClick={() => {
-                            router.push(product.slug ? `/product/${product.slug}` : "/admin/products");
-                            setIsOpen(false);
-                          }}
-                          className="p-2.5 rounded-xl hover:bg-neutral-50 border border-transparent hover:border-neutral-200/60 transition-all cursor-pointer flex items-center justify-between gap-3 group"
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-xl bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
-                              <Image
-                                src={product.imageUrl}
-                                alt={product.name}
-                                width={40}
-                                height={40}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                              />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="font-semibold text-xs text-neutral-900 truncate group-hover:text-amber-800 transition-colors">
-                                {product.name}
-                              </div>
-                              <div className="text-[11px] text-neutral-400 truncate mt-0.5">
-                                {product.category} • SKU: {product.sku || product.id}
-                              </div>
-                            </div>
-                          </div>
+                      {matchingProducts.slice(0, activeTab === "products" ? 20 : 4).map((product) => {
+                        const isSelected = flattenedItems[selectedIndex]?.data === product;
 
-                          <div className="text-right shrink-0 flex items-center gap-2">
-                            <div>
-                              <div className="text-xs font-bold text-neutral-900">
-                                ₹{product.price.toLocaleString("en-IN")}
+                        return (
+                          <div
+                            key={product.id}
+                            onClick={() => {
+                              router.push(product.slug ? `/product/${product.slug}` : "/admin/products");
+                              setIsOpen(false);
+                            }}
+                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
+                              isSelected
+                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
+                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-[10px] bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                                {product.imageUrl ? (
+                                  <Image
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    width={40}
+                                    height={40}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                  />
+                                ) : (
+                                  <Package size={16} className="text-[var(--admin-text-muted)]" />
+                                )}
                               </div>
-                              <div className="text-[10px] text-emerald-600 font-medium">In Stock</div>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-xs text-white truncate group-hover:text-white transition-colors">
+                                  {product.name}
+                                </div>
+                                <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+                                  {product.category} • SKU: {product.sku || product.id}
+                                </div>
+                              </div>
                             </div>
-                            <ChevronRight size={14} className="text-neutral-400 group-hover:translate-x-0.5 transition-transform" />
+
+                            <div className="text-right shrink-0 flex items-center gap-2">
+                              <div>
+                                <div className="text-xs font-bold text-white">
+                                  ₹{product.price.toLocaleString("en-IN")}
+                                </div>
+                                <div className="text-[10px] text-[var(--admin-success)] font-medium">In Stock</div>
+                              </div>
+                              <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -3973,46 +4019,54 @@ function AdminGlobalSearchBar({
                 {/* Customers Section */}
                 {(activeTab === "all" || activeTab === "customers") && matchingCustomers.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                    <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <User size={12} className="text-neutral-500" /> Customers
+                        <User size={12} className="text-[var(--admin-text-muted)]" /> Customers
                       </span>
                       <span>{matchingCustomers.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingCustomers.slice(0, activeTab === "customers" ? 20 : 3).map((cust) => (
-                        <div
-                          key={cust.name}
-                          onClick={() => {
-                            setSearchQuery(cust.name);
-                            setIsOpen(false);
-                          }}
-                          className="p-2.5 rounded-xl hover:bg-neutral-50 border border-transparent hover:border-neutral-200/60 transition-all cursor-pointer flex items-center justify-between gap-3 group"
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 font-bold text-xs flex items-center justify-center shrink-0">
-                              {cust.name.slice(0, 1).toUpperCase()}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="font-semibold text-xs text-neutral-900 truncate group-hover:text-amber-800 transition-colors">
-                                {cust.name}
-                              </div>
-                              <div className="text-[11px] text-neutral-400 truncate mt-0.5">
-                                {cust.phone || "Verified Customer"} • {cust.address ? cust.address.split(",").slice(-2).join(",").trim() : "India"}
-                              </div>
-                            </div>
-                          </div>
+                      {matchingCustomers.slice(0, activeTab === "customers" ? 20 : 3).map((cust) => {
+                        const isSelected = flattenedItems[selectedIndex]?.data === cust;
 
-                          <div className="text-right shrink-0">
-                            <div className="text-xs font-semibold text-neutral-800">
-                              {cust.ordersCount} {cust.ordersCount === 1 ? "order" : "orders"}
+                        return (
+                          <div
+                            key={cust.name}
+                            onClick={() => {
+                              setSearchQuery(cust.name);
+                              setIsOpen(false);
+                            }}
+                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
+                              isSelected
+                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
+                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-9 h-9 rounded-full bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                {cust.name.slice(0, 1).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-xs text-white truncate group-hover:text-white transition-colors">
+                                  {cust.name}
+                                </div>
+                                <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+                                  {cust.phone || "Verified Customer"} • {cust.address ? cust.address.split(",").slice(-2).join(",").trim() : "India"}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-[11px] text-neutral-400 font-medium">
-                              ₹{cust.totalSpent.toLocaleString("en-IN")} total
+
+                            <div className="text-right shrink-0">
+                              <div className="text-xs font-semibold text-white">
+                                {cust.ordersCount} {cust.ordersCount === 1 ? "order" : "orders"}
+                              </div>
+                              <div className="text-[11px] text-[var(--admin-text-muted)] font-medium">
+                                ₹{cust.totalSpent.toLocaleString("en-IN")} total
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -4021,22 +4075,22 @@ function AdminGlobalSearchBar({
           </div>
 
           {/* Palette Footer Bar with Keyboard Hints */}
-          <div className="px-4 py-2 bg-neutral-50/90 border-t border-neutral-100 flex items-center justify-between text-[11px] text-neutral-400">
+          <div className="px-4 py-2 bg-[var(--admin-surface-2)] border-t border-white/5 flex items-center justify-between text-[11px] text-[var(--admin-text-muted)]">
             <div className="flex items-center gap-3">
               <span>
-                <kbd className="px-1.5 py-0.5 bg-neutral-200/70 rounded text-[10px] text-neutral-600 font-mono">↑↓</kbd> navigate
+                <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/10 rounded-md text-[10px] text-zinc-300 font-mono">↑↓</kbd> navigate
               </span>
               <span>
-                <kbd className="px-1.5 py-0.5 bg-neutral-200/70 rounded text-[10px] text-neutral-600 font-mono">↵</kbd> select
+                <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/10 rounded-md text-[10px] text-zinc-300 font-mono">↵</kbd> select
               </span>
               <span>
-                <kbd className="px-1.5 py-0.5 bg-neutral-200/70 rounded text-[10px] text-neutral-600 font-mono">esc</kbd> close
+                <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/10 rounded-md text-[10px] text-zinc-300 font-mono">esc</kbd> close
               </span>
             </div>
             {searchQuery.trim() && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="text-amber-800 font-semibold hover:underline cursor-pointer"
+                className="text-[var(--admin-text-muted)] hover:text-white font-medium hover:underline cursor-pointer"
               >
                 Clear all
               </button>
@@ -4402,25 +4456,25 @@ function OrderDeepInspectionModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-black/5"
+        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-4xl w-full max-h-[92vh] flex flex-col border border-white/10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
-        <div className="px-6 py-4.5 bg-neutral-900 text-white flex items-center justify-between border-b border-white/10 shrink-0">
+        <div className="px-6 py-5 bg-[var(--admin-surface)] text-white flex items-center justify-between border-b border-white/5 shrink-0">
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+            <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] flex items-center justify-center border border-[var(--admin-warning)]/30 shrink-0">
               <Eye size={18} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-wider text-neutral-400 font-semibold">
+                <span className="text-xs uppercase tracking-wider text-[var(--admin-text-muted)] font-semibold">
                   Order Deep Inspection
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white/90 font-mono">
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono">
                   #{currentOrder.id}
                 </span>
               </div>
-              <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-lg font-heading font-bold text-white tracking-tight flex items-center gap-2">
                 {customerName}&apos;s Order
               </h2>
             </div>
@@ -4429,7 +4483,7 @@ function OrderDeepInspectionModal({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Return to Orders (Esc)"
             >
               <ArrowLeft size={13} />
@@ -4438,16 +4492,16 @@ function OrderDeepInspectionModal({
 
             <button
               onClick={handleCopyOrderId}
-              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Copy Order ID"
             >
-              {isCopied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+              {isCopied ? <Check size={13} className="text-[var(--admin-success)]" /> : <Copy size={13} />}
               <span>{isCopied ? "Copied" : "Copy ID"}</span>
             </button>
 
             <button
               onClick={() => printOrDownloadOrderSlip(currentOrder)}
-              className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-warning)] hover:bg-[var(--admin-warning)]/90 text-black text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Print official tax invoice slip"
             >
               <Printer size={13} />
@@ -4456,84 +4510,84 @@ function OrderDeepInspectionModal({
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
               aria-label="Close modal"
             >
-              <X size={16} />
+              <X size={18} />
             </button>
           </div>
         </div>
 
         {/* 4 Hero KPI Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 bg-neutral-50/80 border-b border-neutral-100 shrink-0">
-          <div className="bg-white p-3.5 rounded-2xl border border-neutral-200/70 shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 mb-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 bg-[var(--admin-surface-2)] border-b border-white/5 shrink-0">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Gross Total</span>
-              <IndianRupee size={13} className="text-amber-600" />
+              <IndianRupee size={13} className="text-[var(--admin-warning)]" />
             </div>
-            <div className="text-base sm:text-lg font-extrabold text-neutral-900 tracking-tight">
+            <div className="text-base sm:text-lg font-heading font-extrabold text-white tracking-tight tabular-nums">
               ₹{currentOrder.total.toLocaleString("en-IN")}
             </div>
-            <div className="text-[11px] text-neutral-500 mt-0.5 uppercase tracking-wide font-medium">
-              Payment: <strong className="text-neutral-700">{currentOrder.paymentMethod || "Prepaid"}</strong>
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 uppercase tracking-wide font-medium">
+              Payment: <strong className="text-white font-semibold">{currentOrder.paymentMethod || "Prepaid"}</strong>
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-neutral-200/70 shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 mb-1">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Fulfillment</span>
-              <Package size={13} className="text-blue-500" />
+              <Package size={13} className="text-[var(--admin-primary)]" />
             </div>
             <div className="mt-0.5">
               <StatusPill status={currentOrder.status} />
             </div>
-            <div className="text-[11px] text-neutral-500 mt-1">
-              Est: <strong className="text-neutral-700">{currentOrder.estimatedDelivery || "Standard"}</strong>
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-1">
+              Est: <strong className="text-white font-semibold">{currentOrder.estimatedDelivery || "Standard"}</strong>
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-neutral-200/70 shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 mb-1">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Package Items</span>
-              <Boxes size={13} className="text-emerald-500" />
+              <Boxes size={13} className="text-[var(--admin-success)]" />
             </div>
-            <div className="text-base sm:text-lg font-extrabold text-neutral-900 tracking-tight">
+            <div className="text-base sm:text-lg font-heading font-extrabold text-white tracking-tight tabular-nums">
               {currentOrder.itemsCount || currentOrder.items?.length || 1} Products
             </div>
-            <div className="text-[11px] text-neutral-500 mt-0.5">
-              Total <strong className="text-neutral-700">{totalUnits}</strong> physical units
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
+              Total <strong className="text-white font-semibold">{totalUnits}</strong> physical units
             </div>
           </div>
 
-          <div className="bg-white p-3.5 rounded-2xl border border-neutral-200/70 shadow-2xs">
-            <div className="flex items-center justify-between text-neutral-400 mb-1">
+          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
+            <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Order Date</span>
-              <Clock size={13} className="text-purple-500" />
+              <Clock size={13} className="text-[var(--admin-info)]" />
             </div>
-            <div className="text-xs sm:text-sm font-bold text-neutral-900 tracking-tight truncate">
+            <div className="text-xs sm:text-sm font-heading font-bold text-white tracking-tight truncate tabular-nums">
               {currentOrder.date}
             </div>
-            <div className="text-[11px] text-emerald-600 mt-0.5 font-medium flex items-center gap-1">
+            <div className="text-[11px] text-[var(--admin-success)] mt-0.5 font-medium flex items-center gap-1">
               <ShieldCheck size={12} /> Verified order
             </div>
           </div>
         </div>
 
         {/* Scrollable Modal Body */}
-        <div className="overflow-y-auto flex-1 min-h-0 p-5 sm:p-6 space-y-6 overscroll-contain admin-scroll-container">
+        <div className="overflow-y-auto admin-scroll flex-1 min-h-0 p-5 sm:p-6 space-y-6 overscroll-contain bg-[var(--admin-surface-2)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column (7 cols): Items List + Financials + Staff Notes */}
             <div className="lg:col-span-7 space-y-5">
               {/* Ordered Items List */}
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-4.5 shadow-2xs">
-                <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-neutral-100">
+              <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
+                <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-white/5">
                   <div className="flex items-center gap-2">
-                    <ShoppingCart size={15} className="text-amber-600" />
-                    <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+                    <ShoppingCart size={15} className="text-[var(--admin-primary)]" />
+                    <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                       Ordered Line Items ({currentOrder.items?.length || 0})
                     </h3>
                   </div>
-                  <span className="text-xs text-neutral-400">
+                  <span className="text-xs text-[var(--admin-text-muted)]">
                     Live Stock Allocation
                   </span>
                 </div>
@@ -4543,9 +4597,9 @@ function OrderDeepInspectionModal({
                     currentOrder.items.map((it, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center gap-3.5 p-3 rounded-xl bg-neutral-50/70 border border-neutral-100 hover:border-amber-200 transition-colors"
+                        className="flex items-center gap-3.5 p-3 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 hover:border-white/10 transition-colors"
                       >
-                        <div className="w-14 h-14 rounded-xl bg-white overflow-hidden shrink-0 border border-neutral-200 flex items-center justify-center p-1">
+                        <div className="w-14 h-14 rounded-[10px] bg-[var(--admin-surface)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-1">
                           <Image
                             src={it.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp"}
                             alt={it.productName}
@@ -4556,26 +4610,26 @@ function OrderDeepInspectionModal({
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
-                            <h4 className="text-xs sm:text-sm font-bold text-neutral-900 truncate">
+                            <h4 className="text-xs sm:text-sm font-heading font-bold text-white truncate">
                               {it.productName}
                             </h4>
-                            <span className="text-xs font-bold text-neutral-900 shrink-0">
+                            <span className="text-xs font-heading font-bold text-white shrink-0 tabular-nums">
                               ₹{(it.totalPrice || it.unitPrice * it.quantity).toLocaleString("en-IN")}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 mt-1 text-[11px] text-neutral-500 flex-wrap">
+                          <div className="flex items-center gap-2 mt-1 text-[11px] text-[var(--admin-text-muted)] flex-wrap">
                             {it.colorName && (
-                              <span className="px-2 py-0.5 rounded-md bg-white border border-neutral-200/60 font-medium text-neutral-700">
+                              <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 font-medium text-white/90">
                                 {it.colorName}
                               </span>
                             )}
                             {it.selectedSize && (
-                              <span className="px-2 py-0.5 rounded-md bg-white border border-neutral-200/60 font-medium text-neutral-700">
+                              <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 font-medium text-white/90">
                                 Size: {it.selectedSize}
                               </span>
                             )}
-                            <span className="text-neutral-400">
-                              Qty: <strong className="text-neutral-700">{it.quantity}</strong> × ₹{it.unitPrice.toLocaleString("en-IN")}
+                            <span className="text-[var(--admin-text-muted)]">
+                              Qty: <strong className="text-white">{it.quantity}</strong> × ₹{it.unitPrice.toLocaleString("en-IN")}
                             </span>
                           </div>
                           {it.productSlug && (
@@ -4583,7 +4637,7 @@ function OrderDeepInspectionModal({
                               <Link
                                 href={`/product/${it.productSlug}`}
                                 target="_blank"
-                                className="text-[10px] text-amber-700 hover:text-amber-900 font-semibold inline-flex items-center gap-1 hover:underline"
+                                className="text-[10px] text-[var(--admin-primary)] hover:underline font-semibold inline-flex items-center gap-1"
                               >
                                 <span>Inspect product page</span>
                                 <ExternalLink size={10} />
@@ -4594,7 +4648,7 @@ function OrderDeepInspectionModal({
                       </div>
                     ))
                   ) : (
-                    <div className="p-4 text-center text-xs text-neutral-400">
+                    <div className="p-4 text-center text-xs text-[var(--admin-text-muted)]">
                       No item data available for this order.
                     </div>
                   )}
@@ -4602,62 +4656,62 @@ function OrderDeepInspectionModal({
               </div>
 
               {/* Financial Bill Breakdown */}
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-4.5 shadow-2xs">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-100">
-                  <CreditCard size={15} className="text-amber-600" />
-                  <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+              <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
+                  <CreditCard size={15} className="text-[var(--admin-primary)]" />
+                  <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                     Financial Summary & Taxation
                   </h3>
                 </div>
 
                 <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-neutral-600">
+                  <div className="flex items-center justify-between text-[var(--admin-text-muted)]">
                     <span>Items Subtotal</span>
-                    <span className="font-semibold text-neutral-900">
+                    <span className="font-heading font-semibold text-white tabular-nums">
                       ₹{(currentOrder.subtotal || currentOrder.total).toLocaleString("en-IN")}
                     </span>
                   </div>
 
                   {currentOrder.bundleDiscount > 0 && (
-                    <div className="flex items-center justify-between text-emerald-600">
+                    <div className="flex items-center justify-between text-[var(--admin-success)]">
                       <span>Bundle Savings</span>
-                      <span className="font-semibold">-₹{currentOrder.bundleDiscount.toLocaleString("en-IN")}</span>
+                      <span className="font-heading font-semibold tabular-nums">-₹{currentOrder.bundleDiscount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
 
                   {currentOrder.couponDiscount > 0 && (
-                    <div className="flex items-center justify-between text-emerald-600">
+                    <div className="flex items-center justify-between text-[var(--admin-success)]">
                       <span>
                         Coupon Discount {currentOrder.couponCode ? `(${currentOrder.couponCode})` : ""}
                       </span>
-                      <span className="font-semibold">-₹{currentOrder.couponDiscount.toLocaleString("en-IN")}</span>
+                      <span className="font-heading font-semibold tabular-nums">-₹{currentOrder.couponDiscount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-neutral-600">
+                  <div className="flex items-center justify-between text-[var(--admin-text-muted)]">
                     <span>Express Shipping & Handling</span>
-                    <span className="font-semibold text-emerald-600">
+                    <span className="font-semibold text-[var(--admin-success)]">
                       {currentOrder.shippingCost === 0 ? "FREE (Atelier Complimentary)" : `₹${currentOrder.shippingCost}`}
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-sm font-extrabold text-neutral-900">
+                  <div className="pt-2 border-t border-white/5 flex items-center justify-between text-sm font-heading font-extrabold text-white">
                     <span>Grand Total Paid</span>
-                    <span className="text-base text-amber-700">₹{currentOrder.total.toLocaleString("en-IN")}</span>
+                    <span className="text-base font-heading font-extrabold text-[var(--admin-primary)] tabular-nums">₹{currentOrder.total.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
               </div>
 
               {/* Operational Staff Internal Note Box */}
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-4.5 shadow-2xs">
+              <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <FileText size={15} className="text-amber-600" />
-                    <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+                    <FileText size={15} className="text-[var(--admin-primary)]" />
+                    <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                       Internal Staff Notes
                     </h3>
                   </div>
-                  <span className="text-[10px] text-neutral-400 font-medium">Private to Admin Staff</span>
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-medium">Private to Admin Staff</span>
                 </div>
 
                 <textarea
@@ -4665,7 +4719,7 @@ function OrderDeepInspectionModal({
                   onChange={(e) => setAdminNote(e.target.value)}
                   placeholder="Record customer preferences, delivery instructions, packaging notes or escalation info..."
                   rows={3}
-                  className="w-full text-xs p-3 rounded-xl border border-neutral-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none resize-none transition-all placeholder:text-neutral-400"
+                  className="w-full text-xs p-3 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none transition-all"
                 />
 
                 <div className="flex items-center gap-1.5 mt-2 flex-wrap">
@@ -4679,9 +4733,9 @@ function OrderDeepInspectionModal({
                           const noteWithTag = adminNote ? `${adminNote} • ${tag.text}` : tag.text;
                           setAdminNote(noteWithTag);
                         }}
-                        className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg bg-neutral-100 hover:bg-amber-100 text-neutral-700 hover:text-amber-900 font-medium transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/90 font-medium border border-white/10 transition-colors cursor-pointer"
                       >
-                        <TagIcon size={12} className="text-amber-600 shrink-0" />
+                        <TagIcon size={12} className="text-[var(--admin-primary)] shrink-0" />
                         <span>{tag.label}</span>
                       </button>
                     );
@@ -4691,7 +4745,7 @@ function OrderDeepInspectionModal({
                 <div className="flex justify-end mt-3">
                   <button
                     onClick={handleSaveNote}
-                    className="px-4 py-1.5 rounded-xl bg-neutral-900 hover:bg-black text-white text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+                    className="px-4 py-1.5 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-colors cursor-pointer"
                   >
                     Save Operational Note
                   </button>
@@ -4702,26 +4756,26 @@ function OrderDeepInspectionModal({
             {/* Right Column (5 cols): Customer Info + Timeline + Quick Actions */}
             <div className="lg:col-span-5 space-y-5">
               {/* Customer Dossier Card */}
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-4.5 shadow-2xs">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-100">
-                  <User size={15} className="text-amber-600" />
-                  <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+              <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
+                  <User size={15} className="text-[var(--admin-primary)]" />
+                  <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                     Customer Profile & Contact
                   </h3>
                 </div>
 
                 <div className="flex items-start gap-3 mb-4">
                   <div
-                    className={`w-11 h-11 rounded-2xl ${avatar.bg} ${avatar.text} flex items-center justify-center text-sm font-extrabold shrink-0 shadow-2xs`}
+                    className={`w-11 h-11 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-sm font-extrabold shrink-0`}
                   >
                     {avatar.initial}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-neutral-900">{customerName}</h4>
-                    <p className="text-xs text-neutral-500 mt-0.5">
+                    <h4 className="text-sm font-heading font-bold text-white">{customerName}</h4>
+                    <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">
                       {currentOrder.shippingAddress?.phone || "No phone provided"}
                     </p>
-                    <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200/50">
+                    <span className="inline-block mt-1 text-[10px] px-2.5 py-0.5 rounded-full bg-[var(--admin-success)]/15 text-[var(--admin-success)] font-semibold border border-[var(--admin-success)]/30">
                       Verified Buyer
                     </span>
                   </div>
@@ -4731,9 +4785,9 @@ function OrderDeepInspectionModal({
                   <div className="grid grid-cols-2 gap-2 mb-4">
                     <a
                       href={`tel:${cleanPhone}`}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200/80 text-neutral-800 text-xs font-semibold transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 text-white text-xs font-semibold border border-white/10 transition-colors"
                     >
-                      <Phone size={13} className="text-neutral-600" />
+                      <Phone size={13} className="text-[var(--admin-text-muted)]" />
                       <span>Call Client</span>
                     </a>
                     <a
@@ -4742,68 +4796,68 @@ function OrderDeepInspectionModal({
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold transition-colors border border-emerald-200/60"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[var(--admin-success)]/15 hover:bg-[var(--admin-success)]/25 text-[var(--admin-success)] text-xs font-semibold transition-colors border border-[var(--admin-success)]/30"
                     >
-                      <MessageSquare size={13} className="text-emerald-600" />
+                      <MessageSquare size={13} className="text-[var(--admin-success)]" />
                       <span>WhatsApp</span>
                     </a>
                   </div>
                 )}
 
-                <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 text-xs space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-neutral-700 mb-1">
-                    <MapPin size={13} className="text-amber-600" />
+                <div className="p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-white mb-1">
+                    <MapPin size={13} className="text-[var(--admin-primary)]" />
                     <span>Shipping Destination</span>
                   </div>
-                  <p className="text-neutral-800 leading-relaxed font-medium">
+                  <p className="text-white/80 leading-relaxed font-medium">
                     {currentOrder.shippingAddress?.address || "Address not provided"}
                   </p>
                   {currentOrder.shippingAddress?.pincode && (
-                    <p className="text-neutral-500 text-[11px]">
-                      PIN / Postal Code: <strong className="text-neutral-700">{currentOrder.shippingAddress.pincode}</strong>
+                    <p className="text-[var(--admin-text-muted)] text-[11px]">
+                      PIN / Postal Code: <strong className="text-white">{currentOrder.shippingAddress.pincode}</strong>
                     </p>
                   )}
                 </div>
               </div>
 
               {/* Chronological Tracking Audit Timeline */}
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-4.5 shadow-2xs">
-                <div className="flex items-center justify-between mb-3 pb-2 border-b border-neutral-100">
+              <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
+                <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/5">
                   <div className="flex items-center gap-2">
-                    <Truck size={15} className="text-amber-600" />
-                    <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+                    <Truck size={15} className="text-[var(--admin-primary)]" />
+                    <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                       Fulfillment Journey
                     </h3>
                   </div>
-                  <span className="text-[10px] text-neutral-400 font-semibold uppercase">
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase">
                     Audit Log
                   </span>
                 </div>
 
-                <div className="space-y-3 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-neutral-200">
+                <div className="space-y-3 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
                   {currentOrder.timeline && currentOrder.timeline.length > 0 ? (
                     currentOrder.timeline.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-3 relative z-10">
-                        <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs ring-4 ring-white">
+                        <div className="w-6 h-6 rounded-full bg-[var(--admin-success)] text-black flex items-center justify-center shrink-0 ring-4 ring-[var(--admin-surface)]">
                           <Check size={11} strokeWidth={3} />
                         </div>
                         <div className="flex-1 text-xs">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-neutral-900">{item.status}</span>
-                            <span className="text-[10px] text-neutral-400">{item.timestamp}</span>
+                            <span className="font-heading font-bold text-white">{item.status}</span>
+                            <span className="text-[10px] text-[var(--admin-text-muted)]">{item.timestamp}</span>
                           </div>
-                          <p className="text-neutral-500 text-[11px] mt-0.5">{item.description}</p>
+                          <p className="text-[var(--admin-text-muted)] text-[11px] mt-0.5">{item.description}</p>
                         </div>
                       </div>
                     ))
                   ) : (
                     <div className="flex items-start gap-3 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0 ring-4 ring-white">
+                      <div className="w-6 h-6 rounded-full bg-[var(--admin-warning)] text-black flex items-center justify-center shrink-0 ring-4 ring-[var(--admin-surface)]">
                         <Clock size={11} />
                       </div>
                       <div className="flex-1 text-xs">
-                        <span className="font-bold text-neutral-900">{currentOrder.status}</span>
-                        <p className="text-neutral-500 text-[11px] mt-0.5">Order placed on {currentOrder.date}</p>
+                        <span className="font-heading font-bold text-white">{currentOrder.status}</span>
+                        <p className="text-[var(--admin-text-muted)] text-[11px] mt-0.5">Order placed on {currentOrder.date}</p>
                       </div>
                     </div>
                   )}
@@ -4811,10 +4865,10 @@ function OrderDeepInspectionModal({
               </div>
 
               {/* Fast Quick Status Actions Bar */}
-              <div className="bg-white rounded-2xl border border-neutral-200/80 p-4.5 shadow-2xs">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neutral-100">
-                  <RotateCw size={15} className="text-amber-600" />
-                  <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+              <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
+                  <RotateCw size={15} className="text-[var(--admin-primary)]" />
+                  <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                     Quick Status Actions
                   </h3>
                 </div>
@@ -4823,10 +4877,10 @@ function OrderDeepInspectionModal({
                   <button
                     onClick={() => handleStatusChange("Processing")}
                     disabled={currentOrder.status === "Processing"}
-                    className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       currentOrder.status === "Processing"
-                        ? "bg-amber-100 text-amber-800 cursor-not-allowed opacity-70"
-                        : "bg-neutral-100 hover:bg-neutral-200/80 text-neutral-800"
+                        ? "bg-[var(--admin-warning)]/20 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30 cursor-not-allowed opacity-70"
+                        : "bg-[var(--admin-surface-2)] hover:bg-white/5 text-white border border-white/10"
                     }`}
                   >
                     <span>Mark Processing</span>
@@ -4835,10 +4889,10 @@ function OrderDeepInspectionModal({
                   <button
                     onClick={() => handleStatusChange("Shipped")}
                     disabled={currentOrder.status === "Shipped"}
-                    className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       currentOrder.status === "Shipped"
-                        ? "bg-blue-100 text-blue-800 cursor-not-allowed opacity-70"
-                        : "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/60"
+                        ? "bg-[var(--admin-info)]/20 text-[var(--admin-info)] border border-[var(--admin-info)]/30 cursor-not-allowed opacity-70"
+                        : "bg-[var(--admin-info)]/15 hover:bg-[var(--admin-info)]/25 text-[var(--admin-info)] border border-[var(--admin-info)]/30"
                     }`}
                   >
                     <Truck size={12} />
@@ -4848,10 +4902,10 @@ function OrderDeepInspectionModal({
                   <button
                     onClick={() => handleStatusChange("Delivered")}
                     disabled={currentOrder.status === "Delivered"}
-                    className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       currentOrder.status === "Delivered"
-                        ? "bg-emerald-100 text-emerald-800 cursor-not-allowed opacity-70"
-                        : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs"
+                        ? "bg-[var(--admin-success)]/20 text-[var(--admin-success)] border border-[var(--admin-success)]/30 cursor-not-allowed opacity-70"
+                        : "bg-[var(--admin-success)] hover:opacity-90 text-black font-bold"
                     }`}
                   >
                     <CheckCircle2 size={12} />
@@ -4861,10 +4915,10 @@ function OrderDeepInspectionModal({
                   <button
                     onClick={() => handleStatusChange("Cancelled")}
                     disabled={currentOrder.status === "Cancelled"}
-                    className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       currentOrder.status === "Cancelled"
-                        ? "bg-rose-100 text-rose-800 cursor-not-allowed opacity-70"
-                        : "bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/60"
+                        ? "bg-[var(--admin-danger)]/20 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30 cursor-not-allowed opacity-70"
+                        : "bg-[var(--admin-danger)]/15 hover:bg-[var(--admin-danger)]/25 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30"
                     }`}
                   >
                     <X size={12} />
@@ -4877,14 +4931,14 @@ function OrderDeepInspectionModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3.5 bg-neutral-50 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500 shrink-0">
+        <div className="px-6 py-4 bg-[var(--admin-surface)] border-t border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] shrink-0">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[var(--admin-success)] animate-pulse" />
             <span>Real-time Order State Synchronization Active</span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-neutral-200/80 hover:bg-neutral-300 text-neutral-800 font-semibold transition-colors cursor-pointer"
+            className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-colors cursor-pointer"
           >
             Close Window
           </button>
@@ -4999,25 +5053,25 @@ function AllOrdersManagerModal({
         }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-black/5"
+        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-5xl w-full max-h-[92vh] flex flex-col border border-white/10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 bg-neutral-900 text-white flex items-center justify-between border-b border-white/10 shrink-0">
+        <div className="px-6 py-5 bg-[var(--admin-surface)] text-white flex items-center justify-between border-b border-white/5 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+            <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] flex items-center justify-center border border-[var(--admin-primary)]/30 shrink-0">
               <ShoppingCart size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-wider text-neutral-400 font-semibold">
+                <span className="text-xs uppercase tracking-wider text-[var(--admin-text-muted)] font-semibold">
                   Orders Operations Center
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white/90 font-mono">
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono">
                   {orders.length} total orders
                 </span>
               </div>
-              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+              <h2 className="text-lg sm:text-xl font-heading font-bold text-white tracking-tight">
                 All Orders & Shipments Management
               </h2>
             </div>
@@ -5029,7 +5083,7 @@ function AllOrdersManagerModal({
                 downloadAllOrdersCSV(filteredOrders);
                 showToast(`Exported ${filteredOrders.length} orders to CSV`, "success");
               }}
-              className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <FileSpreadsheet size={13} />
               <span>Export CSV</span>
@@ -5037,31 +5091,31 @@ function AllOrdersManagerModal({
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
               aria-label="Close modal"
             >
-              <X size={16} />
+              <X size={18} />
             </button>
           </div>
         </div>
 
         {/* Toolbar & Filter Bar */}
-        <div className="p-5 bg-neutral-50/80 border-b border-neutral-100 space-y-3 shrink-0">
+        <div className="p-5 bg-[var(--admin-surface-2)] border-b border-white/5 space-y-3 shrink-0">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative flex-1 max-w-md">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
               <input
                 type="text"
                 value={modalSearch}
                 onChange={(e) => setModalSearch(e.target.value)}
                 placeholder="Search by Order ID, Customer, Phone, Product..."
-                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white border border-neutral-200 text-xs focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all placeholder:text-neutral-400"
+                className="w-full pl-9 pr-8 py-2 rounded-[14px] bg-[var(--admin-surface)] border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--admin-primary)] transition-all placeholder:text-[var(--admin-text-muted)]"
               />
               {modalSearch && (
                 <button
                   onClick={() => setModalSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer"
                 >
                   <X size={13} />
                 </button>
@@ -5070,19 +5124,19 @@ function AllOrdersManagerModal({
 
             {/* Sort & Quick Summary */}
             <div className="flex items-center gap-3 justify-between sm:justify-end">
-              <div className="flex items-center gap-1.5 text-xs text-neutral-500">
-                <span className="font-semibold text-neutral-900">{filteredOrders.length}</span>
+              <div className="flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)]">
+                <span className="font-heading font-bold text-white">{filteredOrders.length}</span>
                 <span>orders</span>
                 <span>•</span>
-                <span className="font-bold text-amber-700">₹{totalGrossRevenue.toLocaleString("en-IN")}</span>
+                <span className="font-heading font-bold text-[var(--admin-primary)] tabular-nums">₹{totalGrossRevenue.toLocaleString("en-IN")}</span>
               </div>
 
               <div className="flex items-center gap-1.5">
-                <ArrowUpDown size={13} className="text-neutral-400" />
+                <ArrowUpDown size={13} className="text-[var(--admin-text-muted)]" />
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="text-xs py-1.5 px-2.5 rounded-xl bg-white border border-neutral-200 font-medium text-neutral-700 outline-none focus:border-amber-500"
+                  onChange={(e) => setSortBy(e.target.value as "newest" | "oldest" | "highest" | "lowest")}
+                  className="text-xs py-1.5 px-3 rounded-[14px] bg-[var(--admin-surface)] border border-white/10 font-medium text-white outline-none focus:border-[var(--admin-primary)]"
                 >
                   <option value="newest">Newest First</option>
                   <option value="oldest">Oldest First</option>
@@ -5108,16 +5162,16 @@ function AllOrdersManagerModal({
                 <button
                   key={tab.id}
                   onClick={() => setStatusFilter(tab.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                     isActive
-                      ? "bg-neutral-900 text-white shadow-2xs"
-                      : "bg-white hover:bg-neutral-100 text-neutral-600 border border-neutral-200/70"
+                      ? "bg-[var(--admin-primary)] text-white"
+                      : "bg-white/5 hover:bg-white/10 text-[var(--admin-text-muted)] hover:text-white border border-white/10"
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-500"
+                      isActive ? "bg-white/20 text-white" : "bg-white/10 text-[var(--admin-text-muted)]"
                     }`}
                   >
                     {tab.count}
@@ -5129,23 +5183,23 @@ function AllOrdersManagerModal({
         </div>
 
         {/* Orders Table Container */}
-        <div className="overflow-y-auto flex-1 admin-scroll-container overscroll-contain">
-          <table className="w-full text-left border-collapse" role="table">
-            <thead className="sticky top-0 bg-neutral-50/95 backdrop-blur-xs z-10 border-b border-neutral-200 text-xs font-medium text-neutral-400">
+        <div className="overflow-y-auto admin-scroll flex-1 min-h-0 overscroll-contain bg-[var(--admin-surface-2)]">
+          <table className="w-full text-left [border-collapse:separate] [border-spacing:0]" style={{ borderCollapse: "separate", borderSpacing: 0 }} role="table">
+            <thead className="text-xs font-semibold text-[var(--admin-text-muted)] select-none">
               <tr>
-                <th className="pl-6 py-3 font-medium">Order ID</th>
-                <th className="px-3 py-3 font-medium">Customer</th>
-                <th className="px-3 py-3 font-medium">Products</th>
-                <th className="px-3 py-3 font-medium">Total</th>
-                <th className="px-3 py-3 font-medium">Status</th>
-                <th className="px-3 py-3 font-medium">Date</th>
-                <th className="pr-6 py-3 font-medium text-right">Actions</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 pl-6 pr-3 py-3">Order ID</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Customer</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Products</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Total</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Status</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Date</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 pl-3 pr-6 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-white/5">
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-xs text-neutral-400">
+                  <td colSpan={7} className="py-12 px-6 text-center text-xs text-[var(--admin-text-muted)]">
                     No orders match your filter criteria.
                   </td>
                 </tr>
@@ -5160,11 +5214,11 @@ function AllOrdersManagerModal({
                     <tr
                       key={order.id}
                       onClick={() => onSelectOrder(order)}
-                      className="hover:bg-amber-50/70 cursor-pointer transition-colors group"
+                      className="hover:bg-white/[0.03] cursor-pointer transition-colors group border-b border-white/5"
                       title="Click to deep inspect order"
                     >
                       {/* ID */}
-                      <td className="pl-6 py-3.5 whitespace-nowrap text-xs font-mono font-bold text-neutral-900 group-hover:text-amber-800">
+                      <td className="pl-6 pr-3 py-3.5 whitespace-nowrap text-xs font-mono font-bold text-white group-hover:text-[var(--admin-primary)]">
                         {order.id}
                       </td>
 
@@ -5177,10 +5231,10 @@ function AllOrdersManagerModal({
                             {avatar.initial}
                           </div>
                           <div>
-                            <span className="text-xs sm:text-sm font-semibold text-neutral-900 block">
+                            <span className="text-xs sm:text-sm font-heading font-semibold text-white block">
                               {customerName}
                             </span>
-                            <span className="text-[10px] text-neutral-400 font-mono">
+                            <span className="text-[10px] text-[var(--admin-text-muted)] font-mono">
                               {order.shippingAddress?.phone || "Prepaid"}
                             </span>
                           </div>
@@ -5190,7 +5244,7 @@ function AllOrdersManagerModal({
                       {/* Products */}
                       <td className="px-3 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
+                          <div className="w-7 h-7 rounded-[8px] bg-[var(--admin-surface)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
                             <Image
                               src={thumbUrl}
                               alt="Thumbnail"
@@ -5199,7 +5253,7 @@ function AllOrdersManagerModal({
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          <span className="text-xs text-neutral-600 font-medium">
+                          <span className="text-xs text-[var(--admin-text-muted)] font-medium">
                             {itemCount} {itemCount === 1 ? "item" : "items"}
                           </span>
                         </div>
@@ -5207,7 +5261,7 @@ function AllOrdersManagerModal({
 
                       {/* Total */}
                       <td className="px-3 py-3.5 whitespace-nowrap">
-                        <span className="text-xs sm:text-sm font-extrabold text-neutral-900">
+                        <span className="text-xs sm:text-sm font-heading font-extrabold text-white tabular-nums">
                           ₹{order.total.toLocaleString("en-IN")}
                         </span>
                       </td>
@@ -5218,17 +5272,17 @@ function AllOrdersManagerModal({
                       </td>
 
                       {/* Date */}
-                      <td className="px-3 py-3.5 whitespace-nowrap text-xs text-neutral-500">
+                      <td className="px-3 py-3.5 whitespace-nowrap text-xs text-[var(--admin-text-muted)] tabular-nums">
                         {order.date}
                       </td>
 
                       {/* Actions */}
-                      <td className="px-3 py-3.5 whitespace-nowrap text-right">
+                      <td className="pl-3 pr-6 py-3.5 whitespace-nowrap text-right">
                         <button
                           onClick={() => {
                             onSelectOrder(order);
                           }}
-                          className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition-colors ml-auto cursor-pointer"
+                          className="w-8 h-8 rounded-full bg-[var(--admin-surface)] hover:bg-[var(--admin-primary)] text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors ml-auto cursor-pointer border border-white/10"
                         >
                           <Eye size={14} />
                         </button>
@@ -5264,7 +5318,7 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
     case "return_request":
       return (
         <div
-          className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-700 border border-amber-500/25 flex items-center justify-center shrink-0 shadow-2xs mt-0.5 group-hover:scale-105 transition-transform"
+          className="w-8 h-8 rounded-[14px] bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
           aria-hidden="true"
         >
           <RotateCcw size={15} strokeWidth={2.2} />
@@ -5273,7 +5327,7 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
     case "order_delivered":
       return (
         <div
-          className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-700 border border-emerald-500/25 flex items-center justify-center shrink-0 shadow-2xs mt-0.5 group-hover:scale-105 transition-transform"
+          className="w-8 h-8 rounded-[14px] bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
           aria-hidden="true"
         >
           <CheckCircle2 size={15} strokeWidth={2.2} />
@@ -5282,7 +5336,7 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
     case "low_stock":
       return (
         <div
-          className="w-8 h-8 rounded-xl bg-rose-500/15 text-rose-700 border border-rose-500/25 flex items-center justify-center shrink-0 shadow-2xs mt-0.5 group-hover:scale-105 transition-transform"
+          className="w-8 h-8 rounded-[14px] bg-[#FF4B55]/15 text-[#FF4B55] border border-[#FF4B55]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
           aria-hidden="true"
         >
           <AlertTriangle size={15} strokeWidth={2.2} />
@@ -5291,7 +5345,7 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
     case "new_order":
       return (
         <div
-          className="w-8 h-8 rounded-xl bg-sky-500/15 text-sky-700 border border-sky-500/25 flex items-center justify-center shrink-0 shadow-2xs mt-0.5 group-hover:scale-105 transition-transform"
+          className="w-8 h-8 rounded-[14px] bg-[#38BDF8]/15 text-[#38BDF8] border border-[#38BDF8]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
           aria-hidden="true"
         >
           <ShoppingBag size={15} strokeWidth={2.2} />
@@ -5300,7 +5354,7 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
     default:
       return (
         <div
-          className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-700 border border-neutral-200 flex items-center justify-center shrink-0 shadow-2xs mt-0.5 group-hover:scale-105 transition-transform"
+          className="w-8 h-8 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] border border-white/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform"
           aria-hidden="true"
         >
           <Bell size={15} strokeWidth={2} />
@@ -5550,9 +5604,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Add Product dropdown
-  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
-  const addMenuRef = useRef<HTMLDivElement>(null);
+
 
   // Chart range tab: 7d | 30d | 90d
   const [chartPeriod, setChartPeriod] = useState<"7d" | "30d" | "90d">("30d");
@@ -5583,9 +5635,6 @@ export default function AdminDashboard() {
     function handleClickOutside(e: MouseEvent) {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setIsNotifOpen(false);
-      }
-      if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) {
-        setIsAddMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -5793,6 +5842,7 @@ export default function AdminDashboard() {
   }, [dateFilteredOrders, recentOrdersStatusFilter, selectedStatusFilter, searchQuery]);
 
   const RECENT_ORDERS_PAGE_SIZE = 5;
+  const TOP_PRODUCTS_VISIBLE = 7;
   const totalRecentOrdersPages = Math.max(1, Math.ceil(allFilteredRecentOrders.length / RECENT_ORDERS_PAGE_SIZE));
 
   // Current page displayed orders
@@ -5931,7 +5981,7 @@ export default function AdminDashboard() {
 
   return (
     <div
-      className={`space-y-6 text-neutral-900 pb-16 font-sans transition-[opacity,filter] duration-300 ease-out ${
+      className={`space-y-6 text-white pb-16 font-sans transition-[opacity,filter] duration-300 ease-out ${
         isAnyAdminModalOpen
           ? "opacity-25 filter blur-[6px] pointer-events-none select-none"
           : "opacity-100 filter blur-0 pointer-events-auto select-auto"
@@ -5946,8 +5996,8 @@ export default function AdminDashboard() {
           orders={orders}
           products={unifiedProducts}
           sections={sections}
-          onSelectOrder={(orderId) => {
-            setSearchQuery(orderId);
+          onSelectOrder={(order) => {
+            setSelectedOrderForModal(order);
           }}
         />
 
@@ -5967,13 +6017,13 @@ export default function AdminDashboard() {
           <div className="relative" ref={notifRef}>
             <button
               onClick={() => setIsNotifOpen(!isNotifOpen)}
-              className="relative p-2.5 bg-white rounded-xl border border-neutral-200/80 hover:bg-neutral-50
-                hover:border-neutral-300 text-neutral-600 shadow-2xs transition-all cursor-pointer"
+              className="relative p-2.5 bg-[var(--admin-surface)] rounded-full border border-white/10 hover:bg-[var(--admin-elevated)]
+                text-[var(--admin-text-muted)] hover:text-white transition-all cursor-pointer"
               aria-label="View notifications"
             >
               <Bell size={16} />
               {unreadNotifCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center ring-2 ring-white animate-in zoom-in-50">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[var(--admin-danger)] text-white rounded-full text-[10px] font-bold flex items-center justify-center ring-2 ring-[var(--admin-canvas)] animate-in zoom-in-50">
                   {unreadNotifCount}
                 </span>
               )}
@@ -5981,19 +6031,19 @@ export default function AdminDashboard() {
 
             {isNotifOpen && (
               <div
-                className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-neutral-200 shadow-2xl p-3 z-40 text-xs animate-in fade-in zoom-in-95 duration-150"
+                className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 p-3 z-40 text-xs text-white animate-in fade-in zoom-in-95 duration-150"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-100">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-neutral-900 text-sm">Notifications</span>
+                    <span className="font-bold text-white text-sm font-heading">Notifications</span>
                     {unreadNotifCount > 0 ? (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30">
                         {unreadNotifCount} new
                       </span>
                     ) : (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/25">
                         All read
                       </span>
                     )}
@@ -6002,7 +6052,7 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       onClick={handleMarkAllRead}
-                      className="text-[11px] text-amber-700 hover:text-amber-900 font-semibold cursor-pointer hover:underline"
+                      className="text-[11px] text-[var(--admin-primary)] hover:underline font-semibold cursor-pointer"
                     >
                       Mark all read
                     </button>
@@ -6014,10 +6064,10 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setNotifFilter("all")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       notifFilter === "all"
-                        ? "bg-neutral-900 text-white shadow-2xs"
-                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70"
+                        ? "bg-[var(--admin-elevated)] text-white border border-white/10"
+                        : "bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                   >
                     All ({notifications.length})
@@ -6025,16 +6075,16 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setNotifFilter("unread")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1 ${
                       notifFilter === "unread"
-                        ? "bg-amber-500 text-white shadow-2xs"
-                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/70"
+                        ? "bg-[var(--admin-elevated)] text-white border border-white/10"
+                        : "bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                   >
                     <span>Unread</span>
                     {unreadNotifCount > 0 && (
                       <span className={`px-1 py-0.2 rounded-full text-[9px] font-extrabold ${
-                        notifFilter === "unread" ? "bg-amber-600 text-white" : "bg-neutral-200 text-neutral-800"
+                        notifFilter === "unread" ? "bg-[#F59E0B] text-black" : "bg-white/10 text-white"
                       }`}>
                         {unreadNotifCount}
                       </span>
@@ -6044,7 +6094,7 @@ export default function AdminDashboard() {
                     <button
                       type="button"
                       onClick={handleClearAllNotifs}
-                      className="ml-auto text-[10.5px] text-neutral-400 hover:text-rose-600 font-medium cursor-pointer transition-colors"
+                      className="ml-auto text-[10.5px] text-[var(--admin-text-muted)] hover:text-[var(--admin-danger)] font-medium cursor-pointer transition-colors"
                     >
                       Clear all
                     </button>
@@ -6052,14 +6102,14 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Notification List */}
-                <div className="space-y-2 max-h-[320px] overflow-y-auto pr-0.5">
+                <div className="space-y-2 max-h-[320px] overflow-y-auto admin-scroll pr-1">
                   {filteredNotifications.length === 0 ? (
                     <div className="py-8 text-center">
-                      <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 text-base shadow-2xs border border-emerald-100">
+                      <div className="w-10 h-10 rounded-full bg-[#00F59B]/15 text-[#00F59B] flex items-center justify-center mx-auto mb-2 text-base border border-[#00F59B]/25">
                         <CheckCircle2 size={18} strokeWidth={2.2} />
                       </div>
-                      <p className="font-semibold text-neutral-800 text-xs">All caught up!</p>
-                      <p className="text-[11px] text-neutral-400 mt-0.5">
+                      <p className="font-semibold text-white text-xs">All caught up!</p>
+                      <p className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
                         {notifFilter === "unread"
                           ? "No unread notifications to display"
                           : "No notifications right now"}
@@ -6070,12 +6120,12 @@ export default function AdminDashboard() {
                       <div
                         key={n.id}
                         onClick={() => handleNotifClick(n)}
-                        className={`group relative p-2.5 rounded-xl border flex items-start gap-2.5 cursor-pointer transition-all ${
+                        className={`group relative p-2.5 rounded-[14px] border flex items-start gap-2.5 cursor-pointer transition-all ${
                           n.isRead
-                            ? "bg-white border-neutral-100/90 text-neutral-600 hover:bg-neutral-50/80"
+                            ? "bg-[var(--admin-surface-2)] border-white/5 text-[var(--admin-text-muted)] hover:bg-white/[0.03]"
                             : n.type === "return_request"
-                            ? "bg-[#fff8ee] border-[#fdecd2] hover:bg-[#fdf0e0] shadow-2xs"
-                            : "bg-neutral-50/90 border-neutral-200/70 hover:bg-neutral-100/80 shadow-2xs"
+                            ? "bg-[#FF4B55]/10 border-[#FF4B55]/20 hover:bg-[#FF4B55]/15 text-white"
+                            : "bg-[var(--admin-surface-2)] border-white/10 hover:bg-white/[0.04] text-white"
                         }`}
                       >
                         <NotificationIconBadge type={n.type} />
@@ -6084,25 +6134,25 @@ export default function AdminDashboard() {
                           <div className="flex items-center gap-1.5">
                             <p className={`font-semibold truncate leading-snug ${
                               n.isRead
-                                ? "text-neutral-700"
+                                ? "text-[var(--admin-text-muted)]"
                                 : n.type === "return_request"
-                                ? "text-orange-950 font-bold"
-                                : "text-neutral-900 font-bold"
+                                ? "text-[#FF4B55] font-bold"
+                                : "text-white font-bold"
                             }`}>
                               {n.title}
                             </p>
                             {!n.isRead && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shrink-0" />
                             )}
                           </div>
                           <p className={`text-[11px] mt-0.5 leading-tight truncate ${
                             n.type === "return_request" && !n.isRead
-                              ? "text-orange-900/80 font-medium"
-                              : "text-neutral-500"
+                              ? "text-white/80 font-medium"
+                              : "text-[var(--admin-text-muted)]"
                           }`}>
                             {n.subtitle}
                           </p>
-                          <span className="text-[10px] text-neutral-400 mt-1 block">
+                          <span className="text-[10px] text-[var(--admin-text-muted)] mt-1 block">
                             {n.timeAgo}
                           </span>
                         </div>
@@ -6116,7 +6166,7 @@ export default function AdminDashboard() {
                               handleToggleRead(n.id);
                             }}
                             title={n.isRead ? "Mark as unread" : "Mark as read"}
-                            className="p-1 hover:bg-neutral-200/70 rounded text-neutral-400 hover:text-neutral-700 cursor-pointer"
+                            className="p-1 hover:bg-white/10 rounded text-[var(--admin-text-muted)] hover:text-white cursor-pointer"
                           >
                             <span className="text-[10px] block font-mono">
                               {n.isRead ? "○" : "●"}
@@ -6129,7 +6179,7 @@ export default function AdminDashboard() {
                               handleDismissNotif(n.id);
                             }}
                             title="Dismiss notification"
-                            className="p-1 hover:bg-rose-100 rounded text-neutral-400 hover:text-rose-600 cursor-pointer"
+                            className="p-1 hover:bg-[#FF4B55]/20 rounded text-[var(--admin-text-muted)] hover:text-[#FF4B55] cursor-pointer"
                           >
                             <X size={12} />
                           </button>
@@ -6140,16 +6190,16 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Popover Footer */}
-                <div className="pt-2 mt-2 border-t border-neutral-100 flex items-center justify-between text-[11px]">
+                <div className="pt-2 mt-2 border-t border-white/5 flex items-center justify-between text-[11px]">
                   <Link
                     href="/admin/orders"
                     onClick={() => setIsNotifOpen(false)}
-                    className="text-neutral-600 hover:text-neutral-900 font-semibold flex items-center gap-1 hover:underline"
+                    className="text-[var(--admin-text-muted)] hover:text-white font-semibold flex items-center gap-1 hover:underline"
                   >
                     <span>View all orders</span>
                     <ChevronRight size={12} />
                   </Link>
-                  <span className="text-[10.5px] text-neutral-400">
+                  <span className="text-[10.5px] text-[var(--admin-text-muted)]">
                     VEYRO Admin
                   </span>
                 </div>
@@ -6159,14 +6209,14 @@ export default function AdminDashboard() {
 
           {/* User Profile */}
           <div className="flex items-center gap-2.5 pl-1.5 cursor-pointer">
-            <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm tracking-wide shrink-0 shadow-2xs">
+            <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-white flex items-center justify-center font-bold text-sm tracking-wide shrink-0">
               S
             </div>
             <div className="hidden sm:block text-left">
-              <div className="text-xs font-bold text-neutral-900 leading-tight">
+              <div className="text-xs font-bold text-white leading-tight font-heading">
                 Santhosh S
               </div>
-              <div className="text-[11px] text-neutral-400 font-medium leading-tight">
+              <div className="text-[11px] text-[var(--admin-text-muted)] font-medium leading-tight">
                 Admin
               </div>
             </div>
@@ -6174,286 +6224,152 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      {/* ── GREETING & TOP ACTION PILL + ADD PRODUCT BUTTON ───────────────────── */}
-      <section className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-1">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 tracking-tight">
-            Good Afternoon, Santhosh!
-          </h1>
-          <p className="text-xs sm:text-sm text-neutral-400 font-normal mt-1">
-            Here&apos;s what&apos;s happening with your VEYRO store today.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Return Requests Alert Pill */}
-          <button
-            type="button"
-            onClick={() => setIsReturnModalOpen(true)}
-            className="flex items-center gap-2.5 px-4 py-2 bg-[#fff8ee] border border-[#fdecd2]
-              rounded-xl shadow-2xs hover:bg-[#fdf0e0] hover:border-[#fcd9b0] transition-all cursor-pointer group text-left"
+      {/* ── GREETING & PAGE HEADER (TARGET UI DESIGN) ────────────────────── */}
+      <AdminHeader
+        greeting="Welcome back 👋"
+        subtitle="This is what's happening in your store this month."
+        currentFilter={dateFilter}
+        onSelectFilter={(newFilter) => {
+          setDateFilter(newFilter);
+          triggerToast(`Applied period: ${newFilter.label}`, "info");
+        }}
+        orders={orders}
+        showDateFilter={false}
+        rightAction={
+          <Link
+            href="/admin/products/add"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white rounded-full text-xs sm:text-sm font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0"
           >
-            <span className="w-6 h-6 rounded-lg bg-orange-500/15 text-orange-700 border border-orange-500/25 flex items-center justify-center shrink-0">
-              <RotateCcw size={12} strokeWidth={2.4} />
-            </span>
-            <span className="text-xs sm:text-sm font-semibold text-[#a83232]">
-              {pendingReturnsCount > 0
-                ? `${pendingReturnsCount} return request${pendingReturnsCount === 1 ? "" : "s"} pending review`
-                : "All return requests reviewed"}
-            </span>
-            <ChevronRight size={14} className="text-[#a83232] transition-transform group-hover:translate-x-0.5" />
-          </button>
-
-          {/* Add Product Button with Rich Menu */}
-          <div className="relative" ref={addMenuRef}>
-            <button
-              onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
-              className="flex items-center gap-2 bg-[#fceb3b] hover:bg-[#fad800] text-black px-4 py-2.5
-                rounded-xl text-xs sm:text-sm font-bold shadow-2xs hover:shadow-xs transition-all cursor-pointer"
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              <span>Add Product</span>
-              <ChevronDown size={14} strokeWidth={2} />
-            </button>
-
-            {isAddMenuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-2xl border border-neutral-200/90 shadow-2xl py-2 z-50 text-xs font-semibold text-neutral-800 animate-in fade-in slide-in-from-top-1 duration-150">
-                <Link
-                  href="/admin/products/add"
-                  onClick={() => setIsAddMenuOpen(false)}
-                  className="w-full text-left px-4 py-2.5 hover:bg-neutral-50 flex items-center justify-between group transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
-                      <Plus size={15} strokeWidth={2.5} />
-                    </div>
-                    <div>
-                      <div className="font-bold text-neutral-900 group-hover:text-amber-600 transition-colors">New Product</div>
-                      <div className="text-[10.5px] text-neutral-400 font-normal">Add single item to catalog</div>
-                    </div>
-                  </div>
-                </Link>
-
-                <Link
-                  href="/admin/products"
-                  onClick={() => setIsAddMenuOpen(false)}
-                  className="w-full text-left px-4 py-2.5 hover:bg-neutral-50 flex items-center justify-between group transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                      <Package size={15} />
-                    </div>
-                    <div>
-                      <div className="font-bold text-neutral-900 group-hover:text-blue-600 transition-colors">Manage Catalog</div>
-                      <div className="text-[10.5px] text-neutral-400 font-normal">Full inventory & pricing</div>
-                    </div>
-                  </div>
-                  <span className="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-neutral-100 text-neutral-700 font-mono">
-                    {products.length}
-                  </span>
-                </Link>
-
-                <div className="my-1 border-t border-neutral-100" />
-
-                <Link
-                  href="/admin/returns"
-                  onClick={() => setIsAddMenuOpen(false)}
-                  className="w-full text-left px-4 py-2.5 hover:bg-neutral-50 flex items-center justify-between group transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-orange-50 text-orange-700 flex items-center justify-center shrink-0">
-                      <RotateCcw size={14} />
-                    </div>
-                    <div>
-                      <div className="font-bold text-neutral-900 group-hover:text-orange-600 transition-colors">Returns Portal</div>
-                      <div className="text-[10.5px] text-neutral-400 font-normal">Process refund claims</div>
-                    </div>
-                  </div>
-                  {pendingReturnsCount > 0 && (
-                    <span className="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-400 text-black font-mono">
-                      {pendingReturnsCount}
-                    </span>
-                  )}
-                </Link>
-
-                <Link
-                  href="/admin/orders"
-                  onClick={() => setIsAddMenuOpen(false)}
-                  className="w-full text-left px-4 py-2.5 hover:bg-neutral-50 flex items-center justify-between group transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                      <ShoppingCart size={14} />
-                    </div>
-                    <div>
-                      <div className="font-bold text-neutral-900 group-hover:text-emerald-600 transition-colors">Orders & Sales</div>
-                      <div className="text-[10.5px] text-neutral-400 font-normal">Real-time fulfillment</div>
-                    </div>
-                  </div>
-                  <span className="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-neutral-100 text-neutral-700 font-mono">
-                    {orders.length}
-                  </span>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+            <Plus size={15} strokeWidth={2.5} />
+            <span>Add Product</span>
+          </Link>
+        }
+      />
 
       {/* ── 4 STAT CARDS ────────────────────────────────────────────────────── */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Total Revenue */}
-        <div className="bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <StaggerItem
+          withHover
+          className="group bg-[var(--admin-surface)] rounded-[28px] border border-white/5 hover:border-white/10 p-6 flex flex-col justify-between transition-colors duration-200 cursor-default"
+        >
           <div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] flex items-center justify-center shrink-0 p-1.5 shadow-2xs">
-                <Image
-                  src="/images/admin/rupee-3d-gold.png"
-                  alt="Total Revenue"
-                  width={28}
-                  height={28}
-                  className="w-full h-full object-contain drop-shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
-                  priority
-                />
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Total Revenue</span>
+              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
+                <ArrowUpRight size={18} className="group-hover:translate-x-[1px] group-hover:-translate-y-[1px] transition-transform duration-200" />
               </div>
-              <span className="text-[13px] font-medium text-neutral-600">Total Revenue</span>
             </div>
-            <div className="text-[32px] font-bold text-neutral-900 tracking-tight leading-none mt-3.5 mb-2.5">
-              ₹{stats.totalRev.toLocaleString("en-IN")}
+            <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
+              <CountUp value={stats.totalRev} prefix="₹" />
             </div>
           </div>
 
-          <div className="flex items-end justify-between pt-1">
-            <div className="flex items-center gap-1 text-xs">
-              <span className="font-bold text-emerald-500">
-                ↑ 14%
-              </span>
-              <span className="text-neutral-400 font-normal ml-0.5">
-                {dateFilter.type === "day" ? `for ${dateFilter.label}` : dateFilter.type === "all" ? "store inception to date" : "in this period"}
-              </span>
-            </div>
-            <div className="shrink-0 -mb-1">
-              <SparklineBars />
-            </div>
+          <div className="flex items-center gap-1.5 pt-1 text-xs">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
+              ↑ 14%
+            </span>
+            <span className="text-[var(--admin-text-muted)] font-normal ml-0.5">
+              {dateFilter.type === "day" ? `for ${dateFilter.label}` : dateFilter.type === "all" ? "store inception to date" : "in this period"}
+            </span>
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Card 2: Total Orders */}
-        <div className="bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <StaggerItem
+          withHover
+          className="group bg-[var(--admin-surface)] rounded-[28px] border border-white/5 hover:border-white/10 p-6 flex flex-col justify-between transition-colors duration-200 cursor-default"
+        >
           <div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] flex items-center justify-center shrink-0 p-1.5 shadow-2xs">
-                <Image
-                  src="/images/admin/cart-3d-gold.png"
-                  alt="Total Orders"
-                  width={28}
-                  height={28}
-                  className="w-full h-full object-contain drop-shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
-                  priority
-                />
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Total Orders</span>
+              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
+                <ShoppingCart size={18} />
               </div>
-              <span className="text-[13px] font-medium text-neutral-600">Total Orders</span>
             </div>
-            <div className="text-[32px] font-bold text-neutral-900 tracking-tight leading-none mt-3.5 mb-2.5">
-              {stats.totalOrd}
+            <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
+              <CountUp value={stats.totalOrd} />
             </div>
           </div>
 
-          <div className="flex items-end justify-between pt-1">
-            <div className="flex items-center gap-1 text-xs">
-              <span className="font-bold text-emerald-500">
-                ↑ 14%
-              </span>
-              <span className="text-neutral-400 font-normal ml-0.5">
-                {dateFilter.type === "day" ? `orders on ${dateFilter.label}` : dateFilter.type === "all" ? "lifetime purchases" : "in this period"}
-              </span>
-            </div>
-            <div className="shrink-0 -mb-1">
-              <SparklineBlackLine />
-            </div>
+          <div className="flex items-center gap-1.5 pt-1 text-xs">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
+              ↑ 14%
+            </span>
+            <span className="text-[var(--admin-text-muted)] font-normal ml-0.5">
+              {dateFilter.type === "day" ? `orders on ${dateFilter.label}` : dateFilter.type === "all" ? "lifetime purchases" : "in this period"}
+            </span>
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Card 3: Total Products */}
-        <div className="bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <StaggerItem
+          withHover
+          className="group bg-[var(--admin-surface)] rounded-[28px] border border-white/5 hover:border-white/10 p-6 flex flex-col justify-between transition-colors duration-200 cursor-default"
+        >
           <div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#fff1f1] flex items-center justify-center shrink-0">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2.5 L20 7 L12 11.5 L4 7 Z" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.5" strokeLinejoin="round" />
-                  <path d="M4 7 L12 11.5 V21.5 L4 17 Z" fill="#fecaca" stroke="#ef4444" strokeWidth="1.5" strokeLinejoin="round" />
-                  <path d="M12 11.5 L20 7 V17 L12 21.5 Z" fill="#fca5a5" stroke="#ef4444" strokeWidth="1.5" strokeLinejoin="round" />
-                </svg>
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Total Products</span>
+              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
+                <Package size={18} />
               </div>
-              <span className="text-[13px] font-medium text-neutral-600">Total Products</span>
             </div>
-            <div className="text-[32px] font-bold text-neutral-900 tracking-tight leading-none mt-3.5 mb-2.5">
-              {stats.totalProd}
+            <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
+              <CountUp value={stats.totalProd} />
             </div>
           </div>
 
-          <div className="flex items-end justify-between pt-1">
-            <div className="flex items-center gap-1 text-xs">
-              <span className="font-bold text-red-500">
-                ↓ 14%
-              </span>
-              <span className="text-neutral-400 font-normal ml-0.5">active catalog</span>
-            </div>
-            <div className="shrink-0 -mb-1">
-              <SparklineRedWave />
-            </div>
+          <div className="flex items-center gap-1.5 pt-1 text-xs">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FF4B55]/15 text-[#FF4B55] border border-[#FF4B55]/20">
+              ↓ 14%
+            </span>
+            <span className="text-[var(--admin-text-muted)] font-normal ml-0.5">active catalog</span>
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Card 4: Avg. Order Value */}
-        <div className="bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <StaggerItem
+          withHover
+          className="group bg-[var(--admin-surface)] rounded-[28px] border border-white/5 hover:border-white/10 p-6 flex flex-col justify-between transition-colors duration-200 cursor-default"
+        >
           <div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#e8f7f5] flex items-center justify-center shrink-0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="14" width="4" height="7" rx="1" fill="#0d9488" />
-                  <rect x="10" y="8" width="4" height="13" rx="1" fill="#0d9488" />
-                  <rect x="17" y="3" width="4" height="18" rx="1" fill="#0d9488" />
-                </svg>
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Avg. Order Value</span>
+              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
+                <BarChart3 size={18} />
               </div>
-              <span className="text-[13px] font-medium text-neutral-600">Avg. Order Value</span>
             </div>
-            <div className="text-[32px] font-bold text-neutral-900 tracking-tight leading-none mt-3.5 mb-2.5">
-              ₹{stats.aov.toLocaleString("en-IN")}
+            <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
+              <CountUp value={stats.aov} prefix="₹" />
             </div>
           </div>
 
-          <div className="flex items-end justify-between pt-1">
-            <div className="flex items-center gap-1 text-xs">
-              <span className="font-bold text-emerald-500">
-                ↑ 14%
-              </span>
-              <span className="text-neutral-400 font-normal ml-0.5">
-                {dateFilter.type === "day" ? `basket avg on ${dateFilter.label}` : dateFilter.type === "all" ? "lifetime basket avg" : "in this period"}
-              </span>
-            </div>
-            <div className="shrink-0 -mb-1">
-              <SparklineGreenWave />
-            </div>
+          <div className="flex items-center gap-1.5 pt-1 text-xs">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
+              ↑ 14%
+            </span>
+            <span className="text-[var(--admin-text-muted)] font-normal ml-0.5">
+              {dateFilter.type === "day" ? `basket avg on ${dateFilter.label}` : dateFilter.type === "all" ? "lifetime basket avg" : "in this period"}
+            </span>
           </div>
-        </div>
-      </section>
+        </StaggerItem>
+      </StaggerGroup>
 
       {/* ── MIDDLE ROW: REVENUE OVERVIEW & ORDER STATUS ───────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: Revenue Overview (6 cols) */}
-        <div className="lg:col-span-6 bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <div className="lg:col-span-6 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 flex flex-col justify-between">
           {/* Header Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] text-amber-600 flex items-center justify-center shrink-0 shadow-2xs">
-                <BarChart3 size={18} className="text-amber-600" />
+              <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/5">
+                <BarChart3 size={18} className="text-[var(--admin-text-muted)]" />
               </div>
               <div>
-                <h2 className="text-[17px] font-bold text-neutral-900 leading-tight tracking-tight">
+                <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
                   Revenue Overview
                 </h2>
-                <p className="text-xs text-neutral-400 font-normal mt-0.5">
+                <p className="text-xs text-[var(--admin-text-muted)] font-normal mt-0.5">
                   Sales performance over time
                 </p>
               </div>
@@ -6461,22 +6377,22 @@ export default function AdminDashboard() {
 
             <div className="flex items-center gap-2.5">
               {/* Metric mode toggle: Revenue vs Orders */}
-              <div className="hidden sm:flex items-center bg-[#f3f4f6] border border-neutral-200/80 rounded-xl p-1 gap-1 text-xs font-semibold shadow-2xs">
+              <div className="hidden sm:flex items-center bg-[var(--admin-surface-2)] border border-white/5 rounded-full p-1 gap-1 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => setRevenueMetricMode("revenue")}
-                  className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                     revenueMetricMode === "revenue"
-                      ? "bg-white text-neutral-950 shadow-xs border border-neutral-200/90 font-bold"
-                      : "text-neutral-500 hover:text-neutral-950 hover:bg-white/60 border border-transparent"
+                      ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                      : "text-[var(--admin-text-muted)] hover:text-white border border-transparent"
                   }`}
                   aria-pressed={revenueMetricMode === "revenue"}
                 >
                   <span
-                    className={`w-4 h-4 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                    className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                       revenueMetricMode === "revenue"
-                        ? "bg-amber-500/15 text-amber-800"
-                        : "bg-neutral-200/70 text-neutral-500 group-hover:text-neutral-800"
+                        ? "bg-[#7C3AED]/20 text-[#7C3AED]"
+                        : "bg-white/5 text-[var(--admin-text-muted)] group-hover:text-white"
                     }`}
                   >
                     <IndianRupee size={11} strokeWidth={2.8} />
@@ -6486,18 +6402,18 @@ export default function AdminDashboard() {
                 <button
                   type="button"
                   onClick={() => setRevenueMetricMode("orders")}
-                  className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                     revenueMetricMode === "orders"
-                      ? "bg-white text-neutral-950 shadow-xs border border-neutral-200/90 font-bold"
-                      : "text-neutral-500 hover:text-neutral-950 hover:bg-white/60 border border-transparent"
+                      ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                      : "text-[var(--admin-text-muted)] hover:text-white border border-transparent"
                   }`}
                   aria-pressed={revenueMetricMode === "orders"}
                 >
                   <span
-                    className={`w-4 h-4 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                    className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                       revenueMetricMode === "orders"
-                        ? "bg-sky-500/15 text-sky-800"
-                        : "bg-neutral-200/70 text-neutral-500 group-hover:text-neutral-800"
+                        ? "bg-[#7C3AED]/20 text-[#7C3AED]"
+                        : "bg-white/5 text-[var(--admin-text-muted)] group-hover:text-white"
                     }`}
                   >
                     <ShoppingBag size={11} strokeWidth={2.4} />
@@ -6507,7 +6423,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Period selector pill */}
-              <div className="flex items-center bg-[#f3f4f6] border border-neutral-200/80 rounded-xl p-1 gap-1 shadow-2xs">
+              <div className="flex items-center bg-[var(--admin-surface-2)] border border-white/5 rounded-full p-1 gap-1">
                 {(["7d", "30d", "90d"] as const).map((p) => {
                   const label = p === "7d" ? "7 Days" : p === "30d" ? "30 Days" : "90 Days";
                   const isActive = chartPeriod === p;
@@ -6515,10 +6431,10 @@ export default function AdminDashboard() {
                     <button
                       key={p}
                       onClick={() => setChartPeriod(p)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                         isActive
-                          ? "bg-black text-white shadow-xs font-bold"
-                          : "text-neutral-600 hover:text-black hover:bg-white/50"
+                          ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                          : "text-[var(--admin-text-muted)] hover:text-white"
                       }`}
                     >
                       {label}
@@ -6540,33 +6456,31 @@ export default function AdminDashboard() {
           </div>
 
           {/* Executive KPI Metrics Ribbon */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-3 mb-2 border-b border-neutral-100/80">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-3 mb-2 border-b border-white/5">
             <div className="flex items-baseline gap-3">
               <div>
-                <span className="text-[10.5px] font-semibold text-neutral-400 uppercase tracking-wider block">
+                <span className="text-[10.5px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider block">
                   {revenueMetricMode === "revenue" ? "Period Revenue" : "Period Orders"}
                 </span>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-2xl font-extrabold text-neutral-900 tracking-tight">
+                  <span className="text-2xl font-extrabold text-white tracking-tight tabular-nums">
                     {revenueMetricMode === "revenue"
                       ? `₹${revenueSummary.totalRev.toLocaleString("en-IN")}`
                       : `${revenueSummary.totalOrd} Orders`}
                   </span>
-                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
                     <TrendingUp size={12} />
                     {revenueSummary.growthPct}
                   </span>
                 </div>
               </div>
 
-              <div className="hidden md:block text-xs text-neutral-400 pl-3 border-l border-neutral-200">
-                <span>Avg: <strong className="text-neutral-700 font-semibold">₹{revenueSummary.avgDaily.toLocaleString("en-IN")}/day</strong></span>
+              <div className="hidden md:block text-xs text-[var(--admin-text-muted)] pl-3 border-l border-white/10">
+                <span>Avg: <strong className="text-white font-semibold">₹{revenueSummary.avgDaily.toLocaleString("en-IN")}/day</strong></span>
                 <span className="mx-1.5">•</span>
-                <span><strong className="text-neutral-700 font-semibold">{revenueSummary.totalOrd}</strong> orders placed</span>
+                <span><strong className="text-white font-semibold">{revenueSummary.totalOrd}</strong> orders placed</span>
               </div>
             </div>
-
-
           </div>
 
           {/* Interactive Chart */}
@@ -6581,13 +6495,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Right: Order Status (6 cols) - Exact Side-by-Side Bklit Layout */}
-        <div className="lg:col-span-6 bg-white rounded-[22px] border border-black/[0.04] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        <div className="lg:col-span-6 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] flex items-center justify-center text-amber-600 shadow-2xs shrink-0">
-                <StopwatchIcon className="w-5 h-5 text-amber-600" />
+              <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] flex items-center justify-center text-[var(--admin-text-muted)] border border-white/5 shrink-0">
+                <StopwatchIcon className="w-5 h-5 text-[var(--admin-text-muted)]" />
               </div>
-              <h2 className="text-[17px] font-bold text-neutral-900 tracking-tight leading-tight">
+              <h2 className="text-[17px] font-bold text-white tracking-tight leading-tight">
                 Order Status
               </h2>
             </div>
@@ -6615,14 +6529,14 @@ export default function AdminDashboard() {
           </div>
 
           {selectedStatusFilter && (
-            <div className="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500 animate-in fade-in duration-200">
+            <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-200">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                Filtered by <strong className="text-neutral-900 font-semibold">{selectedStatusFilter}</strong>
+                <span className="w-2 h-2 rounded-full bg-[#7C3AED] animate-pulse" />
+                Filtered by <strong className="text-white font-semibold">{selectedStatusFilter}</strong>
               </span>
               <button
                 onClick={() => setSelectedStatusFilter(null)}
-                className="text-amber-800 font-semibold hover:underline cursor-pointer"
+                className="text-[#7C3AED] font-semibold hover:underline cursor-pointer"
               >
                 Clear filter
               </button>
@@ -6634,35 +6548,35 @@ export default function AdminDashboard() {
       {/* ── BOTTOM ROW: RECENT ORDERS & TOP PRODUCTS ─────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: Recent Orders Table (8 cols) */}
-        <div className="lg:col-span-8 bg-white rounded-[22px] border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col justify-between">
+        <div className="lg:col-span-8 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 overflow-hidden flex flex-col justify-between">
           <div>
             {/* Header */}
             <div className="flex items-center justify-between p-5 sm:p-6 pb-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] text-amber-600 flex items-center justify-center shrink-0 shadow-2xs border border-amber-200/50">
-                  <ShoppingCart size={18} className="text-amber-600" />
+                <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/5">
+                  <ShoppingCart size={18} className="text-[var(--admin-text-muted)]" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-[17px] font-bold text-neutral-900 leading-tight tracking-tight">
+                    <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
                       Recent Orders
                     </h2>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border shadow-2xs flex items-center gap-1 ${
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border flex items-center gap-1.5 ${
                         dateFilter.type === "day"
-                          ? "bg-sky-50 text-sky-800 border-sky-300"
+                          ? "bg-sky-500/15 text-sky-400 border-sky-500/20"
                           : dateFilter.type === "custom"
-                          ? "bg-purple-50 text-purple-800 border-purple-300"
-                          : "bg-amber-50 text-amber-900 border-amber-300"
+                          ? "bg-[#7C3AED]/15 text-[#7C3AED] border-[#7C3AED]/20"
+                          : "bg-[#00F59B]/15 text-[#00F59B] border-[#00F59B]/20"
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
                           dateFilter.type === "day"
-                            ? "bg-sky-500"
+                            ? "bg-sky-400"
                             : dateFilter.type === "custom"
-                            ? "bg-purple-500"
-                            : "bg-amber-500"
+                            ? "bg-[#7C3AED]"
+                            : "bg-[#00F59B]"
                         }`}
                       />
                       {dateFilter.type === "day"
@@ -6672,8 +6586,8 @@ export default function AdminDashboard() {
                         : "Till Date"}
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-500 font-normal mt-1 flex items-center gap-1.5 truncate">
-                    <CalendarDays size={12} className="text-amber-700 shrink-0" />
+                  <p className="text-xs text-[var(--admin-text-muted)] font-normal mt-1 flex items-center gap-1.5 truncate">
+                    <CalendarDays size={12} className="text-[var(--admin-text-muted)] shrink-0" />
                     <span className="truncate">
                       {dateFilter.type === "day"
                         ? `Single day orders: ${dateFilter.label} (${allFilteredRecentOrders.length} ${allFilteredRecentOrders.length === 1 ? "order" : "orders"})`
@@ -6689,14 +6603,14 @@ export default function AdminDashboard() {
                 <button
                   type="button"
                   onClick={() => setIsAllOrdersModalOpen(true)}
-                  className="flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-950 transition-colors group cursor-pointer bg-[#fff8e7] hover:bg-amber-100/70 px-2.5 py-1.5 rounded-xl border border-amber-200/60 shadow-2xs"
+                  className="flex items-center gap-1 text-xs font-semibold text-white hover:text-white transition-colors group cursor-pointer bg-[var(--admin-surface-2)] hover:bg-[var(--admin-elevated)] px-3 py-1.5 rounded-full border border-white/10"
                 >
                   <span>View All ({orders.length})</span>
                   <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5" />
                 </button>
                 <Link
                   href="/admin/orders"
-                  className="w-8 h-8 rounded-xl border border-neutral-200/60 hover:bg-neutral-100 text-neutral-500 hover:text-neutral-900 flex items-center justify-center transition-colors shadow-2xs"
+                  className="w-8 h-8 rounded-full border border-white/10 bg-[var(--admin-surface-2)] hover:bg-[var(--admin-elevated)] text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors"
                   title="Open Dedicated Full Page"
                 >
                   <ExternalLink size={13} />
@@ -6705,7 +6619,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Recent Orders Status & Date Controls Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2.5 px-5 sm:px-6 pb-3.5 border-b border-black/[0.04]">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 px-5 sm:px-6 pb-3.5 border-b border-white/5">
               {/* Status Filter Tabs */}
               <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
                 {["All", "Delivered", "Processing", "Shipped", "Returned"].map((status) => {
@@ -6714,10 +6628,10 @@ export default function AdminDashboard() {
                     <button
                       key={status}
                       onClick={() => setRecentOrdersStatusFilter(status)}
-                      className={`px-3 py-1 rounded-xl text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
+                      className={`px-3 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
                         isActive
-                          ? "bg-neutral-900 text-white shadow-2xs font-semibold"
-                          : "bg-neutral-100/80 hover:bg-neutral-200/70 text-neutral-600"
+                          ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
+                          : "bg-[var(--admin-surface-2)] hover:bg-white/[0.04] text-[var(--admin-text-muted)] hover:text-white border border-white/5"
                       }`}
                     >
                       {status}
@@ -6729,7 +6643,7 @@ export default function AdminDashboard() {
               {/* Date Scope Controls: Quick Switcher + Compact Picker */}
               <div className="flex items-center gap-2">
                 {/* 1-Click Quick Mode Switcher: "Till Date" vs "Day-wise" */}
-                <div className="flex items-center bg-neutral-100 p-0.5 rounded-lg border border-neutral-200/60 text-[10px] font-semibold shrink-0">
+                <div className="flex items-center bg-[var(--admin-surface-2)] p-0.5 rounded-full border border-white/5 text-[10px] font-semibold shrink-0">
                   <button
                     type="button"
                     onClick={() => {
@@ -6741,10 +6655,10 @@ export default function AdminDashboard() {
                       });
                       triggerToast("Showing store orders accumulated Till Date (03 Oct 2026)", "info");
                     }}
-                    className={`px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
                       dateFilter.type === "all"
-                        ? "bg-amber-500 text-white font-bold shadow-2xs"
-                        : "text-neutral-600 hover:text-neutral-950"
+                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
+                        : "text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                     title="View orders accumulated till date (03 Oct 2026)"
                   >
@@ -6762,10 +6676,10 @@ export default function AdminDashboard() {
                       });
                       triggerToast("Showing single-day orders for Today (03 Oct 2026)", "info");
                     }}
-                    className={`px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
                       dateFilter.type === "day"
-                        ? "bg-sky-600 text-white font-bold shadow-2xs"
-                        : "text-neutral-600 hover:text-neutral-950"
+                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
+                        : "text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                     title="View single-day orders (Today: 03 Oct 2026)"
                   >
@@ -6796,17 +6710,17 @@ export default function AdminDashboard() {
 
             {/* ── HIGH-DETAIL DATE SCOPE & DAY-WISE NAVIGATION HUB ── */}
             {dateFilter.type === "day" ? (
-              <div className="mx-5 sm:mx-6 my-2.5 p-3 rounded-2xl bg-gradient-to-r from-sky-50/90 via-sky-50/50 to-indigo-50/40 border border-sky-200/80 shadow-2xs flex flex-col gap-2.5 animate-in fade-in duration-150">
+              <div className="mx-5 sm:mx-6 my-2.5 p-3 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex flex-col gap-2.5 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
-                    <span className="text-xs text-sky-950 font-bold truncate">
+                    <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shrink-0" />
+                    <span className="text-xs text-white font-bold truncate">
                       Day-Wise Breakdown:{" "}
-                      <span className="text-sky-900 underline decoration-sky-300 font-extrabold">
+                      <span className="text-[var(--admin-text-muted)] underline decoration-white/20 font-medium">
                         {dateFilter.label}
                       </span>
                     </span>
-                    <span className="text-[10px] text-sky-800 bg-sky-100 font-bold px-2 py-0.5 rounded-full border border-sky-300/60 shadow-2xs shrink-0">
+                    <span className="text-[10px] text-white bg-white/5 font-bold px-2 py-0.5 rounded-full border border-white/10 shrink-0">
                       {allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} • ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -6817,7 +6731,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => handleStepDay("prev")}
                       disabled={currentDayIndex >= availableOrderDays.length - 1}
-                      className="flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 hover:bg-sky-50 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+                      className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[var(--admin-surface)] border border-white/10 text-white hover:bg-white/[0.05] disabled:opacity-35 disabled:pointer-events-none cursor-pointer transition-all"
                       title="Step to earlier date with orders"
                     >
                       <ChevronLeft size={12} />
@@ -6827,7 +6741,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => handleStepDay("next")}
                       disabled={currentDayIndex <= 0}
-                      className="flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-lg bg-white border border-sky-200 text-sky-900 hover:bg-sky-50 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs transition-all"
+                      className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[var(--admin-surface)] border border-white/10 text-white hover:bg-white/[0.05] disabled:opacity-35 disabled:pointer-events-none cursor-pointer transition-all"
                       title="Step to more recent date"
                     >
                       <span>Next Day</span>
@@ -6844,7 +6758,7 @@ export default function AdminDashboard() {
                         });
                         triggerToast("Restored store orders accumulated Till Date", "info");
                       }}
-                      className="ml-1 text-[11px] font-bold text-sky-800 hover:text-sky-950 hover:underline cursor-pointer"
+                      className="ml-1 text-[11px] font-bold text-[#7C3AED] hover:underline cursor-pointer"
                     >
                       View All (Till Date)
                     </button>
@@ -6853,7 +6767,7 @@ export default function AdminDashboard() {
 
                 {/* Quick Day Selector Pills */}
                 <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-                  <span className="text-[10px] uppercase tracking-wider font-extrabold text-sky-900/60 shrink-0 mr-1">
+                  <span className="text-[10px] uppercase tracking-wider font-extrabold text-[var(--admin-text-muted)] shrink-0 mr-1">
                     Select Day:
                   </span>
                   {availableOrderDays.map((dayItem) => {
@@ -6872,21 +6786,21 @@ export default function AdminDashboard() {
                           });
                           triggerToast(`Selected ${dayItem.label} (${dayItem.count} ${dayItem.count === 1 ? "order" : "orders"})`, "info");
                         }}
-                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
                           isSelected
-                            ? "bg-sky-600 text-white font-bold border-sky-700 shadow-xs ring-2 ring-sky-300"
-                            : "bg-white/90 hover:bg-white text-neutral-700 border-sky-200/70 hover:border-sky-300"
+                            ? "bg-[var(--admin-elevated)] text-white font-bold border-white/15"
+                            : "bg-[var(--admin-surface)] hover:bg-white/[0.03] text-[var(--admin-text-muted)] hover:text-white border-white/5"
                         }`}
                       >
                         <span>{dayItem.label}</span>
                         <span
                           className={`px-1.5 py-0.2 rounded-full text-[9.5px] font-extrabold ${
-                            isSelected ? "bg-white/20 text-white" : "bg-sky-100 text-sky-800"
+                            isSelected ? "bg-white/10 text-white" : "bg-white/5 text-[var(--admin-text-muted)]"
                           }`}
                         >
                           {dayItem.count}
                         </span>
-                        <span className={`text-[10px] ${isSelected ? "text-sky-100" : "text-neutral-400"}`}>
+                        <span className={`text-[10px] ${isSelected ? "text-white/80" : "text-[var(--admin-text-muted)]"}`}>
                           ₹{Math.round(dayItem.totalRevenue).toLocaleString("en-IN")}
                         </span>
                       </button>
@@ -6895,11 +6809,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ) : dateFilter.type === "all" ? (
-              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-50/90 via-amber-50/40 to-transparent border border-amber-200/70 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
+              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={13} className="text-amber-600 shrink-0" />
+                  <Sparkles size={13} className="text-[#00F59B] shrink-0" />
                   <span>
-                    <strong>Till Date Store History:</strong> All {orders.length} orders recorded from store launch (18 Sep 2026) till today (03 Oct 2026). Cumulative gross: <strong>₹{lifetimeStoreRevenue.toLocaleString("en-IN")}</strong>
+                    <strong className="text-white">Till Date Store History:</strong> All {orders.length} orders recorded from store launch (18 Sep 2026) till today (03 Oct 2026). Cumulative gross: <strong className="text-white">₹{lifetimeStoreRevenue.toLocaleString("en-IN")}</strong>
                   </span>
                 </div>
                 <button
@@ -6914,18 +6828,18 @@ export default function AdminDashboard() {
                     });
                     triggerToast("Switched to Day-Wise Breakdown for Today (03 Oct 2026)", "info");
                   }}
-                  className="text-amber-800 hover:text-amber-950 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+                  className="text-[#7C3AED] hover:text-[#9061F9] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
                 >
                   <span>Explore Day-Wise</span>
                   <ArrowRight size={11} />
                 </button>
               </div>
             ) : (
-              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-xl bg-purple-50/80 border border-purple-200/70 flex items-center justify-between text-xs text-purple-950 animate-in fade-in duration-150">
+              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
                 <div className="flex items-center gap-2">
-                  <CalendarDays size={13} className="text-purple-600 shrink-0" />
+                  <CalendarDays size={13} className="text-[#7C3AED] shrink-0" />
                   <span>
-                    <strong>Custom Date Range:</strong> {dateFilter.startDate} → {dateFilter.endDate} ({allFilteredRecentOrders.length} orders found • ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")})
+                    <strong className="text-white">Custom Date Range:</strong> {dateFilter.startDate} → {dateFilter.endDate} ({allFilteredRecentOrders.length} orders found • ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")})
                   </span>
                 </div>
                 <button
@@ -6939,7 +6853,7 @@ export default function AdminDashboard() {
                     });
                     triggerToast("Reset to All Time (Till Date)", "info");
                   }}
-                  className="text-purple-800 hover:text-purple-950 font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
+                  className="text-[#7C3AED] hover:text-[#9061F9] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
                 >
                   <span>Reset to Till Date</span>
                   <RotateCcw size={11} />
@@ -6949,41 +6863,41 @@ export default function AdminDashboard() {
 
             {/* Active Search & Filter Banner */}
             {searchQuery.trim() && (
-              <div className="mx-5 sm:mx-6 my-2.5 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/60 flex items-center justify-between text-xs text-amber-950 animate-in fade-in duration-150">
+              <div className="mx-5 sm:mx-6 my-2.5 p-2.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
                 <div className="flex items-center gap-2">
-                  <Search size={13} className="text-amber-600 shrink-0" />
+                  <Search size={13} className="text-[#7C3AED] shrink-0" />
                   <span>
-                    Showing orders matching <strong className="font-semibold text-black">&quot;{searchQuery}&quot;</strong> ({allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} found)
+                    Showing orders matching <strong className="font-semibold text-white">&quot;{searchQuery}&quot;</strong> ({allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} found)
                   </span>
                 </div>
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="text-amber-800 hover:text-amber-950 font-semibold flex items-center gap-1 cursor-pointer hover:underline"
+                  className="text-[#7C3AED] hover:text-[#9061F9] font-semibold flex items-center gap-1 cursor-pointer hover:underline"
                 >
                   <X size={12} /> Clear search
                 </button>
               </div>
             )}
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto admin-scroll">
               <table className="w-full text-left border-collapse" role="table">
                 <thead>
-                  <tr className="border-b border-neutral-100 text-xs font-medium text-neutral-400">
-                    <th className="pl-6 py-3 font-medium">Order ID</th>
-                    <th className="px-3 py-3 font-medium">Customer</th>
-                    <th className="px-3 py-3 font-medium">Products</th>
-                    <th className="px-3 py-3 font-medium">Total</th>
-                    <th className="px-3 py-3 font-medium">Status</th>
-                    <th className="px-3 py-3 font-medium">Date</th>
-                    <th className="pr-6 py-3 font-medium text-right">Actions</th>
+                  <tr className="bg-[var(--admin-surface-2)] border-b border-white/5 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
+                    <th className="pl-6 py-3">Order ID</th>
+                    <th className="px-3 py-3">Customer</th>
+                    <th className="px-3 py-3">Products</th>
+                    <th className="px-3 py-3">Total</th>
+                    <th className="px-3 py-3">Status</th>
+                    <th className="px-3 py-3">Date</th>
+                    <th className="pr-6 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100">
+                <tbody className="divide-y divide-white/5">
                   {displayedOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-12 text-center text-xs text-neutral-400">
+                      <td colSpan={7} className="py-12 text-center text-xs text-[var(--admin-text-muted)]">
                         <div className="flex flex-col items-center justify-center gap-2">
-                          <Package size={24} className="text-neutral-300" />
+                          <Package size={24} className="text-[var(--admin-text-muted)]" />
                           <span>No orders found matching the active filters.</span>
                           <button
                             type="button"
@@ -6996,7 +6910,7 @@ export default function AdminDashboard() {
                                 endDate: "2026-10-03",
                               });
                             }}
-                            className="text-amber-800 hover:underline font-semibold text-xs mt-1 cursor-pointer"
+                            className="text-[#7C3AED] hover:underline font-semibold text-xs mt-1 cursor-pointer"
                           >
                             Reset filters to All Time
                           </button>
@@ -7015,11 +6929,11 @@ export default function AdminDashboard() {
                         <tr
                           key={order.id}
                           onClick={() => setSelectedOrderForModal(order)}
-                          className="hover:bg-amber-50/40 cursor-pointer transition-colors duration-150 group"
+                          className="hover:bg-white/[0.03] cursor-pointer transition-colors duration-150 group border-b border-white/5"
                           title="Click to deep inspect order"
                         >
                           {/* ID */}
-                          <td className="pl-6 py-3.5 whitespace-nowrap text-xs font-mono font-medium text-neutral-800 group-hover:text-amber-800">
+                          <td className="pl-6 py-3.5 whitespace-nowrap text-xs font-mono font-medium text-white group-hover:text-[#7C3AED]">
                             {order.id}
                           </td>
 
@@ -7031,7 +6945,7 @@ export default function AdminDashboard() {
                               >
                                 {avatar.initial}
                               </div>
-                              <span className="text-xs sm:text-sm font-medium text-neutral-900">
+                              <span className="text-xs sm:text-sm font-medium text-white">
                                 {customerName}
                               </span>
                             </div>
@@ -7040,7 +6954,7 @@ export default function AdminDashboard() {
                           {/* Products */}
                           <td className="px-3 py-3.5 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200/60 flex items-center justify-center">
+                              <div className="w-7 h-7 rounded-[8px] bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
                                 <Image
                                   src={thumbUrl}
                                   alt="Product thumbnail"
@@ -7049,7 +6963,7 @@ export default function AdminDashboard() {
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <span className="text-xs text-neutral-500">
+                              <span className="text-xs text-[var(--admin-text-muted)]">
                                 {itemCount} {itemCount === 1 ? "item" : "items"}
                               </span>
                             </div>
@@ -7058,11 +6972,11 @@ export default function AdminDashboard() {
                           {/* Total */}
                           <td className="px-3 py-3.5 whitespace-nowrap">
                             <div className="flex flex-col gap-0.5">
-                              <span className="text-xs sm:text-sm font-bold text-neutral-900">
+                              <span className="text-xs sm:text-sm font-bold text-white font-heading tabular-nums">
                                 ₹{order.total.toLocaleString("en-IN")}
                               </span>
-                              <span className="text-[10px] text-neutral-500 font-medium uppercase tracking-wider flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                              <span className="text-[10px] text-[var(--admin-text-muted)] font-medium uppercase tracking-wider flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] shrink-0" />
                                 {order.paymentMethod === "upi"
                                   ? "UPI • Paid"
                                   : order.paymentMethod === "card"
@@ -7082,20 +6996,20 @@ export default function AdminDashboard() {
                           {/* Date */}
                           <td className="px-3 py-3.5 whitespace-nowrap">
                             <div className="flex flex-col gap-0.5">
-                              <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
                                 <span>{order.date.includes(",") ? order.date.split(",")[0].trim() : order.date}</span>
                                 {parseOrderDateToDayString(order.date) === "2026-10-03" ? (
-                                  <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
+                                  <span className="px-1.5 py-0.2 rounded-full text-[9.5px] font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
                                     Today
                                   </span>
                                 ) : parseOrderDateToDayString(order.date) === "2026-10-02" ? (
-                                  <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-sky-50 text-sky-700 border border-sky-200/60 shadow-2xs">
+                                  <span className="px-1.5 py-0.2 rounded-full text-[9.5px] font-bold bg-white/10 text-white/80 border border-white/10">
                                     Yesterday
                                   </span>
                                 ) : null}
                               </div>
-                              <div className="text-[11px] text-neutral-400 flex items-center gap-1">
-                                <Clock size={10} className="text-neutral-400 shrink-0" />
+                              <div className="text-[11px] text-[var(--admin-text-muted)] flex items-center gap-1">
+                                <Clock size={10} className="text-[var(--admin-text-muted)] shrink-0" />
                                 <span>{order.date.includes(",") ? order.date.split(",")[1].trim() : "Recorded"}</span>
                               </div>
                             </div>
@@ -7127,19 +7041,19 @@ export default function AdminDashboard() {
 
             {/* Day Logistics Pulse when viewing single day with 1-2 orders (Guarantees zero blank space) */}
             {dateFilter.type === "day" && displayedOrders.length > 0 && displayedOrders.length <= 2 && (
-              <div className="mx-5 sm:mx-6 my-3 p-3.5 rounded-2xl bg-gradient-to-r from-sky-50/80 via-white to-sky-50/40 border border-sky-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs animate-in fade-in duration-200">
+              <div className="mx-5 sm:mx-6 my-3 p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-in fade-in duration-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-sky-100/90 text-sky-700 flex items-center justify-center shrink-0 shadow-2xs border border-sky-200/60">
+                  <div className="w-8 h-8 rounded-full bg-[var(--admin-surface)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/10">
                     <Truck size={15} />
                   </div>
                   <div>
-                    <div className="font-bold text-neutral-900 flex items-center gap-1.5">
+                    <div className="font-bold text-white flex items-center gap-1.5">
                       <span>Day Logistics &amp; Fulfillment Pulse</span>
-                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200/60">
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
                         100% On Schedule
                       </span>
                     </div>
-                    <p className="text-[11px] text-neutral-500 mt-0.5">
+                    <p className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
                       {allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} on {dateFilter.label} handled via BlueDart Express &amp; Delhivery • 0 returns
                     </p>
                   </div>
@@ -7156,10 +7070,10 @@ export default function AdminDashboard() {
                       });
                       triggerToast("Restored store orders accumulated Till Date", "info");
                     }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 font-semibold cursor-pointer transition-all shadow-2xs text-xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--admin-surface)] border border-white/10 hover:bg-white/[0.04] text-white font-semibold cursor-pointer transition-all text-xs"
                   >
                     <span>View All Orders (Till Date)</span>
-                    <ArrowRight size={13} className="text-neutral-500" />
+                    <ArrowRight size={13} className="text-[var(--admin-text-muted)]" />
                   </button>
                 </div>
               </div>
@@ -7167,76 +7081,76 @@ export default function AdminDashboard() {
           </div>
 
           {/* ── THE MASTERPIECE FOOTER (Fills the previous blank space!) ── */}
-          <div className="p-4 sm:p-5 bg-gradient-to-b from-[#faf9f6] to-white border-t border-black/[0.05] mt-auto flex flex-col gap-3">
+          <div className="p-4 sm:p-5 bg-[var(--admin-surface-2)] border-t border-white/5 mt-auto flex flex-col gap-3">
             {/* Upper Strip: Live Analytics Ribbon */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
-                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <IndianRupee size={10} className="text-amber-700" />
+              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <IndianRupee size={10} className="text-[#7C3AED]" />
                   <span>Period Revenue</span>
                 </div>
-                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
                   ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")}
                 </div>
-                <div className="text-[10px] text-neutral-400 mt-0.5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] mt-0.5">
                   {allFilteredRecentOrders.length} orders in scope
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
-                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <TrendingUp size={10} className="text-emerald-700" />
+              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <TrendingUp size={10} className="text-[#00F59B]" />
                   <span>Avg Order Value</span>
                 </div>
-                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
                   ₹{recentOrdersMetrics.aov.toLocaleString("en-IN")}
                 </div>
-                <div className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                <div className="text-[10px] text-[#00F59B] font-medium mt-0.5">
                   Healthy basket size
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
-                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <CheckCircle2 size={10} className="text-sky-700" />
+              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <CheckCircle2 size={10} className="text-[#00F59B]" />
                   <span>Delivered</span>
                 </div>
-                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
                   {recentOrdersMetrics.deliveredCount} orders
                 </div>
-                <div className="text-[10px] text-neutral-400 mt-0.5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] mt-0.5">
                   ₹{recentOrdersMetrics.deliveredRev.toLocaleString("en-IN")} fulfilled
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-white border border-neutral-200/70 shadow-2xs">
-                <div className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <Truck size={10} className="text-indigo-700" />
+              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <Truck size={10} className="text-[#7C3AED]" />
                   <span>Active Transit</span>
                 </div>
-                <div className="text-sm font-bold text-neutral-900 mt-0.5">
+                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
                   {recentOrdersMetrics.shippedCount} shipped
                 </div>
-                <div className="text-[10px] text-neutral-400 mt-0.5">
+                <div className="text-[10px] text-[var(--admin-text-muted)] mt-0.5">
                   {recentOrdersMetrics.processingCount} in packing
                 </div>
               </div>
             </div>
 
             {/* Lower Strip: Pagination & Quick Batch Operations */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-black/[0.04]">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/5">
               {/* Pagination controls */}
-              <div className="flex items-center gap-2 text-xs text-neutral-500">
+              <div className="flex items-center gap-2 text-xs text-[var(--admin-text-muted)]">
                 <span>
                   Showing{" "}
-                  <strong className="text-neutral-900 font-semibold">
+                  <strong className="text-white font-semibold">
                     {allFilteredRecentOrders.length === 0 ? 0 : (recentOrdersPage - 1) * RECENT_ORDERS_PAGE_SIZE + 1}
                   </strong>
                   –
-                  <strong className="text-neutral-900 font-semibold">
+                  <strong className="text-white font-semibold">
                     {Math.min(recentOrdersPage * RECENT_ORDERS_PAGE_SIZE, allFilteredRecentOrders.length)}
                   </strong>{" "}
-                  of <strong className="text-neutral-900 font-semibold">{allFilteredRecentOrders.length}</strong>
+                  of <strong className="text-white font-semibold">{allFilteredRecentOrders.length}</strong>
                 </span>
 
                 {totalRecentOrdersPages > 1 && (
@@ -7245,7 +7159,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => setRecentOrdersPage((p) => Math.max(1, p - 1))}
                       disabled={recentOrdersPage === 1}
-                      className="p-1 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                      className="p-1 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                       title="Previous Page"
                     >
                       <ChevronLeft size={13} />
@@ -7257,10 +7171,10 @@ export default function AdminDashboard() {
                           key={pageNum}
                           type="button"
                           onClick={() => setRecentOrdersPage(pageNum)}
-                          className={`w-6 h-6 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
+                          className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
                             recentOrdersPage === pageNum
-                              ? "bg-neutral-900 text-white shadow-2xs font-bold"
-                              : "text-neutral-600 hover:bg-neutral-100"
+                              ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                              : "text-[var(--admin-text-muted)] hover:text-white"
                           }`}
                         >
                           {pageNum}
@@ -7271,7 +7185,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => setRecentOrdersPage((p) => Math.min(totalRecentOrdersPages, p + 1))}
                       disabled={recentOrdersPage === totalRecentOrdersPages}
-                      className="p-1 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                      className="p-1 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                       title="Next Page"
                     >
                       <ChevronRight size={13} />
@@ -7288,10 +7202,10 @@ export default function AdminDashboard() {
                     downloadAllOrdersCSV(allFilteredRecentOrders);
                     triggerToast(`Exported ${allFilteredRecentOrders.length} orders to CSV`, "success");
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-white/[0.05] text-white text-xs font-semibold transition-all cursor-pointer"
                   title="Export currently filtered orders dataset as CSV"
                 >
-                  <Download size={12} className="text-neutral-500" />
+                  <Download size={12} className="text-[var(--admin-text-muted)]" />
                   <span>Export CSV</span>
                 </button>
 
@@ -7304,10 +7218,10 @@ export default function AdminDashboard() {
                       triggerToast("No orders available to print", "info");
                     }
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-200/80 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold shadow-2xs transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-white/[0.05] text-white text-xs font-semibold transition-all cursor-pointer"
                   title="Print latest order dispatch slip"
                 >
-                  <Printer size={12} className="text-neutral-500" />
+                  <Printer size={12} className="text-[var(--admin-text-muted)]" />
                   <span>Print Slip</span>
                 </button>
               </div>
@@ -7316,35 +7230,36 @@ export default function AdminDashboard() {
         </div>
 
         {/* Right: Top Products (4 cols) */}
-        <div className="lg:col-span-4 bg-white rounded-[22px] border border-black/[0.04] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between">
-          <div>
+        <div className="lg:col-span-4 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 sm:p-6 flex flex-col h-full">
+          {/* a) Header + date/metric toggle + category chips (shrink-0) */}
+          <div className="shrink-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-3.5">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-2xl bg-[#fff8e7] text-amber-600 flex items-center justify-center shrink-0 shadow-2xs border border-amber-200/50">
+                <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/5">
                   <Sparkles size={18} />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-[17px] font-bold text-neutral-900 leading-tight tracking-tight">
+                    <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
                       Top Products
                     </h2>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border shadow-2xs flex items-center gap-1 ${
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border flex items-center gap-1.5 ${
                         dateFilter.type === "day"
-                          ? "bg-sky-50 text-sky-800 border-sky-300"
+                          ? "bg-sky-500/15 text-sky-400 border-sky-500/20"
                           : dateFilter.type === "custom"
-                          ? "bg-purple-50 text-purple-800 border-purple-300"
-                          : "bg-amber-50 text-amber-900 border-amber-300"
+                          ? "bg-[#7C3AED]/15 text-[#7C3AED] border-[#7C3AED]/20"
+                          : "bg-[#00F59B]/15 text-[#00F59B] border-[#00F59B]/20"
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
                           dateFilter.type === "day"
-                            ? "bg-sky-500"
+                            ? "bg-sky-400"
                             : dateFilter.type === "custom"
-                            ? "bg-purple-500"
-                            : "bg-amber-500"
+                            ? "bg-[#7C3AED]"
+                            : "bg-[#00F59B]"
                         }`}
                       />
                       {dateFilter.type === "day"
@@ -7354,8 +7269,8 @@ export default function AdminDashboard() {
                         : "Till Date"}
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-500 font-normal mt-1 flex items-center gap-1.5 truncate">
-                    <CalendarDays size={12} className="text-amber-700 shrink-0" />
+                  <p className="text-xs text-[var(--admin-text-muted)] font-normal mt-1 flex items-center gap-1.5 truncate">
+                    <CalendarDays size={12} className="text-[var(--admin-text-muted)] shrink-0" />
                     <span className="truncate">
                       {dateFilter.type === "day"
                         ? `Single day performance: ${dateFilter.label}`
@@ -7370,7 +7285,7 @@ export default function AdminDashboard() {
               <button
                 type="button"
                 onClick={() => setIsAllProductsModalOpen(true)}
-                className="flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-950 transition-colors group cursor-pointer shrink-0"
+                className="flex items-center gap-1 text-xs font-semibold text-[var(--admin-text-muted)] hover:text-white transition-colors group cursor-pointer shrink-0"
               >
                 <span>View All</span>
                 <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5" />
@@ -7378,7 +7293,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Filter & Metric Bar: Exactly 2 Clean, Balanced Rows */}
-            <div className="flex flex-col gap-2.5 mb-3 pb-3 border-b border-black/[0.04]">
+            <div className="flex flex-col gap-2.5 mb-3 pb-3 border-b border-white/5">
               {/* Row 1: Compact Date Range Picker & Metric Segmented Pill */}
               <div className="flex items-center justify-between gap-2">
                 <AdminDateRangePicker
@@ -7402,38 +7317,38 @@ export default function AdminDashboard() {
                 />
 
                 {/* Unified Segmented Metric Toggle Pill */}
-                <div className="flex items-center bg-neutral-100 p-0.5 rounded-xl border border-neutral-200/60 shadow-2xs shrink-0">
+                <div className="flex items-center bg-[var(--admin-surface-2)] p-0.5 rounded-full border border-white/5 shrink-0">
                   <button
                     type="button"
                     onClick={() => setTopProductsMetric("revenue")}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       topProductsMetric === "revenue"
-                        ? "bg-white text-amber-950 shadow-2xs font-bold"
-                        : "text-neutral-500 hover:text-neutral-900"
+                        ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                        : "text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                     title="Sort products by gross revenue"
                   >
                     <IndianRupee
                       size={10}
                       strokeWidth={2.6}
-                      className={topProductsMetric === "revenue" ? "text-amber-700" : "text-neutral-400"}
+                      className={topProductsMetric === "revenue" ? "text-[#7C3AED]" : "text-[var(--admin-text-muted)]"}
                     />
                     <span>Rev</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setTopProductsMetric("units")}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       topProductsMetric === "units"
-                        ? "bg-white text-sky-950 shadow-2xs font-bold"
-                        : "text-neutral-500 hover:text-neutral-900"
+                        ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                        : "text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                     title="Sort products by total units sold"
                   >
                     <ShoppingBag
                       size={10}
                       strokeWidth={2.4}
-                      className={topProductsMetric === "units" ? "text-sky-700" : "text-neutral-400"}
+                      className={topProductsMetric === "units" ? "text-[#7C3AED]" : "text-[var(--admin-text-muted)]"}
                     />
                     <span>Units</span>
                   </button>
@@ -7454,10 +7369,10 @@ export default function AdminDashboard() {
                       key={c.key}
                       type="button"
                       onClick={() => setTopProductsCategory(c.key)}
-                      className={`px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer shrink-0 ${
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold transition-all cursor-pointer shrink-0 ${
                         topProductsCategory === c.key
-                          ? "bg-neutral-900 text-white shadow-2xs font-bold"
-                          : "text-neutral-500 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200/60"
+                          ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
+                          : "text-[var(--admin-text-muted)] hover:text-white bg-[var(--admin-surface-2)] hover:bg-white/[0.04] border border-white/5"
                       }`}
                     >
                       {c.label}
@@ -7466,7 +7381,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* 1-Click Quick Mode Switcher: "Till Date" vs "Day-wise" */}
-                <div className="flex items-center bg-neutral-100 p-0.5 rounded-lg border border-neutral-200/60 text-[10px] font-semibold shrink-0">
+                <div className="flex items-center bg-[var(--admin-surface-2)] p-0.5 rounded-full border border-white/5 text-[10px] font-semibold shrink-0">
                   <button
                     type="button"
                     onClick={() => {
@@ -7479,10 +7394,10 @@ export default function AdminDashboard() {
                       setTopProductsTimeframe("period");
                       triggerToast("Showing store-wide sales volume accumulated Till Date (03 Oct 2026)", "info");
                     }}
-                    className={`px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`px-2 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
                       dateFilter.type === "all"
-                        ? "bg-amber-500 text-white font-bold shadow-2xs"
-                        : "text-neutral-600 hover:text-neutral-950"
+                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
+                        : "text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                     title="View total sales accumulated till date (03 Oct 2026)"
                   >
@@ -7501,10 +7416,10 @@ export default function AdminDashboard() {
                       setTopProductsTimeframe("period");
                       triggerToast("Showing single-day sales volume for Today (03 Oct 2026)", "info");
                     }}
-                    className={`px-2 py-0.5 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`px-2 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
                       dateFilter.type === "day"
-                        ? "bg-sky-600 text-white font-bold shadow-2xs"
-                        : "text-neutral-600 hover:text-neutral-950"
+                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
+                        : "text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                     title="View single-day sales volume (Today: 03 Oct 2026)"
                   >
@@ -7513,10 +7428,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* List */}
-            <div className="space-y-1.5">
-              {activeTopProducts.slice(0, 5).map((item, idx) => {
+          {/* b) The product list (flex-1 min-h-0, admin-scroll with overflow-y-auto as a safety net) */}
+          <div className="flex-1 min-h-0 overflow-y-auto admin-scroll space-y-1.5">
+            {activeTopProducts.slice(0, TOP_PRODUCTS_VISIBLE).map((item, idx) => {
                 return (
                   <div
                     key={`${item.id || item.name || "prod"}-${idx}`}
@@ -7529,31 +7445,31 @@ export default function AdminDashboard() {
                         setSelectedTopProduct(item);
                       }
                     }}
-                    className="flex items-center justify-between gap-3 group cursor-pointer p-2.5 -mx-1.5 rounded-2xl hover:bg-neutral-50/90 transition-all border border-transparent hover:border-black/[0.04] hover:shadow-2xs focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40"
+                    className="flex items-center justify-between gap-3 group cursor-pointer p-2.5 -mx-1.5 rounded-[14px] hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
                     title={`Click to view deep analytics & stock actions for ${item.name}`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       {/* Rank Medal */}
                       {idx === 0 ? (
-                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-600 text-white flex items-center justify-center font-black text-[10px] shadow-xs shrink-0 ring-1 ring-amber-300/60">
+                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-600 text-white flex items-center justify-center font-black text-[10px] shrink-0 ring-1 ring-amber-300/60">
                           1
                         </div>
                       ) : idx === 1 ? (
-                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 text-white flex items-center justify-center font-black text-[10px] shadow-xs ring-1 ring-slate-300/50">
+                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 text-white flex items-center justify-center font-black text-[10px] shrink-0 ring-1 ring-slate-300/50">
                           2
                         </div>
                       ) : idx === 2 ? (
-                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-700 via-amber-800 to-yellow-900 text-white flex items-center justify-center font-black text-[10px] shadow-xs ring-1 ring-amber-700/40">
+                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-700 via-amber-800 to-yellow-900 text-white flex items-center justify-center font-black text-[10px] shrink-0 ring-1 ring-amber-700/40">
                           3
                         </div>
                       ) : (
-                        <div className="w-5.5 h-5.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200/70 flex items-center justify-center font-bold text-[10px] shrink-0">
+                        <div className="w-5.5 h-5.5 rounded-full bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] border border-white/5 flex items-center justify-center font-bold text-[10px] shrink-0">
                           {idx + 1}
                         </div>
                       )}
 
                       {/* Thumbnail */}
-                      <div className="w-11 h-11 rounded-xl bg-neutral-50 border border-neutral-200/70 overflow-hidden shrink-0 flex items-center justify-center relative shadow-2xs group-hover:scale-105 transition-transform duration-200">
+                      <div className="w-11 h-11 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center relative group-hover:scale-105 transition-transform duration-200">
                         <Image
                           src={item.imageUrl}
                           alt={item.name}
@@ -7565,21 +7481,21 @@ export default function AdminDashboard() {
 
                       {/* Text info */}
                       <div className="min-w-0 flex-1">
-                        <div className="text-xs sm:text-sm font-semibold text-neutral-900 truncate group-hover:text-amber-800 transition-colors leading-snug">
+                        <div className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-[#7C3AED] transition-colors leading-snug">
                           {item.name}
                         </div>
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500 mt-0.5">
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--admin-text-muted)] mt-0.5">
                           <span>
                             {item.category} • {item.soldCount} sold
                           </span>
                           {item.stock <= 10 ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded-md leading-none">
-                              <AlertTriangle size={10} strokeWidth={2.4} className="text-amber-600 shrink-0" />
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#F59E0B] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-1.5 py-0.5 rounded-full leading-none">
+                              <AlertTriangle size={10} strokeWidth={2.4} className="text-[#F59E0B] shrink-0" />
                               {item.stock} left
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/50 px-1.5 py-0.5 rounded-md leading-none">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#00F59B] bg-[#00F59B]/15 border border-[#00F59B]/20 px-1.5 py-0.5 rounded-full leading-none">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] shrink-0" />
                               {item.stock} in stock
                             </span>
                           )}
@@ -7591,20 +7507,20 @@ export default function AdminDashboard() {
                     <div className="text-right shrink-0 flex flex-col items-end justify-center">
                       {topProductsMetric === "units" ? (
                         <>
-                          <span className="text-xs sm:text-sm font-bold text-neutral-900 block group-hover:text-sky-900 transition-colors tracking-tight">
+                          <span className="text-xs sm:text-sm font-heading font-bold text-white block tracking-tight tabular-nums">
                             {item.soldCount.toLocaleString("en-IN")}{" "}
-                            <span className="text-[11px] font-medium text-neutral-500">sold</span>
+                            <span className="text-[11px] font-medium text-[var(--admin-text-muted)]">sold</span>
                           </span>
-                          <span className="text-[10px] font-semibold text-neutral-400 mt-0.5">
+                          <span className="text-[10px] font-semibold text-[var(--admin-text-muted)] mt-0.5">
                             ₹{item.revenue.toLocaleString("en-IN")}
                           </span>
                         </>
                       ) : (
                         <>
-                          <span className="text-xs sm:text-sm font-bold text-neutral-900 block group-hover:text-amber-900 transition-colors tracking-tight">
+                          <span className="text-xs sm:text-sm font-heading font-bold text-white block tracking-tight tabular-nums">
                             ₹{item.revenue.toLocaleString("en-IN")}
                           </span>
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/50 px-1.5 py-0.5 rounded-md mt-0.5">
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[#00F59B] bg-[#00F59B]/15 border border-[#00F59B]/20 px-1.5 py-0.5 rounded-full mt-0.5">
                             <TrendingUp size={9} strokeWidth={2.4} />+{item.growth}%
                           </span>
                         </>
@@ -7613,22 +7529,21 @@ export default function AdminDashboard() {
                   </div>
                 );
               })}
-            </div>
+          </div>
 
-            {/* Bottom Card Footer: Clean Leaderboard Link & Context */}
-            <div className="pt-3 mt-2 border-t border-black/[0.04] flex items-center justify-between">
-              <span className="text-[11px] text-neutral-400 font-medium">
-                Top 5 of {activeTopProducts.length} catalog items
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsAllProductsModalOpen(true)}
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 hover:text-amber-950 transition-colors cursor-pointer group"
-              >
-                <span>View Full Leaderboard</span>
-                <ChevronRight size={11} className="transition-transform group-hover:translate-x-0.5" />
-              </button>
-            </div>
+          {/* c) Footer ("Top N of M catalog items" and "View Full Leaderboard") pinned with mt-auto, border-t white/5 */}
+          <div className="mt-auto pt-3 border-t border-white/5 flex items-center justify-between shrink-0">
+            <span className="text-[11px] text-[var(--admin-text-muted)] font-medium">
+              Top {Math.min(TOP_PRODUCTS_VISIBLE, activeTopProducts.length)} of {activeTopProducts.length} catalog items
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsAllProductsModalOpen(true)}
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-[#7C3AED] hover:text-[#9061F9] transition-colors cursor-pointer group"
+            >
+              <span>View Full Leaderboard</span>
+              <ChevronRight size={11} className="transition-transform group-hover:translate-x-0.5" />
+            </button>
           </div>
         </div>
       </section>
@@ -7719,12 +7634,12 @@ export default function AdminDashboard() {
 
         {/* Floating System Notification Toast */}
         {adminToast && (
-          <div className="fixed bottom-6 right-6 z-[100020] flex items-center gap-3 px-4 py-3 bg-neutral-900 text-white text-xs sm:text-sm font-medium rounded-2xl shadow-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-3 duration-200">
-            <CheckCircle className="text-emerald-400 shrink-0" size={18} />
+          <div className="fixed bottom-6 right-6 z-[100020] flex items-center gap-3 px-4 py-3 bg-[var(--admin-elevated)] text-white text-xs sm:text-sm font-medium rounded-full border border-white/10 animate-in fade-in slide-in-from-bottom-3 duration-200">
+            <CheckCircle className="text-[#00F59B] shrink-0" size={18} />
             <span>{adminToast.message}</span>
             <button
               onClick={() => setAdminToast(null)}
-              className="ml-2 text-neutral-400 hover:text-white cursor-pointer"
+              className="ml-2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer"
             >
               <X size={14} />
             </button>

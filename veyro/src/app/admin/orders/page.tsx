@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus } from "@/types";
@@ -62,11 +62,11 @@ const STATUS_METADATA: Record<OrderStatus, StatusConfigItem> = {
   Confirmed: {
     code: "01",
     sublabel: "ORDER PLACED",
-    accentColor: "#C27803",
-    badgeBg: "bg-[#FEF3C7]",
-    badgeBorder: "border-[#FDE68A]",
+    accentColor: "#F59E0B",
+    badgeBg: "bg-[#F59E0B]/15",
+    badgeBorder: "border-[#F59E0B]/30",
     renderIcon: () => (
-      <div className="w-5 h-5 rounded-full bg-[#C27803] flex items-center justify-center text-white shadow-2xs">
+      <div className="w-5 h-5 rounded-full bg-[#F59E0B] flex items-center justify-center text-black">
         <Check size={11} strokeWidth={3.2} />
       </div>
     ),
@@ -74,66 +74,66 @@ const STATUS_METADATA: Record<OrderStatus, StatusConfigItem> = {
   Packed: {
     code: "02",
     sublabel: "READY TO SHIP",
-    accentColor: "#C27803",
-    badgeBg: "bg-[#FFEDD5]",
-    badgeBorder: "border-[#FED7AA]",
-    renderIcon: () => <Package size={17} className="text-[#C27803]" strokeWidth={1.75} />,
+    accentColor: "#F59E0B",
+    badgeBg: "bg-[#F59E0B]/15",
+    badgeBorder: "border-[#F59E0B]/30",
+    renderIcon: () => <Package size={17} className="text-[#F59E0B]" strokeWidth={1.75} />,
   },
   Shipped: {
     code: "03",
     sublabel: "IN TRANSIT",
-    accentColor: "#2563EB",
-    badgeBg: "bg-[#EFF6FF]",
-    badgeBorder: "border-[#DBEAFE]",
-    renderIcon: () => <Truck size={17} className="text-[#2563EB] -scale-x-100" strokeWidth={1.75} />,
+    accentColor: "#38BDF8",
+    badgeBg: "bg-[#38BDF8]/15",
+    badgeBorder: "border-[#38BDF8]/30",
+    renderIcon: () => <Truck size={17} className="text-[#38BDF8] -scale-x-100" strokeWidth={1.75} />,
   },
   "Out for Delivery": {
     code: "04",
     sublabel: "ON THE WAY",
-    accentColor: "#3B82F6",
-    badgeBg: "bg-[#EEF2FF]",
-    badgeBorder: "border-[#E0E7FF]",
-    renderIcon: () => <Clock size={17} className="text-[#3B82F6]" strokeWidth={1.75} />,
+    accentColor: "#38BDF8",
+    badgeBg: "bg-[#38BDF8]/15",
+    badgeBorder: "border-[#38BDF8]/30",
+    renderIcon: () => <Clock size={17} className="text-[#38BDF8]" strokeWidth={1.75} />,
   },
   Delivered: {
     code: "05",
     sublabel: "SUCCESSFULLY",
-    accentColor: "#16A34A",
-    badgeBg: "bg-[#ECFDF5]",
-    badgeBorder: "border-[#D1FAE5]",
-    renderIcon: () => <PackageCheck size={17} className="text-[#16A34A]" strokeWidth={1.75} />,
+    accentColor: "#00F59B",
+    badgeBg: "bg-[#00F59B]/15",
+    badgeBorder: "border-[#00F59B]/30",
+    renderIcon: () => <PackageCheck size={17} className="text-[#00F59B]" strokeWidth={1.75} />,
   },
   Cancelled: {
     code: "06",
     sublabel: "BY CUSTOMER",
-    accentColor: "#DC2626",
-    badgeBg: "bg-[#FEF2F2]",
-    badgeBorder: "border-[#FEE2E2]",
-    renderIcon: () => <XCircle size={17} className="text-[#DC2626]" strokeWidth={1.75} />,
+    accentColor: "#FF4B55",
+    badgeBg: "bg-[#FF4B55]/15",
+    badgeBorder: "border-[#FF4B55]/30",
+    renderIcon: () => <XCircle size={17} className="text-[#FF4B55]" strokeWidth={1.75} />,
   },
   "Return Requested": {
     code: "07",
     sublabel: "AWAITING REVIEW",
-    accentColor: "#7C3AED",
-    badgeBg: "bg-[#F5F3FF]",
-    badgeBorder: "border-[#EDE9FE]",
-    renderIcon: () => <RotateCcw size={16} className="text-[#7C3AED]" strokeWidth={1.75} />,
+    accentColor: "#94A3B8",
+    badgeBg: "bg-white/10",
+    badgeBorder: "border-white/20",
+    renderIcon: () => <RotateCcw size={16} className="text-[var(--admin-text-muted)]" strokeWidth={1.75} />,
   },
   Processing: {
     code: "00",
     sublabel: "IN PROGRESS",
     accentColor: "#F59E0B",
-    badgeBg: "bg-[#FEF3C7]",
-    badgeBorder: "border-[#FDE68A]",
+    badgeBg: "bg-[#F59E0B]/15",
+    badgeBorder: "border-[#F59E0B]/30",
     renderIcon: () => <Clock size={17} className="text-[#F59E0B]" strokeWidth={1.75} />,
   },
   Returned: {
     code: "08",
     sublabel: "COMPLETED",
-    accentColor: "#A855F7",
-    badgeBg: "bg-[#FDF4FF]",
-    badgeBorder: "border-[#FAE8FF]",
-    renderIcon: () => <Box size={17} className="text-[#A855F7]" strokeWidth={1.75} />,
+    accentColor: "#94A3B8",
+    badgeBg: "bg-white/10",
+    badgeBorder: "border-white/20",
+    renderIcon: () => <Box size={17} className="text-[var(--admin-text-muted)]" strokeWidth={1.75} />,
   },
 };
 
@@ -155,6 +155,157 @@ export function normalizeOrderStatus(status: string | undefined): OrderStatus {
     return status as OrderStatus;
   }
   return "Confirmed";
+}
+
+interface DaySalesDayItem {
+  date: string;
+  label: string;
+  count: number;
+  totalRevenue: number;
+}
+
+interface DaySalesBarsProps {
+  days: DaySalesDayItem[];
+  activeDay?: string | null;
+  maxDayRevenue: number;
+  onSelectDay: (dayStr: string, label: string) => void;
+}
+
+function DaySalesBars({
+  days,
+  activeDay,
+  maxDayRevenue,
+  onSelectDay,
+}: DaySalesBarsProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Chronological order (oldest to newest, left to right)
+  const chronologicalDays = useMemo(() => {
+    return [...days].sort((a, b) => a.date.localeCompare(b.date));
+  }, [days]);
+
+  const isScrollable = chronologicalDays.length > 14;
+
+  // Auto-scroll active day into view when there are many days
+  useEffect(() => {
+    if (isScrollable && activeDay && containerRef.current) {
+      const activeEl = containerRef.current.querySelector<HTMLElement>(
+        `[data-day="${activeDay}"]`
+      );
+      if (activeEl) {
+        activeEl.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  }, [activeDay, isScrollable]);
+
+  if (chronologicalDays.length === 0) {
+    return (
+      <div className="h-32 p-3 bg-[var(--admin-surface-2)] rounded-[14px] border border-white/5 flex items-center justify-center text-xs text-[var(--admin-text-muted)]">
+        No sales activity recorded
+      </div>
+    );
+  }
+
+  const safeMax =
+    !maxDayRevenue || isNaN(maxDayRevenue) || maxDayRevenue <= 0
+      ? 1
+      : maxDayRevenue;
+
+  return (
+    <div
+      ref={containerRef}
+      className={`h-32 p-3 bg-[var(--admin-surface-2)] rounded-[14px] border border-white/5 ${
+        isScrollable
+          ? "flex items-stretch gap-1.5 overflow-x-auto admin-scroll overscroll-x-contain"
+          : "grid gap-1.5"
+      }`}
+      style={
+        isScrollable
+          ? undefined
+          : {
+              gridTemplateColumns: `repeat(${chronologicalDays.length}, minmax(0, 1fr))`,
+            }
+      }
+    >
+      {chronologicalDays.map((d) => {
+        const isActive = Boolean(activeDay && activeDay === d.date);
+        const rev =
+          typeof d.totalRevenue === "number" && !isNaN(d.totalRevenue)
+            ? d.totalRevenue
+            : 0;
+        const rawPercent = Math.round((rev / safeMax) * 100);
+        const heightPercent =
+          !maxDayRevenue || isNaN(maxDayRevenue) || maxDayRevenue <= 0
+            ? 16
+            : Math.max(16, Math.min(100, isNaN(rawPercent) ? 16 : rawPercent));
+
+        return (
+          <div
+            key={d.date}
+            data-day={d.date}
+            data-active={isActive ? "true" : "false"}
+            role="button"
+            tabIndex={0}
+            onClick={() => onSelectDay(d.date, d.label)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSelectDay(d.date, d.label);
+              }
+            }}
+            title={`${d.label}: ${d.count} ${
+              d.count === 1 ? "order" : "orders"
+            } (₹${rev.toLocaleString("en-IN")}) — Click to inspect day`}
+            className={`flex flex-col items-center h-full cursor-pointer group select-none outline-none focus-visible:ring-1 focus-visible:ring-[var(--admin-primary)] rounded-lg ${
+              isScrollable ? "shrink-0 min-w-[28px] flex-1" : "min-w-0 flex-1 w-full"
+            }`}
+          >
+            {/* Top: Fixed-height price slot (shrink-0) */}
+            <div className="h-3.5 shrink-0 w-full flex items-center justify-center mb-1 pointer-events-none">
+              <span
+                className={`text-[9px] font-heading font-bold tabular-nums leading-none truncate transition-opacity duration-150 ${
+                  isActive
+                    ? "opacity-100 text-[var(--admin-primary)] font-extrabold"
+                    : "opacity-0 group-hover:opacity-100 text-[var(--admin-text-muted)] group-hover:text-white"
+                }`}
+              >
+                ₹{rev.toLocaleString("en-IN")}
+              </span>
+            </div>
+
+            {/* Middle: Bar track (flex-1, min-h-0, flex items-end) */}
+            <div className="flex-1 min-h-0 w-full flex items-end justify-center py-0.5">
+              <div
+                style={{ height: `${heightPercent}%` }}
+                className={`w-full rounded-md transition-colors duration-150 ${
+                  isActive
+                    ? "bg-[var(--admin-primary)]"
+                    : "bg-white/10 group-hover:bg-white/20"
+                }`}
+              />
+            </div>
+
+            {/* Bottom: Fixed-height date slot (shrink-0) */}
+            <div className="h-3.5 shrink-0 w-full flex items-center justify-center mt-1 pointer-events-none">
+              <span
+                className={`text-[9px] leading-none whitespace-nowrap text-center transition-colors duration-150 ${
+                  isActive
+                    ? "text-white font-bold"
+                    : "text-[var(--admin-text-muted)] group-hover:text-white font-medium"
+                }`}
+              >
+                {formatBarDate(d.date)}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function AdminOrdersPage() {
@@ -608,8 +759,8 @@ export default function AdminOrdersPage() {
     <div className="space-y-6 max-w-[1480px] mx-auto pb-12">
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-[10001] flex items-center gap-3 px-4 py-3 rounded-xl bg-neutral-900 text-white shadow-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className={`p-1 rounded-full ${toast.type === "success" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-400/20 text-amber-400"}`}>
+        <div className="fixed bottom-6 right-6 z-[10001] flex items-center gap-3 px-4 py-3 rounded-full bg-[var(--admin-elevated)] text-white border border-white/10 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <div className={`p-1 rounded-full ${toast.type === "success" ? "bg-[#00F59B]/20 text-[#00F59B]" : "bg-[#F59E0B]/20 text-[#F59E0B]"}`}>
             <CheckCircle2 size={16} />
           </div>
           <span className="text-xs font-semibold">{toast.message}</span>
@@ -617,18 +768,18 @@ export default function AdminOrdersPage() {
       )}
 
       {/* ── TOP HEADER & LUXURY CONTROLS ────────────────────────────────────── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-xs">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-[var(--admin-surface)] p-6 rounded-[28px] border border-white/5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-neutral-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
               Orders &amp; Sales Hub
             </h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] animate-pulse" />
               Live Sync ({orders.length})
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--admin-text-muted)] mt-1">
             Real-time management for all transactions, cumulative lifetime analytics, and day-wise sales stepping.
           </p>
         </div>
@@ -636,28 +787,28 @@ export default function AdminOrdersPage() {
         {/* Action Controls & Mode Hub */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* 1-Click Till Date vs Day-Wise Switcher */}
-          <div className="flex items-center p-1 bg-neutral-100 rounded-xl border border-neutral-200">
+          <div className="flex items-center p-1 bg-[var(--admin-surface-2)] rounded-full border border-white/10">
             <button
               onClick={handleSelectTillDate}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 isTillDateMode
-                  ? "bg-neutral-900 text-[#fde047] shadow-sm scale-[1.02]"
-                  : "text-neutral-600 hover:text-neutral-900 hover:bg-white/60"
+                  ? "bg-[var(--admin-primary)] text-white"
+                  : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04]"
               }`}
             >
-              <CalendarDays size={14} className={isTillDateMode ? "text-[#fde047]" : "text-neutral-500"} />
+              <CalendarDays size={14} className={isTillDateMode ? "text-white" : "text-[var(--admin-text-muted)]"} />
               <span>All Time (Till Date)</span>
             </button>
 
             <button
               onClick={handleSelectDayWiseMode}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 isDayWiseMode
-                  ? "bg-neutral-900 text-[#fde047] shadow-sm scale-[1.02]"
-                  : "text-neutral-600 hover:text-neutral-900 hover:bg-white/60"
+                  ? "bg-[var(--admin-primary)] text-white"
+                  : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04]"
               }`}
             >
-              <Calendar size={14} className={isDayWiseMode ? "text-[#fde047]" : "text-neutral-500"} />
+              <Calendar size={14} className={isDayWiseMode ? "text-white" : "text-[var(--admin-text-muted)]"} />
               <span>Day-Wise Breakdown</span>
             </button>
           </div>
@@ -676,10 +827,10 @@ export default function AdminOrdersPage() {
           {/* Export CSV button */}
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-neutral-50 border border-neutral-200 text-neutral-800 transition-all cursor-pointer shadow-2xs"
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-[var(--admin-surface)] hover:bg-[var(--admin-elevated)] border border-white/10 text-white transition-all cursor-pointer"
             title="Export filtered orders to CSV"
           >
-            <Download size={14} className="text-neutral-500" />
+            <Download size={14} className="text-[var(--admin-text-muted)]" />
             <span>Export CSV</span>
           </button>
         </div>
@@ -688,36 +839,36 @@ export default function AdminOrdersPage() {
       {/* ── TILL DATE (LIFETIME SCOPE) BANNER & DAY-WISE LEDGER ──────────────── */}
       {isTillDateMode && (
         <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-2xl bg-neutral-950 text-white p-5 border border-white/10 shadow-lg">
-            <div className="absolute right-0 top-0 w-80 h-full bg-gradient-to-l from-[#fde047]/10 to-transparent pointer-events-none" />
+          <div className="relative overflow-hidden rounded-[28px] bg-[var(--admin-surface)] text-white p-6 border border-white/5">
+            <div className="absolute right-0 top-0 w-80 h-full bg-gradient-to-l from-[var(--admin-primary)]/10 to-transparent pointer-events-none" />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-[#fde047] text-black">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-[var(--admin-primary)]/20 text-white border border-[var(--admin-primary)]/30">
                     Lifetime Cumulative Scope
                   </span>
-                  <span className="text-xs text-neutral-400 font-mono">
+                  <span className="text-xs text-[var(--admin-text-muted)]">
                     18 Sep 2026 – Present (03 Oct 2026)
                   </span>
                 </div>
-                <h2 className="text-lg font-bold text-white tracking-tight">
+                <h2 className="text-lg font-bold font-heading text-white tracking-tight">
                   Store Inception Till Date Overview
                 </h2>
-                <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed">
+                <p className="text-xs text-[var(--admin-text-muted)] max-w-2xl leading-relaxed">
                   Displaying all cumulative checkouts, fulfilled luxury orders, and lifetime gross merchandise value. Click any day in the ledger or chart below to isolate individual dates.
                 </p>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="px-4 py-2.5 rounded-xl bg-white/[0.07] border border-white/10 text-right">
-                  <span className="block text-[10px] uppercase tracking-wider text-neutral-400">Total Lifetime GMV</span>
-                  <span className="text-base font-bold text-[#fde047] font-mono">
+                <div className="px-4 py-2.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 text-right">
+                  <span className="block text-[10px] uppercase tracking-wider text-[var(--admin-text-muted)]">Total Lifetime GMV</span>
+                  <span className="text-base font-bold text-white font-heading tabular-nums">
                     ₹{stats.lifetimeRevenue.toLocaleString("en-IN")}
                   </span>
                 </div>
                 <button
                   onClick={handleSelectDayWiseMode}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-neutral-950 font-bold text-xs hover:bg-neutral-100 transition-all cursor-pointer shadow-sm"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white font-bold text-xs transition-all cursor-pointer"
                 >
                   <span>View Day-Wise Breakdown</span>
                   <ArrowRight size={14} />
@@ -727,70 +878,44 @@ export default function AdminOrdersPage() {
           </div>
 
           {/* Interactive Daily Sales Timeline Visualizer in All-Time Mode */}
-          <div className="bg-white rounded-2xl p-4 border border-neutral-200/80 shadow-xs space-y-3">
+          <div className="bg-[var(--admin-surface)] rounded-[28px] p-6 border border-white/5 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BarChart3 size={15} className="text-amber-500" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800">
+                <BarChart3 size={15} className="text-[var(--admin-primary)]" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white font-heading">
                   Daily Sales Timeline Visualizer (Click any date to inspect day-wise)
                 </h3>
               </div>
-              <span className="text-[11px] text-neutral-400 font-mono">
+              <span className="text-[11px] text-[var(--admin-text-muted)]">
                 {availableOrderDays.length} Recorded Days • Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}
               </span>
             </div>
 
-            <div
-              className="grid gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60"
-              style={{ gridTemplateColumns: `repeat(${availableOrderDays.length || 1}, minmax(0, 1fr))` }}
-            >
-              {availableOrderDays
-                .slice()
-                .reverse()
-                .map((d) => {
-                  const heightPercent = Math.max(16, Math.round((d.totalRevenue / maxDayRevenue) * 100));
-                  return (
-                    <div
-                      key={d.date}
-                      onClick={() => handleSelectDay(d.date, d.label)}
-                      className="group flex flex-col items-center h-full justify-end cursor-pointer"
-                      title={`${d.label}: ${d.count} orders (₹${d.totalRevenue.toLocaleString("en-IN")}) — Click to inspect day`}
-                    >
-                      <div className="w-full flex justify-center mb-1">
-                        <span className="text-[9px] font-mono font-bold truncate opacity-0 group-hover:opacity-100 text-amber-600 transition-opacity">
-                          ₹{d.totalRevenue}
-                        </span>
-                      </div>
-                      <div
-                        style={{ height: `${heightPercent}%` }}
-                        className="w-full rounded-md bg-neutral-300 group-hover:bg-amber-500 transition-all duration-300 shadow-2xs"
-                      />
-                      <span className="text-[9px] mt-1 font-mono font-semibold truncate text-neutral-500 group-hover:text-neutral-950">
-                        {formatBarDate(d.date)}
-                      </span>
-                    </div>
-                  );
-                })}
-            </div>
+            <DaySalesBars
+              days={availableOrderDays}
+              activeDay={dateFilter.type === "day" ? (dateFilter.singleDay || dateFilter.startDate) : null}
+              maxDayRevenue={maxDayRevenue}
+              onSelectDay={handleSelectDay}
+            />
           </div>
 
           {/* Day-by-Day Historical Ledger Table */}
-          <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-            <div className="p-4 bg-neutral-50/70 border-b border-neutral-200/70 flex items-center justify-between">
+          <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 overflow-hidden">
+            <div className="p-4 bg-[var(--admin-surface-2)] border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CalendarDays size={15} className="text-amber-600" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                <CalendarDays size={15} className="text-[var(--admin-primary)]" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white font-heading">
                   Day-by-Day Historical Sales Ledger (Inception to Present)
                 </h3>
               </div>
-              <span className="text-xs text-neutral-500 font-mono">
+              <span className="text-xs text-[var(--admin-text-muted)]">
                 {availableOrderDays.length} Active Days Recorded
               </span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto admin-scroll">
               <table className="w-full text-left text-xs">
-                <thead className="bg-neutral-100/70 text-neutral-500 font-bold uppercase tracking-wider text-[10px] border-b border-neutral-200/70">
+                <thead className="bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] font-bold uppercase tracking-wider text-[10px] border-b border-white/5">
                   <tr>
                     <th className="py-2.5 px-4">Date</th>
                     <th className="py-2.5 px-4">Orders Placed</th>
@@ -800,36 +925,36 @@ export default function AdminOrdersPage() {
                     <th className="py-2.5 px-4 text-right">Day Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100">
+                <tbody className="divide-y divide-white/5">
                   {availableOrderDays.map((d) => {
                     const deliveryRate = d.count > 0 ? Math.round((d.deliveredCount / d.count) * 100) : 0;
                     return (
                       <tr
                         key={d.date}
-                        className="hover:bg-amber-50/40 transition-colors group cursor-pointer"
+                        className="hover:bg-white/[0.04] transition-colors group cursor-pointer border-b border-white/5"
                         onClick={() => handleSelectDay(d.date, d.label)}
                       >
-                        <td className="py-3 px-4 font-semibold text-neutral-900 flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-amber-400 group-hover:scale-125 transition-transform" />
+                        <td className="py-3 px-4 font-semibold text-white flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-[var(--admin-primary)] group-hover:scale-125 transition-transform" />
                           <span>{d.label}</span>
                         </td>
-                        <td className="py-3 px-4 font-mono font-bold text-neutral-800">
-                          <span className="px-2 py-0.5 rounded-md bg-neutral-100 group-hover:bg-amber-100 text-neutral-900">
+                        <td className="py-3 px-4 font-heading font-bold tabular-nums text-white">
+                          <span className="px-2.5 py-0.5 rounded-full bg-white/5 group-hover:bg-white/10 text-white">
                             {d.count} {d.count === 1 ? "order" : "orders"}
                           </span>
                         </td>
-                        <td className="py-3 px-4 font-mono font-extrabold text-neutral-950">
+                        <td className="py-3 px-4 font-heading font-extrabold tabular-nums text-white">
                           ₹{d.totalRevenue.toLocaleString("en-IN")}
                         </td>
-                        <td className="py-3 px-4 font-mono text-neutral-600">
+                        <td className="py-3 px-4 font-heading font-medium tabular-nums text-[var(--admin-text-muted)]">
                           ₹{d.aov.toLocaleString("en-IN")}
                         </td>
                         <td className="py-3 px-4">
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                               deliveryRate === 100
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : "bg-blue-50 text-blue-700 border border-blue-200"
+                                ? "bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/30"
+                                : "bg-[#38BDF8]/15 text-[#38BDF8] border border-[#38BDF8]/30"
                             }`}
                           >
                             {deliveryRate}% Fulfilled
@@ -841,7 +966,7 @@ export default function AdminOrdersPage() {
                               e.stopPropagation();
                               handleSelectDay(d.date, d.label);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-900 text-white font-bold text-[11px] group-hover:bg-amber-400 group-hover:text-black hover:bg-amber-400 hover:text-black transition-all cursor-pointer shadow-2xs active:scale-95"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] text-white border border-white/10 font-bold text-[11px] hover:bg-[var(--admin-primary)] transition-all cursor-pointer"
                           >
                             <span>Drill Down Day</span>
                             <ArrowRight size={12} />
@@ -859,16 +984,16 @@ export default function AdminOrdersPage() {
 
       {/* ── DAY-WISE INTERACTIVE NAVIGATION HUB ───────────────────────────────── */}
       {isDayWiseMode && (
-        <div className="bg-white rounded-2xl p-5 border border-neutral-200/80 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-6 border border-white/5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-black">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-[var(--admin-primary)]/20 text-white border border-[var(--admin-primary)]/40">
                 Day-Wise Active
               </span>
-              <h2 className="text-sm font-bold text-neutral-900">
-                Browsing: <span className="font-mono text-neutral-950 underline decoration-amber-400 decoration-2">{dateFilter.label}</span>
+              <h2 className="text-sm font-bold text-white">
+                Browsing: <span className="text-white underline decoration-[var(--admin-primary)] decoration-2">{dateFilter.label}</span>
               </h2>
-              <span className="text-xs text-neutral-500 font-mono">
+              <span className="text-xs text-[var(--admin-text-muted)]">
                 ({filteredOrders.length} {filteredOrders.length === 1 ? "order" : "orders"} • ₹{stats.scopeRevenue.toLocaleString("en-IN")})
               </span>
             </div>
@@ -878,7 +1003,7 @@ export default function AdminOrdersPage() {
               <button
                 onClick={() => handleStepDay("prev")}
                 disabled={currentDayIndex >= availableOrderDays.length - 1}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface-2)] hover:bg-[var(--admin-elevated)] disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-white transition-colors cursor-pointer"
                 title="View previous chronological day"
               >
                 <ChevronLeft size={14} />
@@ -888,7 +1013,7 @@ export default function AdminOrdersPage() {
               <button
                 onClick={() => handleStepDay("next")}
                 disabled={currentDayIndex <= 0}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-neutral-800 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface-2)] hover:bg-[var(--admin-elevated)] disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-white transition-colors cursor-pointer"
                 title="View next chronological day"
               >
                 <span>Next Day</span>
@@ -897,10 +1022,10 @@ export default function AdminOrdersPage() {
 
               <button
                 onClick={handleSelectTillDate}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-xs font-bold text-amber-900 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[var(--admin-primary)]/40 bg-[var(--admin-primary)]/20 hover:bg-[var(--admin-primary)]/30 text-xs font-bold text-white transition-colors cursor-pointer"
                 title="Return to All Time (Till Date) cumulative scope"
               >
-                <CalendarDays size={13} className="text-amber-600" />
+                <CalendarDays size={13} className="text-white" />
                 <span>All Time View</span>
               </button>
             </div>
@@ -908,33 +1033,33 @@ export default function AdminOrdersPage() {
 
           {/* Horizontal Scrollable Day Chips */}
           <div className="space-y-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)] flex items-center gap-1.5">
               <Clock size={12} /> Select Any Recorded Order Day:
             </span>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 admin-scroll-container">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 admin-scroll">
               {availableOrderDays.map((d) => {
                 const isActive = (dateFilter.singleDay || dateFilter.startDate) === d.date;
                 return (
                   <button
                     key={d.date}
                     onClick={() => handleSelectDay(d.date, d.label)}
-                    className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                    className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs transition-all cursor-pointer ${
                       isActive
-                        ? "bg-neutral-900 text-white font-bold shadow-md ring-2 ring-amber-400 scale-[1.02]"
-                        : "bg-neutral-50 hover:bg-neutral-100 text-neutral-700 font-medium border border-neutral-200/70"
+                        ? "bg-[var(--admin-primary)] text-white font-bold border border-[var(--admin-primary)]"
+                        : "bg-[var(--admin-surface-2)] hover:bg-white/[0.04] text-[var(--admin-text-muted)] hover:text-white font-medium border border-white/10"
                     }`}
                   >
-                    <span className={isActive ? "text-[#fde047]" : "text-neutral-500 font-mono text-[11px]"}>
+                    <span className={isActive ? "text-white" : "text-[var(--admin-text-muted)] text-[11px]"}>
                       {d.label}
                     </span>
                     <span
-                      className={`px-1.5 py-0.5 rounded-md text-[10px] font-extrabold ${
-                        isActive ? "bg-amber-400 text-black" : "bg-neutral-200 text-neutral-800"
+                      className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+                        isActive ? "bg-white/20 text-white" : "bg-white/10 text-white"
                       }`}
                     >
                       {d.count}
                     </span>
-                    <span className={`text-[11px] font-mono ${isActive ? "text-amber-200" : "text-neutral-500"}`}>
+                    <span className={`text-[11px] font-heading tabular-nums ${isActive ? "text-white" : "text-[var(--admin-text-muted)]"}`}>
                       ₹{d.totalRevenue.toLocaleString("en-IN")}
                     </span>
                   </button>
@@ -944,71 +1069,32 @@ export default function AdminOrdersPage() {
           </div>
 
           {/* Interactive Daily Sales Visualizer (Mini Bar Chart) */}
-          <div className="pt-2 border-t border-neutral-100">
+          <div className="pt-2 border-t border-white/5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500 flex items-center gap-1.5">
-                <BarChart3 size={13} className="text-amber-500" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)] flex items-center gap-1.5">
+                <BarChart3 size={13} className="text-[var(--admin-primary)]" />
                 Daily Sales Timeline Visualizer (Click any bar to inspect day)
               </span>
-              <span className="text-[11px] text-neutral-400 font-mono">
+              <span className="text-[11px] text-[var(--admin-text-muted)]">
                 {availableOrderDays.length} Recorded Days • Peak: ₹{maxDayRevenue.toLocaleString("en-IN")}
               </span>
             </div>
 
-            <div
-              className="grid gap-1.5 h-20 items-end bg-neutral-50 p-2.5 rounded-xl border border-neutral-200/60"
-              style={{ gridTemplateColumns: `repeat(${availableOrderDays.length || 1}, minmax(0, 1fr))` }}
-            >
-              {availableOrderDays
-                .slice()
-                .reverse()
-                .map((d) => {
-                  const isActive = (dateFilter.singleDay || dateFilter.startDate) === d.date;
-                  const heightPercent = Math.max(16, Math.round((d.totalRevenue / maxDayRevenue) * 100));
-                  return (
-                    <div
-                      key={d.date}
-                      onClick={() => handleSelectDay(d.date, d.label)}
-                      className="group flex flex-col items-center h-full justify-end cursor-pointer"
-                      title={`${d.label}: ${d.count} orders (₹${d.totalRevenue.toLocaleString("en-IN")})`}
-                    >
-                      <div className="w-full flex justify-center mb-1">
-                        <span
-                          className={`text-[9px] font-mono font-bold truncate transition-opacity ${
-                            isActive ? "opacity-100 text-amber-600 font-extrabold" : "opacity-0 group-hover:opacity-100 text-neutral-500"
-                          }`}
-                        >
-                          ₹{d.totalRevenue}
-                        </span>
-                      </div>
-                      <div
-                        style={{ height: `${heightPercent}%` }}
-                        className={`w-full rounded-md transition-all duration-300 ${
-                          isActive
-                            ? "bg-gradient-to-t from-amber-500 to-yellow-400 shadow-sm ring-2 ring-black"
-                            : "bg-neutral-300 group-hover:bg-neutral-400"
-                        }`}
-                      />
-                      <span
-                        className={`text-[9px] mt-1 font-mono font-semibold truncate ${
-                          isActive ? "text-neutral-950 font-bold" : "text-neutral-400"
-                        }`}
-                      >
-                        {formatBarDate(d.date)}
-                      </span>
-                    </div>
-                  );
-                })}
-            </div>
+            <DaySalesBars
+              days={availableOrderDays}
+              activeDay={dateFilter.singleDay || dateFilter.startDate}
+              maxDayRevenue={maxDayRevenue}
+              onSelectDay={handleSelectDay}
+            />
           </div>
         </div>
       )}
 
       {/* ── CUSTOM / PRESET RANGE BANNER ──────────────────────────────────────── */}
       {!isTillDateMode && !isDayWiseMode && (
-        <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-950 animate-in fade-in duration-150">
+        <div className="p-4 rounded-[28px] bg-[var(--admin-surface)] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-white animate-in fade-in duration-150">
           <div className="flex items-center gap-2">
-            <Calendar size={15} className="text-amber-600 shrink-0" />
+            <Calendar size={15} className="text-[var(--admin-primary)] shrink-0" />
             <span>
               <strong>Custom Scope:</strong> {dateFilter.label} ({filteredOrders.length} {filteredOrders.length === 1 ? "order" : "orders"} • ₹{stats.scopeRevenue.toLocaleString("en-IN")})
             </span>
@@ -1016,14 +1102,14 @@ export default function AdminOrdersPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleSelectTillDate}
-              className="text-[11px] font-bold text-amber-900 hover:underline cursor-pointer"
+              className="text-[11px] font-bold text-[var(--admin-primary)] hover:underline cursor-pointer"
             >
               Reset to All Time (Till Date)
             </button>
-            <span className="text-amber-300">•</span>
+            <span className="text-white/20">•</span>
             <button
               onClick={handleSelectDayWiseMode}
-              className="text-[11px] font-bold text-amber-900 hover:underline cursor-pointer"
+              className="text-[11px] font-bold text-[var(--admin-primary)] hover:underline cursor-pointer"
             >
               Switch to Day-Wise
             </button>
@@ -1034,19 +1120,19 @@ export default function AdminOrdersPage() {
       {/* ── 4-CARD LUXURY KPI RIBBON (ADAPTS TO TILL DATE VS DAY-WISE) ───────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Revenue */}
-        <div className="bg-white rounded-2xl p-5 border border-neutral-200/80 shadow-xs hover:border-neutral-300 transition-all">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
               {isDayWiseMode ? "Day's Revenue" : "Total GMV Revenue"}
             </span>
-            <div className="p-2 rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#F59E0B] border border-white/5">
               <IndianRupee size={18} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-neutral-900">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             ₹{stats.scopeRevenue.toLocaleString("en-IN")}
           </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-emerald-600">
+          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-[#00F59B]">
             <TrendingUp size={13} />
             <span>
               {isDayWiseMode
@@ -1057,19 +1143,19 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Card 2: Orders Count */}
-        <div className="bg-white rounded-2xl p-5 border border-neutral-200/80 shadow-xs hover:border-neutral-300 transition-all">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
               {isDayWiseMode ? "Orders on this Date" : "Total Orders Placed"}
             </span>
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#38BDF8] border border-white/5">
               <ShoppingCart size={18} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-neutral-900">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             {stats.scopeOrdersCount}
           </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-neutral-500">
+          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-[var(--admin-text-muted)]">
             <Package size={13} />
             <span>
               {isDayWiseMode
@@ -1080,37 +1166,37 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Card 3: Average Order Value (AOV) */}
-        <div className="bg-white rounded-2xl p-5 border border-neutral-200/80 shadow-xs hover:border-neutral-300 transition-all">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
               Average Order Value (AOV)
             </span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-primary)] border border-white/5">
               <Sparkles size={18} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-neutral-900">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             ₹{stats.scopeAOV.toLocaleString("en-IN")}
           </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-neutral-500">
+          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-[var(--admin-text-muted)]">
             <span>Avg spending per customer basket</span>
           </div>
         </div>
 
         {/* Card 4: Fulfillment / Delivery Rate */}
-        <div className="bg-white rounded-2xl p-5 border border-neutral-200/80 shadow-xs hover:border-neutral-300 transition-all">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] p-5 border border-white/5 hover:border-white/10 transition-all">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--admin-text-muted)]">
               Delivery Success Rate
             </span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+            <div className="p-2 rounded-[14px] bg-[var(--admin-surface-2)] text-[#00F59B] border border-white/5">
               <CheckCircle size={18} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono text-neutral-900">
+          <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums text-white">
             {stats.deliveryRate}%
           </div>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-emerald-600">
+          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-[#00F59B]">
             <span>{stats.statusCounts["Delivered"] || 0} Delivered successfully</span>
           </div>
         </div>
@@ -1118,65 +1204,58 @@ export default function AdminOrdersPage() {
 
       {/* ── STATUS CHIPS & TOP PRODUCTS GRID ─────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Status Breakdown (2 Columns) - Exact Luxury Match with Image 1 */}
-        <div className="lg:col-span-2 bg-[#FAF7F2] rounded-3xl border border-[#EFEAE2] p-5 sm:p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+        {/* Status Breakdown (2 Columns) */}
+        <div className="lg:col-span-2 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 sm:p-6 flex flex-col justify-between">
           {/* Header Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#EFEAE2]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/5">
             <div className="flex items-center gap-3.5">
-              {/* Layers Icon in warm square badge */}
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#FFF9EE] border border-[#F6E3C5] flex items-center justify-center shrink-0 shadow-2xs">
-                <Layers className="w-5.5 h-5.5 text-[#C87D10]" strokeWidth={1.75} />
+              {/* Layers Icon in square badge */}
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-center shrink-0">
+                <Layers className="w-5.5 h-5.5 text-[var(--admin-primary)]" strokeWidth={1.75} />
               </div>
 
               {/* Divider */}
-              <div className="h-9 w-px bg-[#E7E0D6] shrink-0" />
+              <div className="h-9 w-px bg-white/5 shrink-0" />
 
               {/* Title & Operations Subtitle */}
               <div>
-                <span className="block text-[10px] font-bold tracking-[0.2em] uppercase text-[#8C827A] leading-tight">
+                <span className="block text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--admin-text-muted)] leading-tight">
                   OPERATIONS
                 </span>
-                <h2 className="text-xl sm:text-2xl font-serif text-[#1C1917] tracking-tight leading-snug mt-0.5">
+                <h2 className="text-xl sm:text-2xl font-heading font-bold text-white tracking-tight leading-snug mt-0.5">
                   Order Statuses In Active Scope
                 </h2>
-                <p className="text-[11px] sm:text-xs text-[#78716C] mt-0.5 font-normal">
+                <p className="text-[11px] sm:text-xs text-[var(--admin-text-muted)] mt-0.5 font-normal">
                   Live count of orders across different fulfilment stages.
                 </p>
               </div>
             </div>
 
-            {/* Animated Pill button */}
+            {/* Pill button */}
             <button
               onClick={() => setStatusFilter("all")}
               aria-label="View all order statuses"
-              className={`group relative overflow-hidden inline-flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer select-none active:scale-95 ${
+              className={`inline-flex items-center gap-2 self-start sm:self-center px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer select-none active:scale-95 ${
                 statusFilter === "all"
-                  ? "bg-[#111111] text-[#E5A93C] border border-[#D97706]/40 shadow-[0_0_15px_rgba(217,119,6,0.2)] hover:shadow-[0_0_22px_rgba(217,119,6,0.35)] hover:border-amber-400/60"
-                  : "bg-[#18181B] text-[#D4A346] border border-stone-800 hover:border-amber-500/40 hover:bg-[#111111] hover:text-[#E5A93C] hover:shadow-[0_0_16px_rgba(217,119,6,0.2)]"
+                  ? "bg-[var(--admin-primary)] text-white border border-[var(--admin-primary)]"
+                  : "bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] border border-white/10 hover:border-white/20 hover:text-white hover:bg-white/[0.04]"
               }`}
             >
-              {/* Shimmer sweep animation on hover */}
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-amber-400/25 to-transparent pointer-events-none"
-              />
-
               {/* Live active pulsing beacon dot */}
               {statusFilter === "all" && (
                 <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-400" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white" />
                 </span>
               )}
 
-              <span className="relative z-10 font-mono tracking-wider">
+              <span className="relative z-10 font-heading tracking-wider">
                 ALL ({dateFilteredOrders.length})
               </span>
 
-              {/* Arrow that slides smoothly on hover */}
               <span
                 aria-hidden="true"
-                className="relative z-10 text-[#E5A93C] text-sm transform transition-transform duration-300 ease-out group-hover:translate-x-1"
+                className="relative z-10 text-white text-sm transform transition-transform duration-300 ease-out group-hover:translate-x-1"
               >
                 →
               </span>
@@ -1201,10 +1280,10 @@ export default function AdminOrdersPage() {
                 <button
                   key={status}
                   onClick={() => setStatusFilter(statusFilter === status ? "all" : status)}
-                  className={`group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer min-h-[92px] ${
+                  className={`group relative flex flex-col justify-between p-3 sm:p-3.5 rounded-[14px] border text-left transition-all duration-200 cursor-pointer min-h-[92px] ${
                     isSelected
-                      ? "bg-white border-[#C27803] shadow-[0_4px_16px_rgba(194,120,3,0.12)] ring-1 ring-[#C27803]"
-                      : "bg-[#FCFAF7] hover:bg-white border-[#ECE5DC] hover:border-[#DFD7CB] shadow-2xs hover:shadow-xs hover:-translate-y-0.5"
+                      ? "bg-[var(--admin-surface-2)] border-[var(--admin-primary)] ring-1 ring-[var(--admin-primary)]"
+                      : "bg-[var(--admin-surface-2)] hover:bg-white/[0.04] border-white/5 hover:border-white/10"
                   }`}
                 >
                   {/* Top: Icon on Left, Title/Subtitle + Code/Count on Right */}
@@ -1220,20 +1299,20 @@ export default function AdminOrdersPage() {
                     <div className="flex-1 min-w-0">
                       {/* Row 1: Title on left, Code index on right */}
                       <div className="flex items-baseline justify-between gap-1 w-full">
-                        <span className="font-serif font-bold text-[#1C1917] text-[12px] sm:text-[12.5px] leading-tight whitespace-nowrap">
+                        <span className="font-heading font-bold text-white text-[12px] sm:text-[12.5px] leading-tight whitespace-nowrap">
                           {status}
                         </span>
-                        <span className="text-[10px] sm:text-[11px] font-mono font-medium text-[#B8AEA3] shrink-0 leading-none">
+                        <span className="text-[10px] sm:text-[11px] font-medium text-[var(--admin-text-muted)] shrink-0 leading-none">
                           {meta.code}
                         </span>
                       </div>
 
                       {/* Row 2: Sublabel on left, Large count on right */}
                       <div className="flex items-baseline justify-between gap-1 w-full mt-1">
-                        <span className="text-[8px] sm:text-[8.5px] font-semibold tracking-wider uppercase text-[#8C827A] whitespace-nowrap leading-none">
+                        <span className="text-[8px] sm:text-[8.5px] font-semibold tracking-wider uppercase text-[var(--admin-text-muted)] whitespace-nowrap leading-none">
                           {meta.sublabel}
                         </span>
-                        <span className="font-serif text-[18px] sm:text-[20px] font-bold text-[#1C1917] leading-none shrink-0">
+                        <span className="font-heading text-[18px] sm:text-[20px] font-bold text-white leading-none shrink-0">
                           {count}
                         </span>
                       </div>
@@ -1241,7 +1320,7 @@ export default function AdminOrdersPage() {
                   </div>
 
                   {/* Bottom: Accent Progress Bar */}
-                  <div className="w-full h-[2.5px] bg-[#EFEAE2] rounded-full overflow-hidden mt-2.5">
+                  <div className="w-full h-[2.5px] bg-white/5 rounded-full overflow-hidden mt-2.5">
                     <div
                       className="h-full rounded-full transition-all duration-300"
                       style={{
@@ -1257,17 +1336,17 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Top Selling Products in Active Scope */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-3">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
-              <Package size={16} className="text-amber-500" />
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <Package size={16} className="text-[var(--admin-primary)]" />
               Top Products (Active Scope)
             </h2>
-            <span className="text-[11px] text-neutral-400 font-mono">By Revenue</span>
+            <span className="text-[11px] text-[var(--admin-text-muted)]">By Revenue</span>
           </div>
 
           {stats.topProducts.length === 0 ? (
-            <div className="py-8 text-center text-xs text-neutral-400">
+            <div className="py-8 text-center text-xs text-[var(--admin-text-muted)]">
               No product sales data in this date range.
             </div>
           ) : (
@@ -1275,25 +1354,23 @@ export default function AdminOrdersPage() {
               {stats.topProducts.map((p, i) => (
                 <div
                   key={`${p.name}-${i}`}
-                  className="flex items-center justify-between text-xs p-2 rounded-xl bg-neutral-50/80 border border-neutral-100 hover:border-neutral-200 transition-colors"
+                  className="flex items-center justify-between text-xs p-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 hover:border-white/10 transition-colors"
                 >
                   <div className="flex items-center gap-2.5 truncate max-w-[210px]">
                     <span
-                      className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 ${
+                      className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 ${
                         i === 0
-                          ? "bg-amber-400 text-black"
-                          : i === 1
-                          ? "bg-neutral-300 text-black"
-                          : "bg-neutral-200 text-neutral-700"
+                          ? "bg-[var(--admin-primary)] text-white"
+                          : "bg-white/10 text-white"
                       }`}
                     >
                       #{i + 1}
                     </span>
-                    <span className="font-semibold text-neutral-900 truncate">{p.name}</span>
+                    <span className="font-semibold text-white truncate">{p.name}</span>
                   </div>
-                  <div className="text-right flex-shrink-0 font-mono">
-                    <span className="font-bold text-neutral-950">₹{p.revenue.toLocaleString("en-IN")}</span>
-                    <span className="block text-[10px] text-neutral-400">({p.count} sold)</span>
+                  <div className="text-right flex-shrink-0 font-heading tabular-nums">
+                    <span className="font-bold text-white">₹{p.revenue.toLocaleString("en-IN")}</span>
+                    <span className="block text-[10px] text-[var(--admin-text-muted)] font-normal">({p.count} sold)</span>
                   </div>
                 </div>
               ))}
@@ -1303,21 +1380,21 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* ── SEARCH & FILTER CONTROLS BAR ─────────────────────────────────────── */}
-      <div className="bg-white p-4 rounded-2xl border border-neutral-200/80 shadow-xs flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-[var(--admin-surface)] p-4 rounded-[28px] border border-white/5 flex flex-col md:flex-row items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 w-full">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
           <input
             type="text"
             placeholder="Search by Order ID, Customer name, Phone, or Item..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-neutral-200 bg-neutral-50/50 text-sm focus:outline-none focus:border-neutral-900 focus:bg-white transition-all"
+            className="w-full pl-10 pr-10 py-2.5 rounded-[14px] border border-white/10 bg-[var(--admin-surface-2)] text-white placeholder:text-[var(--admin-text-muted)] text-sm focus:outline-none focus:border-[var(--admin-primary)] transition-all"
           />
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)] hover:text-white"
             >
               <X size={16} />
             </button>
@@ -1326,12 +1403,12 @@ export default function AdminOrdersPage() {
 
         {/* Status Dropdown */}
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-neutral-200 bg-neutral-50/50 text-xs">
-            <Filter size={14} className="text-neutral-500" />
+          <div className="flex items-center gap-2 px-3 py-2 rounded-[14px] border border-white/10 bg-[var(--admin-surface-2)] text-xs">
+            <Filter size={14} className="text-[var(--admin-text-muted)]" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-transparent text-neutral-900 font-semibold focus:outline-none cursor-pointer"
+              className="bg-transparent text-white font-semibold focus:outline-none cursor-pointer"
             >
               <option value="all">All Statuses ({dateFilteredOrders.length})</option>
               {ALL_STATUSES.map((s) => (
@@ -1348,7 +1425,7 @@ export default function AdminOrdersPage() {
                 setSearch("");
                 setStatusFilter("all");
               }}
-              className="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+              className="px-3.5 py-2 text-xs font-bold text-[#FF4B55] hover:bg-white/5 rounded-full transition-colors cursor-pointer"
             >
               Reset Filters
             </button>
@@ -1357,11 +1434,11 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* ── ORDERS MASTER TABLE ──────────────────────────────────────────────── */}
-      <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto admin-scroll-container">
+      <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 overflow-hidden">
+        <div className="overflow-x-auto admin-scroll">
           <table className="w-full text-sm text-left border-collapse" role="table">
             <thead>
-              <tr className="border-b border-neutral-200/80 bg-neutral-50/80 text-[11px] uppercase tracking-wider text-neutral-500 font-semibold font-mono">
+              <tr className="border-b border-white/5 bg-[var(--admin-surface-2)] text-[11px] uppercase tracking-wider text-[var(--admin-text-muted)] font-semibold">
                 <th className="px-5 py-4">Order ID</th>
                 <th className="px-5 py-4">Customer</th>
                 <th className="px-5 py-4">Date &amp; Time</th>
@@ -1371,7 +1448,7 @@ export default function AdminOrdersPage() {
                 <th className="px-5 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-white/5">
               {paginatedOrders.map((order) => {
                 const customerName = order.shippingAddress?.name || "Customer";
                 const itemsList = order.items || [];
@@ -1382,20 +1459,21 @@ export default function AdminOrdersPage() {
                 const getStatusPill = (status: OrderStatus) => {
                   switch (status) {
                     case "Delivered":
-                      return "bg-emerald-50 text-emerald-700 border-emerald-200";
+                      return "bg-[#00F59B]/15 text-[#00F59B] border-[#00F59B]/30";
                     case "Shipped":
                     case "Out for Delivery":
-                      return "bg-blue-50 text-blue-700 border-blue-200";
+                      return "bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/30";
                     case "Confirmed":
                     case "Packed":
-                      return "bg-amber-50 text-amber-700 border-amber-200";
+                    case "Processing":
+                      return "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30";
                     case "Cancelled":
-                      return "bg-rose-50 text-rose-700 border-rose-200";
+                      return "bg-[#FF4B55]/15 text-[#FF4B55] border-[#FF4B55]/30";
                     case "Return Requested":
                     case "Returned":
-                      return "bg-purple-50 text-purple-700 border-purple-200";
+                      return "bg-white/10 text-[var(--admin-text-muted)] border-white/20";
                     default:
-                      return "bg-neutral-100 text-neutral-800 border-neutral-200";
+                      return "bg-white/10 text-white border-white/20";
                   }
                 };
 
@@ -1403,20 +1481,20 @@ export default function AdminOrdersPage() {
                   <tr
                     key={order.id}
                     onClick={() => setSelectedOrder(order)}
-                    className="hover:bg-neutral-50/70 transition-colors cursor-pointer group"
+                    className="hover:bg-white/[0.03] transition-colors cursor-pointer group border-b border-white/5"
                   >
                     {/* Order ID */}
                     <td className="px-5 py-4 font-mono text-xs">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-neutral-900 group-hover:text-amber-600 transition-colors">
+                        <span className="font-bold text-white group-hover:text-[var(--admin-primary)] transition-colors">
                           {order.id}
                         </span>
                         <button
                           onClick={(e) => handleCopyId(order.id, e)}
-                          className="p-1 rounded text-neutral-400 hover:text-neutral-700 hover:bg-neutral-200/60 transition-colors"
+                          className="p-1 rounded-full text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 transition-colors"
                           title="Copy Order ID"
                         >
-                          {isCopied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
+                          {isCopied ? <Check size={12} className="text-[#00F59B]" /> : <Copy size={12} />}
                         </button>
                       </div>
                     </td>
@@ -1424,13 +1502,13 @@ export default function AdminOrdersPage() {
                     {/* Customer */}
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-neutral-900 text-amber-300 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
                           {customerName.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-semibold text-xs text-neutral-900">{customerName}</div>
+                          <div className="font-semibold text-xs text-white">{customerName}</div>
                           {order.shippingAddress?.phone && (
-                            <div className="text-[11px] text-neutral-500 font-mono flex items-center gap-1">
+                            <div className="text-[11px] text-[var(--admin-text-muted)] flex items-center gap-1">
                               <Phone size={10} /> {order.shippingAddress.phone}
                             </div>
                           )}
@@ -1440,8 +1518,8 @@ export default function AdminOrdersPage() {
 
                     {/* Date */}
                     <td className="px-5 py-4 whitespace-nowrap">
-                      <div className="text-xs font-medium text-neutral-800 flex items-center gap-1.5">
-                        <Clock size={12} className="text-neutral-400" />
+                      <div className="text-xs font-medium text-[var(--admin-text-muted)] flex items-center gap-1.5">
+                        <Clock size={12} className="text-[var(--admin-text-muted)]" />
                         {order.date}
                       </div>
                     </td>
@@ -1450,7 +1528,7 @@ export default function AdminOrdersPage() {
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2.5 max-w-[240px]">
                         {firstItem?.imageUrl && (
-                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 flex-shrink-0 relative">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-[var(--admin-surface-2)] border border-white/10 flex-shrink-0 relative">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={firstItem.imageUrl}
@@ -1460,10 +1538,10 @@ export default function AdminOrdersPage() {
                           </div>
                         )}
                         <div className="truncate">
-                          <div className="font-semibold text-xs text-neutral-900 truncate">
+                          <div className="font-semibold text-xs text-white truncate">
                             {firstItem ? firstItem.productName : order.itemNames?.[0] || "Luxury Product"}
                           </div>
-                          <div className="text-[11px] text-neutral-500">
+                          <div className="text-[11px] text-[var(--admin-text-muted)]">
                             {firstItem ? (
                               <span>
                                 {firstItem.selectedSize} · {firstItem.colorName} (×{firstItem.quantity})
@@ -1472,7 +1550,7 @@ export default function AdminOrdersPage() {
                               <span>1 item</span>
                             )}
                             {itemsList.length > 1 && (
-                              <span className="ml-1 text-amber-600 font-bold">
+                              <span className="ml-1 text-[var(--admin-primary)] font-bold">
                                 +{itemsList.length - 1} more
                               </span>
                             )}
@@ -1483,10 +1561,10 @@ export default function AdminOrdersPage() {
 
                     {/* Total */}
                     <td className="px-5 py-4">
-                      <div className="font-mono font-bold text-sm text-neutral-950">
+                      <div className="font-heading font-bold tabular-nums text-sm text-white">
                         ₹{(order.total || 0).toLocaleString("en-IN")}
                       </div>
-                      <span className="inline-block px-1.5 py-0.2 rounded text-[10px] font-extrabold uppercase bg-neutral-100 text-neutral-600 font-mono mt-0.5">
+                      <span className="inline-block px-1.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-white/10 text-white mt-0.5">
                         {order.paymentMethod || "CARD"}
                       </span>
                     </td>
@@ -1498,7 +1576,7 @@ export default function AdminOrdersPage() {
                         onChange={(e) =>
                           handleStatusChange(order.id, e.target.value as OrderStatus)
                         }
-                        className={`text-xs font-bold px-3 py-1.5 rounded-xl border focus:outline-none transition-colors cursor-pointer ${getStatusPill(
+                        className={`text-xs font-bold px-3 py-1.5 rounded-full border focus:outline-none transition-colors cursor-pointer ${getStatusPill(
                           normalizeOrderStatus(order.status)
                         )}`}
                       >
@@ -1515,7 +1593,7 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="p-1.5 text-neutral-500 hover:text-neutral-950 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
                           title="Inspect Order Details"
                           aria-label={`Inspect ${order.id}`}
                         >
@@ -1524,7 +1602,7 @@ export default function AdminOrdersPage() {
 
                         <button
                           onClick={(e) => handlePrintSlip(order, e)}
-                          className="p-1.5 text-neutral-500 hover:text-neutral-950 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
                           title="Print Dispatch & Sales Slip"
                           aria-label={`Print ${order.id}`}
                         >
@@ -1533,7 +1611,7 @@ export default function AdminOrdersPage() {
 
                         <button
                           onClick={() => handleDelete(order.id)}
-                          className="p-1.5 text-neutral-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--admin-text-muted)] hover:text-[#FF4B55] hover:bg-white/5 transition-colors cursor-pointer"
                           title="Delete Order"
                           aria-label={`Delete ${order.id}`}
                         >
@@ -1550,10 +1628,10 @@ export default function AdminOrdersPage() {
 
         {/* Empty State */}
         {filteredOrders.length === 0 && (
-          <div className="py-16 text-center text-neutral-500 space-y-2">
-            <Package size={36} className="mx-auto text-neutral-300 mb-2" />
-            <h3 className="text-sm font-bold text-neutral-800">No Orders Found</h3>
-            <p className="text-xs text-neutral-500 max-w-sm mx-auto">
+          <div className="py-16 text-center text-[var(--admin-text-muted)] space-y-2">
+            <Package size={36} className="mx-auto text-[var(--admin-text-muted)] mb-2" />
+            <h3 className="text-sm font-bold text-white font-heading">No Orders Found</h3>
+            <p className="text-xs text-[var(--admin-text-muted)] max-w-sm mx-auto">
               No orders match your active date filter, search query, or status selection.
             </p>
             <button
@@ -1562,7 +1640,7 @@ export default function AdminOrdersPage() {
                 setStatusFilter("all");
                 handleSelectTillDate();
               }}
-              className="mt-3 px-4 py-2 rounded-xl bg-neutral-900 text-white text-xs font-bold hover:bg-neutral-800 transition-colors cursor-pointer"
+              className="mt-3 px-4 py-2 rounded-full bg-[var(--admin-primary)] text-white text-xs font-bold hover:bg-[var(--admin-primary-hover)] transition-colors cursor-pointer"
             >
               Reset to Lifetime Scope
             </button>
@@ -1571,32 +1649,32 @@ export default function AdminOrdersPage() {
 
         {/* Pagination Footer */}
         {filteredOrders.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-neutral-100 bg-neutral-50/50 text-xs text-neutral-600">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-white/5 bg-[var(--admin-surface-2)] text-xs text-[var(--admin-text-muted)]">
             <div>
-              Showing <span className="font-bold text-neutral-900">{(currentPage - 1) * PAGE_SIZE + 1}</span> to{" "}
-              <span className="font-bold text-neutral-900">
+              Showing <span className="font-bold text-white">{(currentPage - 1) * PAGE_SIZE + 1}</span> to{" "}
+              <span className="font-bold text-white">
                 {Math.min(currentPage * PAGE_SIZE, filteredOrders.length)}
               </span>{" "}
-              of <span className="font-bold text-neutral-900">{filteredOrders.length}</span> orders
+              of <span className="font-bold text-white">{filteredOrders.length}</span> orders
             </div>
 
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-[var(--admin-elevated)] text-white disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold cursor-pointer"
               >
                 Previous
               </button>
 
-              <span className="px-2 font-mono text-neutral-500">
+              <span className="px-2 font-heading tabular-nums text-[var(--admin-text-muted)]">
                 Page {currentPage} of {totalPages}
               </span>
 
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-100 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold cursor-pointer"
+                className="px-3.5 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-[var(--admin-elevated)] text-white disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold cursor-pointer"
               >
                 Next
               </button>
@@ -1608,35 +1686,35 @@ export default function AdminOrdersPage() {
       {/* ── DEEP INSPECTION & ORDER DETAILS MODAL ────────────────────────────── */}
       {selectedOrder && (
         <div
-          className="fixed inset-0 z-[10000] bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-[10000] bg-black/75 flex items-center justify-center p-4 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={() => setSelectedOrder(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto admin-scroll-container p-6 space-y-6 shadow-2xl border border-neutral-200"
+            className="bg-[var(--admin-surface)] rounded-[28px] max-w-2xl w-full max-h-[90vh] overflow-y-auto admin-scroll p-6 space-y-6 border border-white/10"
             data-lenis-prevent
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
               <div>
-                <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--admin-primary)] bg-[var(--admin-primary)]/15 border border-[var(--admin-primary)]/30 px-2.5 py-1 rounded-full">
                   Order Inspection
                 </span>
-                <h3 className="text-xl font-bold font-mono text-neutral-900 mt-1">
+                <h3 className="text-xl font-bold font-mono text-white mt-1">
                   {selectedOrder.id}
                 </h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={(e) => handlePrintSlip(selectedOrder, e)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50 text-xs font-bold text-neutral-800 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/10 hover:bg-[var(--admin-elevated)] bg-[var(--admin-surface-2)] text-xs font-bold text-white transition-colors cursor-pointer"
                 >
                   <Printer size={14} />
                   <span>Print Receipt</span>
                 </button>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="p-1.5 rounded-lg hover:bg-neutral-100 text-neutral-500 transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
                   aria-label="Close details"
                 >
                   <X size={20} />
@@ -1646,36 +1724,36 @@ export default function AdminOrdersPage() {
 
             {/* Customer & Shipping Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-100 space-y-2">
-                <div className="font-bold uppercase tracking-wider text-neutral-500 text-[10px] flex items-center gap-1.5">
+              <div className="bg-[var(--admin-surface-2)] p-4 rounded-[14px] border border-white/5 space-y-2">
+                <div className="font-bold uppercase tracking-wider text-[var(--admin-text-muted)] text-[10px] flex items-center gap-1.5">
                   <UserIcon size={12} /> Customer Information
                 </div>
-                <div className="font-semibold text-sm text-neutral-900">
+                <div className="font-semibold text-sm text-white">
                   {selectedOrder.shippingAddress?.name || "Customer"}
                 </div>
-                <div className="text-neutral-600 flex items-center gap-1.5">
+                <div className="text-[var(--admin-text-muted)] flex items-center gap-1.5">
                   <Phone size={12} /> {selectedOrder.shippingAddress?.phone || "No phone provided"}
                 </div>
-                <div className="text-neutral-600 flex items-center gap-1.5">
+                <div className="text-[var(--admin-text-muted)] flex items-center gap-1.5">
                   <Clock size={12} /> Placed: {selectedOrder.date}
                 </div>
               </div>
 
-              <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-100 space-y-2">
-                <div className="font-bold uppercase tracking-wider text-neutral-500 text-[10px] flex items-center gap-1.5">
+              <div className="bg-[var(--admin-surface-2)] p-4 rounded-[14px] border border-white/5 space-y-2">
+                <div className="font-bold uppercase tracking-wider text-[var(--admin-text-muted)] text-[10px] flex items-center gap-1.5">
                   <MapPin size={12} /> Delivery Destination
                 </div>
-                <div className="text-neutral-800 leading-relaxed">
+                <div className="text-white leading-relaxed">
                   {selectedOrder.shippingAddress?.address || "Standard delivery address"}
                 </div>
                 {selectedOrder.shippingAddress?.pincode && (
-                  <div className="font-mono text-neutral-600">
+                  <div className="text-[var(--admin-text-muted)]">
                     PIN: {selectedOrder.shippingAddress.pincode}
                   </div>
                 )}
-                <div className="text-neutral-600 flex items-center gap-1.5">
+                <div className="text-[var(--admin-text-muted)] flex items-center gap-1.5">
                   <CreditCard size={12} /> Payment:{" "}
-                  <span className="uppercase font-semibold text-neutral-900 font-mono">
+                  <span className="uppercase font-semibold text-white">
                     {selectedOrder.paymentMethod}
                   </span>
                 </div>
@@ -1683,21 +1761,21 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Status Quick Updater */}
-            <div className="p-4 bg-neutral-900 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div className="p-4 bg-[var(--admin-surface-2)] border border-white/5 text-white rounded-[14px] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[11px] text-neutral-400 block">Current Dispatch State:</span>
-                <span className="font-bold text-sm text-[#fde047] font-mono">
+                <span className="text-[11px] text-[var(--admin-text-muted)] block">Current Dispatch State:</span>
+                <span className="font-bold text-sm text-[var(--admin-primary)]">
                   {selectedOrder.status}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-neutral-300 font-medium">Update To:</span>
+                <span className="text-xs text-[var(--admin-text-muted)] font-medium">Update To:</span>
                 <select
                   value={selectedOrder.status}
                   onChange={(e) =>
                     handleStatusChange(selectedOrder.id, e.target.value as OrderStatus)
                   }
-                  className="px-3 py-1.5 rounded-lg bg-white text-neutral-950 text-xs font-bold cursor-pointer focus:outline-none"
+                  className="px-3.5 py-1.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/10 text-white text-xs font-bold cursor-pointer focus:outline-none focus:border-[var(--admin-primary)]"
                 >
                   {ALL_STATUSES.map((s) => (
                     <option key={s} value={s}>
@@ -1710,9 +1788,9 @@ export default function AdminOrdersPage() {
 
             {/* Items Breakdown */}
             <div>
-              <h4 className="font-bold text-sm text-neutral-900 mb-3 flex items-center justify-between">
+              <h4 className="font-bold text-sm text-white mb-3 flex items-center justify-between">
                 <span>Items Ordered ({selectedOrder.items?.length || 1})</span>
-                <span className="text-xs font-mono font-normal text-neutral-500">
+                <span className="text-xs font-heading tabular-nums font-normal text-[var(--admin-text-muted)]">
                   Subtotal: ₹{(selectedOrder.subtotal || selectedOrder.total).toLocaleString("en-IN")}
                 </span>
               </h4>
@@ -1720,11 +1798,11 @@ export default function AdminOrdersPage() {
                 {(selectedOrder.items || []).map((item, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between p-3 rounded-xl border border-neutral-100 bg-neutral-50/60"
+                    className="flex items-center justify-between p-3 rounded-[14px] border border-white/5 bg-[var(--admin-surface-2)]"
                   >
                     <div className="flex items-center gap-3">
                       {item.imageUrl && (
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0 relative border border-neutral-200">
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-[var(--admin-surface)] flex-shrink-0 relative border border-white/10">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={item.imageUrl}
@@ -1734,17 +1812,17 @@ export default function AdminOrdersPage() {
                         </div>
                       )}
                       <div>
-                        <div className="font-semibold text-xs text-neutral-900">
+                        <div className="font-semibold text-xs text-white">
                           {item.productName}
                         </div>
-                        <div className="text-[11px] text-neutral-500">
-                          Size: <span className="font-semibold text-neutral-800">{item.selectedSize}</span> · Color:{" "}
-                          <span className="font-semibold text-neutral-800">{item.colorName}</span> · Qty:{" "}
-                          <span className="font-semibold text-neutral-800">{item.quantity}</span>
+                        <div className="text-[11px] text-[var(--admin-text-muted)]">
+                          Size: <span className="font-semibold text-white">{item.selectedSize}</span> · Color:{" "}
+                          <span className="font-semibold text-white">{item.colorName}</span> · Qty:{" "}
+                          <span className="font-semibold text-white">{item.quantity}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="font-bold font-mono text-xs text-neutral-950">
+                    <div className="font-heading font-bold tabular-nums text-xs text-white">
                       ₹{(item.totalPrice || item.unitPrice * item.quantity).toLocaleString("en-IN")}
                     </div>
                   </div>
@@ -1753,46 +1831,46 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Financial Summary */}
-            <div className="border-t border-neutral-100 pt-4 space-y-1.5 text-xs font-mono">
-              <div className="flex justify-between text-neutral-600">
+            <div className="border-t border-white/5 pt-4 space-y-1.5 text-xs font-heading tabular-nums">
+              <div className="flex justify-between text-[var(--admin-text-muted)]">
                 <span>Subtotal</span>
-                <span>₹{(selectedOrder.subtotal || selectedOrder.total).toLocaleString("en-IN")}</span>
+                <span className="text-white font-bold">₹{(selectedOrder.subtotal || selectedOrder.total).toLocaleString("en-IN")}</span>
               </div>
               {selectedOrder.couponDiscount > 0 && (
-                <div className="flex justify-between text-emerald-600 font-bold">
+                <div className="flex justify-between text-[#00F59B] font-bold">
                   <span>Coupon Discount ({selectedOrder.couponCode})</span>
                   <span>-₹{selectedOrder.couponDiscount.toLocaleString("en-IN")}</span>
                 </div>
               )}
               {selectedOrder.shippingCost > 0 && (
-                <div className="flex justify-between text-neutral-600">
+                <div className="flex justify-between text-[var(--admin-text-muted)]">
                   <span>Shipping Cost</span>
-                  <span>₹{selectedOrder.shippingCost.toLocaleString("en-IN")}</span>
+                  <span className="text-white font-bold">₹{selectedOrder.shippingCost.toLocaleString("en-IN")}</span>
                 </div>
               )}
-              <div className="flex justify-between text-base font-bold text-neutral-950 pt-2 border-t border-neutral-200">
+              <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
                 <span>Total Amount Paid</span>
-                <span className="text-[#d97706] font-mono">₹{selectedOrder.total.toLocaleString("en-IN")}</span>
+                <span className="text-white font-heading font-bold tabular-nums">₹{selectedOrder.total.toLocaleString("en-IN")}</span>
               </div>
             </div>
 
             {/* Timeline */}
             {selectedOrder.timeline && selectedOrder.timeline.length > 0 && (
-              <div className="border-t border-neutral-100 pt-4">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-neutral-500 mb-3">
+              <div className="border-t border-white/5 pt-4">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--admin-text-muted)] mb-3">
                   Dispatch &amp; Delivery Timeline
                 </h4>
-                <div className="space-y-3 border-l-2 border-neutral-200 pl-4 ml-2">
+                <div className="space-y-3 border-l-2 border-white/10 pl-4 ml-2">
                   {selectedOrder.timeline.map((step, idx) => (
                     <div key={idx} className="relative text-xs">
-                      <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-neutral-900 border-2 border-white ring-2 ring-neutral-200" />
+                      <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-[var(--admin-primary)] border-2 border-[var(--admin-surface)] ring-2 ring-white/10" />
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-neutral-900">{step.status}</span>
-                        <span className="text-[10px] text-neutral-500 font-mono">
+                        <span className="font-bold text-white">{step.status}</span>
+                        <span className="text-[10px] text-[var(--admin-text-muted)]">
                           {step.timestamp}
                         </span>
                       </div>
-                      <p className="text-neutral-600 text-[11px] mt-0.5">{step.description}</p>
+                      <p className="text-[var(--admin-text-muted)] text-[11px] mt-0.5">{step.description}</p>
                     </div>
                   ))}
                 </div>

@@ -1,5 +1,40 @@
 import React from "react";
 
+/**
+ * Exact geometric vector path for the letter V in the VEYRO wordmark.
+ * Stored in ONE place and shared across storefront and admin marks.
+ */
+export const VEYRO_V_PATH =
+  "M 170,68 C 170,66 172,65 174,65 L 190,65 C 192,65 194,66 195,68 L 227.5,153 L 260,68 C 261,66 263,65 265,65 L 281,65 C 283,65 285,66 285,68 L 237,183 C 235,186 220,186 218,183 Z";
+
+export interface VeyroMarkProps extends React.SVGProps<SVGSVGElement> {
+  className?: string;
+}
+
+/**
+ * Standalone VEYRO "V" vector icon mark.
+ * ViewBox is tightly cropped to the 115 x 121 glyph boundary.
+ * Rendered with fill-current and geometricPrecision for razor-sharp display at any DPI.
+ */
+export function VeyroMark({
+  className = "w-5 h-5",
+  ...props
+}: VeyroMarkProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="170 65 115 121"
+      className={className}
+      fill="currentColor"
+      shapeRendering="geometricPrecision"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d={VEYRO_V_PATH} />
+    </svg>
+  );
+}
+
 interface LogoProps {
   variant?: "black" | "white" | "accent";
   className?: string;
@@ -35,7 +70,7 @@ export function Logo({
       )}
       <g fill={fillColor} fillRule="evenodd">
         {/* Letter V */}
-        <path d="M 170,68 C 170,66 172,65 174,65 L 190,65 C 192,65 194,66 195,68 L 227.5,153 L 260,68 C 261,66 263,65 265,65 L 281,65 C 283,65 285,66 285,68 L 237,183 C 235,186 220,186 218,183 Z" />
+        <path d={VEYRO_V_PATH} />
 
         {/* Letter E */}
         <path d="M 308,65 L 401,65 C 404,65 406,67 406,70 L 406,82 C 406,85 404,87 401,87 L 330,87 L 330,114 L 383,114 C 386,114 388,116 388,119 L 388,131 C 388,134 386,136 383,136 L 330,136 L 330,163 L 401,163 C 404,163 406,165 406,168 L 406,180 C 406,183 404,185 401,185 L 308,185 C 306,185 306,183 306,180 L 306,70 C 306,67 306,65 308,65 Z" />

@@ -10,3 +10,4 @@ export * from "./SpotlightBentoCard";
 export * from "./WishlistButton";
 export * from "./Toast";
 export * from "./Skeleton";
+export * from "./ScrollArea";

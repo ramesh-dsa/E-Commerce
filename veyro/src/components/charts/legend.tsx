@@ -144,11 +144,12 @@ Legend.displayName = "Legend";
 
 export interface LegendItemProps {
   className?: string;
+  selectedClassName?: string;
   children: ReactNode;
   onClick?: () => void;
 }
 
-export function LegendItem({ className = "", children, onClick }: LegendItemProps) {
+export function LegendItem({ className = "", selectedClassName = "", children, onClick }: LegendItemProps) {
   const { setHoveredIndex, onSelectItem } = useLegend();
   const { index, isHovered, isFaded, isSelected, item } = useLegendItem();
 
@@ -161,13 +162,13 @@ export function LegendItem({ className = "", children, onClick }: LegendItemProp
     <button
       type="button"
       className={cn(
-        "w-full cursor-pointer rounded-xl px-2.5 py-1.5 transition-all duration-200 text-left outline-none focus-visible:ring-2 focus-visible:ring-black/10 select-none",
+        "w-full cursor-pointer rounded-[14px] px-2.5 py-1.5 transition-all duration-200 text-left outline-none select-none",
         isSelected
-          ? "bg-neutral-100 font-bold shadow-2xs"
+          ? (selectedClassName || "bg-white/10 font-bold border border-white/15")
           : isHovered
-          ? "bg-neutral-50/90 scale-[1.01]"
-          : "hover:bg-neutral-50/60",
-        isFaded && "opacity-60",
+          ? "bg-white/[0.04] scale-[1.01]"
+          : "hover:bg-white/[0.02]",
+        isFaded && "opacity-50",
         className
       )}
       data-hovered={isHovered ? "" : undefined}

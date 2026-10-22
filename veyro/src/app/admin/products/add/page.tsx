@@ -16,14 +16,14 @@ export default function AddProductPage() {
       <div className="flex items-center gap-3 mb-6">
         <Link
           href="/admin/products"
-          className="p-2 rounded-lg hover:bg-veyro-surface transition-colors text-veyro-muted hover:text-veyro-black"
+          className="w-9 h-9 rounded-full bg-[var(--admin-surface)] border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-[var(--admin-elevated)] flex items-center justify-center transition-colors cursor-pointer"
           aria-label="Back to products"
         >
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-veyro-black">Add Product</h1>
-          <p className="text-sm text-veyro-muted mt-0.5">
+          <h1 className="text-2xl font-bold font-heading text-white">Add Product</h1>
+          <p className="text-sm text-[var(--admin-text-muted)] mt-0.5">
             New product will appear on the store immediately
           </p>
         </div>

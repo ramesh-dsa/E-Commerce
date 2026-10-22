@@ -265,32 +265,40 @@ body {
   background-color: rgba(255, 255, 255, 0.45);
 }
 
-/* ─── Admin Panel Scrollbar ─────────────────────────────────────────────── */
+/* ─── Admin Panel Scrollbar (Dark Theme Reusable) ───────────────────────── */
+.admin-scroll,
 .admin-scroll-container {
+  color-scheme: dark;
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f8f8f6;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
   -webkit-overflow-scrolling: touch;
 }
 
+.admin-scroll::-webkit-scrollbar,
 .admin-scroll-container::-webkit-scrollbar {
-  display: block;
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
-
+.admin-scroll::-webkit-scrollbar-track,
 .admin-scroll-container::-webkit-scrollbar-track {
-  background: #f1f1ee;
-  border-radius: 4px;
+  background: transparent;
 }
-
+.admin-scroll::-webkit-scrollbar-thumb,
 .admin-scroll-container::-webkit-scrollbar-thumb {
-  background-color: #c4c4be;
-  border-radius: 4px;
-  border: 2px solid #f1f1ee;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
 }
-
+.admin-scroll::-webkit-scrollbar-thumb:hover,
 .admin-scroll-container::-webkit-scrollbar-thumb:hover {
-  background-color: #999994;
+  background: rgba(255, 255, 255, 0.32);
+}
+.admin-scroll::-webkit-scrollbar-button,
+.admin-scroll-container::-webkit-scrollbar-button {
+  display: none;
+}
+.admin-scroll::-webkit-scrollbar-corner,
+.admin-scroll-container::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* ─── Filter Section Collapse/Expand (CSS grid-rows trick) ──────────────── */
@@ -1165,5 +1173,121 @@ footer input:-webkit-autofill:active,
   --color-chart-scale-04: var(----chart-scale-04);
   --color-chart-scale-05: var(----chart-scale-05);
   --color-chart-scale-pattern-color: var(----chart-scale-pattern-color);
+}
+
+/* ─── Admin Panel Theme System (Strictly Scoped) ───────────────────────── */
+.admin-theme {
+  --admin-canvas: #0D0D11;
+  --admin-rail: #09090C;
+  --admin-sidebar: #09090C;
+  --admin-surface: #17171C;
+  --admin-surface-2: #121216;
+  --admin-surface-hover: #1E1E24;
+  --admin-elevated: #24242A;
+  --admin-border: rgba(255, 255, 255, 0.05);
+  --admin-border-strong: rgba(255, 255, 255, 0.10);
+  --admin-border-hover: rgba(255, 255, 255, 0.12);
+  --admin-accent: #7C3AED;
+  --admin-primary: #7C3AED;
+  --admin-primary-hover: #6D28D9;
+  --admin-text-primary: #FFFFFF;
+  --admin-text-muted: #71717A;
+  --admin-success: #00F59B;
+  --admin-danger: #FF4B55;
+  --admin-warning: #F59E0B;
+  --admin-info: #38BDF8;
+
+  --admin-radius-card: 28px;
+  --admin-radius-input: 14px;
+  --admin-radius-inner: 14px;
+  --admin-radius-pill: 9999px;
+
+  /* Sidebar expand/collapse shared timing (duration 250ms, cubic-bezier(0.32, 0.72, 0, 1)) */
+  --admin-sidebar-duration: 250ms;
+  --admin-sidebar-easing: cubic-bezier(0.32, 0.72, 0, 1);
+  --admin-sidebar-transition: width 250ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  background-color: var(--admin-canvas);
+  color: var(--admin-text-primary);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+.admin-theme h1,
+.admin-theme h2,
+.admin-theme h3,
+.admin-theme h4,
+.admin-theme [data-font="heading"],
+.admin-theme .font-heading {
+  font-family: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.admin-theme .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-theme .admin-input {
+  background-color: var(--admin-surface-2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+}
+.admin-theme .admin-input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+}
+.admin-theme .admin-input::placeholder {
+  color: var(--admin-text-muted);
+  opacity: 0.8;
+}
+
+.admin-theme select option {
+  background-color: var(--admin-surface);
+  color: #ffffff;
+}
+
+.admin-theme input[type="checkbox"] {
+  accent-color: var(--admin-primary);
+}
+
+/* Sidebar shared transition classes */
+.admin-sidebar-animate {
+  transition: width 250ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.admin-sidebar-item-animate {
+  transition: width 250ms cubic-bezier(0.32, 0.72, 0, 1), background-color 150ms ease, color 150ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar-animate,
+  .admin-sidebar-item-animate {
+    transition: none !important;
+  }
+}
+
+
+/* ─── Radix / shadcn Portals under Admin (Dialogs, Select, Dropdown, Popover) ─── */
+body.admin-theme [data-radix-popper-content-wrapper] > div,
+body.admin-theme [role="dialog"],
+body.admin-theme [data-slot="dialog-content"],
+body.admin-theme [data-slot="popover-content"],
+body.admin-theme [data-slot="select-content"],
+body.admin-theme [data-slot="dropdown-menu-content"] {
+  background-color: #17171C !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.admin-theme [data-radix-popper-content-wrapper] [role="option"],
+body.admin-theme [role="menuitem"] {
+  color: #D4D4D8 !important;
+}
+
+body.admin-theme [data-radix-popper-content-wrapper] [role="option"]:hover,
+body.admin-theme [role="menuitem"]:hover,
+body.admin-theme [data-radix-popper-content-wrapper] [data-highlighted] {
+  background-color: #24242A !important;
+  color: #FFFFFF !important;
 }
 

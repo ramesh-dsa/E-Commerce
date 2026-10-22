@@ -18,13 +18,13 @@ export default function EditProductPage() {
   if (!product) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-xl font-bold text-veyro-black mb-3">Product Not Found</h1>
-        <p className="text-sm text-veyro-muted mb-6">
+        <h1 className="text-xl font-bold font-heading text-white mb-3">Product Not Found</h1>
+        <p className="text-sm text-[var(--admin-text-muted)] mb-6">
           Product with ID &ldquo;{productId}&rdquo; does not exist or was deleted.
         </p>
         <Link
           href="/admin/products"
-          className="text-sm font-semibold text-veyro-yellow hover:underline"
+          className="text-sm font-semibold text-[var(--admin-primary)] hover:underline"
         >
           ← Back to Products
         </Link>
@@ -37,15 +37,15 @@ export default function EditProductPage() {
       <div className="flex items-center gap-3 mb-6">
         <Link
           href="/admin/products"
-          className="p-2 rounded-lg hover:bg-veyro-surface transition-colors text-veyro-muted hover:text-veyro-black"
+          className="w-9 h-9 rounded-full bg-[var(--admin-surface)] border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-[var(--admin-elevated)] flex items-center justify-center transition-colors cursor-pointer"
           aria-label="Back to products"
         >
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-veyro-black">Edit Product</h1>
-          <p className="text-sm text-veyro-muted mt-0.5">
-            {product.name} · <span className="font-mono">{product.id}</span>
+          <h1 className="text-2xl font-bold font-heading text-white">Edit Product</h1>
+          <p className="text-sm text-[var(--admin-text-muted)] mt-0.5">
+            <span className="text-white font-medium">{product.name}</span> · <span className="font-mono">{product.id}</span>
           </p>
         </div>
       </div>

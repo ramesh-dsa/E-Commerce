@@ -87,7 +87,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center bg-[#070709] text-white overflow-x-hidden overflow-y-auto select-none">
+    <div className="relative min-h-screen w-full flex items-center justify-center bg-[#070709] text-white overflow-x-hidden overflow-y-auto admin-scroll select-none">
       {/* ─── 1. REACT BITS SQUARES INTERACTIVE CANVAS BACKGROUND ─── */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-auto">
         <Squares
@@ -115,7 +115,7 @@ export default function AdminLoginPage() {
         {/* Brand Atelier Identity */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 focus:outline-none">
-            <span className="font-serif text-xl tracking-[0.32em] text-white uppercase group-hover/banner:text-[#fcd017] transition-colors duration-300 font-medium">
+            <span className="font-heading font-extrabold text-xl tracking-[0.25em] text-white uppercase group-hover/banner:text-[#fcd017] transition-colors duration-300">
               VEYRO
             </span>
             <span className="text-white/20 text-xs font-light">/</span>
@@ -171,12 +171,12 @@ export default function AdminLoginPage() {
             {/* Headline Section: MASS "ADMIN PANEL" */}
             <div className="space-y-4">
               <div className="relative">
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[88px] font-serif text-white tracking-[0.12em] xl:tracking-[0.15em] uppercase leading-[1.0] drop-shadow-[0_15px_45px_rgba(0,0,0,0.95)]">
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl 2xl:text-[88px] font-heading font-extrabold text-white tracking-[0.12em] xl:tracking-[0.15em] uppercase leading-[1.0] drop-shadow-[0_15px_45px_rgba(0,0,0,0.95)]">
                   <SplitText
                     text="ADMIN PANEL"
                     delay={35}
                     enableHoverSpring={true}
-                    className="font-serif text-white tracking-[0.12em] xl:tracking-[0.15em] whitespace-nowrap"
+                    className="font-heading font-extrabold text-white tracking-[0.12em] xl:tracking-[0.15em] whitespace-nowrap"
                   />
                 </h1>
 
@@ -261,7 +261,7 @@ export default function AdminLoginPage() {
                 {/* Card Header */}
                 <div className="text-center mb-8">
                   <Link href="/" className="inline-block group focus:outline-none">
-                    <h2 className="text-4xl sm:text-5xl font-serif tracking-[0.38em] text-white uppercase group-hover:text-amber-200 transition-colors leading-none">
+                    <h2 className="text-4xl sm:text-5xl font-heading font-extrabold tracking-[0.25em] text-white uppercase group-hover:text-amber-200 transition-colors leading-none">
                       VEYRO
                     </h2>
                   </Link>

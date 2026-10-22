@@ -43,15 +43,15 @@ import {
 function AdminToast({ message, type, onClose }: { message: string; type: "success" | "error"; onClose: () => void }) {
   return (
     <div
-      className={`fixed top-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-semibold animate-in fade-in slide-in-from-top-4 duration-300 motion-reduce:animate-none ${
+      className={`fixed top-6 right-6 z-[100] flex items-center gap-2.5 px-5 py-3 rounded-full border text-xs font-semibold animate-in fade-in slide-in-from-top-4 duration-300 motion-reduce:animate-none ${
         type === "success"
-          ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-          : "bg-red-50 border-red-200 text-red-800"
+          ? "bg-[var(--admin-success)]/15 border-[var(--admin-success)]/30 text-[var(--admin-success)]"
+          : "bg-[var(--admin-danger)]/15 border-[var(--admin-danger)]/30 text-[var(--admin-danger)]"
       }`}
       role="alert"
     >
       {type === "success" ? <Check size={16} /> : <AlertCircle size={16} />}
-      {message}
+      <span>{message}</span>
       <button onClick={onClose} className="ml-2 p-0.5 hover:opacity-70 cursor-pointer" aria-label="Dismiss">
         <X size={14} />
       </button>
@@ -74,9 +74,9 @@ function SectionCard({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 hover:border-white/10 transition-colors overflow-hidden">
       {/* Preview Banner */}
-      <div className="relative h-36 bg-gradient-to-br from-neutral-100 to-neutral-50 overflow-hidden">
+      <div className="relative h-36 bg-[var(--admin-surface-2)] overflow-hidden">
         {section.carouselImages.length > 0 ? (
           <Image
             src={section.carouselImages[0].src}
@@ -86,17 +86,17 @@ function SectionCard({
             unoptimized={section.carouselImages[0].src?.startsWith("data:")}
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-neutral-300">
+          <div className="flex items-center justify-center h-full text-[var(--admin-text-muted)]">
             <ImagePlus size={40} />
           </div>
         )}
         {/* Status Badge */}
         <div className="absolute top-3 right-3">
           <span
-            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md ${
               section.isActive
-                ? "bg-emerald-500 text-white"
-                : "bg-neutral-400 text-white"
+                ? "bg-[var(--admin-success)]/20 border border-[var(--admin-success)]/40 text-[var(--admin-success)]"
+                : "bg-black/60 border border-white/20 text-white"
             }`}
           >
             {section.isActive ? "LIVE" : "DRAFT"}
@@ -106,40 +106,40 @@ function SectionCard({
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="text-base font-bold text-neutral-900 tracking-tight">{section.name}</h3>
-        <p className="text-xs text-neutral-500 mt-1 line-clamp-2">{section.description || "No description"}</p>
+        <h3 className="text-base font-heading font-bold text-white tracking-tight">{section.name}</h3>
+        <p className="text-xs text-[var(--admin-text-muted)] mt-1 line-clamp-2">{section.description || "No description"}</p>
 
         {/* Stats Row */}
         <div className="flex items-center gap-4 mt-4">
-          <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)]">
             <ImagePlus size={13} />
-            <span>{section.carouselImages.length} images</span>
+            <span><strong className="text-white font-heading font-bold tabular-nums">{section.carouselImages.length}</strong> images</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)]">
             <ShoppingBag size={13} />
-            <span>{section.products.length} products</span>
+            <span><strong className="text-white font-heading font-bold tabular-nums">{section.products.length}</strong> products</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)]">
             <Filter size={13} />
-            <span>{section.filters.length} filters</span>
+            <span><strong className="text-white font-heading font-bold tabular-nums">{section.filters.length}</strong> filters</span>
           </div>
         </div>
 
         {/* Actions Row */}
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-neutral-100">
+        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/5">
           <button
             onClick={onEdit}
-            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-neutral-900 text-white text-xs font-semibold rounded-lg hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-semibold rounded-full transition-colors cursor-pointer"
           >
             <Edit3 size={13} />
             Edit
           </button>
           <button
             onClick={onToggleActive}
-            className={`flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-full border transition-colors cursor-pointer ${
               section.isActive
-                ? "bg-amber-50 text-amber-700 hover:bg-amber-100"
-                : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                ? "bg-[var(--admin-warning)]/15 border-[var(--admin-warning)]/30 text-[var(--admin-warning)] hover:bg-[var(--admin-warning)]/25"
+                : "bg-[var(--admin-surface)] border-white/10 text-white hover:bg-white/5"
             }`}
             aria-label={section.isActive ? "Deactivate section" : "Activate section"}
           >
@@ -153,13 +153,13 @@ function SectionCard({
                   onDelete();
                   setConfirmDelete(false);
                 }}
-                className="px-3 py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 cursor-pointer"
+                className="px-3 py-2 bg-[var(--admin-danger)] hover:bg-rose-600 text-white text-xs font-bold rounded-full cursor-pointer"
               >
                 Confirm
               </button>
               <button
                 onClick={() => setConfirmDelete(false)}
-                className="px-2 py-2 text-xs text-neutral-500 hover:text-neutral-700 cursor-pointer"
+                className="px-2 py-2 text-xs text-[var(--admin-text-muted)] hover:text-white cursor-pointer"
               >
                 Cancel
               </button>
@@ -167,10 +167,10 @@ function SectionCard({
           ) : (
             <button
               onClick={() => setConfirmDelete(true)}
-              className="flex items-center justify-center p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center rounded-full border border-white/10 bg-[var(--admin-surface)] text-[var(--admin-text-muted)] hover:text-[var(--admin-danger)] hover:bg-[var(--admin-danger)]/15 hover:border-[var(--admin-danger)]/30 transition-colors cursor-pointer"
               aria-label="Delete section"
             >
-              <Trash2 size={14} />
+              <Trash2 size={13} />
             </button>
           )}
         </div>
@@ -591,20 +591,20 @@ function ImageCropperModal({
       }}
     >
       <div
-        className="bg-[#121217] border border-white/10 rounded-2xl w-full max-w-[480px] shadow-2xl flex flex-col text-white overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="bg-[var(--admin-elevated)] border border-white/10 rounded-[28px] w-full max-w-[480px] flex flex-col text-white overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="relative z-10 flex items-center justify-between px-5 py-4 border-b border-white/10 bg-[#16161d]">
+        <div className="relative z-10 flex items-center justify-between px-5 py-4 border-b border-white/5 bg-[var(--admin-elevated)]">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-              <Crop size={16} className="text-[#fcd017]" />
+            <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-white flex items-center gap-2">
+              <Crop size={16} className="text-[var(--admin-primary)]" />
               {title}
             </h3>
-            <p className="text-[11px] text-neutral-400 mt-0.5">
+            <p className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
               Drag image to position • Scroll or slider to zoom
             </p>
           </div>
@@ -614,7 +614,7 @@ function ImageCropperModal({
               e.stopPropagation();
               onClose();
             }}
-            className="p-1.5 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-1.5 rounded-full text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
             aria-label="Close cropper"
           >
             <X size={18} />
@@ -622,19 +622,19 @@ function ImageCropperModal({
         </div>
 
         {/* Viewport Workspace */}
-        <div className="p-5 flex flex-col items-center bg-[#09090c]">
+        <div className="p-5 flex flex-col items-center bg-[var(--admin-canvas)]">
           {/* Architectural Segmented Tab Bar */}
-          <div className="relative z-10 flex items-center gap-1.5 mb-5 bg-[#16161d] p-1.5 rounded-xl border border-white/15 backdrop-blur-sm shadow-inner">
+          <div className="relative z-10 flex items-center gap-1.5 mb-5 bg-[var(--admin-surface)] p-1.5 rounded-full border border-white/10">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 handleAspectChange("3/4");
               }}
-              className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
                 aspect === "3/4"
-                  ? "bg-[#fcd017] text-neutral-950 font-black shadow-md shadow-[#fcd017]/25 scale-[1.02]"
-                  : "text-neutral-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[var(--admin-primary)] text-white"
+                  : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5"
               }`}
             >
               3:4 STORE CARD
@@ -645,10 +645,10 @@ function ImageCropperModal({
                 e.stopPropagation();
                 handleAspectChange("1/1");
               }}
-              className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
                 aspect === "1/1"
-                  ? "bg-[#fcd017] text-neutral-950 font-black shadow-md shadow-[#fcd017]/25 scale-[1.02]"
-                  : "text-neutral-300 hover:text-white hover:bg-white/10"
+                  ? "bg-[var(--admin-primary)] text-white"
+                  : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5"
               }`}
             >
               1:1 SQUARE
@@ -661,7 +661,7 @@ function ImageCropperModal({
             style={{ width: `${Vw}px`, height: `${Vh}px` }}
             onPointerDown={handlePointerDown}
             onClick={(e) => e.stopPropagation()}
-            className={`relative overflow-hidden rounded-xl border-2 border-white/90 shadow-2xl shadow-black/90 ring-1 ring-white/20 flex items-center justify-center transition-[width,height] duration-200 select-none touch-none ${
+            className={`relative overflow-hidden rounded-[14px] border-2 border-white/90 ring-1 ring-white/20 flex items-center justify-center transition-[width,height] duration-200 select-none touch-none ${
               isDragging ? "cursor-grabbing" : "cursor-grab"
             }`}
           >
@@ -682,7 +682,7 @@ function ImageCropperModal({
                 }}
               />
             ) : (
-              <div className="text-xs text-neutral-500 animate-pulse">Loading image...</div>
+              <div className="text-xs text-[var(--admin-text-muted)] animate-pulse">Loading image...</div>
             )}
 
             {/* Dynamic Rule-of-Thirds Grid */}
@@ -703,15 +703,15 @@ function ImageCropperModal({
             </div>
 
             {/* Viewfinder Architectural Corner Brackets */}
-            <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#fcd017] pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
-            <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[#fcd017] pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
-            <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#fcd017] pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
-            <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#fcd017] pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
+            <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[var(--admin-primary)] pointer-events-none" />
+            <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[var(--admin-primary)] pointer-events-none" />
+            <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[var(--admin-primary)] pointer-events-none" />
+            <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[var(--admin-primary)] pointer-events-none" />
           </div>
 
           {/* Floating Dock Zoom Strip */}
           <div
-            className="relative z-10 w-full max-w-[360px] mt-5 flex items-center gap-3 bg-[#16161d] border border-white/15 px-4 py-2.5 rounded-xl shadow-lg backdrop-blur-sm"
+            className="relative z-10 w-full max-w-[360px] mt-5 flex items-center gap-3 bg-[var(--admin-surface)] border border-white/10 px-4 py-2.5 rounded-full"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -721,7 +721,7 @@ function ImageCropperModal({
                 handleZoomUpdate(zoom - 0.15);
               }}
               disabled={zoom <= 1}
-              className="text-neutral-300 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-500 transition-all active:scale-95 cursor-pointer p-1 rounded-lg hover:bg-white/10"
+              className="text-[var(--admin-text-muted)] hover:text-white disabled:opacity-30 transition-all active:scale-95 cursor-pointer p-1 rounded-full hover:bg-white/5"
               title="Zoom Out"
               aria-label="Zoom Out"
             >
@@ -743,7 +743,7 @@ function ImageCropperModal({
                 triggerInteraction();
               }}
               onChange={(e) => handleZoomUpdate(parseFloat(e.target.value))}
-              className="flex-1 h-1.5 bg-neutral-700/80 rounded-lg appearance-none cursor-pointer accent-[#fcd017]"
+              className="flex-1 h-1.5 bg-[var(--admin-surface-2)] rounded-full appearance-none cursor-pointer accent-[var(--admin-primary)]"
               aria-label="Zoom level"
             />
 
@@ -754,7 +754,7 @@ function ImageCropperModal({
                 handleZoomUpdate(zoom + 0.15);
               }}
               disabled={zoom >= 3}
-              className="text-neutral-300 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-500 transition-all active:scale-95 cursor-pointer p-1 rounded-lg hover:bg-white/10"
+              className="text-[var(--admin-text-muted)] hover:text-white disabled:opacity-30 transition-all active:scale-95 cursor-pointer p-1 rounded-full hover:bg-white/5"
               title="Zoom In"
               aria-label="Zoom In"
             >
@@ -773,7 +773,7 @@ function ImageCropperModal({
                 e.stopPropagation();
                 handleReset();
               }}
-              className="p-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
+              className="p-1.5 rounded-full text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 transition-all active:scale-95 cursor-pointer"
               title="Reset Framing & Zoom"
               aria-label="Reset Framing & Zoom"
             >
@@ -783,14 +783,14 @@ function ImageCropperModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="relative z-10 p-4 border-t border-white/10 bg-[#16161d] flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+        <div className="relative z-10 p-4 border-t border-white/5 bg-[var(--admin-elevated)] flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onClose();
             }}
-            className="flex-1 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-200 hover:text-white bg-white/10 hover:bg-white/15 border border-white/20 hover:border-white/30 rounded-xl transition-all active:scale-[0.98] cursor-pointer text-center shadow-sm"
+            className="flex-1 px-4 py-2.5 text-xs font-semibold text-white/80 bg-[var(--admin-surface)] border border-white/10 rounded-full hover:bg-white/5 transition-colors cursor-pointer text-center"
           >
             Cancel
           </button>
@@ -800,7 +800,7 @@ function ImageCropperModal({
               e.stopPropagation();
               handleApplyCrop();
             }}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-neutral-950 bg-[#fcd017] hover:bg-[#ffe043] rounded-xl transition-all active:scale-[0.98] cursor-pointer shadow-lg shadow-[#fcd017]/25"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] rounded-full transition-colors cursor-pointer"
           >
             <Check size={16} className="stroke-[2.5]" />
             Apply &amp; Set Image
@@ -921,7 +921,7 @@ function ProductFormModal({
   return (
     <>
       <div
-        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xs"
+        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 backdrop-blur-xs"
         onPointerDown={(e) => {
           formBackdropPointerDownRef.current = e.target === e.currentTarget;
         }}
@@ -933,24 +933,24 @@ function ProductFormModal({
         }}
       >
         <div
-          className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-y-auto mx-4 admin-scroll-container"
+          className="relative w-full max-w-2xl max-h-[90vh] bg-[var(--admin-elevated)] border border-white/10 rounded-[28px] overflow-y-auto mx-4 admin-scroll"
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           onMouseUp={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
-        <div className="sticky top-0 bg-white z-10 flex items-center justify-between p-5 border-b border-neutral-100">
-          <h3 className="text-lg font-bold text-neutral-900">
+        <div className="sticky top-0 bg-[var(--admin-elevated)] z-10 flex items-center justify-between p-5 border-b border-white/5">
+          <h3 className="text-lg font-heading font-bold text-white">
             {product ? "Edit Product" : "Add Product"}
           </h3>
-          <button onClick={onClose} className="p-1.5 hover:bg-neutral-100 rounded-lg cursor-pointer" aria-label="Close">
+          <button onClick={onClose} className="p-1.5 hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white rounded-full transition-colors cursor-pointer" aria-label="Close">
             <X size={18} />
           </button>
         </div>
 
         <div className="p-5 space-y-5">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700" role="alert">
+            <div className="flex items-center gap-2 p-3 bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 rounded-[14px] text-xs text-[var(--admin-danger)]" role="alert">
               <AlertCircle size={14} />
               {error}
             </div>
@@ -958,23 +958,23 @@ function ProductFormModal({
 
           {/* Product Name */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Product Name <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
+              Product Name <span className="text-[var(--admin-danger)]">*</span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => { setName(e.target.value); setError(""); }}
               placeholder="e.g. Leather Crossbody Bag"
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
             />
           </div>
 
           {/* Price Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Price (₹) <span className="text-red-400">*</span>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
+                Price (₹) <span className="text-[var(--admin-danger)]">*</span>
               </label>
               <input
                 type="number"
@@ -982,11 +982,11 @@ function ProductFormModal({
                 onChange={(e) => { setPrice(e.target.value); setError(""); }}
                 placeholder="1999"
                 min="1"
-                className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
                 Original Price (₹)
               </label>
               <input
@@ -995,22 +995,22 @@ function ProductFormModal({
                 onChange={(e) => setOriginalPrice(e.target.value)}
                 placeholder="2499"
                 min="0"
-                className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
               />
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Description <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
+              Description <span className="text-[var(--admin-danger)]">*</span>
             </label>
             <textarea
               value={description}
               onChange={(e) => { setDescription(e.target.value); setError(""); }}
               placeholder="Write a compelling product description..."
               rows={3}
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none"
             />
           </div>
 
@@ -1018,18 +1018,18 @@ function ProductFormModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Primary Image */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Primary Image <span className="text-red-400">*</span>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
+                Primary Image <span className="text-[var(--admin-danger)]">*</span>
               </label>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, "primary")} />
               {imageUrl ? (
-                <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200 group">
+                <div className="relative w-full aspect-square rounded-[14px] overflow-hidden bg-[var(--admin-surface-2)] border border-white/10 group">
                   <Image src={imageUrl} alt="Product Primary" fill className="object-cover" unoptimized={imageUrl.startsWith("data:")} />
                   <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10">
                     <button
                       type="button"
                       onClick={() => setCropperModal({ open: true, source: rawPrimaryImage || imageUrl, target: "primary" })}
-                      className="p-1.5 bg-neutral-900/80 hover:bg-neutral-900 text-white rounded-full transition-colors shadow-md cursor-pointer"
+                      className="p-1.5 bg-black/60 hover:bg-black/90 text-white rounded-full transition-colors cursor-pointer border border-white/10"
                       title="Adjust crop / framing"
                       aria-label="Adjust crop"
                     >
@@ -1042,7 +1042,7 @@ function ProductFormModal({
                         setRawPrimaryImage("");
                         if (fileInputRef.current) fileInputRef.current.value = "";
                       }}
-                      className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-md cursor-pointer"
+                      className="p-1.5 bg-[var(--admin-danger)]/80 hover:bg-[var(--admin-danger)] text-white rounded-full transition-colors cursor-pointer border border-white/10"
                       aria-label="Remove primary image"
                     >
                       <X size={14} />
@@ -1073,17 +1073,17 @@ function ProductFormModal({
                       const file = e.dataTransfer.files?.[0];
                       if (file) processFile(file, "primary");
                     }}
-                    className={`w-full aspect-square flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all cursor-pointer p-4 text-center ${
+                    className={`w-full aspect-square flex flex-col items-center justify-center gap-2 rounded-[14px] border-2 border-dashed transition-all cursor-pointer p-4 text-center ${
                       isPrimaryDragging
-                        ? "border-neutral-900 bg-neutral-100 scale-[1.02]"
-                        : "border-neutral-300 bg-neutral-50 hover:border-neutral-500 hover:bg-neutral-100 focus:border-neutral-900 focus:outline-none"
+                        ? "border-[var(--admin-primary)] bg-[var(--admin-primary)]/10 scale-[1.01]"
+                        : "border-white/10 bg-[var(--admin-surface-2)] hover:border-white/20 hover:bg-white/[0.03] focus:border-[var(--admin-primary)] focus:outline-none"
                     }`}
                   >
-                    <Upload size={22} className={isPrimaryDragging ? "text-neutral-900" : "text-neutral-400"} />
-                    <span className="text-xs font-semibold text-neutral-700">
+                    <Upload size={22} className={isPrimaryDragging ? "text-[var(--admin-primary)]" : "text-[var(--admin-text-muted)]"} />
+                    <span className="text-xs font-semibold text-white">
                       {isPrimaryDragging ? "Drop image now" : "Drag & Drop or Click"}
                     </span>
-                    <span className="text-[10px] text-neutral-400">Press Enter / Click to browse (Max 10MB)</span>
+                    <span className="text-[10px] text-[var(--admin-text-muted)]">Press Enter / Click to browse (Max 10MB)</span>
                   </div>
                   {/* Direct URL input */}
                   <div className="flex gap-1.5">
@@ -1103,7 +1103,7 @@ function ProductFormModal({
                           }
                         }
                       }}
-                      className="flex-1 px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                      className="flex-1 px-3 py-2 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-xs text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
                     />
                     <button
                       type="button"
@@ -1115,7 +1115,7 @@ function ProductFormModal({
                           setError("");
                         }
                       }}
-                      className="px-2.5 py-1.5 bg-neutral-900 text-white rounded-lg text-xs font-medium hover:bg-neutral-800 transition-colors"
+                      className="px-3.5 py-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white rounded-full text-xs font-medium transition-colors cursor-pointer"
                     >
                       Set
                     </button>
@@ -1126,18 +1126,18 @@ function ProductFormModal({
 
             {/* Secondary Image */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Secondary Image <span className="text-neutral-400 font-normal">(Hover view)</span>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
+                Secondary Image <span className="text-[var(--admin-text-muted)] font-normal">(Hover view)</span>
               </label>
               <input ref={secondaryFileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, "secondary")} />
               {secondaryImageUrl ? (
-                <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200 group">
+                <div className="relative w-full aspect-square rounded-[14px] overflow-hidden bg-[var(--admin-surface-2)] border border-white/10 group">
                   <Image src={secondaryImageUrl} alt="Product Secondary" fill className="object-cover" unoptimized={secondaryImageUrl.startsWith("data:")} />
                   <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10">
                     <button
                       type="button"
                       onClick={() => setCropperModal({ open: true, source: rawSecondaryImage || secondaryImageUrl, target: "secondary" })}
-                      className="p-1.5 bg-neutral-900/80 hover:bg-neutral-900 text-white rounded-full transition-colors shadow-md cursor-pointer"
+                      className="p-1.5 bg-black/60 hover:bg-black/90 text-white rounded-full transition-colors cursor-pointer border border-white/10"
                       title="Adjust crop / framing"
                       aria-label="Adjust crop"
                     >
@@ -1150,7 +1150,7 @@ function ProductFormModal({
                         setRawSecondaryImage("");
                         if (secondaryFileInputRef.current) secondaryFileInputRef.current.value = "";
                       }}
-                      className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors shadow-md cursor-pointer"
+                      className="p-1.5 bg-[var(--admin-danger)]/80 hover:bg-[var(--admin-danger)] text-white rounded-full transition-colors cursor-pointer border border-white/10"
                       aria-label="Remove secondary image"
                     >
                       <X size={14} />
@@ -1181,17 +1181,17 @@ function ProductFormModal({
                       const file = e.dataTransfer.files?.[0];
                       if (file) processFile(file, "secondary");
                     }}
-                    className={`w-full aspect-square flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all cursor-pointer p-4 text-center ${
+                    className={`w-full aspect-square flex flex-col items-center justify-center gap-2 rounded-[14px] border-2 border-dashed transition-all cursor-pointer p-4 text-center ${
                       isSecondaryDragging
-                        ? "border-neutral-900 bg-neutral-100 scale-[1.02]"
-                        : "border-neutral-300 bg-neutral-50 hover:border-neutral-500 hover:bg-neutral-100 focus:border-neutral-900 focus:outline-none"
+                        ? "border-[var(--admin-primary)] bg-[var(--admin-primary)]/10 scale-[1.01]"
+                        : "border-white/10 bg-[var(--admin-surface-2)] hover:border-white/20 hover:bg-white/[0.03] focus:border-[var(--admin-primary)] focus:outline-none"
                     }`}
                   >
-                    <Upload size={22} className={isSecondaryDragging ? "text-neutral-900" : "text-neutral-400"} />
-                    <span className="text-xs font-semibold text-neutral-700">
+                    <Upload size={22} className={isSecondaryDragging ? "text-[var(--admin-primary)]" : "text-[var(--admin-text-muted)]"} />
+                    <span className="text-xs font-semibold text-white">
                       {isSecondaryDragging ? "Drop image now" : "Drag & Drop or Click"}
                     </span>
-                    <span className="text-[10px] text-neutral-400">Optional hover view (Max 10MB)</span>
+                    <span className="text-[10px] text-[var(--admin-text-muted)]">Optional hover view (Max 10MB)</span>
                   </div>
                   {/* Direct URL input */}
                   <div className="flex gap-1.5">
@@ -1210,7 +1210,7 @@ function ProductFormModal({
                           }
                         }
                       }}
-                      className="flex-1 px-2.5 py-1.5 bg-neutral-50 border border-neutral-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                      className="flex-1 px-3 py-2 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-xs text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
                     />
                     <button
                       type="button"
@@ -1221,7 +1221,7 @@ function ProductFormModal({
                           setSecondaryUrlInput("");
                         }
                       }}
-                      className="px-2.5 py-1.5 bg-neutral-900 text-white rounded-lg text-xs font-medium hover:bg-neutral-800 transition-colors"
+                      className="px-3.5 py-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white rounded-full text-xs font-medium transition-colors cursor-pointer"
                     >
                       Set
                     </button>
@@ -1234,7 +1234,7 @@ function ProductFormModal({
           {/* Sizes, Color, Material, Badge */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
                 Sizes (comma-separated)
               </label>
               <input
@@ -1242,44 +1242,44 @@ function ProductFormModal({
                 value={sizes}
                 onChange={(e) => setSizes(e.target.value)}
                 placeholder="S, M, L, XL"
-                className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Badge</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Badge</label>
               <select
                 value={badge}
                 onChange={(e) => setBadge(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 cursor-pointer"
+                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white focus:outline-none focus:border-[var(--admin-primary)] cursor-pointer"
               >
-                <option value="">No Badge</option>
-                <option value="NEW">NEW</option>
-                <option value="SALE">SALE</option>
-                <option value="BESTSELLER">BESTSELLER</option>
-                <option value="LIMITED">LIMITED</option>
-                <option value="TRENDING">TRENDING</option>
-                <option value="PREMIUM">PREMIUM</option>
-                <option value="EXCLUSIVE">EXCLUSIVE</option>
+                <option value="" className="bg-[var(--admin-surface-2)] text-white">No Badge</option>
+                <option value="NEW" className="bg-[var(--admin-surface-2)] text-white">NEW</option>
+                <option value="SALE" className="bg-[var(--admin-surface-2)] text-white">SALE</option>
+                <option value="BESTSELLER" className="bg-[var(--admin-surface-2)] text-white">BESTSELLER</option>
+                <option value="LIMITED" className="bg-[var(--admin-surface-2)] text-white">LIMITED</option>
+                <option value="TRENDING" className="bg-[var(--admin-surface-2)] text-white">TRENDING</option>
+                <option value="PREMIUM" className="bg-[var(--admin-surface-2)] text-white">PREMIUM</option>
+                <option value="EXCLUSIVE" className="bg-[var(--admin-surface-2)] text-white">EXCLUSIVE</option>
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="min-w-0">
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Color Name</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Color Name</label>
               <input
                 type="text"
                 value={colorName}
                 onChange={(e) => setColorName(e.target.value)}
                 placeholder="Black"
-                className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
               />
             </div>
             <div className="min-w-0">
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Color Hex</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Color Hex</label>
               <div className="flex items-center gap-2 min-w-0">
                 <div
-                  className="relative w-10 h-10 rounded-xl border border-neutral-200 overflow-hidden shrink-0 shadow-sm cursor-pointer hover:border-neutral-400 transition-colors"
+                  className="relative w-10 h-10 rounded-[14px] border border-white/10 overflow-hidden shrink-0 cursor-pointer hover:border-white/20 transition-colors"
                   title="Click to select color"
                 >
                   <div
@@ -1304,25 +1304,25 @@ function ProductFormModal({
                     setColorHex(val.toUpperCase());
                   }}
                   placeholder="#111111"
-                  className="flex-1 min-w-0 px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="flex-1 min-w-0 px-3 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white font-mono uppercase placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
                 />
               </div>
             </div>
             <div className="min-w-0">
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Material</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Material</label>
               <input
                 type="text"
                 value={material}
                 onChange={(e) => setMaterial(e.target.value)}
                 placeholder="Genuine Leather"
-                className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
               />
             </div>
           </div>
 
           {/* Tags */}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
               Tags (comma-separated)
             </label>
             <input
@@ -1330,14 +1330,14 @@ function ProductFormModal({
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="leather, premium, handcrafted"
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
             />
           </div>
 
           {/* In Stock */}
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <div
-              className={`w-10 h-5.5 rounded-full relative transition-colors ${inStock ? "bg-emerald-500" : "bg-neutral-300"}`}
+              className={`w-10 h-5.5 rounded-full relative transition-colors ${inStock ? "bg-[var(--admin-primary)]" : "bg-[var(--admin-surface-2)] border border-white/10"}`}
               onClick={() => setInStock(!inStock)}
               role="switch"
               aria-checked={inStock}
@@ -1345,26 +1345,26 @@ function ProductFormModal({
               onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") setInStock(!inStock); }}
             >
               <div
-                className={`absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full shadow transition-transform ${
+                className={`absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full transition-transform ${
                   inStock ? "translate-x-[18px]" : "translate-x-0.5"
                 }`}
               />
             </div>
-            <span className="text-xs font-medium text-neutral-700">In Stock</span>
+            <span className="text-xs font-medium text-white/90">In Stock</span>
           </label>
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white p-5 border-t border-neutral-100 flex items-center gap-3">
+        <div className="sticky bottom-0 bg-[var(--admin-elevated)] p-5 border-t border-white/5 flex items-center gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 text-sm font-semibold text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors cursor-pointer"
+            className="flex-1 px-4 py-2.5 text-sm font-semibold text-white/80 bg-[var(--admin-surface)] border border-white/10 rounded-full hover:bg-white/5 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-sm font-semibold rounded-full transition-colors cursor-pointer"
           >
             <Save size={14} />
             {product ? "Update Product" : "Add Product"}
@@ -1425,94 +1425,94 @@ function FilterFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xs" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 backdrop-blur-xs" onClick={onClose}>
       <div
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden mx-4"
+        className="relative w-full max-w-md bg-[var(--admin-elevated)] border border-white/10 rounded-[28px] overflow-hidden mx-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-5 border-b border-neutral-100">
-          <h3 className="text-lg font-bold text-neutral-900">
+        <div className="flex items-center justify-between p-5 border-b border-white/5">
+          <h3 className="text-lg font-heading font-bold text-white">
             {filter ? "Edit Filter" : "Add Filter"}
           </h3>
-          <button onClick={onClose} className="p-1.5 hover:bg-neutral-100 rounded-lg cursor-pointer" aria-label="Close">
+          <button onClick={onClose} className="p-1.5 hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white rounded-full transition-colors cursor-pointer" aria-label="Close">
             <X size={18} />
           </button>
         </div>
 
         <div className="p-5 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700" role="alert">
+            <div className="flex items-center gap-2 p-3 bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 rounded-[14px] text-xs text-[var(--admin-danger)]" role="alert">
               <AlertCircle size={14} />
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Filter Label <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
+              Filter Label <span className="text-[var(--admin-danger)]">*</span>
             </label>
             <input
               type="text"
               value={label}
               onChange={(e) => { setLabel(e.target.value); setError(""); }}
               placeholder="e.g. Color, Size, Material"
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Filter Key <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
+              Filter Key <span className="text-[var(--admin-danger)]">*</span>
             </label>
             <input
               type="text"
               value={key}
               onChange={(e) => { setKey(e.target.value); setError(""); }}
               placeholder="e.g. color, size, material"
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
             />
-            <p className="text-[10px] text-neutral-400 mt-1">Used to match product tags. Products with tags matching these options will appear.</p>
+            <p className="text-[10px] text-[var(--admin-text-muted)] mt-1">Used to match product tags. Products with tags matching these options will appear.</p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
               Filter Type
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as CustomSectionFilter["type"])}
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 cursor-pointer"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white focus:outline-none focus:border-[var(--admin-primary)] cursor-pointer"
             >
-              <option value="checkbox">Checkbox (Multi-select)</option>
-              <option value="radio">Radio (Single-select)</option>
+              <option value="checkbox" className="bg-[var(--admin-surface-2)] text-white">Checkbox (Multi-select)</option>
+              <option value="radio" className="bg-[var(--admin-surface-2)] text-white">Radio (Single-select)</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Options <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
+              Options <span className="text-[var(--admin-danger)]">*</span>
             </label>
             <textarea
               value={options}
               onChange={(e) => { setOptions(e.target.value); setError(""); }}
               placeholder={"Enter each option on a new line:\nBlack\nWhite\nBrown\nTan"}
               rows={5}
-              className="w-full px-3.5 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none font-mono"
+              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none font-mono"
             />
-            <p className="text-[10px] text-neutral-400 mt-1">One option per line. Must match product tags for filtering to work.</p>
+            <p className="text-[10px] text-[var(--admin-text-muted)] mt-1">One option per line. Must match product tags for filtering to work.</p>
           </div>
         </div>
 
-        <div className="p-5 border-t border-neutral-100 flex items-center gap-3">
+        <div className="p-5 border-t border-white/5 flex items-center gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 text-sm font-semibold text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors cursor-pointer"
+            className="flex-1 px-4 py-2.5 text-sm font-semibold text-white/80 bg-[var(--admin-surface)] border border-white/10 rounded-full hover:bg-white/5 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-sm font-semibold rounded-full transition-colors cursor-pointer"
           >
             <Save size={14} />
             {filter ? "Update" : "Add Filter"}
@@ -1675,47 +1675,47 @@ function SectionEditor({
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={onBack}
-          className="p-2 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer"
+          className="p-2 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 rounded-full transition-colors cursor-pointer"
           aria-label="Back to sections"
         >
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h2 className="text-xl font-bold text-neutral-900 tracking-tight">Edit: {currentSection.name}</h2>
-          <p className="text-xs text-neutral-500 mt-0.5">
+          <h2 className="text-xl font-heading font-bold text-white tracking-tight">Edit: {currentSection.name}</h2>
+          <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">
             /{currentSection.slug} · {currentSection.isActive ? "Live" : "Draft"}
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-neutral-100/80 p-1 rounded-xl mb-6 overflow-x-auto" role="tablist">
+      <div className="flex items-center gap-1 bg-[var(--admin-surface)] border border-white/5 p-1 rounded-full mb-6 overflow-x-auto admin-scroll" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             role="tab"
             aria-selected={activeTab === tab.key}
-            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === tab.key
-                ? "bg-white text-neutral-900 shadow-sm"
-                : "text-neutral-500 hover:text-neutral-700"
+                ? "bg-[var(--admin-primary)] text-white"
+                : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5"
             }`}
           >
             <tab.icon size={14} />
             {tab.label}
             {tab.key === "carousel" && (
-              <span className="ml-1 text-[10px] bg-neutral-200 px-1.5 py-0.5 rounded-full">
+              <span className={`ml-1 text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? "bg-white/20 text-white" : "bg-white/5 text-[var(--admin-text-muted)]"}`}>
                 {currentSection.carouselImages.length}
               </span>
             )}
             {tab.key === "products" && (
-              <span className="ml-1 text-[10px] bg-neutral-200 px-1.5 py-0.5 rounded-full">
+              <span className={`ml-1 text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? "bg-white/20 text-white" : "bg-white/5 text-[var(--admin-text-muted)]"}`}>
                 {currentSection.products.length}
               </span>
             )}
             {tab.key === "filters" && (
-              <span className="ml-1 text-[10px] bg-neutral-200 px-1.5 py-0.5 rounded-full">
+              <span className={`ml-1 text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === tab.key ? "bg-white/20 text-white" : "bg-white/5 text-[var(--admin-text-muted)]"}`}>
                 {currentSection.filters.length}
               </span>
             )}
@@ -1727,56 +1727,56 @@ function SectionEditor({
       <div role="tabpanel">
         {/* ─── Details Tab ─────────────────────────────────────────── */}
         {activeTab === "details" && (
-          <div className="bg-white rounded-2xl border border-neutral-200/80 p-6 space-y-5">
+          <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-                Section Name <span className="text-red-400">*</span>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
+                Section Name <span className="text-[var(--admin-danger)]">*</span>
               </label>
               <input
                 type="text"
                 value={sectionName}
                 onChange={(e) => setSectionName(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-4 py-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
                 placeholder="e.g. Accessories"
               />
-              <p className="text-[10px] text-neutral-400 mt-1">
+              <p className="text-[10px] text-[var(--admin-text-muted)] mt-1">
                 URL: /{sectionName.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-").replace(/^-+|-+$/g, "") || "section-name"}
               </p>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Description</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Description</label>
               <textarea
                 value={sectionDescription}
                 onChange={(e) => setSectionDescription(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+                className="w-full px-4 py-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none"
                 placeholder="Describe this section..."
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Meta Title (SEO)</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Meta Title (SEO)</label>
               <input
                 type="text"
                 value={metaTitle}
                 onChange={(e) => setMetaTitle(e.target.value)}
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="w-full px-4 py-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
                 placeholder="Page title for search engines"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Meta Description (SEO)</label>
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">Meta Description (SEO)</label>
               <textarea
                 value={metaDescription}
                 onChange={(e) => setMetaDescription(e.target.value)}
                 rows={2}
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+                className="w-full px-4 py-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none"
                 placeholder="Brief description for search engine results"
               />
             </div>
 
             {/* Carousel Banner Height */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+              <label className="block text-xs font-semibold text-white/90 mb-1.5">
                 Carousel Banner Height
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -1789,14 +1789,14 @@ function SectionEditor({
                     key={item.key}
                     type="button"
                     onClick={() => handleUpdateCarouselHeight(item.key as any)}
-                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`p-3 rounded-[14px] border text-left transition-all cursor-pointer ${
                       carouselHeight === item.key
-                        ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
-                        : "border-neutral-200 bg-neutral-50 text-neutral-700 hover:border-neutral-300 hover:bg-neutral-100"
+                        ? "border-[var(--admin-primary)] bg-[var(--admin-primary)]/15 text-white"
+                        : "border-white/10 bg-[var(--admin-surface-2)] text-white/90 hover:border-white/20 hover:bg-white/[0.03]"
                     }`}
                   >
-                    <div className="text-xs font-bold">{item.label}</div>
-                    <div className={`text-[10px] ${carouselHeight === item.key ? "text-neutral-300" : "text-neutral-400"}`}>
+                    <div className="text-xs font-heading font-bold">{item.label}</div>
+                    <div className={`text-[10px] ${carouselHeight === item.key ? "text-white/70" : "text-[var(--admin-text-muted)]"}`}>
                       {item.desc}
                     </div>
                   </button>
@@ -1806,7 +1806,7 @@ function SectionEditor({
 
             <button
               onClick={handleSaveDetails}
-              className="flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-sm font-semibold rounded-full transition-colors cursor-pointer"
             >
               <Save size={14} />
               Save Details
@@ -1818,10 +1818,10 @@ function SectionEditor({
         {activeTab === "carousel" && (
           <div className="space-y-5">
             {/* Height selector bar */}
-            <div className="bg-white rounded-2xl border border-neutral-200/80 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h4 className="text-xs font-bold text-neutral-800">Carousel Banner Size</h4>
-                <p className="text-[11px] text-neutral-400">Choose how prominent the banner appears on the storefront</p>
+                <h4 className="text-xs font-heading font-bold text-white">Carousel Banner Size</h4>
+                <p className="text-[11px] text-[var(--admin-text-muted)]">Choose how prominent the banner appears on the storefront</p>
               </div>
               <div className="flex items-center gap-2">
                 {(["compact", "medium", "large"] as const).map((h) => (
@@ -1829,10 +1829,10 @@ function SectionEditor({
                     key={h}
                     type="button"
                     onClick={() => handleUpdateCarouselHeight(h)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                       carouselHeight === h
-                        ? "bg-neutral-900 text-white shadow-xs"
-                        : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                        ? "bg-[var(--admin-primary)] text-white"
+                        : "bg-[var(--admin-surface-2)] border border-white/10 text-[var(--admin-text-muted)] hover:text-white"
                     }`}
                   >
                     {h}
@@ -1866,23 +1866,23 @@ function SectionEditor({
               }}
               onDragLeave={() => setIsCarouselDragging(false)}
               onDrop={handleCarouselDrop}
-              className={`rounded-2xl border-2 border-dashed p-6 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer ${
+              className={`rounded-[28px] border-2 border-dashed p-6 transition-all text-center flex flex-col items-center justify-center gap-2 cursor-pointer ${
                 currentSection.carouselImages.length >= maxCarouselImages
-                  ? "bg-neutral-50 border-neutral-200 opacity-60 cursor-not-allowed"
+                  ? "bg-[var(--admin-surface-2)] border-white/5 opacity-50 cursor-not-allowed"
                   : isCarouselDragging
-                  ? "border-neutral-900 bg-neutral-100 scale-[1.01]"
-                  : "border-neutral-300 bg-white hover:border-neutral-500 hover:bg-neutral-50 focus:border-neutral-900 focus:outline-none"
+                  ? "border-[var(--admin-primary)] bg-[var(--admin-primary)]/10 scale-[1.01]"
+                  : "border-white/10 bg-[var(--admin-surface)] hover:border-white/20 hover:bg-white/[0.02] focus:border-[var(--admin-primary)] focus:outline-none"
               }`}
             >
-              <ImagePlus size={32} className={isCarouselDragging ? "text-neutral-900" : "text-neutral-400"} />
-              <div className="text-xs font-semibold text-neutral-800">
+              <ImagePlus size={32} className={isCarouselDragging ? "text-[var(--admin-primary)]" : "text-[var(--admin-text-muted)]"} />
+              <div className="text-xs font-semibold text-white">
                 {currentSection.carouselImages.length >= maxCarouselImages
                   ? `Maximum ${maxCarouselImages} carousel images reached`
                   : isCarouselDragging
                   ? "Drop your banner image here"
                   : "Drag & Drop carousel image or Click to browse"}
               </div>
-              <p className="text-[10px] text-neutral-400">
+              <p className="text-[10px] text-[var(--admin-text-muted)]">
                 Press Enter or Click to select image • Supports PNG, JPG, WEBP (Max 5MB) • {currentSection.carouselImages.length} / {maxCarouselImages} images
               </p>
             </div>
@@ -1901,12 +1901,12 @@ function SectionEditor({
                       handleCarouselUrlAdd();
                     }
                   }}
-                  className="flex-1 px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="flex-1 px-4 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-xs text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
                 />
                 <button
                   type="button"
                   onClick={handleCarouselUrlAdd}
-                  className="px-4 py-2.5 bg-neutral-900 text-white rounded-xl text-xs font-semibold hover:bg-neutral-800 transition-colors cursor-pointer"
+                  className="px-4 py-2.5 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white rounded-full text-xs font-semibold transition-colors cursor-pointer"
                 >
                   Add Banner
                 </button>
@@ -1915,21 +1915,21 @@ function SectionEditor({
 
             {/* Carousel Images Grid */}
             {currentSection.carouselImages.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-neutral-200 p-8 text-center">
-                <p className="text-xs text-neutral-400">No carousel banners added yet. Drop an image above to get started.</p>
+              <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-8 text-center">
+                <p className="text-xs text-[var(--admin-text-muted)]">No carousel banners added yet. Drop an image above to get started.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 {currentSection.carouselImages.map((img, index) => (
-                  <div key={img.id} className="relative group rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200 aspect-[16/9]">
+                  <div key={img.id} className="relative group rounded-[14px] overflow-hidden bg-[var(--admin-surface-2)] border border-white/10 aspect-[16/9]">
                     <Image src={img.src} alt={img.alt} fill className="object-cover" unoptimized={img.src?.startsWith("data:")} />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
-                    <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 rounded text-[10px] font-bold text-white">
+                    <div className="absolute top-2 left-2 px-2.5 py-0.5 bg-black/60 rounded-full text-[10px] font-bold text-white backdrop-blur-md">
                       Banner {index + 1}
                     </div>
                     <button
                       onClick={() => removeCarouselImage(section.id, img.id)}
-                      className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 cursor-pointer shadow-md"
+                      className="absolute top-2 right-2 p-1.5 bg-[var(--admin-danger)]/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--admin-danger)] cursor-pointer"
                       aria-label={`Remove image ${index + 1}`}
                     >
                       <Trash2 size={12} />
@@ -1945,12 +1945,12 @@ function SectionEditor({
         {activeTab === "products" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-[var(--admin-text-muted)]">
                 {currentSection.products.length} product{currentSection.products.length !== 1 ? "s" : ""}
               </p>
               <button
                 onClick={() => setProductModal({ open: true })}
-                className="flex items-center gap-1.5 px-4 py-2 bg-neutral-900 text-white text-xs font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-semibold rounded-full transition-colors cursor-pointer"
               >
                 <Plus size={14} />
                 Add Product
@@ -1958,29 +1958,29 @@ function SectionEditor({
             </div>
 
             {currentSection.products.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-dashed border-neutral-300 p-12 text-center">
-                <ShoppingBag size={40} className="mx-auto text-neutral-300 mb-3" />
-                <p className="text-sm font-medium text-neutral-500">No products yet</p>
-                <p className="text-xs text-neutral-400 mt-1">Add products that will appear in this section&apos;s catalog</p>
+              <div className="bg-[var(--admin-surface)] rounded-[28px] border border-dashed border-white/10 p-12 text-center">
+                <ShoppingBag size={40} className="mx-auto text-[var(--admin-text-muted)] mb-3" />
+                <p className="text-sm font-medium text-white">No products yet</p>
+                <p className="text-xs text-[var(--admin-text-muted)] mt-1">Add products that will appear in this section&apos;s catalog</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {currentSection.products.map((product) => (
-                  <div key={product.id} className="flex items-center gap-4 bg-white rounded-xl border border-neutral-200/80 p-3 hover:shadow-sm transition-shadow">
-                    <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-neutral-100 shrink-0">
+                  <div key={product.id} className="flex items-center gap-4 bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-3 hover:border-white/10 transition-colors">
+                    <div className="relative w-14 h-14 rounded-[10px] overflow-hidden bg-[var(--admin-surface-2)] border border-white/5 shrink-0">
                       <Image src={product.imageUrl} alt={product.name} fill className="object-cover" unoptimized={product.imageUrl?.startsWith("data:")} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-semibold text-neutral-900 truncate">{product.name}</h4>
+                      <h4 className="text-sm font-semibold text-white truncate">{product.name}</h4>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-xs font-bold text-neutral-900">₹{product.price.toLocaleString("en-IN")}</span>
+                        <span className="text-xs font-heading font-bold tabular-nums text-white">₹{product.price.toLocaleString("en-IN")}</span>
                         {product.originalPrice && product.originalPrice > product.price && (
-                          <span className="text-[10px] text-neutral-400 line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
+                          <span className="text-[10px] text-[var(--admin-text-muted)] line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
                         )}
                         {product.badge && (
-                          <span className="text-[9px] bg-neutral-900 text-white px-1.5 py-0.5 rounded font-bold">{product.badge}</span>
+                          <span className="text-[9px] bg-[var(--admin-primary)]/20 border border-[var(--admin-primary)]/30 text-[var(--admin-primary)] px-1.5 py-0.5 rounded-full font-bold">{product.badge}</span>
                         )}
-                        <span className={`text-[10px] font-medium ${product.inStock ? "text-emerald-600" : "text-red-500"}`}>
+                        <span className={`text-[10px] font-medium ${product.inStock ? "text-[var(--admin-success)]" : "text-[var(--admin-danger)]"}`}>
                           {product.inStock ? "In Stock" : "Out of Stock"}
                         </span>
                       </div>
@@ -1988,14 +1988,14 @@ function SectionEditor({
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => setProductModal({ open: true, product })}
-                        className="p-2 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 rounded-full transition-colors cursor-pointer"
                         aria-label={`Edit ${product.name}`}
                       >
                         <Edit3 size={14} />
                       </button>
                       <button
                         onClick={() => removeProductFromSection(section.id, product.id)}
-                        className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 text-[var(--admin-text-muted)] hover:text-[var(--admin-danger)] hover:bg-[var(--admin-danger)]/15 rounded-full transition-colors cursor-pointer"
                         aria-label={`Remove ${product.name}`}
                       >
                         <Trash2 size={14} />
@@ -2013,47 +2013,47 @@ function SectionEditor({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-[var(--admin-text-muted)]">
                   {currentSection.filters.length} filter{currentSection.filters.length !== 1 ? "s" : ""}
                 </p>
               </div>
               <button
                 onClick={() => setFilterModal({ open: true })}
-                className="flex items-center gap-1.5 px-4 py-2 bg-neutral-900 text-white text-xs font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-semibold rounded-full transition-colors cursor-pointer"
               >
                 <Plus size={14} />
                 Add Filter
               </button>
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-800">
+            <div className="bg-[var(--admin-warning)]/10 border border-[var(--admin-warning)]/20 rounded-[14px] p-3.5 text-xs text-[var(--admin-warning)]">
               <strong>How filters work:</strong> Each filter has a <strong>key</strong> and <strong>options</strong>.
               Products are filtered by matching their <strong>tags</strong> against the selected filter options.
               For example, a &quot;Color&quot; filter with options [Black, White] will show products that have &quot;Black&quot; or &quot;White&quot; in their tags.
             </div>
 
             {currentSection.filters.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-dashed border-neutral-300 p-12 text-center">
-                <SlidersHorizontal size={40} className="mx-auto text-neutral-300 mb-3" />
-                <p className="text-sm font-medium text-neutral-500">No filters yet</p>
-                <p className="text-xs text-neutral-400 mt-1">Add filters so customers can narrow down products</p>
+              <div className="bg-[var(--admin-surface)] rounded-[28px] border border-dashed border-white/10 p-12 text-center">
+                <SlidersHorizontal size={40} className="mx-auto text-[var(--admin-text-muted)] mb-3" />
+                <p className="text-sm font-medium text-white">No filters yet</p>
+                <p className="text-xs text-[var(--admin-text-muted)] mt-1">Add filters so customers can narrow down products</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {currentSection.filters.map((filter) => (
-                  <div key={filter.id} className="flex items-start gap-4 bg-white rounded-xl border border-neutral-200/80 p-4 hover:shadow-sm transition-shadow">
-                    <div className="p-2 bg-neutral-100 rounded-lg shrink-0">
-                      <SlidersHorizontal size={16} className="text-neutral-600" />
+                  <div key={filter.id} className="flex items-start gap-4 bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4 hover:border-white/10 transition-colors">
+                    <div className="p-2 bg-[var(--admin-surface-2)] border border-white/5 rounded-[10px] shrink-0 text-white/80">
+                      <SlidersHorizontal size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-semibold text-neutral-900">{filter.label}</h4>
-                        <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded font-mono">{filter.key}</span>
-                        <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">{filter.type}</span>
+                        <h4 className="text-sm font-semibold text-white">{filter.label}</h4>
+                        <span className="text-[10px] bg-white/5 text-[var(--admin-text-muted)] border border-white/10 px-1.5 py-0.5 rounded font-mono">{filter.key}</span>
+                        <span className="text-[10px] bg-[var(--admin-info)]/15 border border-[var(--admin-info)]/30 text-[var(--admin-info)] px-1.5 py-0.5 rounded font-medium">{filter.type}</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {filter.options.map((opt) => (
-                          <span key={opt} className="text-[10px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full">
+                          <span key={opt} className="text-[10px] bg-[var(--admin-surface-2)] border border-white/10 text-white/90 px-2 py-0.5 rounded-full">
                             {opt}
                           </span>
                         ))}
@@ -2062,14 +2062,14 @@ function SectionEditor({
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => setFilterModal({ open: true, filter })}
-                        className="p-2 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 rounded-full transition-colors cursor-pointer"
                         aria-label={`Edit filter ${filter.label}`}
                       >
                         <Edit3 size={14} />
                       </button>
                       <button
                         onClick={() => removeFilterFromSection(section.id, filter.id)}
-                        className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 text-[var(--admin-text-muted)] hover:text-[var(--admin-danger)] hover:bg-[var(--admin-danger)]/15 rounded-full transition-colors cursor-pointer"
                         aria-label={`Remove filter ${filter.label}`}
                       >
                         <Trash2 size={14} />
@@ -2123,65 +2123,65 @@ function CreateSectionModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-xs" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 backdrop-blur-xs" onClick={onClose}>
       <div
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden mx-4"
+        className="relative w-full max-w-md bg-[var(--admin-elevated)] border border-white/10 rounded-[28px] overflow-hidden mx-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-5 border-b border-neutral-100">
-          <h3 className="text-lg font-bold text-neutral-900">Create New Section</h3>
-          <button onClick={onClose} className="p-1.5 hover:bg-neutral-100 rounded-lg cursor-pointer" aria-label="Close">
+        <div className="flex items-center justify-between p-5 border-b border-white/5">
+          <h3 className="text-lg font-heading font-bold text-white">Create New Section</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white rounded-full transition-colors cursor-pointer" aria-label="Close">
             <X size={18} />
           </button>
         </div>
 
         <div className="p-5 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700" role="alert">
+            <div className="flex items-center gap-2 p-3 bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 rounded-[14px] text-xs text-[var(--admin-danger)]" role="alert">
               <AlertCircle size={14} />
               {error}
             </div>
           )}
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Section Name <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">
+              Section Name <span className="text-[var(--admin-danger)]">*</span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => { setName(e.target.value); setError(""); }}
               placeholder="e.g. Accessories, Bags, Sunglasses"
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-4 py-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
               autoFocus
             />
             {name.trim() && (
-              <p className="text-[10px] text-neutral-400 mt-1">
+              <p className="text-[10px] text-[var(--admin-text-muted)] mt-1">
                 URL: /{name.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-").replace(/^-+|-+$/g, "")}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Description</label>
+            <label className="block text-xs font-semibold text-white/90 mb-1.5">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+              className="w-full px-4 py-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white placeholder-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none"
               placeholder="Short description for this section..."
             />
           </div>
         </div>
 
-        <div className="p-5 border-t border-neutral-100 flex items-center gap-3">
+        <div className="p-5 border-t border-white/5 flex items-center gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 text-sm font-semibold text-neutral-600 bg-neutral-100 rounded-xl hover:bg-neutral-200 transition-colors cursor-pointer"
+            className="flex-1 px-4 py-2.5 text-sm font-semibold text-white/80 bg-[var(--admin-surface)] border border-white/10 rounded-full hover:bg-white/5 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleCreate}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-sm font-semibold rounded-full transition-colors cursor-pointer"
           >
             <Plus size={14} />
             Create Section
@@ -2272,18 +2272,18 @@ export default function AdminCustomSectionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Custom Sections</h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Create up to {maxSections} custom storefront sections with carousels, products & filters
+          <h1 className="text-2xl font-heading font-bold text-white tracking-tight">Custom Sections</h1>
+          <p className="text-sm text-[var(--admin-text-muted)] mt-1">
+            Create up to <span className="font-heading font-bold tabular-nums text-white">{maxSections}</span> custom storefront sections with carousels, products &amp; filters
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           disabled={!canAddSection}
-          className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition-colors cursor-pointer ${
+          className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full transition-colors cursor-pointer ${
             canAddSection
-              ? "bg-neutral-900 text-white hover:bg-neutral-800"
-              : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+              ? "bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white"
+              : "bg-white/5 border border-white/10 text-[var(--admin-text-muted)] cursor-not-allowed"
           }`}
         >
           <Plus size={16} />
@@ -2292,17 +2292,16 @@ export default function AdminCustomSectionsPage() {
       </div>
 
       {/* Quota Indicator */}
-      <div className="bg-white rounded-xl border border-neutral-200/80 p-4 mb-6">
+      <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-neutral-700">Sections Used</span>
-          <span className="text-xs font-bold text-neutral-900">{sections.length} / {maxSections}</span>
+          <span className="text-xs font-semibold text-[var(--admin-text-muted)]">Sections Used</span>
+          <span className="text-xs font-heading font-bold tabular-nums text-white">{sections.length} / {maxSections}</span>
         </div>
-        <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-500"
+            className="h-full rounded-full transition-all duration-500 bg-[var(--admin-primary)]"
             style={{
               width: `${(sections.length / maxSections) * 100}%`,
-              backgroundColor: sections.length >= maxSections ? "#ef4444" : sections.length >= 2 ? "#f59e0b" : "#10b981",
             }}
           />
         </div>
@@ -2310,15 +2309,15 @@ export default function AdminCustomSectionsPage() {
 
       {/* Section Cards Grid */}
       {sections.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-neutral-300 p-16 text-center">
-          <Layers size={48} className="mx-auto text-neutral-300 mb-4" />
-          <h3 className="text-lg font-semibold text-neutral-600">No custom sections yet</h3>
-          <p className="text-sm text-neutral-400 mt-2 max-w-md mx-auto">
+        <div className="bg-[var(--admin-surface)] rounded-[28px] border border-dashed border-white/10 p-16 text-center">
+          <Layers size={48} className="mx-auto text-[var(--admin-text-muted)] mb-4" />
+          <h3 className="text-lg font-heading font-bold text-white">No custom sections yet</h3>
+          <p className="text-sm text-[var(--admin-text-muted)] mt-2 max-w-md mx-auto">
             Create your first custom section to add a new category to your store with its own carousel banners, products, and filters.
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer"
+            className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-sm font-semibold rounded-full transition-colors cursor-pointer"
           >
             <Plus size={16} />
             Create First Section
