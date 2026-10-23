@@ -160,33 +160,31 @@ export function Footer() {
     ],
   };
 
-  const isDarkAbove = pathname === "/";
-
   return (
-    <footer className="relative w-full bg-[#efeeea] text-[#111111] pt-16 sm:pt-24 pb-12 border-t border-[#d8d7d2]">
-      {/* Subtle top transition gradient from dark section above */}
-      {isDarkAbove && (
-        <div
-          aria-hidden="true"
-          className="absolute top-0 inset-x-0 h-12 bg-gradient-to-b from-black/15 via-black/5 to-transparent pointer-events-none"
-        />
-      )}
+    <footer className="relative w-full bg-[#050505] text-white pt-16 sm:pt-24 pb-12 border-t border-[#1a1a1a] overflow-hidden">
+      {/* Subtle luxury ambient radial aura */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 h-40 bg-[radial-gradient(ellipse_70%_120px_at_50%_0%,rgba(255,255,255,0.035),transparent)] pointer-events-none"
+      />
+
       <Container>
         {/* Newsletter & Brand Statement Strip */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 pb-16 border-b border-[#d8d7d2]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 pb-16 border-b border-[#1c1c1c]">
           {/* Brand Vision */}
           <div className="lg:col-span-6 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <Logo height={32} variant="black" />
+                <Logo height={32} variant="white" />
               </div>
-              <p className="mt-5 text-sm sm:text-base text-[#2b2b2b] leading-relaxed max-w-sm font-medium">
+              <p className="mt-5 text-sm sm:text-base text-[#999999] leading-relaxed max-w-sm font-light">
                 Engineered for the modern Indian uniform. Architectural cuts, premium textiles, and brutalist silhouettes.
               </p>
             </div>
 
-            <div className="mt-8 flex items-center gap-6">
-              <span className="text-xs font-semibold tracking-widest text-[#3d3d3d] uppercase">
+            <div className="mt-8 flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017] animate-pulse" />
+              <span className="text-xs font-semibold tracking-widest text-[#888888] uppercase">
                 MADE IN INDIA • GLOBAL STANDARD
               </span>
             </div>
@@ -194,13 +192,13 @@ export function Footer() {
 
           {/* Newsletter / The VEYRO Club VIP Ticket Box */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            <span className="text-xs font-semibold tracking-wider text-[#3d3d3d] uppercase mb-2">
+            <span className="text-xs font-semibold tracking-wider text-[#fcd017] uppercase mb-2 font-mono">
               THE VEYRO CLUB
             </span>
-            <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#111111] mb-2">
+            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
               Unlock inaugural privileges.
             </h3>
-            <p className="text-sm text-[#2b2b2b] mb-6 font-medium">
+            <p className="text-sm text-[#888888] mb-6 font-light">
               Early access to releases. Exclusive archival cuts.
             </p>
 
@@ -222,13 +220,13 @@ export function Footer() {
                     placeholder="Enter your email address"
                     autoComplete="off"
                     spellCheck={false}
-                    className="w-full bg-transparent border-b border-[#8a8a85] px-0 py-3 text-sm text-[#111111] placeholder-[#4a4a4a] focus:outline-none focus:border-[#111111] transition-colors rounded-none font-medium"
+                    className="w-full bg-transparent border-b border-[#333333] px-0 py-3 text-sm text-white placeholder-[#777777] focus:outline-none focus:border-white transition-colors rounded-none"
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="self-center sm:self-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-white px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase hover:bg-[#333333] transition-colors cursor-pointer shrink-0 rounded-[1px]"
+                  className="self-center sm:self-auto inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase hover:bg-[#fcd017] hover:text-black transition-colors cursor-pointer shrink-0 rounded-[1px]"
                 >
                   <span>Request Pass</span>
                   <ArrowRightIcon size={14} />
@@ -238,14 +236,14 @@ export function Footer() {
               <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
                 {!isTorn && (
                   <div className="flex items-center justify-end text-xs">
-                    <span className="text-[11px] text-[#444444] font-mono font-medium">
+                    <span className="text-[11px] text-neutral-400 font-mono">
                       Drag or tap right stub to tear →
                     </span>
                   </div>
                 )}
 
-                {/* The Luxury Tear Ticket with Soft Shadow */}
-                <div className="w-full overflow-visible flex justify-center py-4 relative min-h-[260px] drop-shadow-[0_16px_32px_rgba(0,0,0,0.18)]">
+                {/* The Luxury Tear Ticket */}
+                <div className="w-full overflow-visible flex justify-center py-4 relative min-h-[260px]">
                   <TearTicket
                     image="/images/veyro-vip-pass-artwork.jpg"
                     imageAlt="VEYRO Luxury Atelier VIP Pass"
@@ -347,20 +345,20 @@ export function Footer() {
 
                 {/* Ticket Status / Action Bar */}
                 {isTorn && (
-                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700 border-t border-[#d8d7d2] pt-4">
+                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700 border-t border-[#1a1a1a] pt-4">
                     <div className="flex items-center gap-3">
                       <div>
-                        <p className="text-[11px] font-bold text-[#111111] tracking-[0.15em] uppercase">Privilege Unlocked</p>
-                        <p className="text-[11px] text-[#444444] font-medium mt-0.5 tracking-wide">10% inaugural discount automatically applied.</p>
+                        <p className="text-[11px] font-bold text-white tracking-[0.15em] uppercase">Privilege Unlocked</p>
+                        <p className="text-[11px] text-[#777777] font-light mt-0.5 tracking-wide">10% inaugural discount automatically applied.</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                       <Link
                         href="/cart"
-                        className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[#111111] hover:underline transition-colors cursor-pointer"
+                        className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white hover:text-[#fcd017] transition-colors cursor-pointer"
                       >
-                        <span>Proceed to Bag</span>
-                        <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+                        <span className="relative pb-0.5 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-[1px] after:bottom-0 after:left-0 after:bg-[#fcd017] after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">Proceed to Bag</span>
+                        <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1 text-[#fcd017]" />
                       </Link>
                     </div>
                   </div>
@@ -371,18 +369,18 @@ export function Footer() {
         </div>
 
         {/* Links Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-14 border-b border-[#d8d7d2]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-14 border-b border-[#1c1c1c]">
           {/* Col 1: Shop */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#3d3d3d] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#888888] mb-4 font-mono">
               Shop
             </h4>
-            <ul className="space-y-2.5 text-sm text-[#2b2b2b] font-medium">
+            <ul className="space-y-2.5 text-sm text-[#aaaaaa]">
               {footerLinks.shop.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="hover:text-[#111111] hover:underline hover:translate-x-0.5 inline-block transition-transform transition-colors duration-150"
+                    className="hover:text-white hover:translate-x-0.5 inline-block transition-transform transition-colors duration-150"
                   >
                     {link.label}
                   </Link>
@@ -393,15 +391,15 @@ export function Footer() {
 
           {/* Col 2: Brand Ethos */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#3d3d3d] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#888888] mb-4 font-mono">
               About
             </h4>
-            <ul className="space-y-2.5 text-sm text-[#2b2b2b] font-medium">
+            <ul className="space-y-2.5 text-sm text-[#aaaaaa]">
               {footerLinks.about.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="hover:text-[#111111] hover:underline hover:translate-x-0.5 inline-block transition-transform transition-colors duration-150"
+                    className="hover:text-white hover:translate-x-0.5 inline-block transition-transform transition-colors duration-150"
                   >
                     {link.label}
                   </Link>
@@ -412,15 +410,15 @@ export function Footer() {
 
           {/* Col 3: Customer Care */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#3d3d3d] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#888888] mb-4 font-mono">
               Support
             </h4>
-            <ul className="space-y-2.5 text-sm text-[#2b2b2b] font-medium">
+            <ul className="space-y-2.5 text-sm text-[#aaaaaa]">
               {footerLinks.help.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="hover:text-[#111111] hover:underline hover:translate-x-0.5 inline-block transition-transform transition-colors duration-150"
+                    className="hover:text-white hover:translate-x-0.5 inline-block transition-transform transition-colors duration-150"
                   >
                     {link.label}
                   </Link>
@@ -431,19 +429,21 @@ export function Footer() {
 
           {/* Col 4: Store Info & Social Follow */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#3d3d3d] mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-[#888888] mb-4 font-mono">
               Contact
             </h4>
-            <div className="text-xs text-[#2b2b2b] font-medium space-y-2 leading-relaxed">
+            <div className="text-xs text-[#888888] space-y-2 leading-relaxed">
               <p>VEYRO Apparel & Footwear Pvt. Ltd.</p>
               <p>Bengaluru & Tirupur, India</p>
-              <p className="pt-2 text-[#111111] font-semibold">support@veyro.in</p>
+              <p className="pt-2 text-white font-medium hover:text-[#fcd017] transition-colors">
+                <a href="mailto:support@veyro.in">support@veyro.in</a>
+              </p>
               <p>Mon – Sat, 10:00 AM – 7:00 PM IST</p>
             </div>
 
             {/* Social Presence */}
-            <div className="mt-5 pt-4 border-t border-[#d8d7d2]">
-              <span className="block text-[11px] font-semibold uppercase tracking-widest text-[#3d3d3d] mb-2.5">
+            <div className="mt-5 pt-4 border-t border-[#1c1c1c]">
+              <span className="block text-[11px] font-semibold uppercase tracking-widest text-[#777777] mb-2.5 font-mono">
                 Follow @veyro.in
               </span>
               <div className="flex items-center gap-2">
@@ -456,7 +456,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Follow VEYRO on ${social.label}`}
-                      className="w-8 h-8 rounded-full bg-[#f7f6f3] border border-[#d8d7d2] text-[#111111] hover:bg-[#e4e3de] hover:text-[#111111] hover:border-[#111111] flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
+                      className="w-8 h-8 rounded-full bg-[#111111] border border-[#222222] text-[#888888] hover:text-[#fcd017] hover:border-[#fcd017] hover:bg-[#181818] flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <Icon className="w-3.5 h-3.5" />
                     </a>
@@ -468,16 +468,16 @@ export function Footer() {
         </div>
 
         {/* Bottom Legal & Copyright Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#444444] font-medium">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#666666]">
           <p>© {currentYear} VEYRO APPAREL. ALL RIGHTS RESERVED.</p>
           <div className="flex items-center gap-6">
-            <Link href="/faq#terms" className="hover:text-[#111111] transition-colors">
+            <Link href="/faq#terms" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/faq#terms" className="hover:text-[#111111] transition-colors">
+            <Link href="/faq#terms" className="hover:text-white transition-colors">
               Terms & Conditions
             </Link>
-            <Link href="/collections" className="hover:text-[#111111] transition-colors">
+            <Link href="/collections" className="hover:text-white transition-colors">
               Sitemap
             </Link>
           </div>
