@@ -17,8 +17,12 @@ import {
   Check,
   RotateCcw,
   Boxes,
+  IndianRupee,
 } from "lucide-react";
 import { ImageCropperModal } from "./ImageCropperModal";
+import { AdminIconBadge } from "./AdminIconBadge";
+import { StatusBadge } from "./StatusBadge";
+import { AdminSelect } from "./AdminSelect";
 
 /* ─── Form Data Shape (string-based for inputs) ─────────────────────────── */
 interface ProductFormData {
@@ -197,7 +201,7 @@ const DEFAULT_FORM: ProductFormData = {
   inStock: true,
   stock: "25",
   lowStockThreshold: "10",
-  sizeStock: {},
+  sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
   shortDescription: "",
   longDescription: "",
   features:
@@ -252,6 +256,68 @@ const CATEGORY_PRESETS: Record<
   },
 };
 
+const FASHION_COLOR_PRESETS = [
+  { name: "Black", hex: "#111111" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Charcoal", hex: "#27272A" },
+  { name: "Navy", hex: "#0F172A" },
+  { name: "Beige", hex: "#D4B996" },
+  { name: "Olive", hex: "#3F4A3C" },
+  { name: "Crimson", hex: "#991B1B" },
+  { name: "Brown", hex: "#4A2E18" },
+];
+
+function getClosestColorName(hex: string): string {
+  const cleanHex = hex.replace("#", "");
+  if (cleanHex.length !== 6 && cleanHex.length !== 3) return "";
+  let fullHex = cleanHex;
+  if (cleanHex.length === 3) {
+    fullHex = cleanHex.split("").map((c) => c + c).join("");
+  }
+  const r = parseInt(fullHex.substring(0, 2), 16);
+  const g = parseInt(fullHex.substring(2, 4), 16);
+  const b = parseInt(fullHex.substring(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return "";
+
+  const COLOR_PALETTE = [
+    { name: "Black", rgb: [17, 17, 17] },
+    { name: "White", rgb: [255, 255, 255] },
+    { name: "Charcoal", rgb: [39, 39, 42] },
+    { name: "Slate Grey", rgb: [100, 116, 139] },
+    { name: "Silver Grey", rgb: [209, 213, 219] },
+    { name: "Midnight Navy", rgb: [15, 23, 42] },
+    { name: "Royal Blue", rgb: [37, 99, 235] },
+    { name: "Sky Blue", rgb: [56, 189, 248] },
+    { name: "Forest Green", rgb: [21, 128, 61] },
+    { name: "Olive Green", rgb: [63, 74, 60] },
+    { name: "Sage", rgb: [134, 150, 137] },
+    { name: "Crimson Red", rgb: [153, 27, 27] },
+    { name: "Burgundy", rgb: [112, 26, 49] },
+    { name: "Coral Pink", rgb: [244, 114, 182] },
+    { name: "Sand Beige", rgb: [212, 185, 150] },
+    { name: "Camel", rgb: [193, 154, 107] },
+    { name: "Chocolate Brown", rgb: [62, 39, 35] },
+    { name: "Warm Amber", rgb: [217, 119, 6] },
+    { name: "Deep Purple", rgb: [88, 28, 135] },
+  ];
+
+  let closestName = "";
+  let minDistance = Infinity;
+
+  for (const c of COLOR_PALETTE) {
+    const dr = r - c.rgb[0];
+    const dg = g - c.rgb[1];
+    const db = b - c.rgb[2];
+    const distance = dr * dr + dg * dg + db * db;
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestName = c.name;
+    }
+  }
+
+  return closestName;
+}
+
 /* ─── Main Form Component ────────────────────────────────────────────────── */
 interface ProductFormProps {
   product?: Product;
@@ -267,6 +333,14 @@ export function ProductForm({
   const [form, setForm] = useState<ProductFormData>(
     product ? productToFormData(product) : DEFAULT_FORM
   );
+
+  const handleColorChange = (newHex: string) => {
+    update("colorHex", newHex);
+    const suggestedName = getClosestColorName(newHex);
+    if (suggestedName) {
+      update("colorName", suggestedName);
+    }
+  };
 
   // Raw original image sources before cropping (for re-opening cropper)
   const [rawPrimaryImage, setRawPrimaryImage] = useState(form.imageUrl || "");
@@ -464,9 +538,7 @@ export function ProductForm({
             {/* 1. Basic Information */}
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center gap-3 pb-3 border-b border-white/5">
-                <div className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] text-amber-400 border border-white/5 flex items-center justify-center shrink-0">
-                  <Tag size={16} />
-                </div>
+                <AdminIconBadge variant="section" icon={Tag} />
                 <div>
                   <h2 className="text-sm font-bold uppercase tracking-wider text-white font-heading">
                     Basic Information
@@ -601,9 +673,7 @@ export function ProductForm({
             {/* 2. Color & Pricing (Clean 3x2 Grid) */}
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center gap-3 pb-3 border-b border-white/5">
-                <div className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] text-[#00F59B] border border-white/5 flex items-center justify-center shrink-0">
-                  <span className="font-bold text-xs">₹</span>
-                </div>
+                <AdminIconBadge variant="section" icon={IndianRupee} />
                 <div>
                   <h2 className="text-sm font-bold uppercase tracking-wider text-white font-heading">
                     Color, Pricing &amp; Merchandising
@@ -615,40 +685,46 @@ export function ProductForm({
               </div>
 
               <div className="space-y-4 pt-1">
-                {/* Row 1: Color Name (col 1), Color Hex (col 2), Product Badge (col 3) */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-                  <FormInput
-                    label="Color Name"
-                    required
-                    value={form.colorName}
-                    onChange={(v) => update("colorName", v)}
-                    placeholder="e.g. Midnight Black"
-                  />
+                {/* Row 1: Color Name (col 1), Unified Swatch & Hex (col 2), Product Badge (col 3) */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
+                  <div>
+                    <FormInput
+                      label="Color Name"
+                      required
+                      value={form.colorName}
+                      onChange={(v) => update("colorName", v)}
+                      placeholder="e.g. Midnight Black"
+                    />
+                  </div>
 
-                  {/* Color Hex with pixel-aligned swatch */}
+                  {/* Unified Swatch & Hex Input - Single Sleek Luxury Container */}
                   <div>
                     <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
-                      Color Swatch
+                      Color Swatch &amp; Hex <span className="text-[#FF4B55] ml-0.5">*</span>
                     </label>
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="relative w-10.5 h-10.5 rounded-[14px] border border-white/10 overflow-hidden flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
+                    <div className="relative flex items-center h-11 px-3 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] focus-within:border-[var(--admin-primary)] transition-colors">
+                      <label
+                        className="relative w-6.5 h-6.5 rounded-full border border-white/20 shadow-sm shrink-0 cursor-pointer transition-transform hover:scale-110 overflow-hidden mr-2.5 ring-1 ring-black/40"
                         style={{ backgroundColor: form.colorHex || "#111111" }}
                         title="Click to pick swatch color"
                       >
                         <input
                           type="color"
                           value={form.colorHex || "#111111"}
-                          onChange={(e) => update("colorHex", e.target.value)}
+                          onChange={(e) => handleColorChange(e.target.value)}
                           className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
                         />
-                      </div>
+                      </label>
+                      <span className="text-[var(--admin-text-muted)] text-xs font-mono select-none">#</span>
                       <input
                         type="text"
-                        value={form.colorHex}
-                        onChange={(e) => update("colorHex", e.target.value)}
-                        placeholder="#111111"
-                        className="admin-input flex-1 font-mono uppercase h-10.5 text-xs tracking-wider bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-white focus:border-[var(--admin-primary)]"
+                        value={form.colorHex?.replace("#", "") || "111111"}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9A-Fa-f]/g, "").slice(0, 6);
+                          handleColorChange(`#${val}`);
+                        }}
+                        placeholder="111111"
+                        className="flex-1 bg-transparent border-0 outline-none font-mono uppercase text-xs tracking-wider text-white pl-1"
                       />
                     </div>
                   </div>
@@ -660,6 +736,35 @@ export function ProductForm({
                     onChange={(v) => update("badge", v)}
                     options={BADGE_OPTIONS}
                   />
+                </div>
+
+                {/* Curated Luxury Fashion Colorways Shelf */}
+                <div className="flex items-center gap-1.5 flex-wrap min-h-[26px]">
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-medium">Quick:</span>
+                  {FASHION_COLOR_PRESETS.map((p) => {
+                    const isSelected = form.colorHex?.toLowerCase() === p.hex.toLowerCase();
+                    return (
+                      <button
+                        key={p.name}
+                        type="button"
+                        onClick={() => {
+                          update("colorHex", p.hex);
+                          update("colorName", p.name);
+                        }}
+                        className={`inline-flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-[var(--admin-elevated)] text-white border-[var(--admin-primary)] shadow-sm font-semibold"
+                            : "bg-[var(--admin-surface)] hover:bg-[var(--admin-elevated)] border-white/10 text-[var(--admin-text-muted)] hover:text-white"
+                        }`}
+                      >
+                        <span
+                          className="w-2.5 h-2.5 rounded-full border border-white/20 shrink-0"
+                          style={{ backgroundColor: p.hex }}
+                        />
+                        <span>{p.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {/* Row 2: Price (col 1), Original Price (col 2), Discount Label (col 3) */}
@@ -706,9 +811,7 @@ export function ProductForm({
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] text-blue-400 border border-white/5 flex items-center justify-center shrink-0">
-                    <ImageIcon size={16} />
-                  </div>
+                  <AdminIconBadge variant="section" icon={ImageIcon} />
                   <div>
                     <h2 className="text-sm font-bold uppercase tracking-wider text-white font-heading">
                       Product Photography &amp; Framing
@@ -718,9 +821,10 @@ export function ProductForm({
                     </p>
                   </div>
                 </div>
-                <div className="hidden sm:flex items-center gap-1.5 text-[var(--admin-text-muted)] bg-[var(--admin-surface-2)] border border-white/5 px-3 py-1 rounded-full text-xs font-semibold">
-                  <Crop size={13} className="text-amber-400" />
-                  <span>Auto-Crop Active</span>
+                <div className="hidden sm:flex">
+                  <StatusBadge variant="neutral" icon={<Crop size={12} strokeWidth={2} className="text-[var(--admin-text-muted)]" />}>
+                    Auto-Crop Active
+                  </StatusBadge>
                 </div>
               </div>
 
@@ -780,22 +884,14 @@ export function ProductForm({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                        form.galleryImages.length >= 4
-                          ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/20"
-                          : "bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] border-white/10"
-                      }`}
+                    <StatusBadge
+                      variant={form.galleryImages.length >= 4 ? "warning" : "neutral"}
+                      dot
                     >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          form.galleryImages.length >= 4 ? "bg-[#F59E0B]" : "bg-[#00F59B]"
-                        }`}
-                      />
                       <span>{form.galleryImages.length} / 4 Gallery Shots</span>
-                      <span className="text-white/10">·</span>
-                      <span className="text-[var(--admin-text-muted)]">{totalActiveImages} / 6 Total</span>
-                    </span>
+                      <span className="opacity-40">·</span>
+                      <span>{totalActiveImages} / 6 Total</span>
+                    </StatusBadge>
                   </div>
                 </div>
 
@@ -826,9 +922,7 @@ export function ProductForm({
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-white/5 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] text-purple-400 border border-white/5 flex items-center justify-center shrink-0">
-                    <Layers size={16} />
-                  </div>
+                  <AdminIconBadge variant="section" icon={Layers} />
                   <div>
                     <h2 className="text-sm font-bold uppercase tracking-wider text-white font-heading">
                       Sizes &amp; Inventory Status
@@ -869,7 +963,7 @@ export function ProductForm({
               </div>
 
               <div className="space-y-4 pt-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                   <div>
                     <FormChipInput
                       label="Available Sizes"
@@ -891,7 +985,7 @@ export function ProductForm({
                       placeholder="Type size and press Enter (e.g. XL)"
                     />
                     {/* Category Size Presets */}
-                    <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap min-h-[26px]">
                       <span className="text-[10px] text-[var(--admin-text-muted)] font-medium">Add:</span>
                       {currentPresets.sizes.map((sz) => (
                         <button
@@ -915,7 +1009,7 @@ export function ProductForm({
                               update("sizeStock", updatedSizeStock);
                             }
                           }}
-                          className="text-[10px] px-2.5 py-0.5 rounded-full border bg-[var(--admin-elevated)] hover:bg-white/10 border-white/5 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
+                          className="text-[10px] px-2.5 py-0.5 rounded-full border bg-[var(--admin-surface)] hover:bg-[var(--admin-elevated)] border-white/10 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
                         >
                           +{sz}
                         </button>
@@ -923,38 +1017,42 @@ export function ProductForm({
                     </div>
                   </div>
 
-                  <FormInput
-                    label="Fit / Size Guide Note"
-                    value={form.sizeGuide}
-                    onChange={(v) => update("sizeGuide", v)}
-                    placeholder="e.g. Relaxed fit — recommended true to size"
-                  />
+                  <div>
+                    <FormInput
+                      label="Fit / Size Guide Note"
+                      value={form.sizeGuide}
+                      onChange={(v) => update("sizeGuide", v)}
+                      placeholder="e.g. Relaxed fit — recommended true to size"
+                    />
+                    <p className="text-[11px] text-[var(--admin-text-muted)] mt-2 leading-[26px]">
+                      Displays on storefront product page for customer sizing clarity
+                    </p>
+                  </div>
                 </div>
 
                 {/* Warehouse Inventory Management Box - Professional Luxury Layout */}
-                <div className="p-4 sm:p-5 rounded-[20px] border border-white/5 bg-[var(--admin-surface-2)] space-y-4">
+                <div className="p-4 sm:p-5 rounded-[18px] border border-white/5 bg-[var(--admin-surface-2)] space-y-4">
                   {/* Header Row with Clean Actions */}
                   <div className="flex items-center justify-between pb-2.5 border-b border-white/5 flex-wrap gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-white">
+                      <span className="text-xs font-bold uppercase tracking-wider text-white font-heading">
                         Warehouse Inventory
                       </span>
                       <span className="text-[11px] text-[var(--admin-text-muted)] font-normal hidden sm:inline">
                         · Live stock available for immediate checkout
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-xs">
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => {
                           update("stock", "0");
                           update("inStock", false);
                         }}
-                        className="font-medium text-[var(--admin-text-muted)] hover:text-[#FF4B55] transition-colors cursor-pointer"
+                        className="text-xs font-semibold px-2.5 py-1 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-[#FF4B55] hover:border-[#FF4B55]/30 hover:bg-[#FF4B55]/5 transition-colors cursor-pointer"
                       >
                         Mark Sold Out (0)
                       </button>
-                      <span className="text-white/10">|</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -962,8 +1060,25 @@ export function ProductForm({
                           const next = curr === 0 ? 25 : curr;
                           update("stock", next.toString());
                           update("inStock", true);
+                          const sizeList = form.sizes
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean);
+                          const allocatedSum = sizeList.reduce(
+                            (acc, sz) => acc + (form.sizeStock[sz] ?? 0),
+                            0
+                          );
+                          if (allocatedSum === 0 && sizeList.length > 0) {
+                            const base = Math.floor(next / sizeList.length);
+                            const remainder = next % sizeList.length;
+                            const nextStock: Record<string, number> = {};
+                            sizeList.forEach((sz, idx) => {
+                              nextStock[sz] = base + (idx < remainder ? 1 : 0);
+                            });
+                            update("sizeStock", nextStock);
+                          }
                         }}
-                        className="font-medium text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
+                        className="text-xs font-semibold px-2.5 py-1 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
                       >
                         Default Stock (25)
                       </button>
@@ -971,13 +1086,13 @@ export function ProductForm({
                   </div>
 
                   {/* Master Units Input & Threshold Controls */}
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     {/* Total Units Input + Stepper */}
-                    <div className="sm:col-span-7 flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2.5 flex-wrap">
                       <span className="text-xs font-bold text-white whitespace-nowrap">
                         Total Units:
                       </span>
-                      <div className="inline-flex items-center border border-white/10 rounded-full bg-[var(--admin-surface)] overflow-hidden focus-within:border-[var(--admin-primary)] transition-colors">
+                      <div className="inline-flex items-center h-9 border border-white/10 rounded-full bg-[var(--admin-surface)] overflow-hidden focus-within:border-[var(--admin-primary)] transition-colors">
                         <button
                           type="button"
                           onClick={() => {
@@ -986,7 +1101,7 @@ export function ProductForm({
                             update("stock", next.toString());
                             if (next === 0) update("inStock", false);
                           }}
-                          className="w-8 h-8 flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 active:bg-white/10 border-r border-white/10 transition-colors cursor-pointer"
+                          className="w-9 h-9 flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 active:bg-white/10 border-r border-white/10 transition-colors cursor-pointer"
                           aria-label="Decrease stock"
                         >
                           <Minus size={13} />
@@ -1004,7 +1119,7 @@ export function ProductForm({
                               else if (!form.inStock && num > 0) update("inStock", true);
                             }
                           }}
-                          className="w-16 h-8 text-center text-xs font-mono font-bold text-white outline-none tabular-nums bg-transparent"
+                          className="w-16 h-9 text-center text-xs font-mono font-bold text-white outline-none tabular-nums bg-transparent"
                           placeholder="0"
                         />
                         <button
@@ -1015,7 +1130,7 @@ export function ProductForm({
                             update("stock", next.toString());
                             if (!form.inStock && next > 0) update("inStock", true);
                           }}
-                          className="w-8 h-8 flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 active:bg-white/10 border-l border-white/10 transition-colors cursor-pointer"
+                          className="w-9 h-9 flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white hover:bg-white/5 active:bg-white/10 border-l border-white/10 transition-colors cursor-pointer"
                           aria-label="Increase stock"
                         >
                           <Plus size={13} />
@@ -1023,7 +1138,7 @@ export function ProductForm({
                       </div>
 
                       {/* Quick Increments */}
-                      <div className="inline-flex items-center gap-1">
+                      <div className="inline-flex items-center gap-1.5">
                         {[5, 10, 25, 50].map((delta) => (
                           <button
                             key={delta}
@@ -1034,7 +1149,7 @@ export function ProductForm({
                               update("stock", next.toString());
                               if (!form.inStock && next > 0) update("inStock", true);
                             }}
-                            className="px-2.5 py-1 rounded-full text-xs font-mono font-medium text-[var(--admin-text-muted)] bg-[var(--admin-surface)] border border-white/10 hover:bg-[var(--admin-primary)] hover:text-white hover:border-[var(--admin-primary)] transition-colors cursor-pointer active:scale-95"
+                            className="h-8 px-2.5 rounded-full text-xs font-mono font-medium text-[var(--admin-text-muted)] bg-[var(--admin-surface)] border border-white/10 hover:bg-[var(--admin-primary)] hover:text-white hover:border-[var(--admin-primary)] transition-colors cursor-pointer active:scale-95 flex items-center justify-center"
                           >
                             +{delta}
                           </button>
@@ -1043,11 +1158,11 @@ export function ProductForm({
                     </div>
 
                     {/* Low stock alert threshold - compact inline */}
-                    <div className="sm:col-span-5 flex items-center justify-start sm:justify-end gap-2">
+                    <div className="flex items-center gap-2">
                       <span className="text-xs text-[var(--admin-text-muted)] whitespace-nowrap">
                         Low stock alert below:
                       </span>
-                      <div className="inline-flex items-center gap-1.5">
+                      <div className="inline-flex items-center gap-2">
                         <input
                           type="number"
                           min={1}
@@ -1128,7 +1243,12 @@ export function ProductForm({
                         </div>
 
                         {/* Compact variant matrix tiles */}
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                        <div
+                          className="grid gap-2.5 w-full"
+                          style={{
+                            gridTemplateColumns: `repeat(${Math.max(sizeList.length, 1)}, minmax(0, 1fr))`,
+                          }}
+                        >
                           {sizeList.map((sz) => {
                             const qty = form.sizeStock[sz] ?? 0;
                             const isSoldOut = qty === 0;
@@ -1136,22 +1256,22 @@ export function ProductForm({
                             return (
                               <div
                                 key={sz}
-                                className={`p-2.5 rounded-[14px] border border-white/5 transition-all ${
+                                className={`p-2.5 rounded-[10px] border transition-all focus-within:border-[var(--admin-primary)] ${
                                   isSoldOut
-                                    ? "bg-[var(--admin-surface)]/50 text-[var(--admin-text-muted)]"
-                                    : "bg-[var(--admin-surface)] hover:border-white/10 text-white"
+                                    ? "bg-[var(--admin-surface)]/50 border-white/5 text-[var(--admin-text-muted)]"
+                                    : "bg-[var(--admin-surface)] border-white/10 hover:border-white/20 text-white"
                                 }`}
                               >
-                                <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-xs font-black tracking-wider text-white uppercase">
+                                <div className="flex items-center justify-between mb-1 gap-1">
+                                  <span className="text-xs font-black tracking-wider text-white uppercase truncate">
                                     {sz}
                                   </span>
                                   {isSoldOut ? (
-                                    <span className="text-[9px] font-bold text-[#FF4B55] uppercase tracking-widest">
+                                    <span className="text-[9px] font-bold text-[#FF4B55] uppercase tracking-wider shrink-0">
                                       OOS
                                     </span>
                                   ) : (
-                                    <span className="text-[10px] font-mono text-[var(--admin-text-muted)]">
+                                    <span className="text-[10px] font-mono text-[var(--admin-text-muted)] shrink-0">
                                       units
                                     </span>
                                   )}
@@ -1167,7 +1287,7 @@ export function ProductForm({
                                       [sz]: val,
                                     });
                                   }}
-                                  className="w-full text-center text-xs font-mono font-bold bg-[var(--admin-surface-2)] border border-white/10 rounded-[10px] py-1 outline-none text-white focus:border-[var(--admin-primary)] transition-colors"
+                                  className="w-full text-center text-sm font-mono font-bold bg-transparent outline-none text-white py-0.5 tabular-nums"
                                 />
                               </div>
                             );
@@ -1180,7 +1300,7 @@ export function ProductForm({
 
                 {/* Toggles */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-                  <label className="flex items-center gap-3 p-3.5 rounded-[14px] border border-white/5 bg-[var(--admin-surface-2)] hover:bg-white/[0.03] cursor-pointer select-none transition-colors">
+                  <label className="flex items-start gap-3 p-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface-2)] hover:bg-white/[0.03] cursor-pointer select-none transition-colors">
                     <input
                       type="checkbox"
                       checked={form.inStock}
@@ -1194,7 +1314,7 @@ export function ProductForm({
                           }
                         }
                       }}
-                      className="w-4.5 h-4.5 rounded cursor-pointer accent-[var(--admin-primary)]"
+                      className="w-4.5 h-4.5 rounded cursor-pointer accent-[var(--admin-primary)] mt-0.5 shrink-0"
                     />
                     <div>
                       <span className="block text-xs font-bold text-white">
@@ -1208,12 +1328,12 @@ export function ProductForm({
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 p-3.5 rounded-[14px] border border-white/5 bg-[var(--admin-surface-2)] hover:bg-white/[0.03] cursor-pointer select-none transition-colors">
+                  <label className="flex items-start gap-3 p-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface-2)] hover:bg-white/[0.03] cursor-pointer select-none transition-colors">
                     <input
                       type="checkbox"
                       checked={form.isNewArrival}
                       onChange={(e) => update("isNewArrival", e.target.checked)}
-                      className="w-4.5 h-4.5 rounded cursor-pointer accent-[var(--admin-primary)]"
+                      className="w-4.5 h-4.5 rounded cursor-pointer accent-[var(--admin-primary)] mt-0.5 shrink-0"
                     />
                     <div>
                       <span className="block text-xs font-bold text-white">
@@ -1231,9 +1351,7 @@ export function ProductForm({
             {/* 5. Descriptions & Details */}
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center gap-3 pb-3 border-b border-white/5">
-                <div className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] text-stone-300 border border-white/5 flex items-center justify-center shrink-0">
-                  <Info size={16} />
-                </div>
+                <AdminIconBadge variant="section" icon={Info} />
                 <div>
                   <h2 className="text-sm font-bold uppercase tracking-wider text-white font-heading">
                     Descriptions &amp; Garment Care
@@ -1281,9 +1399,7 @@ export function ProductForm({
             {/* 6. Collections & Related */}
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center gap-3 pb-3 border-b border-white/5">
-                <div className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] text-amber-400 border border-white/5 flex items-center justify-center shrink-0">
-                  <Sparkles size={16} />
-                </div>
+                <AdminIconBadge variant="section" icon={Sparkles} />
                 <div>
                   <h2 className="text-sm font-bold uppercase tracking-wider text-white font-heading">
                     Collections &amp; Search Tags
@@ -1323,91 +1439,105 @@ export function ProductForm({
           <div className="xl:col-span-4 space-y-6 xl:sticky xl:top-6">
             <div className="bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-white/5">
-                <span className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                  <ShoppingBag size={15} className="text-amber-400" />
-                  Publication Action
-                </span>
+                <div className="flex items-center gap-3">
+                  <AdminIconBadge variant="section" icon={ShoppingBag} />
+                  <span className="text-xs font-bold uppercase tracking-wider text-white font-heading">
+                    Publication Action
+                  </span>
+                </div>
                 <span
-                  className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border transition-colors ${
+                  className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border transition-colors ${
                     isFormComplete
                       ? "bg-[#00F59B]/15 text-[#00F59B] border-[#00F59B]/20"
-                      : "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/20"
+                      : "bg-white/5 text-[var(--admin-text-muted)] border-white/10"
                   }`}
                 >
-                  {isFormComplete ? "Ready to Launch" : "Draft (Missing Info)"}
+                  {isFormComplete ? "Ready to Launch" : "Draft"}
                 </span>
               </div>
 
               {/* Requirement Checklist */}
               <div className="space-y-2.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Product Name:</span>
+                  <span className="text-[var(--admin-text-muted)]">Product Name</span>
                   <span
                     className={
                       isNameValid
-                        ? "text-[#00F59B] font-bold flex items-center gap-1"
-                        : "text-[var(--admin-text-muted)] font-medium"
+                        ? "text-[#00F59B] font-semibold flex items-center gap-1"
+                        : "text-amber-400/90 font-medium flex items-center gap-1.5"
                     }
                   >
-                    {isNameValid ? "✓ Provided" : "Required"}
+                    {isNameValid ? (
+                      "✓ Set"
+                    ) : (
+                      <>
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                        Required
+                      </>
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Selling Price:</span>
+                  <span className="text-[var(--admin-text-muted)]">Selling Price</span>
                   <span
                     className={
                       isPriceValid
-                        ? "text-[#00F59B] font-bold flex items-center gap-1"
-                        : "text-[var(--admin-text-muted)] font-medium"
+                        ? "text-[#00F59B] font-semibold flex items-center gap-1 font-mono"
+                        : "text-amber-400/90 font-medium flex items-center gap-1.5"
                     }
                   >
-                    {isPriceValid
-                      ? `✓ ₹${parseFloat(form.price).toLocaleString("en-IN")}`
-                      : "Required"}
+                    {isPriceValid ? (
+                      `✓ ₹${parseFloat(form.price).toLocaleString("en-IN")}`
+                    ) : (
+                      <>
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                        Required
+                      </>
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Primary Hero Image:</span>
+                  <span className="text-[var(--admin-text-muted)]">Primary Hero Image</span>
                   <span
                     className={
                       isImageValid
-                        ? "text-[#00F59B] font-bold flex items-center gap-1"
-                        : "text-[#F59E0B] font-medium"
+                        ? "text-[#00F59B] font-semibold flex items-center gap-1"
+                        : "text-[var(--admin-text-muted)] font-medium"
                     }
                   >
-                    {isImageValid ? "✓ Cropped & Set" : "Recommended"}
+                    {isImageValid ? "✓ Set" : "Optional"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Media Kit:</span>
-                  <span className="text-white font-semibold flex items-center gap-1">
+                  <span className="text-[var(--admin-text-muted)]">Media Kit</span>
+                  <span className="text-white font-mono font-medium flex items-center gap-1">
                     {totalActiveImages} / 6 Active
                   </span>
                 </div>
               </div>
 
-              {/* Concise Product Metrics Summary */}
-              <div className="p-3.5 bg-[var(--admin-surface-2)] rounded-[14px] border border-white/5 space-y-2 text-xs">
+              {/* Concise Product Metrics Summary - Unified Single Surface */}
+              <div className="pt-3 border-t border-white/5 space-y-2.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Taxonomy:</span>
-                  <span className="font-semibold text-white">
+                  <span className="text-[var(--admin-text-muted)]">Taxonomy</span>
+                  <span className="font-medium text-white">
                     {form.category} · {form.subcategory || "General"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Color Swatch:</span>
-                  <span className="font-semibold text-white flex items-center gap-1.5">
+                  <span className="text-[var(--admin-text-muted)]">Color Swatch</span>
+                  <span className="font-medium text-white flex items-center gap-2">
                     <span
-                      className="w-2.5 h-2.5 rounded-full border border-white/10 shrink-0"
+                      className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-sm shrink-0"
                       style={{ backgroundColor: form.colorHex || "#111111" }}
                     />
                     {form.colorName || "Default"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--admin-text-muted)]">Stock Availability:</span>
+                  <span className="text-[var(--admin-text-muted)]">Stock Availability</span>
                   <span
-                    className={`font-semibold flex items-center gap-1.5 ${
+                    className={`font-medium flex items-center gap-1.5 ${
                       isOutOfStock
                         ? "text-[#FF4B55]"
                         : isLowStock
@@ -1416,7 +1546,7 @@ export function ProductForm({
                     }`}
                   >
                     <span
-                      className={`w-2 h-2 rounded-full ${
+                      className={`w-1.5 h-1.5 rounded-full ${
                         isOutOfStock
                           ? "bg-[#FF4B55]"
                           : isLowStock
@@ -1427,13 +1557,13 @@ export function ProductForm({
                     {isOutOfStock
                       ? "Out of Stock"
                       : isLowStock
-                      ? `Low Stock (${stockNum})`
-                      : `In Stock (${stockNum})`}
+                      ? `Low Stock · ${stockNum} units`
+                      : `In Stock · ${stockNum} units`}
                   </span>
                 </div>
                 {form.badge && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[var(--admin-text-muted)]">Badge:</span>
+                    <span className="text-[var(--admin-text-muted)]">Badge</span>
                     <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/10">
                       {form.badge}
                     </span>
@@ -1441,19 +1571,25 @@ export function ProductForm({
                 )}
               </div>
 
-              <div className="pt-2 border-t border-white/5">
+              <div className="pt-3 border-t border-white/5 space-y-2.5">
                 <button
                   type="submit"
                   disabled={!isNameValid || !isPriceValid}
-                  className="w-full flex items-center justify-center gap-2.5 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white disabled:opacity-40 disabled:cursor-not-allowed py-3.5 px-6 rounded-full font-bold text-sm transition-all cursor-pointer active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2 bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white disabled:opacity-35 disabled:cursor-not-allowed py-3 px-5 rounded-full font-bold text-sm transition-all cursor-pointer active:scale-[0.98]"
                 >
-                  <Plus size={17} />
+                  <Plus size={16} />
                   <span>{submitLabel}</span>
                 </button>
-                <p className="text-[11px] text-[var(--admin-text-muted)] text-center mt-2.5 flex items-center justify-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] animate-pulse" />
-                  Live update takes effect immediately on storefront
-                </p>
+                {isFormComplete ? (
+                  <p className="text-[11px] text-[var(--admin-text-muted)] text-center flex items-center justify-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] animate-pulse" />
+                    Live update takes effect immediately on storefront
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-[var(--admin-text-muted)] text-center">
+                    Fill in required fields to publish product
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -1589,7 +1725,7 @@ function ImageUploadCropCard({
               onClick={onAdjustCrop}
               className="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-[var(--admin-surface)] border border-white/10 px-3 py-2 rounded-full hover:bg-[var(--admin-elevated)] transition-colors cursor-pointer"
             >
-              <Crop size={14} className="text-amber-400" />
+              <Crop size={14} className="text-[var(--admin-text-muted)]" />
               <span>Adjust Crop / Framing</span>
             </button>
             <button
@@ -1750,7 +1886,7 @@ function GalleryImageCard({
           onClick={onAdjustCrop}
           className="flex-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-white hover:text-white bg-[var(--admin-surface)] border border-white/10 hover:border-white/20 py-1.5 rounded-full hover:bg-[var(--admin-elevated)] transition-all cursor-pointer active:scale-95"
         >
-          <Crop size={12} className="text-amber-400" />
+          <Crop size={12} className="text-[var(--admin-text-muted)]" />
           <span>Crop</span>
         </button>
         <button
@@ -1985,23 +2121,25 @@ function FormSelect({
   options: string[];
   required?: boolean;
 }) {
+  const selectOptions = options.map((opt) => ({
+    value: opt,
+    label: opt || "— None —",
+  }));
+
   return (
     <div>
-      <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+      <label className="block text-xs font-semibold text-[var(--admin-text-muted)] mb-1.5">
         {label}
-        {required && <span className="text-[#FF4B55] ml-0.5">*</span>}
+        {required && <span className="text-[var(--admin-danger)] ml-0.5">*</span>}
       </label>
-      <select
+      <AdminSelect
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="admin-input w-full h-10.5 text-xs font-semibold cursor-pointer bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-white focus:outline-none focus:border-[var(--admin-primary)] transition-colors"
-      >
-        {options.map((opt) => (
-          <option key={opt} value={opt} className="bg-[var(--admin-surface)] text-white">
-            {opt || "— None —"}
-          </option>
-        ))}
-      </select>
+        onValueChange={onChange}
+        options={selectOptions}
+        className="w-full"
+        triggerClassName="h-10.5 text-xs"
+        aria-label={label}
+      />
     </div>
   );
 }

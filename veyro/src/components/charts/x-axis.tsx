@@ -67,7 +67,7 @@ function XAxisLabel({
       className="absolute"
       style={{
         left: x,
-        bottom: 12,
+        bottom: 14,
         width: 0,
         display: "flex",
         justifyContent: "center",
@@ -77,7 +77,7 @@ function XAxisLabel({
       }}
     >
       <span
-        className={cn("whitespace-nowrap text-chart-label text-xs")}
+        className={cn("whitespace-nowrap text-zinc-200 font-semibold text-xs")}
         style={{
           opacity,
           transition: "opacity 0.4s ease-in-out",

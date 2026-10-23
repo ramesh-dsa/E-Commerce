@@ -31,6 +31,7 @@ export const ADMIN_TOKENS = {
     input: "14px",
     select: "14px",
     innerPanel: "14px",
+    item: "10px",
     button: "9999px",
     badge: "9999px",
   },

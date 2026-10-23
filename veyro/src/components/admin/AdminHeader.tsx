@@ -10,8 +10,26 @@ import {
   DateFilterSelection,
 } from "./AdminDateRangePicker";
 
+/**
+ * Calculates deterministic executive greeting based on time of day
+ * 04:00 - 11:59 -> "Good morning"
+ * 12:00 - 16:59 -> "Good afternoon"
+ * 17:00 - 03:59 -> "Good evening"
+ */
+export function getTimeOfDayGreeting(date: Date = new Date()): string {
+  const hours = date.getHours();
+  if (hours >= 4 && hours < 12) {
+    return "Good morning";
+  }
+  if (hours >= 12 && hours < 17) {
+    return "Good afternoon";
+  }
+  return "Good evening";
+}
+
 interface AdminHeaderProps {
-  greeting?: string;
+  greeting?: React.ReactNode;
+  adminName?: string;
   subtitle?: string;
   currentFilter?: DateFilterSelection;
   onSelectFilter?: (filter: DateFilterSelection) => void;
@@ -21,17 +39,35 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({
-  greeting = "Welcome back 👋",
-  subtitle = "This is what's happening in your store this month.",
+  greeting,
+  adminName = "Santhosh",
+  subtitle = "Here's what's happening in your store today.",
   currentFilter,
   onSelectFilter,
   orders = [],
   rightAction,
   showDateFilter = true,
 }: AdminHeaderProps) {
+  const [timeGreeting, setTimeGreeting] = useState<string>("Good morning");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isQuickFilterOpen, setIsQuickFilterOpen] = useState(false);
   const quickFilterRef = useRef<HTMLDivElement>(null);
+
+  // Sync greeting with real client-side local time on mount & keep updated
+  useEffect(() => {
+    setTimeGreeting(getTimeOfDayGreeting());
+    const interval = setInterval(() => {
+      setTimeGreeting(getTimeOfDayGreeting());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const resolvedGreeting =
+    greeting !== undefined
+      ? greeting
+      : adminName
+      ? `${timeGreeting}, ${adminName}`
+      : timeGreeting;
 
   // Close quick filter on outside click
   useEffect(() => {
@@ -46,45 +82,80 @@ export function AdminHeader({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isQuickFilterOpen]);
 
-  // Standard preset ranges
-  const quickPresets: { label: string; filter: DateFilterSelection }[] = [
-    {
-      label: "This month",
-      filter: {
-        type: "preset",
-        label: "This Month (01 Oct - 03 Oct 2026)",
-        startDate: "2026-10-01",
-        endDate: "2026-10-03",
+  // Standard preset ranges based on current date
+  const quickPresets = React.useMemo(() => {
+    const now = new Date();
+    const formatIso = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+    const formatDisplay = (d: Date) => {
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const day = String(d.getDate()).padStart(2, "0");
+      const m = months[d.getMonth()];
+      const y = d.getFullYear();
+      return `${day} ${m} ${y}`;
+    };
+
+    const todayIso = formatIso(now);
+    const todayDisplay = formatDisplay(now);
+
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthStartIso = formatIso(monthStart);
+    const monthStartDisplay = formatDisplay(monthStart);
+
+    const last7 = new Date(now);
+    last7.setDate(now.getDate() - 6);
+    const last7Iso = formatIso(last7);
+    const last7Display = formatDisplay(last7);
+
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const prevMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+    const prevMonthStartIso = formatIso(prevMonthStart);
+    const prevMonthEndIso = formatIso(prevMonthEnd);
+    const prevMonthLabel = `${formatDisplay(prevMonthStart)} - ${formatDisplay(prevMonthEnd)}`;
+
+    return [
+      {
+        label: "This month",
+        filter: {
+          type: "preset" as const,
+          label: `This Month (${monthStartDisplay.slice(0, 6)} - ${todayDisplay})`,
+          startDate: monthStartIso,
+          endDate: todayIso,
+        },
       },
-    },
-    {
-      label: "Last month",
-      filter: {
-        type: "preset",
-        label: "Sep 1, 2026 - Sep 30, 2026",
-        startDate: "2026-09-01",
-        endDate: "2026-09-30",
+      {
+        label: "Last month",
+        filter: {
+          type: "preset" as const,
+          label: prevMonthLabel,
+          startDate: prevMonthStartIso,
+          endDate: prevMonthEndIso,
+        },
       },
-    },
-    {
-      label: "Last 7 days",
-      filter: {
-        type: "preset",
-        label: "Last 7 Days (27 Sep - 03 Oct 2026)",
-        startDate: "2026-09-27",
-        endDate: "2026-10-03",
+      {
+        label: "Last 7 days",
+        filter: {
+          type: "preset" as const,
+          label: `Last 7 Days (${last7Display.slice(0, 6)} - ${todayDisplay})`,
+          startDate: last7Iso,
+          endDate: todayIso,
+        },
       },
-    },
-    {
-      label: "All time (Till Date)",
-      filter: {
-        type: "all",
-        label: "All Time (Till Date)",
-        startDate: "2026-09-18",
-        endDate: "2026-10-03",
+      {
+        label: "All time (Till Date)",
+        filter: {
+          type: "all" as const,
+          label: "All Time (Till Date)",
+          startDate: "2026-01-01",
+          endDate: todayIso,
+        },
       },
-    },
-  ];
+    ];
+  }, []);
 
   // Display label on the dropdown trigger pill
   const activeLabel = React.useMemo(() => {
@@ -106,14 +177,15 @@ export function AdminHeader({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: DUR_ENTRY, ease: EASE }}
           className="text-2xl sm:text-[28px] font-bold text-white tracking-tight leading-tight font-heading"
+          suppressHydrationWarning
         >
-          {greeting}
+          {resolvedGreeting}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: DIST }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: DUR_ENTRY, delay: 0.08, ease: EASE }}
-          className="text-xs sm:text-[13px] text-[#71717A] mt-1 font-normal"
+          className="text-xs sm:text-[13px] text-[var(--admin-text-muted)] mt-1 font-normal"
         >
           {subtitle}
         </motion.p>
@@ -140,7 +212,7 @@ export function AdminHeader({
                 </button>
 
                 {isQuickFilterOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--admin-surface)] border border-white/10 rounded-[18px] shadow-2xl p-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--admin-surface)] border border-white/10 rounded-[18px] shadow-2xl p-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-150 space-y-0.5">
                     {quickPresets.map((preset) => {
                       const isSelected = activeLabel === preset.label;
                       return (

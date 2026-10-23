@@ -438,7 +438,7 @@ function DatePillTrackerInner({
       style={{
         left: discreteInteraction ? xWithMargin : animatedX,
         transform: "translateX(-50%)",
-        bottom: 4,
+        bottom: 8,
       }}
     >
       <DateTicker

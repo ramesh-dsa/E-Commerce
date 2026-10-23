@@ -41,9 +41,48 @@ export function parseOrderDateToDayString(dateStr: string): string {
   }
   const d = new Date(dateStr);
   if (!isNaN(d.getTime())) {
-    return d.toISOString().slice(0, 10);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }
-  return "2026-10-03";
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+export function getAllTimeScope(
+  orders?: OrderRecord[],
+  currentFilter?: DateFilterSelection
+): { filter: DateFilterSelection; label: string } {
+  const now = new Date();
+  const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  let earliest = todayIso;
+  if (orders && orders.length > 0) {
+    for (const o of orders) {
+      const d = parseOrderDateToDayString(o.date);
+      if (d && d < earliest) earliest = d;
+    }
+  }
+
+  const allTimeFilter: DateFilterSelection = {
+    type: "all",
+    label: "All time",
+    startDate: earliest,
+    endDate: todayIso,
+  };
+
+  const target = currentFilter || allTimeFilter;
+  let label = "All time";
+  if (target.type === "day") {
+    label = `Day: ${target.singleDay || target.startDate}`;
+  } else if (target.type === "custom") {
+    label = `${target.startDate.slice(5)} → ${target.endDate.slice(5)}`;
+  } else if (target.type !== "all" && target.label) {
+    label = target.label;
+  }
+
+  return {
+    filter: allTimeFilter,
+    label,
+  };
 }
 
 export function formatDayDisplay(dayStr: string): string {
@@ -55,8 +94,15 @@ export function formatDayDisplay(dayStr: string): string {
       const year = parts[0];
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const month = months[monthNum - 1] || "Oct";
-      if (dayStr === "2026-10-03") return `Today (${day} ${month} ${year})`;
-      if (dayStr === "2026-10-02") return `Yesterday (${day} ${month} ${year})`;
+
+      const now = new Date();
+      const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const y = new Date(now);
+      y.setDate(now.getDate() - 1);
+      const yesterdayIso = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, "0")}-${String(y.getDate()).padStart(2, "0")}`;
+
+      if (dayStr === todayIso) return `Today (${day} ${month} ${year})`;
+      if (dayStr === yesterdayIso) return `Yesterday (${day} ${month} ${year})`;
       return `${day} ${month} ${year}`;
     }
   } catch {
@@ -105,8 +151,8 @@ export function AdminDateRangePicker({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Month navigation state for custom calendar
-  const [currentYear, setCurrentYear] = useState(2026);
-  const [currentMonth, setCurrentMonth] = useState(9); // 0-indexed: 9 is October, 8 is September
+  const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth()); // 0-indexed: dynamic current month
 
   // Custom range temporary state
   const [customStart, setCustomStart] = useState<string>(currentFilter.startDate);
@@ -148,6 +194,53 @@ export function AdminDateRangePicker({
       .sort((a, b) => b.dayStr.localeCompare(a.dayStr));
   }, [orders]);
 
+  const now = new Date();
+  const formatIso = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const formatDisplay = (d: Date) => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const day = String(d.getDate()).padStart(2, "0");
+    const m = months[d.getMonth()];
+    const y = d.getFullYear();
+    return `${day} ${m} ${y}`;
+  };
+
+  const todayIso = formatIso(now);
+  const todayDisplay = formatDisplay(now);
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayIso = formatIso(yesterday);
+  const yesterdayDisplay = formatDisplay(yesterday);
+
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthStartIso = formatIso(monthStart);
+  const monthStartDisplay = formatDisplay(monthStart);
+
+  const last7 = new Date(now);
+  last7.setDate(now.getDate() - 6);
+  const last7Iso = formatIso(last7);
+  const last7Display = formatDisplay(last7);
+
+  const last30 = new Date(now);
+  last30.setDate(now.getDate() - 29);
+  const last30Iso = formatIso(last30);
+  const last30Display = formatDisplay(last30);
+
+  const last90 = new Date(now);
+  last90.setDate(now.getDate() - 89);
+  const last90Iso = formatIso(last90);
+
+  const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prevMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+  const prevMonthStartIso = formatIso(prevMonthStart);
+  const prevMonthEndIso = formatIso(prevMonthEnd);
+  const prevMonthLabel = `${formatDisplay(prevMonthStart)} - ${formatDisplay(prevMonthEnd)}`;
+
   const presets: {
     id: string;
     label: string;
@@ -159,73 +252,73 @@ export function AdminDateRangePicker({
     {
       id: "all_time",
       label: "All Time (Till Date)",
-      sub: "Complete store history up to 03 Oct 2026",
+      sub: `Complete store history up to ${todayDisplay}`,
       start: "2026-01-01",
-      end: "2026-10-03",
+      end: todayIso,
       type: "all",
     },
     {
       id: "today",
-      label: "Today (03 Oct 2026)",
+      label: `Today (${todayDisplay})`,
       sub: "Today's live volume (2 orders recorded)",
-      start: "2026-10-03",
-      end: "2026-10-03",
+      start: todayIso,
+      end: todayIso,
       type: "day",
     },
     {
       id: "yesterday",
-      label: "Yesterday (02 Oct 2026)",
+      label: `Yesterday (${yesterdayDisplay})`,
       sub: "Previous business day closing",
-      start: "2026-10-02",
-      end: "2026-10-02",
+      start: yesterdayIso,
+      end: yesterdayIso,
       type: "day",
     },
     {
       id: "this_month",
-      label: "This Month (01 Oct - 03 Oct 2026)",
+      label: `This Month (${monthStartDisplay.slice(0, 6)} - ${todayDisplay})`,
       sub: "Month to date (MTD till today)",
-      start: "2026-10-01",
-      end: "2026-10-03",
+      start: monthStartIso,
+      end: todayIso,
       type: "preset",
     },
     {
       id: "last_7",
-      label: "Last 7 Days (27 Sep - 03 Oct 2026)",
+      label: `Last 7 Days (${last7Display.slice(0, 6)} - ${todayDisplay})`,
       sub: "Rolling 7 days performance",
-      start: "2026-09-27",
-      end: "2026-10-03",
+      start: last7Iso,
+      end: todayIso,
       type: "preset",
     },
     {
       id: "last_30",
-      label: "Last 30 Days (04 Sep - 03 Oct 2026)",
+      label: `Last 30 Days (${last30Display.slice(0, 6)} - ${todayDisplay})`,
       sub: "Rolling 30-day window",
-      start: "2026-09-04",
-      end: "2026-10-03",
+      start: last30Iso,
+      end: todayIso,
       type: "preset",
     },
     {
-      id: "sep_2026",
-      label: "Sep 1, 2026 - Sep 30, 2026",
+      id: "prev_month",
+      label: prevMonthLabel,
       sub: "Full previous calendar month",
-      start: "2026-09-01",
-      end: "2026-09-30",
+      start: prevMonthStartIso,
+      end: prevMonthEndIso,
       type: "preset",
     },
     {
       id: "last_90",
       label: "Last 90 Days",
       sub: "Quarterly volume",
-      start: "2026-07-05",
-      end: "2026-10-03",
+      start: last90Iso,
+      end: todayIso,
       type: "preset",
     },
     {
       id: "ytd",
       label: "Year to Date (2026)",
-      sub: "01 Jan 2026 - 03 Oct 2026",
+      sub: `01 Jan 2026 - ${todayDisplay}`,
       start: "2026-01-01",
-      end: "2026-10-03",
+      end: todayIso,
       type: "preset",
     },
   ];
@@ -360,7 +453,7 @@ export function AdminDateRangePicker({
             <div>
               <h3 className="font-heading font-bold text-sm text-white">Select Period & Date Range</h3>
               <p className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
-                Current Store Date: <strong className="text-white">03 Oct 2026</strong>
+                Current Store Date: <strong className="text-white">{todayDisplay}</strong>
               </p>
             </div>
             <button
@@ -457,55 +550,10 @@ export function AdminDateRangePicker({
           {/* TAB 2: DAY-WISE (SINGLE DAY) */}
           {activeTab === "day" && (
             <ScrollArea className="max-h-[320px] pr-1.5">
-              <div className="space-y-2">
-                <div className="p-2.5 rounded-[14px] text-[11px] bg-[var(--admin-surface-2)] border border-white/5 text-[var(--admin-text-muted)]">
-                  <span>Select any single date to view that exact day's orders, gross revenue, and fulfillment.</span>
-                </div>
-
-                {/* Quick Day Chips */}
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => handleSelectDay("2026-10-03")}
-                    className={`p-2.5 rounded-[14px] border text-left transition-all cursor-pointer ${
-                      currentFilter.singleDay === "2026-10-03"
-                        ? "bg-[var(--admin-surface)] text-white border-white/20 font-bold"
-                        : "bg-[var(--admin-surface-2)] border-white/5 hover:bg-white/[0.06] text-white/90"
-                    }`}
-                  >
-                    <div className="text-xs font-bold flex items-center justify-between">
-                      <span>Today</span>
-                      <span className="w-2 h-2 rounded-full bg-[var(--admin-success)]" />
-                    </div>
-                    <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">03 Oct 2026</div>
-                    <div className="text-[10px] font-heading font-bold tabular-nums text-[var(--admin-success)] mt-1">2 orders • ₹2,698</div>
-                  </button>
-
-                  <button
-                    onClick={() => handleSelectDay("2026-10-02")}
-                    className={`p-2.5 rounded-[14px] border text-left transition-all cursor-pointer ${
-                      currentFilter.singleDay === "2026-10-02"
-                        ? "bg-[var(--admin-surface)] text-white border-white/20 font-bold"
-                        : "bg-[var(--admin-surface-2)] border-white/5 hover:bg-white/[0.06] text-white/90"
-                    }`}
-                  >
-                    <div className="text-xs font-bold flex items-center justify-between">
-                      <span>Yesterday</span>
-                      <span className="w-2 h-2 rounded-full bg-[var(--admin-warning)]" />
-                    </div>
-                    <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">02 Oct 2026</div>
-                    <div className="text-[10px] font-heading font-bold tabular-nums text-[var(--admin-success)] mt-1">1 order • ₹2,399</div>
-                  </button>
-                </div>
-
-                {/* Day List by Transaction History */}
-                <div className="text-[10px] uppercase font-bold tracking-wider px-1 pt-1 text-[var(--admin-text-muted)]">
-                  Recorded Store Order Days
-                </div>
-
-                <div className="space-y-1">
-                  {orderDaysSummary.map((item) => {
-                    const isSelected = currentFilter.singleDay === item.dayStr;
-                    return (
+              <div className="space-y-1">
+                {orderDaysSummary.map((item) => {
+                  const isSelected = currentFilter.singleDay === item.dayStr;
+                  return (
                       <button
                         key={item.dayStr}
                         onClick={() => handleSelectDay(item.dayStr)}
@@ -537,9 +585,8 @@ export function AdminDateRangePicker({
                     );
                   })}
                 </div>
-              </div>
-            </ScrollArea>
-          )}
+              </ScrollArea>
+            )}
 
           {/* TAB 3: CUSTOM RANGE (INTERACTIVE CALENDAR) */}
           {activeTab === "custom" && (
@@ -603,7 +650,7 @@ export function AdminDateRangePicker({
                   const isInRange =
                     customStart && customEnd && dateString >= customStart && dateString <= customEnd;
                   const hasOrders = orderDaysSummary.some((d) => d.dayStr === dateString);
-                  const isToday = dateString === "2026-10-03";
+                  const isToday = dateString === todayIso;
 
                   return (
                     <button
@@ -663,7 +710,7 @@ export function AdminDateRangePicker({
                   type: "all",
                   label: "All Time (Till Date)",
                   startDate: "2026-01-01",
-                  endDate: "2026-10-03",
+                  endDate: todayIso,
                 });
                 setIsOpen(false);
               }}

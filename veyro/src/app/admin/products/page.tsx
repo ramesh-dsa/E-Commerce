@@ -8,6 +8,14 @@ import { useCustomSections } from "@/context/CustomSectionsContext";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus, Search, RotateCcw } from "lucide-react";
 import { searchProducts, getUnifiedSearchableProducts } from "@/utils/searchEngine";
+import { AdminSelect } from "@/components/admin/AdminSelect";
+
+const CATEGORY_OPTIONS = [
+  { value: "all", label: "All Categories" },
+  { value: "Clothing", label: "Clothing" },
+  { value: "Footwear", label: "Footwear" },
+  { value: "Watches", label: "Watches" },
+];
 
 export default function AdminProductsPage() {
   const { products, deleteProduct, resetToDefaults } = useProducts();
@@ -85,17 +93,14 @@ export default function AdminProductsPage() {
               focus:outline-none focus:border-[var(--admin-primary)] transition-colors"
           />
         </div>
-        <select
+        <AdminSelect
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="px-4 py-2.5 rounded-[14px] border border-white/10 bg-[var(--admin-surface-2)] text-white text-sm
-            focus:outline-none focus:border-[var(--admin-primary)] transition-colors cursor-pointer"
-        >
-          <option value="all">All Categories</option>
-          <option value="Clothing">Clothing</option>
-          <option value="Footwear">Footwear</option>
-          <option value="Watches">Watches</option>
-        </select>
+          onValueChange={setCategoryFilter}
+          options={CATEGORY_OPTIONS}
+          className="w-full sm:w-48"
+          triggerClassName="h-10 text-sm"
+          aria-label="Filter products by category"
+        />
       </div>
 
       {/* Product Table */}

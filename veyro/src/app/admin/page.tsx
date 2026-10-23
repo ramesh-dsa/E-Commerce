@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useMemo, useState, useRef, useEffect } from "react";
+import React, { useMemo, useState, useRef, useEffect, useDeferredValue } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useProducts } from "@/context/ProductsContext";
@@ -12,7 +12,30 @@ import { useUser } from "@/context/UserContext";
 import type { OrderRecord, OrderStatus, Product } from "@/types";
 import { AdminDateRangePicker, DateFilterSelection, parseOrderDateToDayString, formatDayDisplay } from "@/components/admin/AdminDateRangePicker";
 import { AdminHeader } from "@/components/admin/AdminHeader";
-import { StaggerGroup, StaggerItem, CountUp } from "@/components/admin/motion";
+import { AdminIconBadge } from "@/components/admin/AdminIconBadge";
+import { StaggerGroup, StaggerItem, CountUp, DUR_FAST, EASE } from "@/components/admin/motion";
+import { useAnchoredMenu } from "@/components/admin/useAnchoredMenu";
+import { AdminSelect } from "@/components/admin/AdminSelect";
+
+const STOCK_FILTER_OPTIONS = [
+  { value: "all", label: "All Inventory" },
+  { value: "in_stock", label: "Healthy Stock (10+)" },
+  { value: "low_stock", label: "Low Stock (≤10)" },
+];
+
+const TOP_PRODUCTS_SORT_OPTIONS = [
+  { value: "revenue", label: "Sort: Highest Revenue" },
+  { value: "units", label: "Sort: Most Units Sold" },
+  { value: "margin", label: "Sort: Highest Margin %" },
+  { value: "growth", label: "Sort: Fastest Growth" },
+];
+
+const RECENT_ORDERS_SORT_OPTIONS = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "highest", label: "Amount: High to Low" },
+  { value: "lowest", label: "Amount: Low to High" },
+];
 import {
   searchProducts,
   searchOrders,
@@ -92,6 +115,15 @@ import {
   LegendProgress,
 } from "@/components/charts/legend";
 import type { RingData } from "@/components/charts/ring-context";
+import {
+  AreaChart,
+  Area,
+  Grid,
+  XAxis,
+  YAxis,
+  ChartTooltip,
+} from "@/components/charts";
+import { curveCatmullRom } from "@visx/curve";
 
 // ─── STATIC DATA & ASSETS MATCHING TARGET DESIGN ──────────────────────────────
 
@@ -529,63 +561,84 @@ interface RevenuePoint {
   growthPct?: string; // daily trend
 }
 
-const REVENUE_DATA_30D: RevenuePoint[] = [
-  { dayLabel: "Sep 1", dateStr: "Sep 1, 2026", value: 1200, ordersCount: 1, growthPct: "+0%" },
-  { dayLabel: "", dateStr: "Sep 2, 2026", value: 1350, ordersCount: 2, growthPct: "+12.5%" },
-  { dayLabel: "", dateStr: "Sep 3, 2026", value: 1420, ordersCount: 2, growthPct: "+5.2%" },
-  { dayLabel: "", dateStr: "Sep 4, 2026", value: 1100, ordersCount: 1, growthPct: "-22.5%" },
-  { dayLabel: "Sep 5", dateStr: "Sep 5, 2026", value: 1050, ordersCount: 1, growthPct: "-4.5%" },
-  { dayLabel: "", dateStr: "Sep 6, 2026", value: 1320, ordersCount: 2, growthPct: "+25.7%" },
-  { dayLabel: "", dateStr: "Sep 7, 2026", value: 1650, ordersCount: 2, growthPct: "+25.0%" },
-  { dayLabel: "", dateStr: "Sep 8, 2026", value: 1880, ordersCount: 3, growthPct: "+13.9%" },
-  { dayLabel: "", dateStr: "Sep 9, 2026", value: 1620, ordersCount: 2, growthPct: "-13.8%" },
-  { dayLabel: "Sep 10", dateStr: "Sep 10, 2026", value: 1380, ordersCount: 2, growthPct: "-14.8%" },
-  { dayLabel: "", dateStr: "Sep 11, 2026", value: 1550, ordersCount: 2, growthPct: "+12.3%" },
-  { dayLabel: "", dateStr: "Sep 12, 2026", value: 1780, ordersCount: 2, growthPct: "+14.8%" },
-  { dayLabel: "", dateStr: "Sep 13, 2026", value: 2050, ordersCount: 3, growthPct: "+15.2%" },
-  { dayLabel: "Sep 15", dateStr: "Sep 14, 2026", value: 2420, ordersCount: 3, growthPct: "+18.0%" }, // Campaign high peak
-  { dayLabel: "", dateStr: "Sep 15, 2026", value: 2150, ordersCount: 3, growthPct: "-11.2%" },
-  { dayLabel: "", dateStr: "Sep 16, 2026", value: 1820, ordersCount: 2, growthPct: "-15.3%" },
-  { dayLabel: "", dateStr: "Sep 17, 2026", value: 1710, ordersCount: 2, growthPct: "-6.0%" },
-  { dayLabel: "", dateStr: "Sep 18, 2026", value: 1950, ordersCount: 2, growthPct: "+14.0%" },
-  { dayLabel: "", dateStr: "Sep 19, 2026", value: 1840, ordersCount: 2, growthPct: "-5.6%" },
-  { dayLabel: "Sep 20", dateStr: "Sep 20, 2026", value: 1650, ordersCount: 2, growthPct: "-10.3%" },
-  { dayLabel: "", dateStr: "Sep 21, 2026", value: 1980, ordersCount: 2, growthPct: "+20.0%" },
-  { dayLabel: "", dateStr: "Sep 22, 2026", value: 2320, ordersCount: 3, growthPct: "+17.2%" },
-  { dayLabel: "", dateStr: "Sep 23, 2026", value: 2100, ordersCount: 3, growthPct: "-9.5%" },
-  { dayLabel: "", dateStr: "Sep 24, 2026", value: 1890, ordersCount: 2, growthPct: "-10.0%" },
-  { dayLabel: "Sep 25", dateStr: "Sep 25, 2026", value: 1800, ordersCount: 2, growthPct: "-4.8%" },
-  { dayLabel: "", dateStr: "Sep 26, 2026", value: 2120, ordersCount: 3, growthPct: "+17.8%" },
-  { dayLabel: "", dateStr: "Sep 27, 2026", value: 2280, ordersCount: 3, growthPct: "+7.5%" },
-  { dayLabel: "", dateStr: "Sep 28, 2026", value: 2450, ordersCount: 3, growthPct: "+7.5%" },
-  { dayLabel: "", dateStr: "Sep 29, 2026", value: 2320, ordersCount: 3, growthPct: "-5.3%" },
-  { dayLabel: "Sep 30", dateStr: "Sep 30, 2026", value: 2680, ordersCount: 4, growthPct: "+15.5%" },
-];
+const REVENUE_DATA_30D: RevenuePoint[] = (() => {
+  const values = [
+    1200, 1350, 1420, 1100, 1050, 1320, 1650, 1880, 1620, 1380,
+    1550, 1780, 2050, 2420, 2150, 1820, 1710, 1950, 1840, 1650,
+    1980, 2320, 2100, 1890, 1800, 2120, 2280, 2450, 2320, 2680,
+  ];
+  const orders = [
+    12, 14, 15, 11, 10, 13, 17, 19, 16, 14,
+    15, 18, 20, 24, 21, 18, 17, 19, 18, 16,
+    20, 23, 21, 19, 18, 21, 23, 25, 23, 27,
+  ];
+  const now = new Date();
+  const points: RevenuePoint[] = [];
 
-const REVENUE_DATA_7D: RevenuePoint[] = [
-  { dayLabel: "Sep 24", dateStr: "Sep 24, 2026", value: 1890, ordersCount: 2, growthPct: "+4.2%" },
-  { dayLabel: "Sep 25", dateStr: "Sep 25, 2026", value: 1800, ordersCount: 2, growthPct: "-4.8%" },
-  { dayLabel: "Sep 26", dateStr: "Sep 26, 2026", value: 2120, ordersCount: 3, growthPct: "+17.8%" },
-  { dayLabel: "Sep 27", dateStr: "Sep 27, 2026", value: 2280, ordersCount: 3, growthPct: "+7.5%" },
-  { dayLabel: "Sep 28", dateStr: "Sep 28, 2026", value: 2450, ordersCount: 3, growthPct: "+7.5%" },
-  { dayLabel: "Sep 29", dateStr: "Sep 29, 2026", value: 2320, ordersCount: 3, growthPct: "-5.3%" },
-  { dayLabel: "Sep 30", dateStr: "Sep 30, 2026", value: 2680, ordersCount: 4, growthPct: "+15.5%" },
-];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = months[d.getMonth()];
+    const day = d.getDate();
+    const year = d.getFullYear();
+    const dateStr = `${month} ${day}, ${year}`;
+    const dayLabel = (i === 29 || i === 22 || i === 15 || i === 7 || i === 0) ? `${month} ${day}` : "";
+    const idx = 29 - i;
+    const prevVal = idx > 0 ? values[idx - 1] : values[0];
+    const diff = values[idx] - prevVal;
+    const pct = idx === 0 ? "+0%" : `${diff >= 0 ? "+" : ""}${((diff / prevVal) * 100).toFixed(1)}%`;
 
-const REVENUE_DATA_90D: RevenuePoint[] = [
-  { dayLabel: "Jul 1", dateStr: "Jul 1, 2026", value: 1100, ordersCount: 1, growthPct: "+0%" },
-  { dayLabel: "", dateStr: "Jul 8, 2026", value: 1320, ordersCount: 2, growthPct: "+20%" },
-  { dayLabel: "Jul 15", dateStr: "Jul 15, 2026", value: 1540, ordersCount: 2, growthPct: "+16.7%" },
-  { dayLabel: "", dateStr: "Jul 22, 2026", value: 1680, ordersCount: 2, growthPct: "+9.1%" },
-  { dayLabel: "Aug 1", dateStr: "Aug 1, 2026", value: 1820, ordersCount: 2, growthPct: "+8.3%" },
-  { dayLabel: "", dateStr: "Aug 8, 2026", value: 1750, ordersCount: 2, growthPct: "-3.8%" },
-  { dayLabel: "Aug 15", dateStr: "Aug 15, 2026", value: 1950, ordersCount: 3, growthPct: "+11.4%" },
-  { dayLabel: "", dateStr: "Aug 22, 2026", value: 2020, ordersCount: 3, growthPct: "+3.6%" },
-  { dayLabel: "Sep 1", dateStr: "Sep 1, 2026", value: 2100, ordersCount: 3, growthPct: "+4.0%" },
-  { dayLabel: "", dateStr: "Sep 8, 2026", value: 2280, ordersCount: 3, growthPct: "+8.6%" },
-  { dayLabel: "Sep 15", dateStr: "Sep 15, 2026", value: 2420, ordersCount: 3, growthPct: "+6.1%" },
-  { dayLabel: "Sep 30", dateStr: "Sep 30, 2026", value: 2680, ordersCount: 4, growthPct: "+10.7%" },
-];
+    points.push({
+      dayLabel,
+      dateStr,
+      value: values[idx],
+      ordersCount: orders[idx],
+      growthPct: pct,
+    });
+  }
+  return points;
+})();
+
+const REVENUE_DATA_7D: RevenuePoint[] = REVENUE_DATA_30D.slice(-7).map((p) => ({
+  ...p,
+  dayLabel: p.dateStr.split(",")[0],
+}));
+
+const REVENUE_DATA_90D: RevenuePoint[] = (() => {
+  const values90 = [
+    1100, 1320, 1540, 1680, 1820, 1750, 1950, 2020, 2100, 2280, 2420, 2680,
+  ];
+  const orders90 = [
+    11, 13, 15, 17, 18, 17, 20, 21, 22, 23, 25, 27,
+  ];
+  const now = new Date();
+  const points: RevenuePoint[] = [];
+  const count = values90.length;
+  for (let i = count - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i * 8);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = months[d.getMonth()];
+    const day = d.getDate();
+    const year = d.getFullYear();
+    const dateStr = `${month} ${day}, ${year}`;
+    const dayLabel = `${month} ${day}`;
+    const idx = count - 1 - i;
+    const prevVal = idx > 0 ? values90[idx - 1] : values90[0];
+    const diff = values90[idx] - prevVal;
+    const pct = idx === 0 ? "+0%" : `${diff >= 0 ? "+" : ""}${((diff / prevVal) * 100).toFixed(1)}%`;
+
+    points.push({
+      dayLabel,
+      dateStr,
+      value: values90[idx],
+      ordersCount: orders90[idx],
+      growthPct: pct,
+    });
+  }
+  return points;
+})();
 
 // ─── AVATAR COLORS MAP ────────────────────────────────────────────────────────
 
@@ -647,7 +700,7 @@ function StatusPill({ status }: { status: OrderStatus | string }) {
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${pillClass}`}
+      className={`inline-flex items-center px-2.5 py-1 rounded-[8px] text-xs font-semibold whitespace-nowrap transition-colors ${pillClass}`}
     >
       {display}
     </span>
@@ -826,10 +879,10 @@ function StatCardMenu({ title }: { title: string }) {
         <MoreHorizontal size={15} />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-48 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 py-1 z-30 text-xs font-medium text-white animate-in fade-in duration-150">
+        <div className="absolute right-0 top-full mt-1.5 w-48 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 p-1.5 z-30 text-xs font-medium text-white shadow-2xl shadow-black/60 animate-in fade-in duration-150 space-y-0.5">
           <button
             onClick={handleExportCSV}
-            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
           >
             <Download size={13} className="text-[var(--admin-text-muted)]" />
             <span>Export CSV Report</span>
@@ -839,7 +892,7 @@ function StatCardMenu({ title }: { title: string }) {
               window.print();
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
           >
             <Eye size={13} className="text-[var(--admin-text-muted)]" />
             <span>Print View</span>
@@ -919,8 +972,8 @@ function OrderStatusMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 py-2 z-40 text-xs font-medium text-white animate-in fade-in zoom-in-95 duration-150">
-          <div className="px-3 py-1 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
+        <div className="absolute right-0 top-full mt-1.5 w-56 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 p-1.5 z-40 text-xs font-medium text-white shadow-2xl shadow-black/60 animate-in fade-in zoom-in-95 duration-150 space-y-0.5">
+          <div className="px-2.5 py-1 text-[10px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
             Filter View
           </div>
           <button
@@ -928,8 +981,8 @@ function OrderStatusMenu({
               onSelectStatus?.(null);
               setOpen(false);
             }}
-            className={`w-full text-left px-3 py-1.5 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors ${
-              !selectedStatus ? "bg-white/[0.05] font-bold text-white" : "text-[var(--admin-text-muted)] hover:text-white"
+            className={`w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-white/10 flex items-center justify-between cursor-pointer transition-colors ${
+              !selectedStatus ? "bg-white/10 font-bold text-white" : "text-[var(--admin-text-muted)] hover:text-white"
             }`}
           >
             <span>All Statuses</span>
@@ -948,8 +1001,8 @@ function OrderStatusMenu({
                 onSelectStatus?.(selectedStatus === item.label ? null : item.label);
                 setOpen(false);
               }}
-              className={`w-full text-left px-3 py-1.5 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors ${
-                selectedStatus === item.label ? "bg-white/[0.05] font-bold text-white" : "text-[var(--admin-text-muted)] hover:text-white"
+              className={`w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-white/10 flex items-center justify-between cursor-pointer transition-colors ${
+                selectedStatus === item.label ? "bg-white/10 font-bold text-white" : "text-[var(--admin-text-muted)] hover:text-white"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -960,14 +1013,14 @@ function OrderStatusMenu({
             </button>
           ))}
 
-          <div className="my-1.5 border-t border-white/5" />
+          <div className="my-1 border-t border-white/5" />
 
-          <div className="px-3 py-1 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
+          <div className="px-2.5 py-1 text-[10px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
             Actions
           </div>
           <button
             onClick={handleExportCSV}
-            className="w-full text-left px-3 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
           >
             <Download size={14} className="text-[var(--admin-text-muted)]" />
             <span>Export Breakdown CSV</span>
@@ -977,7 +1030,7 @@ function OrderStatusMenu({
               onRefresh?.();
               setOpen(false);
             }}
-            className="w-full text-left px-3 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center gap-2 cursor-pointer text-[var(--admin-text-muted)] hover:text-white transition-colors"
           >
             <RotateCw size={14} className="text-[var(--admin-text-muted)]" />
             <span>Refresh Metrics</span>
@@ -1046,8 +1099,8 @@ function RevenueChartMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 py-1.5 z-40 text-xs font-medium text-white animate-in fade-in duration-150">
-          <div className="px-3.5 py-1.5 text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider border-b border-white/5 mb-1">
+        <div className="absolute right-0 top-full mt-1.5 w-60 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 p-1.5 z-40 text-xs font-medium text-white shadow-2xl shadow-black/60 animate-in fade-in duration-150 space-y-0.5">
+          <div className="px-2.5 py-1 text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider border-b border-white/5 mb-1">
             Chart View Options
           </div>
           <button
@@ -1055,7 +1108,7 @@ function RevenueChartMenu({
               setMetricMode(metricMode === "revenue" ? "orders" : "revenue");
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors text-[var(--admin-text-muted)] hover:text-white"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center justify-between cursor-pointer transition-colors text-[var(--admin-text-muted)] hover:text-white"
           >
             <div className="flex items-center gap-2">
               <BarChart3 size={13} className="text-[var(--admin-text-muted)]" />
@@ -1068,7 +1121,7 @@ function RevenueChartMenu({
               setShowGridlines((prev) => !prev);
               setOpen(false);
             }}
-            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center justify-between cursor-pointer transition-colors text-[var(--admin-text-muted)] hover:text-white"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center justify-between cursor-pointer transition-colors text-[var(--admin-text-muted)] hover:text-white"
           >
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={13} className="text-[var(--admin-text-muted)]" />
@@ -1081,7 +1134,7 @@ function RevenueChartMenu({
           <div className="border-t border-white/5 my-1" />
           <button
             onClick={handleExportCSV}
-            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 cursor-pointer text-white font-semibold transition-colors"
+            className="w-full text-left px-2.5 py-2 rounded-[8px] hover:bg-white/10 flex items-center gap-2 cursor-pointer text-white font-semibold transition-colors"
           >
             <Download size={13} className="text-[var(--admin-text-muted)]" />
             <span>Export CSV Dataset</span>
@@ -1095,326 +1148,76 @@ function RevenueChartMenu({
 // ─── REVENUE OVERVIEW CHART COMPONENT ────────────────────────────────────────
 
 function RevenueOverviewChart({
-  period,
   data,
   metricMode = "revenue",
   showGridlines = true,
-  hoverIndex,
-  setHoverIndex,
 }: {
   period: "7d" | "30d" | "90d";
   data: RevenuePoint[];
   metricMode?: "revenue" | "orders";
   showGridlines?: boolean;
-  hoverIndex: number | null;
-  setHoverIndex: (idx: number | null) => void;
+  hoverIndex?: number | null;
+  setHoverIndex?: (idx: number | null) => void;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 700, height: 260 });
-
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.clientWidth || 700,
-          height: 260,
-        });
-      }
-    };
-    updateDimensions();
-
-    // Debounce 250ms matching the sidebar transition duration so chart resizes once after animation finishes
-    const observer = new ResizeObserver(() => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(updateDimensions, 250);
-    });
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    const handleWindowResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(updateDimensions, 250);
-    };
-    window.addEventListener("resize", handleWindowResize);
-
-    return () => {
-      clearTimeout(timeoutId);
-      observer.disconnect();
-      window.removeEventListener("resize", handleWindowResize);
-    };
-  }, []);
-
-  const padding = { top: 35, right: 30, bottom: 40, left: 45 };
-  const chartW = Math.max(dimensions.width - padding.left - padding.right, 200);
-  const chartH = dimensions.height - padding.top - padding.bottom;
-
-  // Maximum value for scaling
-  const maxMetricVal = useMemo(() => {
-    if (metricMode === "revenue") {
-      const highest = Math.max(...data.map((d) => d.value), 2800);
-      return Math.ceil(highest / 1000) * 1000;
-    } else {
-      const highest = Math.max(...data.map((d) => d.ordersCount), 4);
-      return highest + 1;
-    }
+  const formattedData = useMemo(() => {
+    return data.map((d) => ({
+      ...d,
+      date: new Date(d.dateStr),
+      value: metricMode === "revenue" ? d.value : d.ordersCount,
+    }));
   }, [data, metricMode]);
 
-  const yMax = maxMetricVal;
-  const yMin = 0;
-
-  // Compute coordinate points
-  const points = useMemo(() => {
-    return data.map((d, i) => {
-      const val = metricMode === "revenue" ? d.value : d.ordersCount;
-      const x = padding.left + (i / Math.max(data.length - 1, 1)) * chartW;
-      const y = padding.top + chartH - ((val - yMin) / (yMax - yMin)) * chartH;
-      return { x, y, ...d };
-    });
-  }, [data, metricMode, chartW, chartH, padding.left, padding.top, yMax, yMin]);
-
-  // Generate smooth Catmull-Rom / Bézier curve
-  const { curvePath, areaPath } = useMemo(() => {
-    if (points.length === 0) return { curvePath: "", areaPath: "" };
-    let cPath = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[Math.max(0, i - 1)];
-      const p1 = points[i];
-      const p2 = points[i + 1];
-      const p3 = points[Math.min(points.length - 1, i + 2)];
-
-      const cp1x = p1.x + (p2.x - p0.x) / 5.5;
-      const cp1y = p1.y + (p2.y - p0.y) / 5.5;
-      const cp2x = p2.x - (p3.x - p1.x) / 5.5;
-      const cp2y = p2.y - (p3.y - p1.y) / 5.5;
-
-      cPath += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
-    }
-    const aPath = `${cPath} L ${points[points.length - 1].x} ${padding.top + chartH} L ${points[0].x} ${padding.top + chartH} Z`;
-    return { curvePath: cPath, areaPath: aPath };
-  }, [points, padding.top, chartH]);
-
-  // Y-axis tick values
-  const yTicks = useMemo(() => {
-    if (metricMode === "revenue") {
-      return [
-        { label: `₹${(yMax / 1000).toFixed(0)}k`, value: yMax },
-        { label: `₹${Math.round((yMax * 2) / 3 / 1000)}k`, value: (yMax * 2) / 3 },
-        { label: `₹${Math.round(yMax / 3 / 1000)}k`, value: yMax / 3 },
-        { label: "0", value: 0 },
-      ];
-    } else {
-      return [
-        { label: `${yMax} ord`, value: yMax },
-        { label: `${Math.round((yMax * 2) / 3)} ord`, value: (yMax * 2) / 3 },
-        { label: `${Math.round(yMax / 3)} ord`, value: yMax / 3 },
-        { label: "0", value: 0 },
-      ];
-    }
-  }, [metricMode, yMax]);
-
-  // Default active index
-  const defaultHighlightIdx = period === "30d" ? 13 : period === "7d" ? 6 : Math.min(10, points.length - 1);
-  const activeIdx =
-    hoverIndex !== null && hoverIndex >= 0 && hoverIndex < points.length
-      ? hoverIndex
-      : defaultHighlightIdx;
-  const activePoint = points[activeIdx] || points[0];
-
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (!containerRef.current) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left - padding.left;
-    const relRatio = Math.max(0, Math.min(1, mouseX / chartW));
-    const closestIdx = Math.round(relRatio * (data.length - 1));
-    setHoverIndex(closestIdx);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<SVGSVGElement>) => {
-    if (!containerRef.current || !e.touches[0]) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const touchX = e.touches[0].clientX - rect.left - padding.left;
-    const relRatio = Math.max(0, Math.min(1, touchX / chartW));
-    const closestIdx = Math.round(relRatio * (data.length - 1));
-    setHoverIndex(closestIdx);
-  };
-
-  const primaryColor = "#7C3AED";
-
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full select-none outline-none"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowLeft") {
-          e.preventDefault();
-          setHoverIndex(Math.max(0, activeIdx - 1));
-        } else if (e.key === "ArrowRight") {
-          e.preventDefault();
-          setHoverIndex(Math.min(data.length - 1, activeIdx + 1));
-        }
-      }}
-    >
-      <svg
-        width={dimensions.width}
-        height={dimensions.height}
-        viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-        className="w-full overflow-visible cursor-crosshair outline-none"
-        onMouseMove={handleMouseMove}
-        onTouchMove={handleTouchMove}
-        onMouseLeave={() => setHoverIndex(defaultHighlightIdx)}
-        role="img"
-        aria-label="Revenue overview timeline graph"
+    <div className="w-full">
+      <AreaChart
+        data={formattedData}
+        aspectRatio="2.4 / 1"
+        margin={{ top: 25, right: 28, bottom: 44, left: 54 }}
+        animationDuration={800}
       >
-        <defs>
-          <linearGradient id="revenueYellowGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.0" />
-          </linearGradient>
-        </defs>
-
-        {/* Horizontal gridlines */}
-        {showGridlines &&
-          yTicks.map((tick, i) => {
-            const y = padding.top + chartH - ((tick.value - yMin) / (yMax - yMin)) * chartH;
-            return (
-              <g key={i}>
-                <line
-                  x1={padding.left}
-                  y1={y}
-                  x2={dimensions.width - padding.right}
-                  y2={y}
-                  stroke="rgba(255, 255, 255, 0.05)"
-                  strokeWidth="1"
-                />
-                <text
-                  x={padding.left - 10}
-                  y={y + 4}
-                  textAnchor="end"
-                  fill="#71717A"
-                  fontSize="11"
-                  fontWeight="500"
-                >
-                  {tick.label}
-                </text>
-              </g>
-            );
-          })}
-
-        {/* X-axis labels */}
-        {points.map((pt, i) => {
-          if (!pt.dayLabel) return null;
-          const isSelected = i === activeIdx;
-          return (
-            <text
-              key={i}
-              x={pt.x}
-              y={dimensions.height - 10}
-              textAnchor="middle"
-              fill={isSelected ? "#FFFFFF" : "#71717A"}
-              fontSize="11"
-              fontWeight={isSelected ? "700" : "500"}
-              className="cursor-pointer transition-colors duration-150"
-              onClick={() => setHoverIndex(i)}
-            >
-              {pt.dayLabel}
-            </text>
-          );
-        })}
-
-        {/* Area fill */}
-        <path d={areaPath} fill="url(#revenueYellowGradient)" />
-
-        {/* Violet curve */}
-        <path
-          d={curvePath}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="3.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <YAxis
+          numTicks={4}
+          tickFormat={(val) =>
+            metricMode === "revenue"
+              ? val === 0
+                ? "0"
+                : `₹${(val / 1000).toFixed(0)}k`
+              : val === 0
+              ? "0"
+              : `${val} ord`
+          }
         />
-
-        {/* Active Marker Dot & Crosshair Drop-line */}
-        {activePoint && (
-          <g className="transition-all duration-150 pointer-events-none">
-            {/* Vertical crosshair guide line */}
-            <line
-              x1={activePoint.x}
-              y1={padding.top}
-              x2={activePoint.x}
-              y2={padding.top + chartH}
-              stroke="rgba(255, 255, 255, 0.15)"
-              strokeWidth="1.5"
-              strokeDasharray="4 4"
-            />
-
-            {/* Glowing outer pulse ring */}
-            <circle
-              cx={activePoint.x}
-              cy={activePoint.y}
-              r="12"
-              fill={primaryColor}
-              fillOpacity="0.25"
-              className="animate-pulse"
-            />
-
-            {/* Solid marker dot with dark canvas border */}
-            <circle
-              cx={activePoint.x}
-              cy={activePoint.y}
-              r="5.5"
-              fill={primaryColor}
-              stroke="#17171C"
-              strokeWidth="2.5"
-            />
-          </g>
+        {showGridlines && (
+          <Grid
+            horizontal
+            strokeDasharray="4,4"
+            stroke="rgba(255, 255, 255, 0.22)"
+            fadeHorizontal={false}
+          />
         )}
-      </svg>
-
-      {/* Floating HTML Tooltip in Elevated token with border-white/10 and rounded-[14px], no shadow */}
-      {activePoint && (
-        <div
-          className="absolute pointer-events-none transition-all duration-150 ease-out z-20"
-          style={{
-            left: `${Math.max(65, Math.min(dimensions.width - 65, activePoint.x))}px`,
-            top: `${Math.max(50, activePoint.y - 12)}px`,
-            transform: "translate(-50%, -100%)",
-          }}
-        >
-          <div className="bg-[var(--admin-elevated)] border border-white/10 rounded-[14px] px-3.5 py-2 text-center select-none min-w-[110px] animate-in fade-in zoom-in-95 duration-150">
-            <div className="text-[10px] font-semibold text-[var(--admin-text-muted)] tracking-wide uppercase">
-              {activePoint.dateStr}
-            </div>
-            <div className="text-[15px] font-extrabold text-white mt-0.5 leading-snug tracking-tight font-heading tabular-nums">
-              {metricMode === "revenue"
-                ? `₹${activePoint.value.toLocaleString("en-IN")}`
-                : `${activePoint.ordersCount} Orders`}
-            </div>
-            <div className="flex items-center justify-center gap-1.5 mt-0.5 text-[10px]">
-              <span className="text-[var(--admin-text-muted)] font-medium">
-                {metricMode === "revenue"
-                  ? `${activePoint.ordersCount} ${activePoint.ordersCount === 1 ? "order" : "orders"}`
-                  : `₹${activePoint.value.toLocaleString("en-IN")}`}
-              </span>
-              {activePoint.growthPct && (
-                <span
-                  className={`font-semibold ${
-                    activePoint.growthPct.startsWith("-") ? "text-[var(--admin-danger)]" : "text-[var(--admin-success)]"
-                  }`}
-                >
-                  {activePoint.growthPct}
-                </span>
-              )}
-            </div>
-            {/* Downward triangle caret */}
-            <div className="w-2.5 h-2.5 bg-[var(--admin-elevated)] border-r border-b border-white/10 rotate-45 mx-auto -mb-3.5 mt-1" />
-          </div>
-        </div>
-      )}
+        <Area
+          dataKey="value"
+          fill="#A855F7"
+          stroke="#A855F7"
+          strokeWidth={3.2}
+          fillOpacity={0.32}
+          curve={curveCatmullRom}
+        />
+        <XAxis />
+        <ChartTooltip
+          indicatorColor="rgba(255, 255, 255, 0.35)"
+          rows={(point) => [
+            {
+              color: "#A855F7",
+              label: metricMode === "revenue" ? "Revenue" : "Orders",
+              value:
+                metricMode === "revenue"
+                  ? `₹${Number(point.value).toLocaleString("en-IN")}`
+                  : `${point.value} Orders`,
+            },
+          ]}
+        />
+      </AreaChart>
     </div>
   );
 }
@@ -1429,7 +1232,6 @@ function OrderStatusDonut({
   returnedCount = 0,
   onSelectStatus,
   selectedStatus,
-  isSpinning = false,
 }: {
   deliveredCount: number;
   processingCount: number;
@@ -1438,7 +1240,6 @@ function OrderStatusDonut({
   returnedCount: number;
   onSelectStatus?: (status: string | null) => void;
   selectedStatus?: string | null;
-  isSpinning?: boolean;
 }) {
   const total =
     deliveredCount +
@@ -1449,9 +1250,9 @@ function OrderStatusDonut({
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // Modern Bklit UI color palette (emerald, amber, indigo, rose, slate)
-  const ringData: RingData[] = useMemo(
-    () => [
+  // Modern Bklit UI color palette - sorted strictly descending by volume (highest -> lowest)
+  const ringData: RingData[] = useMemo(() => {
+    const raw: RingData[] = [
       {
         label: "Delivered",
         value: deliveredCount,
@@ -1482,9 +1283,15 @@ function OrderStatusDonut({
         maxValue: total,
         color: "#94a3b8", // Slate 400
       },
-    ],
-    [deliveredCount, processingCount, shippedCount, cancelledCount, returnedCount, total]
-  );
+    ];
+
+    // Order-wise descending: strictly Highest count (athigam) -> Lowest count (kammi)
+    return [...raw].sort((a, b) => {
+      if (b.value !== a.value) return b.value - a.value;
+      const tieBreaker = ["Delivered", "Returned", "Processing", "Shipped", "Cancelled"];
+      return tieBreaker.indexOf(a.label) - tieBreaker.indexOf(b.label);
+    });
+  }, [deliveredCount, processingCount, shippedCount, cancelledCount, returnedCount, total]);
 
   const selectedIndex = useMemo(() => {
     if (!selectedStatus) return null;
@@ -1504,11 +1311,7 @@ function OrderStatusDonut({
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 w-full py-1">
       {/* Left: Ring Chart */}
-      <div
-        className={`shrink-0 relative flex items-center justify-center select-none transition-transform duration-700 ease-out ${
-          isSpinning ? "rotate-[360deg] scale-95" : ""
-        }`}
-      >
+      <div className="shrink-0 relative flex items-center justify-center select-none">
         <RingChart
           data={ringData}
           size={210}
@@ -1590,6 +1393,20 @@ function OrderStatusDonut({
   );
 }
 
+// ─── ADMIN PORTAL ROOT HELPER ────────────────────────────────────────────────
+
+function AdminPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || typeof document === "undefined") {
+    return null;
+  }
+  return createPortal(children, document.body);
+}
+
 // ─── ORDER ROW ACTIONS MENU ──────────────────────────────────────────────────
 
 function OrderRowMenu({
@@ -1606,119 +1423,158 @@ function OrderRowMenu({
   onCopyId?: (id: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const { triggerRef, menuRef, position } = useAnchoredMenu({
+    isOpen: open,
+    onClose: () => setOpen(false),
+    offset: 6,
+    viewportMargin: 8,
+    closeOnScroll: true,
+  });
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
+  const placement = position?.placement ?? "bottom";
+  const initialY = shouldReduceMotion ? 0 : (placement === "top" ? 4 : -4);
 
   return (
-    <div className="relative inline-block text-left" ref={ref}>
+    <div className="relative inline-block text-left">
       <button
+        ref={triggerRef}
         onClick={(e) => {
           e.stopPropagation();
           setOpen(!open);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            if (!open) setOpen(true);
+          }
         }}
         className="w-8 h-8 rounded-[14px] border border-white/10 bg-[var(--admin-surface-2)] hover:bg-white/[0.05]
           flex items-center justify-center text-[var(--admin-text-muted)] hover:text-white
           transition-colors cursor-pointer focus:outline-none"
         aria-label={`Actions for order ${order.id}`}
+        aria-haspopup="menu"
         aria-expanded={open}
       >
         <MoreHorizontal size={14} />
       </button>
 
-      {open && (
-        <div
-          className="absolute right-0 top-full mt-1.5 w-52 bg-[var(--admin-surface)] rounded-[14px] border
-            border-white/10 py-1.5 z-40 text-xs font-medium text-white animate-in fade-in duration-150"
-          role="menu"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={() => {
-              setOpen(false);
-              if (onInspectOrder) {
-                onInspectOrder(order);
-              }
-            }}
-            className="w-full text-left px-3.5 py-2 hover:bg-white/[0.05] flex items-center gap-2 font-semibold text-white cursor-pointer transition-colors"
-          >
-            <Eye size={13} className="text-[var(--admin-primary)]" /> Deep Inspect Order
-          </button>
-
-          {onDownloadSlip && (
-            <button
-              onClick={() => {
-                setOpen(false);
-                onDownloadSlip(order);
+      <AdminPortal>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={menuRef}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: initialY }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: initialY }}
+              transition={{ duration: shouldReduceMotion ? 0 : DUR_FAST, ease: EASE }}
+              style={{
+                position: "fixed",
+                top: position ? `${position.top}px` : "-9999px",
+                left: position ? `${position.left}px` : "-9999px",
+                maxHeight: position?.maxHeight ? `${position.maxHeight}px` : undefined,
+                visibility: position ? "visible" : "hidden",
+                zIndex: 9999,
               }}
-              className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer transition-colors"
+              className="w-56 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 p-1.5 text-xs font-medium text-white shadow-2xl shadow-black/60 admin-scroll overflow-y-auto overscroll-contain space-y-0.5"
+              role="menu"
+              aria-label={`Actions for order ${order.id}`}
+              onClick={(e) => e.stopPropagation()}
             >
-              <Download size={13} className="text-[var(--admin-text-muted)]" /> Download Invoice Slip
-            </button>
-          )}
+              <button
+                role="menuitem"
+                tabIndex={-1}
+                onClick={() => {
+                  setOpen(false);
+                  if (onInspectOrder) {
+                    onInspectOrder(order);
+                  }
+                }}
+                className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-white/10 focus:bg-white/10 focus:outline-none flex items-center gap-2.5 font-semibold text-white cursor-pointer transition-colors"
+              >
+                <Eye size={13} className="text-[var(--admin-primary)]" /> Deep Inspect Order
+              </button>
 
-          {onCopyId && (
-            <button
-              onClick={() => {
-                setOpen(false);
-                onCopyId(order.id);
-              }}
-              className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer transition-colors"
-            >
-              <FileSpreadsheet size={13} className="text-[var(--admin-text-muted)]" /> Copy Order ID
-            </button>
-          )}
+              {onDownloadSlip && (
+                <button
+                  role="menuitem"
+                  tabIndex={-1}
+                  onClick={() => {
+                    setOpen(false);
+                    onDownloadSlip(order);
+                  }}
+                  className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-white/10 focus:bg-white/10 focus:outline-none flex items-center gap-2.5 text-[var(--admin-text-muted)] hover:text-white cursor-pointer transition-colors"
+                >
+                  <Download size={13} className="text-[var(--admin-text-muted)]" /> Download Invoice Slip
+                </button>
+              )}
 
-          <div className="my-1 border-t border-white/5" />
-          <div className="px-3 py-1 text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">
-            Quick Status Transition
-          </div>
-          <button
-            onClick={() => {
-              onUpdateStatus(order.id, "Delivered");
-              setOpen(false);
-            }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#00F59B] cursor-pointer transition-colors"
-          >
-            <CheckCircle size={13} /> Mark Delivered
-          </button>
-          <button
-            onClick={() => {
-              onUpdateStatus(order.id, "Processing");
-              setOpen(false);
-            }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#F59E0B] cursor-pointer transition-colors"
-          >
-            <Clock size={13} /> Mark Processing
-          </button>
-          <button
-            onClick={() => {
-              onUpdateStatus(order.id, "Shipped");
-              setOpen(false);
-            }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#7C3AED] cursor-pointer transition-colors"
-          >
-            <RotateCcw size={13} /> Mark Shipped
-          </button>
-          <button
-            onClick={() => {
-              onUpdateStatus(order.id, "Cancelled");
-              setOpen(false);
-            }}
-            className="w-full text-left px-3.5 py-1.5 hover:bg-white/[0.05] flex items-center gap-2 text-[#FF4B55] cursor-pointer transition-colors"
-          >
-            <AlertTriangle size={13} /> Cancel Order
-          </button>
-        </div>
-      )}
+              {onCopyId && (
+                <button
+                  role="menuitem"
+                  tabIndex={-1}
+                  onClick={() => {
+                    setOpen(false);
+                    onCopyId(order.id);
+                  }}
+                  className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-white/10 focus:bg-white/10 focus:outline-none flex items-center gap-2.5 text-[var(--admin-text-muted)] hover:text-white cursor-pointer transition-colors"
+                >
+                  <FileSpreadsheet size={13} className="text-[var(--admin-text-muted)]" /> Copy Order ID
+                </button>
+              )}
+
+              <div className="my-1 border-t border-white/5" role="separator" />
+              <div className="px-2.5 py-1 text-[10px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider select-none">
+                Quick Status Transition
+              </div>
+              <button
+                role="menuitem"
+                tabIndex={-1}
+                onClick={() => {
+                  onUpdateStatus(order.id, "Delivered");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-[#00F59B]/10 focus:bg-[#00F59B]/10 focus:outline-none flex items-center gap-2.5 text-[#00F59B] cursor-pointer transition-colors"
+              >
+                <CheckCircle size={13} /> Mark Delivered
+              </button>
+              <button
+                role="menuitem"
+                tabIndex={-1}
+                onClick={() => {
+                  onUpdateStatus(order.id, "Processing");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-[#F59E0B]/10 focus:bg-[#F59E0B]/10 focus:outline-none flex items-center gap-2.5 text-[#F59E0B] cursor-pointer transition-colors"
+              >
+                <Clock size={13} /> Mark Processing
+              </button>
+              <button
+                role="menuitem"
+                tabIndex={-1}
+                onClick={() => {
+                  onUpdateStatus(order.id, "Shipped");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-[#7C3AED]/15 focus:bg-[#7C3AED]/15 focus:outline-none flex items-center gap-2.5 text-[#7C3AED] cursor-pointer transition-colors"
+              >
+                <RotateCcw size={13} /> Mark Shipped
+              </button>
+              <button
+                role="menuitem"
+                tabIndex={-1}
+                onClick={() => {
+                  onUpdateStatus(order.id, "Cancelled");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-2.5 py-1.5 rounded-[8px] hover:bg-[#FF4B55]/10 focus:bg-[#FF4B55]/10 focus:outline-none flex items-center gap-2.5 text-[#FF4B55] cursor-pointer transition-colors"
+              >
+                <AlertTriangle size={13} /> Cancel Order
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </AdminPortal>
     </div>
   );
 }
@@ -2523,6 +2379,51 @@ function ProductPerformanceModal({
     )
   );
 
+  // Dynamically scale/derive variant performance so it 100% matches active hero card volume
+  const activeVariants = useMemo(() => {
+    if (!product.variants || product.variants.length === 0) {
+      return [
+        {
+          size: "Standard",
+          sold: product.soldCount,
+          revenue: product.revenue,
+          stock: product.stock,
+          isBestseller: true,
+        },
+      ];
+    }
+
+    if (product.variants.length === 1) {
+      return [
+        {
+          ...product.variants[0],
+          sold: product.soldCount,
+          revenue: product.revenue,
+          stock: product.stock,
+        },
+      ];
+    }
+
+    const baseSum = product.variants.reduce((acc, v) => acc + (v.sold || 1), 0) || 1;
+    let runningSold = 0;
+    let runningRev = 0;
+
+    return product.variants.map((v, idx) => {
+      const isLast = idx === product.variants.length - 1;
+      const weight = (v.sold || 1) / baseSum;
+      const vSold = isLast ? Math.max(0, product.soldCount - runningSold) : Math.round(product.soldCount * weight);
+      const vRev = isLast ? Math.max(0, product.revenue - runningRev) : Math.round(product.revenue * weight);
+      runningSold += vSold;
+      runningRev += vRev;
+
+      return {
+        ...v,
+        sold: vSold,
+        revenue: vRev,
+      };
+    });
+  }, [product]);
+
   // Calculated live gross margin based on priceInput
   const simulatedMargin = priceInput > 0
     ? Math.round(((priceInput - product.cogs) / priceInput) * 1000) / 10
@@ -2561,165 +2462,161 @@ function ProductPerformanceModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[var(--admin-elevated)] rounded-[28px] border border-white/10 max-w-3xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
+        className="bg-[var(--admin-elevated)] rounded-[28px] border border-white/10 max-w-3xl w-full overflow-hidden flex flex-col my-auto max-h-[88vh] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-[var(--admin-surface)] border-b border-white/5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 min-w-0">
-            <div className="w-14 h-14 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 overflow-hidden shrink-0 relative">
+        <div className="px-5 py-4 sm:px-6 sm:py-4 bg-[var(--admin-surface)] border-b border-white/5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
+            <div className="w-12 h-12 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 overflow-hidden shrink-0 relative shadow-sm">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
-                width={56}
-                height={56}
+                width={48}
+                height={48}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <span className="text-[11px] font-black uppercase tracking-wider bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30 px-2.5 py-0.5 rounded-full">
-                  #{product.rank} Best Seller
-                </span>
-                <span className="text-[11px] font-medium text-[var(--admin-text-muted)] bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">
-                  {product.sku}
-                </span>
-                <span className="text-[11px] font-semibold text-white/90 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">
-                  {product.category}
-                </span>
-                {product.stock <= 10 ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--admin-danger)] bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 px-2.5 py-0.5 rounded-full">
-                    <AlertTriangle size={12} strokeWidth={2.4} className="text-[var(--admin-danger)] shrink-0" />
-                    Low Stock ({product.stock} left)
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--admin-success)] bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 px-2.5 py-0.5 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-success)] shrink-0" />
-                    {product.stock} in warehouse
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-1 min-w-0">
+                <h2 className="text-base sm:text-lg font-heading font-bold text-white leading-tight break-words">
+                  {product.name}
+                </h2>
+                {product.rank && (
+                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider bg-amber-400/10 text-amber-300 border border-amber-400/25 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <Star size={10} className="fill-amber-400 text-amber-400" />
+                    <span>#{product.rank} Bestseller</span>
                   </span>
                 )}
               </div>
-              <h2 className="text-lg sm:text-xl font-heading font-bold text-white truncate">
-                {product.name}
-              </h2>
+              <div className="flex items-center gap-2 text-xs text-[var(--admin-text-muted)] flex-wrap">
+                <span className="font-medium text-white/80">{product.category}</span>
+                <span className="text-white/20">•</span>
+                <span className="font-mono text-[11px]">SKU: {product.sku}</span>
+                <span className="text-white/20 hidden sm:inline">•</span>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-white/70">
+                  <Star size={11} className="fill-amber-400 text-amber-400" />
+                  <strong className="text-white">{Number(product.rating).toFixed(1)}</strong> ({product.reviewCount} reviews)
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
-              onClick={onClose}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold transition-all cursor-pointer"
-              title="Return to Leaderboard (Esc)"
+              type="button"
+              onClick={handleDownloadCSV}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-xs font-medium transition-all cursor-pointer"
+              title="Export product performance data to CSV"
             >
-              <ArrowLeft size={13} />
-              <span className="hidden sm:inline">Back</span>
+              <Download size={13} />
+              <span className="hidden md:inline">Export CSV</span>
             </button>
 
             <a
               href={`/product/${liveStoreSlug || product.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-xs font-medium transition-all cursor-pointer"
               title="Open customer view in store"
             >
-              <span>Live Store</span>
               <ExternalLink size={13} />
+              <span className="hidden md:inline">Live Store</span>
             </a>
 
             <button
-              onClick={handleDownloadCSV}
-              className="p-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
-              title="Export CSV Report"
-            >
-              <FileSpreadsheet size={16} />
-            </button>
-
-            <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-full bg-white/[0.04] hover:bg-white/10 border border-white/10 text-white/70 hover:text-white flex items-center justify-center transition-colors cursor-pointer ml-1"
               title="Close (Esc)"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
         </div>
 
         {/* 4-Card Hero Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-5 sm:p-6 bg-[var(--admin-surface-2)] border-b border-white/5">
-          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
-            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3.5 sm:px-6 sm:py-3.5 bg-[var(--admin-surface-2)] border-b border-white/5">
+          {/* Revenue */}
+          <div className="bg-[var(--admin-surface)] p-3 rounded-[14px] border border-white/5 flex flex-col justify-between min-h-[86px]">
+            <div className="flex items-center justify-between text-[10.5px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">
               <span>Gross Revenue</span>
-              <IndianRupee size={13} className="text-[var(--admin-warning)]" />
+              <IndianRupee size={13} className="text-white/35" />
             </div>
-            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums tracking-tight">
               ₹{product.revenue.toLocaleString("en-IN")}
             </div>
-            <div className="text-[11px] text-[var(--admin-success)] font-semibold mt-0.5 flex items-center gap-0.5">
+            <div className="text-[11px] text-[#10B981] font-semibold flex items-center gap-1">
               <TrendingUp size={11} />
               <span>+{product.growth}% vs prev</span>
             </div>
           </div>
 
-          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
-            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
+          {/* Units Sold */}
+          <div className="bg-[var(--admin-surface)] p-3 rounded-[14px] border border-white/5 flex flex-col justify-between min-h-[86px]">
+            <div className="flex items-center justify-between text-[10.5px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">
               <span>Units Sold</span>
-              <Package size={13} className="text-[var(--admin-info)]" />
+              <Package size={13} className="text-white/35" />
             </div>
-            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums tracking-tight">
               {product.soldCount} units
             </div>
-            <div className="text-[11px] text-[var(--admin-text-muted)] font-normal mt-0.5">
-              ~{(product.soldCount / 30).toFixed(1)} units/day
+            <div className="text-[11px] text-[var(--admin-text-muted)] font-medium">
+              ~{(product.soldCount / 30).toFixed(1)} units / day
             </div>
           </div>
 
-          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
-            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
+          {/* Unit Margin */}
+          <div className="bg-[var(--admin-surface)] p-3 rounded-[14px] border border-white/5 flex flex-col justify-between min-h-[86px]">
+            <div className="flex items-center justify-between text-[10.5px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">
               <span>Unit Margin</span>
-              <Percent size={13} className="text-[var(--admin-success)]" />
+              <Percent size={13} className="text-white/35" />
             </div>
-            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums tracking-tight">
               {product.marginPercent}%
             </div>
-            <div className="text-[11px] text-[var(--admin-text-muted)] font-normal mt-0.5">
-              Cost: ₹{product.cogs} • Price: ₹{product.unitPrice}
+            <div className="text-[11px] text-[var(--admin-text-muted)] font-medium leading-none">
+              ₹{Math.max(0, product.unitPrice - product.cogs)} profit / unit
             </div>
           </div>
 
-          <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
-            <div className="flex items-center justify-between text-[var(--admin-text-muted)] text-xs font-medium mb-1">
+          {/* Warehouse Stock */}
+          <div className="bg-[var(--admin-surface)] p-3 rounded-[14px] border border-white/5 flex flex-col justify-between min-h-[86px]">
+            <div className="flex items-center justify-between text-[10.5px] font-bold text-[var(--admin-text-muted)] uppercase tracking-wider">
               <span>Warehouse Stock</span>
-              <Boxes size={13} className="text-[var(--admin-primary)]" />
+              <Boxes size={13} className="text-white/35" />
             </div>
-            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums">
+            <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums tracking-tight">
               {product.stock} units
             </div>
-            <div className="text-[11px] text-[var(--admin-text-muted)] font-normal mt-0.5">
-              ~{Math.max(4, Math.round(product.stock / 1.4))} days supply
+            <div className="text-[11px] font-medium flex items-center gap-1.5">
+              <span className={`w-1.5 h-1.5 rounded-full ${product.stock <= 10 ? "bg-amber-400" : "bg-emerald-400"}`} />
+              <span className={product.stock <= 10 ? "text-amber-400 font-semibold" : "text-[var(--admin-text-muted)]"}>
+                {product.stock <= 10 ? `Low (${product.stock} left)` : "Healthy inventory"}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-white/5 px-6 bg-[var(--admin-surface)] gap-2">
+        {/* Tab Navigation - Clean Segmented Pill Bar */}
+        <div className="flex items-center gap-1.5 px-5 sm:px-6 py-2.5 bg-[var(--admin-surface)] border-b border-white/5">
           <button
             onClick={() => setActiveTab("variants")}
-            className={`py-3 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`py-1.5 px-3 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "variants"
-                ? "border-[var(--admin-primary)] text-white"
-                : "border-transparent text-[var(--admin-text-muted)] hover:text-white"
+                ? "bg-white/10 text-white shadow-xs border border-white/10"
+                : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent"
             }`}
           >
             <Layers size={13} />
-            <span>Size &amp; Variant Breakdown</span>
+            <span>Variants &amp; Sizes</span>
           </button>
 
           <button
             onClick={() => setActiveTab("orders")}
-            className={`py-3 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`py-1.5 px-3 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "orders"
-                ? "border-[var(--admin-primary)] text-white"
-                : "border-transparent text-[var(--admin-text-muted)] hover:text-white"
+                ? "bg-white/10 text-white shadow-xs border border-white/10"
+                : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent"
             }`}
           >
             <ShoppingCart size={13} />
@@ -2728,169 +2625,160 @@ function ProductPerformanceModal({
 
           <button
             onClick={() => setActiveTab("actions")}
-            className={`py-3 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`py-1.5 px-3 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === "actions"
-                ? "border-[var(--admin-primary)] text-white"
-                : "border-transparent text-[var(--admin-text-muted)] hover:text-white"
+                ? "bg-white/10 text-white shadow-xs border border-white/10"
+                : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent"
             }`}
           >
             <SlidersHorizontal size={13} />
-            <span>Quick Restock &amp; Pricing</span>
+            <span>Restock &amp; Pricing</span>
           </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="p-5 sm:p-6 overflow-y-auto admin-scroll flex-1 min-h-0 bg-[var(--admin-surface-2)] space-y-4 overscroll-contain">
+        {/* Tab Content - Clean Natural Hugging (Matches Image 1, Zero Artificial Fillers) */}
+        <div className="p-4 sm:p-5 overflow-y-auto admin-scroll bg-[var(--admin-surface-2)] space-y-3.5 overscroll-contain max-h-[380px]">
           {activeTab === "variants" && (
-            <div className="space-y-4">
-              <div className="border border-white/5 rounded-[14px] overflow-hidden bg-[var(--admin-surface)]">
+            <div className="space-y-3">
+              <div className="border border-white/5 rounded-[16px] overflow-hidden bg-[var(--admin-surface)] shadow-xs">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] font-semibold border-b border-white/5">
+                  <thead className="bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] font-semibold border-b border-white/5 select-none">
                     <tr>
-                      <th className="py-2.5 px-4">Variant / Size</th>
-                      <th className="py-2.5 px-4 text-center">Share</th>
-                      <th className="py-2.5 px-4 text-center">Units Sold</th>
-                      <th className="py-2.5 px-4 text-right">Revenue</th>
-                      <th className="py-2.5 px-4 text-right">Available Stock</th>
+                      <th className="py-2.5 px-4 text-left font-semibold">Variant / Size</th>
+                      <th className="py-2.5 px-4 text-right font-semibold">Share of Sales</th>
+                      <th className="py-2.5 px-4 text-right font-semibold">Units Sold</th>
+                      <th className="py-2.5 px-4 text-right font-semibold">Revenue</th>
+                      <th className="py-2.5 px-4 text-right font-semibold">Available Stock</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {product.variants.map((v) => {
-                      const sharePct = product.soldCount > 0 ? Math.round((v.sold / product.soldCount) * 100) : 0;
-                      return (
-                        <tr key={v.size} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 px-4 font-semibold text-white flex items-center gap-2">
-                            <span>{v.size}</span>
-                            {v.isBestseller && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--admin-warning)] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 px-2 py-0.5 rounded-full">
-                                <Sparkles size={10} className="text-[var(--admin-warning)]" />
-                                <span>Bestseller Size</span>
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <div className="flex items-center justify-center gap-1.5">
-                              <div className="w-16 bg-white/5 h-1.5 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-[var(--admin-warning)] rounded-full"
-                                  style={{ width: `${sharePct}%` }}
-                                />
+                    {(() => {
+                      const totalVariantUnits = activeVariants.reduce((acc, curr) => acc + curr.sold, 0);
+                      return activeVariants.map((v) => {
+                        const sharePct = totalVariantUnits > 0 ? Math.round((v.sold / totalVariantUnits) * 100) : 0;
+                        const isLow = v.stock <= 3;
+                        const isMedium = v.stock <= 6;
+                        return (
+                          <tr key={v.size} className="hover:bg-white/[0.02] transition-colors">
+                            <td className="py-3 px-4 font-semibold text-white">
+                              <div className="flex items-center gap-2">
+                                <span>{v.size}</span>
+                                {v.isBestseller && (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 border border-amber-400/25 px-2 py-0.5 rounded-full">
+                                    <Star size={9} className="fill-amber-400 text-amber-400" />
+                                    <span>Bestseller</span>
+                                  </span>
+                                )}
                               </div>
+                            </td>
+                            <td className="py-3 px-4 text-right">
                               <span className="text-[11px] text-[var(--admin-text-muted)] font-medium tabular-nums">{sharePct}%</span>
-                            </div>
-                          </td>
-                          <td className="py-3 px-4 text-center font-bold text-white tabular-nums">
-                            {v.sold}
-                          </td>
-                          <td className="py-3 px-4 text-right font-bold text-white tabular-nums">
-                            ₹{v.revenue.toLocaleString("en-IN")}
-                          </td>
-                          <td className="py-3 px-4 text-right">
-                            <span
-                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                                v.stock <= 4
-                                  ? "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30"
-                                  : v.stock <= 8
-                                  ? "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30"
-                                  : "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border border-[var(--admin-success)]/30"
-                              }`}
-                            >
-                              {v.stock} in stock
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                            <td className="py-3 px-4 text-right font-mono font-bold text-white tabular-nums">
+                              {v.sold}
+                            </td>
+                            <td className="py-3 px-4 text-right font-bold text-white tabular-nums">
+                              ₹{v.revenue.toLocaleString("en-IN")}
+                            </td>
+                            <td className="py-3 px-4 text-right">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-medium tabular-nums">
+                                <span className={`w-1.5 h-1.5 rounded-full ${isLow ? "bg-red-400" : isMedium ? "bg-amber-400" : "bg-emerald-400"}`} />
+                                <span className={isLow ? "text-red-300 font-semibold" : "text-white/80"}>
+                                  {v.stock} in stock
+                                </span>
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })()}
                   </tbody>
                 </table>
               </div>
 
-              {/* Quality & Return benchmark pill */}
-              <div className="p-4 rounded-[14px] bg-[var(--admin-surface)] border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              {/* Clean Operational Summary Bar - 100% Mathematically Unified */}
+              <div className="px-4 py-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-[10px] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 text-[var(--admin-warning)] flex items-center justify-center shrink-0">
-                    <ShieldCheck size={18} />
-                  </div>
-                  <div>
-                    <div className="font-heading font-bold text-white">
-                      Exceptional Retail Quality Rating
-                    </div>
-                    <div className="text-[var(--admin-text-muted)] text-[11px] mt-0.5">
-                      Return Rate: <strong className="text-white">{product.returnRate}%</strong> (Standard apparel baseline: 8.5%) • Verified Rating: <strong className="text-white">★ {product.rating} / 5.0</strong> ({product.reviewCount} customer reviews)
-                    </div>
-                  </div>
+                  <span>Active Variants: <strong className="text-white font-semibold">{activeVariants.length}</strong></span>
+                  <span className="text-white/20">•</span>
+                  <span>Warehouse Stock: <strong className="text-white font-semibold">{product.stock} units</strong></span>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleDownloadCSV}
-                  className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white font-semibold text-xs transition-all cursor-pointer shrink-0"
-                >
-                  Export Size Metrics (CSV)
-                </button>
+                <div>
+                  Total Units Sold: <strong className="text-white tabular-nums font-semibold">{product.soldCount}</strong>
+                </div>
               </div>
             </div>
           )}
 
           {activeTab === "orders" && (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {matchingOrders.length > 0 ? (
-                matchingOrders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="p-3.5 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] hover:border-white/10 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-white">
-                          {order.id}
-                        </span>
-                        <span className="text-[11px] text-[var(--admin-text-muted)]">
-                          • {order.date}
-                        </span>
-                        <span
-                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                            order.status === "Delivered"
-                              ? "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border border-[var(--admin-success)]/30"
-                              : order.status === "Shipped"
-                              ? "bg-[var(--admin-info)]/15 text-[var(--admin-info)] border border-[var(--admin-info)]/30"
-                              : "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30"
-                          }`}
-                        >
-                          {order.status}
-                        </span>
+                matchingOrders.map((order) => {
+                  const customerCity = order.shippingAddress?.address?.split(",")?.slice(-2)?.[0]?.trim() || "Chennai";
+                  return (
+                    <div
+                      key={order.id}
+                      className="p-3 px-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] hover:border-white/10 transition-colors flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-white">
+                              {order.id}
+                            </span>
+                            <span className="text-[11px] text-[var(--admin-text-muted)]">
+                              {order.date}
+                            </span>
+                            <span
+                              className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full ${
+                                order.status === "Delivered"
+                                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
+                                  : order.status === "Shipped"
+                                  ? "bg-sky-500/15 text-sky-400 border border-sky-500/25"
+                                  : order.status === "Cancelled"
+                                  ? "bg-amber-500/15 text-amber-400 border border-amber-500/25"
+                                  : "bg-white/10 text-white/80 border border-white/15"
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 truncate">
+                            Customer: <strong className="text-white/90 font-medium">{order.shippingAddress?.name || "Verified Customer"}</strong> ({customerCity})
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-[var(--admin-text-muted)] mt-1">
-                        Customer: <strong className="text-white">{order.shippingAddress?.name || "Verified Buyer"}</strong> • {order.shippingAddress?.address || "Chennai Hub"}
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-3 self-end sm:self-center">
-                      <div className="text-right">
-                        <span className="text-xs font-heading font-bold text-white block tabular-nums">
-                          ₹{order.total.toLocaleString("en-IN")}
-                        </span>
-                        <span className="text-[10px] text-[var(--admin-text-muted)]">
-                          {order.itemsCount} item{order.itemsCount === 1 ? "" : "s"}
-                        </span>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div className="text-right">
+                          <span className="font-heading font-bold text-white tabular-nums block">
+                            ₹{order.total.toLocaleString("en-IN")}
+                          </span>
+                          <span className="text-[10px] text-[var(--admin-text-muted)]">
+                            {order.itemsCount} {order.itemsCount === 1 ? "item" : "items"}
+                          </span>
+                        </div>
+                        <Link
+                          href={`/orders/${order.id}`}
+                          target="_blank"
+                          className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/10 border border-white/10 text-white text-xs font-semibold transition-colors"
+                        >
+                          Inspect
+                        </Link>
                       </div>
-                      <Link
-                        href={`/orders/${order.id}`}
-                        target="_blank"
-                        className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold transition-colors"
-                      >
-                        Inspect
-                      </Link>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
-                <div className="py-8 text-center bg-[var(--admin-surface)] rounded-[14px] border border-dashed border-white/10">
-                  <Package size={24} className="mx-auto text-[var(--admin-text-muted)] mb-2" />
+                <div className="py-8 px-6 text-center bg-[var(--admin-surface)] rounded-[18px] border border-white/5 flex flex-col items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center mb-2.5 text-[var(--admin-text-muted)]">
+                    <Package size={18} />
+                  </div>
                   <p className="text-xs font-semibold text-white">
-                    No active demo order matching {product.name}
+                    No active orders in current live batch
                   </p>
-                  <p className="text-[11px] text-[var(--admin-text-muted)] max-w-sm mx-auto mt-0.5">
-                    Orders created in the storefront will automatically link and populate here in real-time.
+                  <p className="text-[11px] text-[var(--admin-text-muted)] max-w-sm mx-auto mt-1 leading-relaxed">
+                    Lifetime fulfilled volume: <strong className="text-white">{product.soldCount} units</strong>. Storefront checkout orders link here automatically in real-time.
                   </p>
                 </div>
               )}
@@ -2898,157 +2786,139 @@ function ProductPerformanceModal({
           )}
 
           {activeTab === "actions" && (
-            <div className="space-y-5">
-              {/* Quick Restock Tool */}
-              <div className="p-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
-                    <Boxes size={14} className="text-[var(--admin-warning)]" />
-                    <span>Quick Warehouse Restock</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {/* Card 1: Warehouse Restock */}
+              <div className="p-4 sm:p-5 rounded-[18px] border border-white/5 bg-[var(--admin-surface)] flex flex-col justify-between space-y-3.5">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
+                      <Boxes size={14} className="text-[#8B5CF6]" />
+                      <span>Warehouse Restock</span>
+                    </div>
+                    <span className="text-[10.5px] text-[var(--admin-text-muted)]">
+                      Current: <strong className="text-white font-semibold">{product.stock} units</strong>
+                    </span>
                   </div>
-                  <span className="text-[11px] text-[var(--admin-text-muted)]">
-                    Current Inventory: <strong className="text-white">{product.stock} units</strong>
-                  </span>
+                  <p className="text-[11px] text-[var(--admin-text-muted)]">
+                    Adjust on-hand inventory levels for this SKU.
+                  </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] px-3 py-1.5">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2 bg-[var(--admin-surface-2)] border border-white/10 rounded-xl px-3.5 py-2">
                     <span className="text-xs text-[var(--admin-text-muted)] font-medium">New Stock:</span>
                     <input
                       type="number"
                       min={0}
                       value={stockInput}
                       onChange={(e) => setStockInput(Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-16 text-xs font-bold text-white bg-transparent outline-none tabular-nums"
+                      className="w-24 text-right text-xs font-bold text-white bg-transparent outline-none tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    {[10, 25, 50, 100].map((inc) => (
+                      <button
+                        key={inc}
+                        type="button"
+                        onClick={() => setStockInput((s) => s + inc)}
+                        className="flex-1 py-1 rounded-lg bg-[var(--admin-surface-2)] hover:bg-white/10 border border-white/5 text-[11px] font-semibold text-white/90 cursor-pointer transition-colors text-center"
+                      >
+                        +{inc}
+                      </button>
+                    ))}
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => setStockInput((s) => s + 10)}
-                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
-                  >
-                    +10
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStockInput((s) => s + 25)}
-                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
-                  >
-                    +25
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStockInput((s) => s + 50)}
-                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
-                  >
-                    +50
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStockInput((s) => s + 100)}
-                    className="px-3 py-1.5 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-xs font-semibold text-white cursor-pointer transition-all"
-                  >
-                    +100
-                  </button>
-
-                  <button
-                    type="button"
                     onClick={handleStockSave}
-                    className="ml-auto px-4 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
+                    className="w-full py-2.5 rounded-xl bg-white/[0.10] hover:bg-white/[0.16] border border-white/15 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-[0.99] flex items-center justify-center gap-1.5"
                   >
                     Save Stock Update
                   </button>
                 </div>
               </div>
 
-              {/* Price & Margin Adjustment */}
-              <div className="p-4 rounded-[14px] border border-white/5 bg-[var(--admin-surface)] space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
-                    <Tag size={14} className="text-[var(--admin-warning)]" />
-                    <span>Price &amp; Margin Optimizer</span>
+              {/* Card 2: Price & Margin */}
+              <div className="p-4 sm:p-5 rounded-[18px] border border-white/5 bg-[var(--admin-surface)] flex flex-col justify-between space-y-3.5">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="font-heading font-bold text-xs text-white flex items-center gap-1.5">
+                      <Tag size={14} className="text-[#8B5CF6]" />
+                      <span>Price &amp; Margin Optimizer</span>
+                    </div>
+                    <span className="text-[10.5px] text-[var(--admin-text-muted)]">
+                      Unit Cost: <strong className="text-white font-semibold">₹{product.cogs}</strong>
+                    </span>
                   </div>
-                  <span className="text-[11px] text-[var(--admin-text-muted)]">
-                    Unit Cost: <strong className="text-white">₹{product.cogs}</strong>
-                  </span>
+                  <p className="text-[11px] text-[var(--admin-text-muted)]">
+                    Tune retail price and simulate profit margins live.
+                  </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-1.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] px-3 py-1.5">
-                    <span className="text-xs text-[var(--admin-text-muted)] font-medium">₹</span>
-                    <input
-                      type="number"
-                      min={product.cogs}
-                      step={50}
-                      value={priceInput}
-                      onChange={(e) => setPriceInput(Math.max(1, parseInt(e.target.value) || 0))}
-                      className="w-20 text-xs font-bold text-white bg-transparent outline-none tabular-nums"
-                    />
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2 bg-[var(--admin-surface-2)] border border-white/10 rounded-xl px-3.5 py-2">
+                    <span className="text-xs text-[var(--admin-text-muted)] font-medium">Retail Price:</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-white/60">₹</span>
+                      <input
+                        type="number"
+                        min={product.cogs}
+                        step={50}
+                        value={priceInput}
+                        onChange={(e) => setPriceInput(Math.max(1, parseInt(e.target.value) || 0))}
+                        className="w-24 text-right text-xs font-bold text-white bg-transparent outline-none tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
                   </div>
 
-                  <div className="text-xs text-[var(--admin-text-muted)]">
-                    Gross Margin:{" "}
-                    <strong
-                      className={`font-bold tabular-nums ${
-                        simulatedMargin >= 50
-                          ? "text-[var(--admin-success)]"
-                          : simulatedMargin >= 30
-                          ? "text-[var(--admin-warning)]"
-                          : "text-[var(--admin-danger)]"
-                      }`}
-                    >
-                      {simulatedMargin}%
-                    </strong>
-                    <span className="text-[var(--admin-text-muted)] text-[11px] ml-1">
-                      (Profit: ₹{Math.max(0, priceInput - product.cogs)}/unit)
+                  <div className="px-3 py-1.5 rounded-xl bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-[11px]">
+                    <span className="text-[var(--admin-text-muted)]">Gross Margin:</span>
+                    <span className="font-bold tabular-nums text-white">
+                      <span
+                        className={
+                          simulatedMargin >= 50
+                            ? "text-emerald-400"
+                            : simulatedMargin >= 30
+                            ? "text-amber-400"
+                            : "text-rose-400"
+                        }
+                      >
+                        {simulatedMargin}%
+                      </span>
+                      <span className="text-[var(--admin-text-muted)] font-normal ml-1">
+                        (₹{Math.max(0, priceInput - product.cogs)} profit)
+                      </span>
                     </span>
                   </div>
 
                   <button
                     type="button"
                     onClick={handlePriceSave}
-                    className="ml-auto px-4 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
+                    className="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs border border-violet-400/30 active:scale-[0.99] flex items-center justify-center gap-1.5"
                   >
                     Apply New Price
                   </button>
                 </div>
               </div>
-
-              {/* Download Report button */}
-              <div className="flex items-center justify-between p-4 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
-                <div>
-                  <div className="text-xs font-heading font-bold text-white">
-                    Export Comprehensive Product Audit
-                  </div>
-                  <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
-                    Download full sales history, variant distributions, and inventory margins in CSV format.
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleDownloadCSV}
-                  className="px-4 py-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <Download size={13} />
-                  <span>Download .CSV</span>
-                </button>
-              </div>
             </div>
           )}
         </div>
 
+
         {/* Footer */}
-        <div className="p-4 sm:p-5 bg-[var(--admin-surface)] border-t border-white/5 flex items-center justify-between text-xs">
-          <span className="text-[var(--admin-text-muted)]">
-            Last updated: Today, 04:00 PM • VEYRO Analytics Engine
-          </span>
+        <div className="px-5 py-2.5 sm:px-6 sm:py-2.5 bg-[var(--admin-surface)] border-t border-white/5 flex items-center justify-between text-xs">
+          <div className="text-[var(--admin-text-muted)] text-[11px] flex items-center gap-2">
+            <span className="font-mono text-white/70">SKU: {product.sku}</span>
+            <span className="text-white/20">•</span>
+            <span>{product.category}</span>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white font-bold transition-all cursor-pointer"
+            className="px-3.5 py-1 rounded-xl bg-white/[0.06] hover:bg-white/10 text-white font-medium text-xs border border-white/10 transition-colors cursor-pointer"
           >
-            Done
+            Close
           </button>
         </div>
       </motion.div>
@@ -3143,42 +3013,37 @@ function AllTopProductsModal({
         }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[var(--admin-elevated)] rounded-[28px] border border-white/10 max-w-5xl w-full overflow-hidden flex flex-col my-auto max-h-[92vh]"
+        className="bg-[var(--admin-elevated)] rounded-[28px] border border-white/10 max-w-6xl xl:max-w-7xl w-full overflow-hidden flex flex-col my-auto h-[88vh] min-h-[580px] max-h-[880px] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-5 sm:p-6 bg-[var(--admin-surface)] border-b border-white/5 flex items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-[14px] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 text-[var(--admin-warning)] flex items-center justify-center shrink-0">
-              <Award size={20} />
-            </div>
+            <AdminIconBadge variant="section" icon={Sparkles} />
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl font-heading font-bold text-white leading-tight">
-                  Top Products Leaderboard
-                </h2>
-                <span className="text-[11px] font-bold text-[var(--admin-warning)] bg-[var(--admin-warning)]/15 border border-[var(--admin-warning)]/30 px-2.5 py-0.5 rounded-full capitalize">
-                  {timeframe}
-                </span>
-              </div>
-              <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-white leading-tight tracking-tight">
+                Top Products Leaderboard
+              </h2>
+              <p className="text-xs sm:text-[13px] text-[var(--admin-text-muted)] mt-1">
                 Complete retail performance, units moved, gross margin analysis, and stock health
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
+              type="button"
               onClick={onExportAllCSV}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-all cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 rounded-[12px] bg-white/[0.05] hover:bg-white/10 text-white border border-white/10 text-xs sm:text-[13px] font-semibold transition-colors cursor-pointer"
             >
-              <FileSpreadsheet size={14} />
+              <FileSpreadsheet size={15} />
               <span>Export CSV</span>
             </button>
 
             <button
+              type="button"
               onClick={onClose}
-              className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
+              className="w-9 h-9 rounded-[12px] hover:bg-white/10 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
               aria-label="Close modal"
             >
               <X size={18} />
@@ -3189,14 +3054,14 @@ function AllTopProductsModal({
         {/* Filters Bar */}
         <div className="p-4 sm:p-5 border-b border-white/5 bg-[var(--admin-surface-2)] flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
           {/* Search */}
-          <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
+          <div className="relative flex-1 min-w-[280px] max-w-md">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search product name, SKU, category..."
-              className="w-full pl-9 pr-3 py-2 bg-[var(--admin-surface)] rounded-[14px] border border-white/10 text-xs text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)]"
+              className="w-full h-10 pl-10 pr-3 bg-[var(--admin-surface)] rounded-[12px] border border-white/10 text-xs sm:text-sm text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] transition-colors"
             />
           </div>
 
@@ -3207,10 +3072,10 @@ function AllTopProductsModal({
                 key={cat}
                 type="button"
                 onClick={() => setCategoryFilter(cat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                className={`h-9 px-4 rounded-[10px] text-xs sm:text-[13px] transition-colors cursor-pointer flex items-center justify-center ${
                   categoryFilter === cat
-                    ? "bg-[var(--admin-primary)] text-white"
-                    : "bg-white/5 text-[var(--admin-text-muted)] hover:text-white border border-white/10 hover:bg-white/10"
+                    ? "bg-white/15 text-white font-semibold border border-white/20 shadow-sm"
+                    : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent font-medium"
                 }`}
               >
                 {cat === "all" ? "All Categories" : cat}
@@ -3219,157 +3084,137 @@ function AllTopProductsModal({
           </div>
 
           {/* Stock Filter & Sort */}
-          <div className="flex items-center gap-2">
-            <select
+          <div className="flex items-center gap-2.5">
+            <AdminSelect
               value={stockFilter}
-              onChange={(e) => setStockFilter(e.target.value as "all" | "in_stock" | "low_stock")}
-              className="px-3 py-1.5 bg-[var(--admin-surface)] border border-white/10 rounded-[14px] text-white text-xs font-medium outline-none focus:border-[var(--admin-primary)]"
-            >
-              <option value="all">All Inventory</option>
-              <option value="in_stock">Healthy Stock (10+)</option>
-              <option value="low_stock">Low Stock (≤10)</option>
-            </select>
+              onValueChange={(val) => setStockFilter(val as "all" | "in_stock" | "low_stock")}
+              options={STOCK_FILTER_OPTIONS}
+              className="w-44"
+              triggerClassName="h-10 text-xs sm:text-[13px] font-medium rounded-[12px]"
+              aria-label="Filter leaderboard inventory by stock status"
+            />
 
-            <select
+            <AdminSelect
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "revenue" | "units" | "margin" | "growth")}
-              className="px-3 py-1.5 bg-[var(--admin-surface)] border border-white/10 rounded-[14px] text-white text-xs font-semibold outline-none focus:border-[var(--admin-primary)]"
-            >
-              <option value="revenue">Sort: Highest Revenue</option>
-              <option value="units">Sort: Most Units Sold</option>
-              <option value="margin">Sort: Highest Margin %</option>
-              <option value="growth">Sort: Fastest Growth</option>
-            </select>
+              onValueChange={(val) => setSortBy(val as "revenue" | "units" | "margin" | "growth")}
+              options={TOP_PRODUCTS_SORT_OPTIONS}
+              className="w-56"
+              triggerClassName="h-10 text-xs sm:text-[13px] font-medium rounded-[12px]"
+              aria-label="Sort leaderboard products"
+            />
           </div>
         </div>
 
         {/* Leaderboard Table */}
         <div className="overflow-y-auto admin-scroll flex-1 min-h-0 overscroll-contain bg-[var(--admin-surface-2)]">
-          <table className="w-full text-left text-xs [border-collapse:separate] [border-spacing:0]" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
-            <thead className="text-[var(--admin-text-muted)] font-semibold select-none">
+          <table className="w-full text-left text-xs sm:text-[13px] [border-collapse:separate] [border-spacing:0]" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
+            <thead className="text-[var(--admin-text-muted)] font-bold text-[11px] sm:text-xs uppercase tracking-wider select-none">
               <tr>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 pl-6 pr-3 w-14 text-center">Rank</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3">Product</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3">Category</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-center">Units Sold</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-right">Price / Cost</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-right">Total Revenue</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-center">Margin</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 px-3 text-right">Stock</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-3 pl-3 pr-6 text-center">Action</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 pl-6 pr-3 w-16 text-center">Rank</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 min-w-[280px]">Product</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-3 w-28">Category</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-3 text-center w-28">Units Sold</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-3 text-right w-28">Price</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 text-right w-36">Total Revenue</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-3 text-center w-24">Margin</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 text-center w-32">Stock</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 pl-3 pr-6 text-center w-28">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {filtered.map((item, idx) => {
-                const barWidth = Math.round((item.revenue / maxRevenue) * 100);
                 return (
                   <tr
                     key={item.id}
                     onClick={() => {
                       onSelectProduct(item);
                     }}
-                    className="hover:bg-white/[0.03] transition-colors group cursor-pointer border-b border-white/5"
+                    className="hover:bg-white/[0.04] transition-colors group cursor-pointer border-b border-white/5"
                   >
-                    <td className="py-3 pl-6 pr-3 text-center">
-                      {idx === 0 ? (
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white inline-flex items-center justify-center font-black text-[11px]">
-                          1
-                        </span>
-                      ) : idx === 1 ? (
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 text-white inline-flex items-center justify-center font-black text-[11px]">
-                          2
-                        </span>
-                      ) : idx === 2 ? (
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 text-white inline-flex items-center justify-center font-black text-[11px]">
-                          3
-                        </span>
-                      ) : (
-                        <span className="text-xs font-bold text-[var(--admin-text-muted)] tabular-nums">{idx + 1}</span>
-                      )}
+                    <td className="py-4.5 pl-6 pr-3 text-center">
+                      <div className="w-8 h-8 rounded-[10px] bg-white/[0.05] border border-white/10 text-white font-heading font-bold text-[13px] flex items-center justify-center mx-auto tabular-nums group-hover:border-white/20 group-hover:bg-white/[0.08] transition-colors">
+                        {idx + 1}
+                      </div>
                     </td>
 
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-[10px] bg-[var(--admin-surface)] border border-white/10 overflow-hidden shrink-0">
+                    <td className="py-4.5 px-4">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-12 h-12 rounded-[12px] bg-[var(--admin-surface)] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center p-0.5">
                           <Image
                             src={item.imageUrl}
                             alt={item.name}
-                            width={40}
-                            height={40}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover rounded-[10px]"
                           />
                         </div>
                         <div className="min-w-0">
-                          <div className="font-bold text-white group-hover:text-[var(--admin-primary)] transition-colors truncate">
+                          <div className="font-semibold text-white text-[15px] leading-snug tracking-tight truncate group-hover:text-white transition-colors">
                             {item.name}
                           </div>
-                          <div className="text-[10px] text-[var(--admin-text-muted)] font-mono">
+                          <div className="text-[12px] text-[var(--admin-text-muted)] font-mono tracking-wide mt-0.5 select-all">
                             {item.sku}
                           </div>
                         </div>
                       </div>
                     </td>
 
-                    <td className="py-3 px-3">
-                      <span className="text-[11px] font-medium text-white/80 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">
+                    <td className="py-4.5 px-3">
+                      <span className="text-[13px] text-white/70 font-medium">
                         {item.category}
                       </span>
                     </td>
 
-                    <td className="py-3 px-3 text-center">
-                      <div className="font-heading font-bold text-white tabular-nums">{item.soldCount}</div>
-                      <div className="w-16 bg-white/10 h-1 rounded-full mx-auto mt-1 overflow-hidden">
-                        <div
-                          className="h-full bg-[var(--admin-primary)] rounded-full"
-                          style={{ width: `${barWidth}%` }}
-                        />
-                      </div>
+                    <td className="py-4.5 px-3 text-center">
+                      <span className="font-heading font-semibold text-[15px] text-white tabular-nums">
+                        {item.soldCount.toLocaleString("en-IN")}
+                      </span>
                     </td>
 
-                    <td className="py-3 px-3 text-right">
-                      <div className="font-heading font-bold text-white tabular-nums">
+                    <td className="py-4.5 px-3 text-right">
+                      <span className="font-heading font-semibold text-[15px] text-white tabular-nums">
                         ₹{item.unitPrice.toLocaleString("en-IN")}
-                      </div>
-                      <div className="text-[10px] text-[var(--admin-text-muted)] tabular-nums">
-                        Cost: ₹{item.cogs}
-                      </div>
+                      </span>
                     </td>
 
-                    <td className="py-3 px-3 text-right">
-                      <div className="font-heading font-bold text-white tabular-nums">
+                    <td className="py-4.5 px-4 text-right">
+                      <div className="font-heading font-bold text-[16px] text-white tabular-nums">
                         ₹{item.revenue.toLocaleString("en-IN")}
                       </div>
-                      <div className="text-[10px] text-[var(--admin-success)] font-semibold tabular-nums">
+                      <div className="text-xs text-[var(--admin-success)] font-semibold tabular-nums mt-0.5">
                         +{item.growth}%
                       </div>
                     </td>
 
-                    <td className="py-3 px-3 text-center">
-                      <span className="font-bold text-[var(--admin-success)] bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 px-2.5 py-0.5 rounded-full text-[11px] tabular-nums">
+                    <td className="py-4.5 px-3 text-center">
+                      <span className="font-heading font-bold text-[15px] text-[var(--admin-success)] tabular-nums">
                         {item.marginPercent}%
                       </span>
                     </td>
 
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-4.5 px-4 text-center">
                       {item.stock <= 10 ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--admin-danger)] bg-[var(--admin-danger)]/15 border border-[var(--admin-danger)]/30 px-2 py-0.5 rounded-full tabular-nums">
-                          <AlertTriangle size={10} strokeWidth={2.4} className="text-[var(--admin-danger)] shrink-0" />
+                        <span className="text-[13px] font-bold text-amber-400 tabular-nums">
                           {item.stock} left
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-[var(--admin-success)] bg-[var(--admin-success)]/15 border border-[var(--admin-success)]/30 px-2 py-0.5 rounded-full tabular-nums">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-success)] shrink-0" />
+                        <span className="text-[13px] font-medium text-white/80 tabular-nums">
                           {item.stock} in stock
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3 pl-3 pr-6 text-center">
+                    <td className="py-4.5 pl-3 pr-6 text-center">
                       <button
                         type="button"
-                        className="px-3 py-1 rounded-full bg-[var(--admin-surface)] hover:bg-[var(--admin-primary)] text-white text-[11px] font-bold border border-white/10 transition-colors cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectProduct(item);
+                        }}
+                        className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-[9px] bg-white/[0.04] hover:bg-white/10 text-white/80 hover:text-white text-xs font-semibold border border-white/5 hover:border-white/15 transition-all cursor-pointer"
                       >
-                        Inspect
+                        <span>Inspect</span>
+                        <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5 text-white/50 group-hover:text-white" />
                       </button>
                     </td>
                   </tr>
@@ -3380,38 +3225,48 @@ function AllTopProductsModal({
         </div>
 
         {/* Footer KPI Summary Bar */}
-        <div className="p-4 sm:p-5 bg-[var(--admin-surface)] border-t border-white/5 flex flex-wrap items-center justify-between gap-4 text-xs shrink-0">
-          <div className="flex items-center gap-6">
+        <div className="p-4 sm:p-5 bg-[var(--admin-surface)] border-t border-white/5 flex flex-wrap items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-6 sm:gap-8">
             <div>
-              <span className="text-[var(--admin-text-muted)]">Total Filtered Revenue:</span>{" "}
-              <strong className="text-white font-heading font-bold text-sm tabular-nums">
+              <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">Filtered Revenue</div>
+              <div className="text-lg sm:text-xl font-heading font-bold text-white tabular-nums mt-0.5">
                 ₹{totalRev.toLocaleString("en-IN")}
-              </strong>
+              </div>
             </div>
+
+            <div className="h-8 w-px bg-white/10 hidden sm:block" />
+
             <div>
-              <span className="text-[var(--admin-text-muted)]">Total Units:</span>{" "}
-              <strong className="text-white font-heading font-bold tabular-nums">{totalUnits} items</strong>
+              <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">Total Volume</div>
+              <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums mt-0.5">
+                {totalUnits.toLocaleString("en-IN")} <span className="text-xs font-normal text-[var(--admin-text-muted)] font-sans">items</span>
+              </div>
             </div>
+
+            <div className="h-8 w-px bg-white/10 hidden sm:block" />
+
             <div>
-              <span className="text-[var(--admin-text-muted)]">Average Margin:</span>{" "}
-              <strong className="text-[var(--admin-success)] font-heading font-bold tabular-nums">{avgMargin}%</strong>
+              <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">Average Margin</div>
+              <div className="text-base sm:text-lg font-heading font-bold text-[var(--admin-success)] tabular-nums mt-0.5">
+                {avgMargin}%
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={onExportAllCSV}
-              className="px-4 py-2 rounded-full bg-[var(--admin-surface-2)] border border-white/10 hover:bg-white/5 text-white font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
+              className="h-10 px-4 rounded-[12px] bg-white/[0.05] border border-white/10 hover:bg-white/10 text-white font-semibold text-xs sm:text-[13px] transition-colors cursor-pointer flex items-center gap-2"
             >
-              <Download size={13} />
+              <Download size={14} />
               <span>Export All ({filtered.length})</span>
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white font-bold transition-all cursor-pointer"
+              className="h-10 px-5 rounded-[12px] bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs sm:text-[13px] font-semibold transition-colors cursor-pointer shadow-md shadow-[var(--admin-primary)]/20"
             >
               Close
             </button>
@@ -3424,6 +3279,235 @@ function AllTopProductsModal({
 
 // ─── ADMIN GLOBAL SEARCH BAR COMPONENT ───────────────────────────────────────
 
+const getSearchStatusBadge = (status: string) => {
+  switch (status) {
+    case "Delivered":
+      return "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border-white/10";
+    case "Processing":
+    case "Confirmed":
+    case "Packed":
+      return "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border-white/10";
+    case "Shipped":
+    case "Out for Delivery":
+      return "bg-[var(--admin-info)]/15 text-[var(--admin-info)] border-white/10";
+    case "Cancelled":
+      return "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border-white/10";
+    case "Returned":
+    case "Return Requested":
+      return "bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] border-white/10";
+    default:
+      return "bg-white/5 text-[var(--admin-text-muted)] border-white/10";
+  }
+};
+
+const OrderResultRow = React.memo(function OrderResultRow({
+  order,
+  isSelected,
+  onSelect,
+  onMouseMove,
+}: {
+  order: OrderRecord;
+  isSelected: boolean;
+  onSelect: () => void;
+  onMouseMove: () => void;
+}) {
+  const customer = order.shippingAddress?.name || "Customer";
+  const firstItem = order.items?.[0]?.productName || "Items";
+  const extraItems = order.items && order.items.length > 1 ? ` +${order.items.length - 1} more` : "";
+
+  return (
+    <div
+      data-selected={isSelected ? "true" : undefined}
+      onClick={onSelect}
+      onMouseMove={onMouseMove}
+      className={`p-2.5 rounded-[14px] border cursor-pointer flex items-center justify-between gap-3 group touch-manipulation ${
+        isSelected
+          ? "bg-[var(--admin-elevated)] border-[var(--admin-primary)]/60 text-white transition-none"
+          : "border-transparent hover:border-white/10 hover:bg-white/[0.05] transition-colors duration-75"
+      }`}
+    >
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-xs text-white">
+            {order.id}
+          </span>
+          <span
+            className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${getSearchStatusBadge(
+              order.status
+            )}`}
+          >
+            {order.status}
+          </span>
+        </div>
+        <div className="text-xs text-[var(--admin-text-muted)] truncate mt-0.5">
+          <strong className="font-semibold text-white">{customer}</strong> • {firstItem}
+          {extraItems}
+        </div>
+        <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
+          {order.date} • {order.shippingAddress?.address ? order.shippingAddress.address.split(",").slice(-2).join(",").trim() : "India"}
+        </div>
+      </div>
+
+      <div className="text-right shrink-0 flex items-center gap-2">
+        <span className="text-xs font-bold text-white">
+          ₹{order.total.toLocaleString("en-IN")}
+        </span>
+        <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white" />
+      </div>
+    </div>
+  );
+});
+
+const SectionResultRow = React.memo(function SectionResultRow({
+  sec,
+  isSelected,
+  onSelect,
+  onMouseMove,
+}: {
+  sec: CustomSection;
+  isSelected: boolean;
+  onSelect: () => void;
+  onMouseMove: () => void;
+}) {
+  return (
+    <div
+      data-selected={isSelected ? "true" : undefined}
+      onClick={onSelect}
+      onMouseMove={onMouseMove}
+      className={`p-2.5 rounded-[14px] border cursor-pointer flex items-center justify-between gap-3 group touch-manipulation ${
+        isSelected
+          ? "bg-[var(--admin-elevated)] border-[var(--admin-primary)]/60 text-white transition-none"
+          : "border-transparent hover:border-white/10 hover:bg-white/[0.05] transition-colors duration-75"
+      }`}
+    >
+      <div className="flex items-center gap-2.5 min-w-0">
+        <span className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center shrink-0">
+          #
+        </span>
+        <div className="min-w-0">
+          <div className="font-semibold text-xs text-white truncate">
+            {sec.name}
+          </div>
+          <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+            {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · /section/{sec.slug}
+          </div>
+        </div>
+      </div>
+      <div className="text-right shrink-0 flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)] group-hover:text-white font-medium">
+        <span>Manage</span>
+        <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white" />
+      </div>
+    </div>
+  );
+});
+
+const ProductResultRow = React.memo(function ProductResultRow({
+  product,
+  isSelected,
+  onSelect,
+  onMouseMove,
+}: {
+  product: Product;
+  isSelected: boolean;
+  onSelect: () => void;
+  onMouseMove: () => void;
+}) {
+  return (
+    <div
+      data-selected={isSelected ? "true" : undefined}
+      onClick={onSelect}
+      onMouseMove={onMouseMove}
+      className={`p-2.5 rounded-[14px] border cursor-pointer flex items-center justify-between gap-3 group touch-manipulation ${
+        isSelected
+          ? "bg-[var(--admin-elevated)] border-[var(--admin-primary)]/60 text-white transition-none"
+          : "border-transparent hover:border-white/10 hover:bg-white/[0.05] transition-colors duration-75"
+      }`}
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-10 h-10 rounded-[10px] bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              width={40}
+              height={40}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Package size={16} className="text-[var(--admin-text-muted)]" />
+          )}
+        </div>
+        <div className="min-w-0">
+          <div className="font-semibold text-xs text-white truncate">
+            {product.name}
+          </div>
+          <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+            {product.category} • SKU: {product.sku || product.id}
+          </div>
+        </div>
+      </div>
+
+      <div className="text-right shrink-0 flex items-center gap-2">
+        <div>
+          <div className="text-xs font-bold text-white">
+            ₹{product.price.toLocaleString("en-IN")}
+          </div>
+          <div className="text-[10px] text-[var(--admin-success)] font-medium">In Stock</div>
+        </div>
+        <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white" />
+      </div>
+    </div>
+  );
+});
+
+const CustomerResultRow = React.memo(function CustomerResultRow({
+  cust,
+  isSelected,
+  onSelect,
+  onMouseMove,
+}: {
+  cust: { name: string; phone: string; address: string; ordersCount: number; totalSpent: number };
+  isSelected: boolean;
+  onSelect: () => void;
+  onMouseMove: () => void;
+}) {
+  return (
+    <div
+      data-selected={isSelected ? "true" : undefined}
+      onClick={onSelect}
+      onMouseMove={onMouseMove}
+      className={`p-2.5 rounded-[14px] border cursor-pointer flex items-center justify-between gap-3 group touch-manipulation ${
+        isSelected
+          ? "bg-[var(--admin-elevated)] border-[var(--admin-primary)]/60 text-white transition-none"
+          : "border-transparent hover:border-white/10 hover:bg-white/[0.05] transition-colors duration-75"
+      }`}
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-9 h-9 rounded-full bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center shrink-0">
+          {cust.name.slice(0, 1).toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <div className="font-semibold text-xs text-white truncate">
+            {cust.name}
+          </div>
+          <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+            {cust.phone || "Verified Customer"} • {cust.address ? cust.address.split(",").slice(-2).join(",").trim() : "India"}
+          </div>
+        </div>
+      </div>
+
+      <div className="text-right shrink-0">
+        <div className="text-xs font-semibold text-white">
+          {cust.ordersCount} {cust.ordersCount === 1 ? "order" : "orders"}
+        </div>
+        <div className="text-[11px] text-[var(--admin-text-muted)] font-medium">
+          ₹{cust.totalSpent.toLocaleString("en-IN")} total
+        </div>
+      </div>
+    </div>
+  );
+});
+
 function AdminGlobalSearchBar({
   searchQuery,
   setSearchQuery,
@@ -3431,6 +3515,7 @@ function AdminGlobalSearchBar({
   products,
   sections,
   onSelectOrder,
+  pendingReturnsCount = 0,
 }: {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
@@ -3438,13 +3523,23 @@ function AdminGlobalSearchBar({
   products: Product[];
   sections?: CustomSection[];
   onSelectOrder?: (order: OrderRecord) => void;
+  pendingReturnsCount?: number;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | "orders" | "products" | "customers">("all");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [searchDraft, setSearchDraft] = useState(searchQuery);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Sync draft state if parent searchQuery changes externally
+  useEffect(() => {
+    setSearchDraft(searchQuery);
+  }, [searchQuery]);
+
+  const deferredQuery = useDeferredValue(searchDraft);
 
   // Keyboard shortcut '/' or 'Cmd+K' / 'Ctrl+K'
   useEffect(() => {
@@ -3478,27 +3573,27 @@ function AdminGlobalSearchBar({
 
   // Filter Matching Orders with Smart Normalization & Synonyms
   const matchingOrders = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    return searchOrders(orders, searchQuery);
-  }, [orders, searchQuery]);
+    if (!deferredQuery.trim()) return [];
+    return searchOrders(orders, deferredQuery);
+  }, [orders, deferredQuery]);
 
   // Filter Matching Products with Normalization, Synonyms & Typo Tolerance
   const matchingProducts = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    return searchProducts(products, searchQuery);
-  }, [products, searchQuery]);
+    if (!deferredQuery.trim()) return [];
+    return searchProducts(products, deferredQuery);
+  }, [products, deferredQuery]);
 
   // Filter Matching Custom Sections
   const matchingSections = useMemo(() => {
-    if (!searchQuery.trim() || !sections) return [];
-    return searchSections(sections, searchQuery);
-  }, [sections, searchQuery]);
+    if (!deferredQuery.trim() || !sections) return [];
+    return searchSections(sections, deferredQuery);
+  }, [sections, deferredQuery]);
 
   // Filter Matching Customers
   const matchingCustomers = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase().trim();
-    const strippedQ = stripToAlphaNumeric(searchQuery);
+    if (!deferredQuery.trim()) return [];
+    const q = deferredQuery.toLowerCase().trim();
+    const strippedQ = stripToAlphaNumeric(deferredQuery);
     const customerMap = new Map<
       string,
       { name: string; phone: string; address: string; ordersCount: number; totalSpent: number }
@@ -3529,7 +3624,7 @@ function AdminGlobalSearchBar({
     });
 
     return Array.from(customerMap.values());
-  }, [orders, searchQuery]);
+  }, [orders, deferredQuery]);
 
   const totalResults =
     matchingOrders.length +
@@ -3537,26 +3632,55 @@ function AdminGlobalSearchBar({
     matchingCustomers.length +
     matchingSections.length;
 
-  // Flattened results for keyboard navigation
+  // Visible slices matching what is displayed in the DOM
+  const visibleOrders = useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "orders") return [];
+    return matchingOrders.slice(0, activeTab === "orders" ? 20 : 4);
+  }, [matchingOrders, activeTab]);
+
+  const visibleSections = useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "products") return [];
+    return matchingSections;
+  }, [matchingSections, activeTab]);
+
+  const visibleProducts = useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "products") return [];
+    return matchingProducts.slice(0, activeTab === "products" ? 20 : 4);
+  }, [matchingProducts, activeTab]);
+
+  const visibleCustomers = useMemo(() => {
+    if (activeTab !== "all" && activeTab !== "customers") return [];
+    return matchingCustomers.slice(0, activeTab === "customers" ? 20 : 3);
+  }, [matchingCustomers, activeTab]);
+
+  // Flattened results for keyboard navigation (1:1 with rendered items)
   const flattenedItems = useMemo(() => {
     const list: Array<{ type: "order" | "product" | "customer" | "section"; data: any }> = [];
-    if (activeTab === "all" || activeTab === "orders") {
-      matchingOrders.forEach((o) => list.push({ type: "order", data: o }));
-    }
-    if (activeTab === "all" || activeTab === "products") {
-      matchingSections.forEach((s) => list.push({ type: "section", data: s }));
-      matchingProducts.forEach((p) => list.push({ type: "product", data: p }));
-    }
-    if (activeTab === "all" || activeTab === "customers") {
-      matchingCustomers.forEach((c) => list.push({ type: "customer", data: c }));
-    }
+    visibleOrders.forEach((o) => list.push({ type: "order", data: o }));
+    visibleSections.forEach((s) => list.push({ type: "section", data: s }));
+    visibleProducts.forEach((p) => list.push({ type: "product", data: p }));
+    visibleCustomers.forEach((c) => list.push({ type: "customer", data: c }));
     return list;
-  }, [activeTab, matchingOrders, matchingProducts, matchingCustomers, matchingSections]);
+  }, [visibleOrders, visibleSections, visibleProducts, visibleCustomers]);
 
   // Reset selected index when query or tab changes
   useEffect(() => {
     setSelectedIndex(0);
-  }, [searchQuery, activeTab]);
+  }, [deferredQuery, activeTab]);
+
+  // Scroll active item into view only if out of viewport (block: "nearest", behavior: "auto")
+  useEffect(() => {
+    if (!isOpen) return;
+    const container = resultsContainerRef.current;
+    if (!container) return;
+    const selectedEl = container.querySelector<HTMLElement>('[data-selected="true"]');
+    if (!selectedEl) return;
+    const containerRect = container.getBoundingClientRect();
+    const elRect = selectedEl.getBoundingClientRect();
+    if (elRect.top < containerRect.top || elRect.bottom > containerRect.bottom) {
+      selectedEl.scrollIntoView({ block: "nearest", behavior: "auto" });
+    }
+  }, [selectedIndex, isOpen]);
 
   const handleKeyDownInInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!isOpen) {
@@ -3579,39 +3703,22 @@ function AdminGlobalSearchBar({
         if (currentItem.type === "order") {
           setIsOpen(false);
           inputRef.current?.blur();
+          setSearchQuery(searchDraft);
           onSelectOrder?.(currentItem.data);
         } else if (currentItem.type === "section") {
           router.push(`/admin/custom-sections`);
           setIsOpen(false);
+          setSearchQuery(searchDraft);
         } else if (currentItem.type === "product") {
           router.push(currentItem.data.slug ? `/product/${currentItem.data.slug}` : "/admin/products");
           setIsOpen(false);
+          setSearchQuery(searchDraft);
         } else if (currentItem.type === "customer") {
+          setSearchDraft(currentItem.data.name);
           setSearchQuery(currentItem.data.name);
           setIsOpen(false);
         }
       }
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Delivered":
-        return "bg-[var(--admin-success)]/15 text-[var(--admin-success)] border-white/10";
-      case "Processing":
-      case "Confirmed":
-      case "Packed":
-        return "bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] border-white/10";
-      case "Shipped":
-      case "Out for Delivery":
-        return "bg-[var(--admin-info)]/15 text-[var(--admin-info)] border-white/10";
-      case "Cancelled":
-        return "bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border-white/10";
-      case "Returned":
-      case "Return Requested":
-        return "bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] border-white/10";
-      default:
-        return "bg-white/5 text-[var(--admin-text-muted)] border-white/10";
     }
   };
 
@@ -3628,23 +3735,24 @@ function AdminGlobalSearchBar({
         <input
           ref={inputRef}
           type="text"
-          value={searchQuery}
+          value={searchDraft}
           onFocus={() => setIsOpen(true)}
           onChange={(e) => {
-            setSearchQuery(e.target.value);
+            setSearchDraft(e.target.value);
             if (!isOpen) setIsOpen(true);
           }}
           onKeyDown={handleKeyDownInInput}
           placeholder="Search orders, products, customers..."
-          className={`w-full text-xs sm:text-sm pl-10 pr-9 py-2 rounded-[14px] transition-all ${
+          className={`w-full text-xs sm:text-sm pl-10 pr-9 py-2 rounded-[14px] touch-manipulation transition-colors ${
             isOpen
               ? "bg-[var(--admin-surface)] text-white border-white/20 ring-1 ring-white/10"
               : "bg-[var(--admin-surface-2)] hover:bg-[var(--admin-surface)] text-white border-white/10 placeholder-[var(--admin-text-muted)]"
           } border focus:outline-none`}
         />
-        {searchQuery ? (
+        {searchDraft ? (
           <button
             onClick={() => {
+              setSearchDraft("");
               setSearchQuery("");
               inputRef.current?.focus();
             }}
@@ -3664,7 +3772,7 @@ function AdminGlobalSearchBar({
       {isOpen && (
         <div className="absolute left-0 top-full mt-2 w-full md:w-[480px] lg:w-[540px] bg-[var(--admin-surface)] rounded-[14px] border border-white/10 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Top Filter Tabs when searching */}
-          {searchQuery.trim() ? (
+          {searchDraft.trim() ? (
             <div className="flex items-center gap-1 p-2 bg-[var(--admin-surface-2)] border-b border-white/5 text-xs">
               {(
                 [
@@ -3702,9 +3810,12 @@ function AdminGlobalSearchBar({
           )}
 
           {/* Results Scrollable Area */}
-          <div className="max-h-[380px] overflow-y-auto admin-scroll divide-y divide-white/5 p-2 space-y-2">
+          <div
+            ref={resultsContainerRef}
+            className="max-h-[380px] overflow-y-auto admin-scroll divide-y divide-white/5 p-2 space-y-2 touch-manipulation"
+          >
             {/* Case A: Query is empty -> Quick Actions & Filter Pills */}
-            {!searchQuery.trim() ? (
+            {!searchDraft.trim() ? (
               <div className="space-y-4 py-1">
                 {/* Quick Navigation Links */}
                 <div>
@@ -3762,18 +3873,29 @@ function AdminGlobalSearchBar({
 
                     <button
                       onClick={() => {
-                        setSearchQuery("Return Requested");
+                        router.push("/admin/returns");
                         setIsOpen(false);
                       }}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-[14px] text-left hover:bg-white/[0.05] transition-colors text-xs text-white cursor-pointer group"
+                      className="flex items-center justify-between gap-2.5 px-3 py-2 rounded-[14px] text-left hover:bg-white/[0.05] transition-colors text-xs text-white cursor-pointer group"
                     >
-                      <div className="w-7 h-7 rounded-[10px] bg-[var(--admin-surface-2)] text-rose-400 border border-white/5 flex items-center justify-center shrink-0">
-                        <RotateCcw size={14} />
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <AdminIconBadge variant="section" icon={RotateCcw} />
+                        <div className="min-w-0">
+                          <div className="font-semibold text-white">Pending Returns</div>
+                          <div className="text-[11px] text-[var(--admin-text-muted)] truncate">
+                            {pendingReturnsCount === 0
+                              ? "No pending returns"
+                              : pendingReturnsCount === 1
+                              ? "1 item awaiting review"
+                              : `${pendingReturnsCount} items awaiting review`}
+                          </div>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <div className="font-semibold text-white">Pending Returns</div>
-                        <div className="text-[11px] text-[var(--admin-text-muted)] truncate">2 items awaiting review</div>
-                      </div>
+                      {pendingReturnsCount > 0 && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--admin-danger)]/15 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30 shrink-0 tabular-nums">
+                          {pendingReturnsCount}
+                        </span>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -3796,6 +3918,7 @@ function AdminGlobalSearchBar({
                       <button
                         key={chip}
                         onClick={() => {
+                          setSearchDraft(chip);
                           setSearchQuery(chip);
                           inputRef.current?.focus();
                         }}
@@ -3815,7 +3938,7 @@ function AdminGlobalSearchBar({
                   <Search size={22} />
                 </div>
                 <div className="text-sm font-semibold text-white mb-1">
-                  No matches found for &quot;{searchQuery}&quot;
+                  No matches found for &quot;{searchDraft}&quot;
                 </div>
                 <p className="text-xs text-[var(--admin-text-muted)] max-w-xs mx-auto mb-4">
                   Check the spelling or try searching by Order ID (e.g. VEY-2026), product name, customer name, or status.
@@ -3824,7 +3947,10 @@ function AdminGlobalSearchBar({
                   {["Delivered", "Processing", "Boopesh", "Shoes", "Watches"].map((chip) => (
                     <button
                       key={chip}
-                      onClick={() => setSearchQuery(chip)}
+                      onClick={() => {
+                        setSearchDraft(chip);
+                        setSearchQuery(chip);
+                      }}
                       className="px-2.5 py-1 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/[0.05] border border-white/5 text-xs text-[var(--admin-text-muted)] hover:text-white font-medium cursor-pointer"
                     >
                       {chip}
@@ -3836,7 +3962,7 @@ function AdminGlobalSearchBar({
               /* Case C: Matches found */
               <div className="space-y-4 py-1">
                 {/* Orders Section */}
-                {(activeTab === "all" || activeTab === "orders") && matchingOrders.length > 0 && (
+                {visibleOrders.length > 0 && (
                   <div>
                     <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
@@ -3845,55 +3971,25 @@ function AdminGlobalSearchBar({
                       <span>{matchingOrders.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingOrders.slice(0, activeTab === "orders" ? 20 : 4).map((order) => {
-                        const customer = order.shippingAddress?.name || "Customer";
-                        const firstItem = order.items?.[0]?.productName || "Items";
-                        const extraItems = order.items && order.items.length > 1 ? ` +${order.items.length - 1} more` : "";
-                        const isSelected = flattenedItems[selectedIndex]?.data === order;
+                      {visibleOrders.map((order, idx) => {
+                        const flatIndex = idx;
+                        const isSelected = selectedIndex === flatIndex;
 
                         return (
-                          <div
+                          <OrderResultRow
                             key={order.id}
-                            onClick={() => {
+                            order={order}
+                            isSelected={isSelected}
+                            onMouseMove={() => {
+                              if (selectedIndex !== flatIndex) setSelectedIndex(flatIndex);
+                            }}
+                            onSelect={() => {
                               setIsOpen(false);
                               inputRef.current?.blur();
+                              setSearchQuery(searchDraft);
                               onSelectOrder?.(order);
                             }}
-                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
-                              isSelected
-                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
-                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
-                            }`}
-                          >
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-xs text-white group-hover:text-white transition-colors">
-                                  {order.id}
-                                </span>
-                                <span
-                                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${getStatusBadge(
-                                    order.status
-                                  )}`}
-                                >
-                                  {order.status}
-                                </span>
-                              </div>
-                              <div className="text-xs text-[var(--admin-text-muted)] truncate mt-0.5">
-                                <strong className="font-semibold text-white">{customer}</strong> • {firstItem}
-                                {extraItems}
-                              </div>
-                              <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
-                                {order.date} • {order.shippingAddress?.address ? order.shippingAddress.address.split(",").slice(-2).join(",").trim() : "India"}
-                              </div>
-                            </div>
-
-                            <div className="text-right shrink-0 flex items-center gap-2">
-                              <span className="text-xs font-bold text-white">
-                                ₹{order.total.toLocaleString("en-IN")}
-                              </span>
-                              <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-                            </div>
-                          </div>
+                          />
                         );
                       })}
                     </div>
@@ -3901,7 +3997,7 @@ function AdminGlobalSearchBar({
                 )}
 
                 {/* Custom Sections Group */}
-                {(activeTab === "all" || activeTab === "products") && matchingSections.length > 0 && (
+                {visibleSections.length > 0 && (
                   <div>
                     <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
@@ -3910,40 +4006,24 @@ function AdminGlobalSearchBar({
                       <span>{matchingSections.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingSections.map((sec) => {
-                        const isSelected = flattenedItems[selectedIndex]?.data === sec;
+                      {visibleSections.map((sec, idx) => {
+                        const flatIndex = visibleOrders.length + idx;
+                        const isSelected = selectedIndex === flatIndex;
 
                         return (
-                          <div
+                          <SectionResultRow
                             key={sec.id}
-                            onClick={() => {
+                            sec={sec}
+                            isSelected={isSelected}
+                            onMouseMove={() => {
+                              if (selectedIndex !== flatIndex) setSelectedIndex(flatIndex);
+                            }}
+                            onSelect={() => {
                               router.push(`/admin/custom-sections`);
                               setIsOpen(false);
+                              setSearchQuery(searchDraft);
                             }}
-                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
-                              isSelected
-                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
-                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <span className="w-8 h-8 rounded-[10px] bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                                #
-                              </span>
-                              <div className="min-w-0">
-                                <div className="font-semibold text-xs text-white group-hover:text-white truncate">
-                                  {sec.name}
-                                </div>
-                                <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
-                                  {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · /section/{sec.slug}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right shrink-0 flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)] group-hover:text-white font-medium">
-                              <span>Manage</span>
-                              <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-                            </div>
-                          </div>
+                          />
                         );
                       })}
                     </div>
@@ -3951,7 +4031,7 @@ function AdminGlobalSearchBar({
                 )}
 
                 {/* Products Section */}
-                {(activeTab === "all" || activeTab === "products") && matchingProducts.length > 0 && (
+                {visibleProducts.length > 0 && (
                   <div>
                     <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
@@ -3960,56 +4040,24 @@ function AdminGlobalSearchBar({
                       <span>{matchingProducts.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingProducts.slice(0, activeTab === "products" ? 20 : 4).map((product) => {
-                        const isSelected = flattenedItems[selectedIndex]?.data === product;
+                      {visibleProducts.map((product, idx) => {
+                        const flatIndex = visibleOrders.length + visibleSections.length + idx;
+                        const isSelected = selectedIndex === flatIndex;
 
                         return (
-                          <div
+                          <ProductResultRow
                             key={product.id}
-                            onClick={() => {
+                            product={product}
+                            isSelected={isSelected}
+                            onMouseMove={() => {
+                              if (selectedIndex !== flatIndex) setSelectedIndex(flatIndex);
+                            }}
+                            onSelect={() => {
                               router.push(product.slug ? `/product/${product.slug}` : "/admin/products");
                               setIsOpen(false);
+                              setSearchQuery(searchDraft);
                             }}
-                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
-                              isSelected
-                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
-                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-10 h-10 rounded-[10px] bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
-                                {product.imageUrl ? (
-                                  <Image
-                                    src={product.imageUrl}
-                                    alt={product.name}
-                                    width={40}
-                                    height={40}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                                  />
-                                ) : (
-                                  <Package size={16} className="text-[var(--admin-text-muted)]" />
-                                )}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="font-semibold text-xs text-white truncate group-hover:text-white transition-colors">
-                                  {product.name}
-                                </div>
-                                <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
-                                  {product.category} • SKU: {product.sku || product.id}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="text-right shrink-0 flex items-center gap-2">
-                              <div>
-                                <div className="text-xs font-bold text-white">
-                                  ₹{product.price.toLocaleString("en-IN")}
-                                </div>
-                                <div className="text-[10px] text-[var(--admin-success)] font-medium">In Stock</div>
-                              </div>
-                              <ChevronRight size={14} className="text-[var(--admin-text-muted)] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-                            </div>
-                          </div>
+                          />
                         );
                       })}
                     </div>
@@ -4017,7 +4065,7 @@ function AdminGlobalSearchBar({
                 )}
 
                 {/* Customers Section */}
-                {(activeTab === "all" || activeTab === "customers") && matchingCustomers.length > 0 && (
+                {visibleCustomers.length > 0 && (
                   <div>
                     <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider px-2 py-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
@@ -4026,45 +4074,24 @@ function AdminGlobalSearchBar({
                       <span>{matchingCustomers.length}</span>
                     </div>
                     <div className="space-y-1 mt-1">
-                      {matchingCustomers.slice(0, activeTab === "customers" ? 20 : 3).map((cust) => {
-                        const isSelected = flattenedItems[selectedIndex]?.data === cust;
+                      {visibleCustomers.map((cust, idx) => {
+                        const flatIndex = visibleOrders.length + visibleSections.length + visibleProducts.length + idx;
+                        const isSelected = selectedIndex === flatIndex;
 
                         return (
-                          <div
+                          <CustomerResultRow
                             key={cust.name}
-                            onClick={() => {
+                            cust={cust}
+                            isSelected={isSelected}
+                            onMouseMove={() => {
+                              if (selectedIndex !== flatIndex) setSelectedIndex(flatIndex);
+                            }}
+                            onSelect={() => {
+                              setSearchDraft(cust.name);
                               setSearchQuery(cust.name);
                               setIsOpen(false);
                             }}
-                            className={`p-2.5 rounded-[14px] border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
-                              isSelected
-                                ? "bg-[var(--admin-elevated)] ring-1 ring-[var(--admin-primary)] border-transparent"
-                                : "border-transparent hover:border-white/10 hover:bg-white/[0.05]"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-9 h-9 rounded-full bg-[var(--admin-surface-2)] border border-white/10 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                                {cust.name.slice(0, 1).toUpperCase()}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="font-semibold text-xs text-white truncate group-hover:text-white transition-colors">
-                                  {cust.name}
-                                </div>
-                                <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
-                                  {cust.phone || "Verified Customer"} • {cust.address ? cust.address.split(",").slice(-2).join(",").trim() : "India"}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="text-right shrink-0">
-                              <div className="text-xs font-semibold text-white">
-                                {cust.ordersCount} {cust.ordersCount === 1 ? "order" : "orders"}
-                              </div>
-                              <div className="text-[11px] text-[var(--admin-text-muted)] font-medium">
-                                ₹{cust.totalSpent.toLocaleString("en-IN")} total
-                              </div>
-                            </div>
-                          </div>
+                          />
                         );
                       })}
                     </div>
@@ -4087,9 +4114,12 @@ function AdminGlobalSearchBar({
                 <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/10 rounded-md text-[10px] text-zinc-300 font-mono">esc</kbd> close
               </span>
             </div>
-            {searchQuery.trim() && (
+            {searchDraft.trim() && (
               <button
-                onClick={() => setSearchQuery("")}
+                onClick={() => {
+                  setSearchDraft("");
+                  setSearchQuery("");
+                }}
                 className="text-[var(--admin-text-muted)] hover:text-white font-medium hover:underline cursor-pointer"
               >
                 Clear all
@@ -4408,9 +4438,30 @@ function OrderDeepInspectionModal({
   const cleanPhone = (currentOrder.shippingAddress?.phone || "").replace(/[^0-9]/g, "");
   const totalUnits = (currentOrder.items || []).reduce((acc, it) => acc + (it.quantity || 1), 0);
 
+  const formatPaymentMethod = (pm?: string) => {
+    if (!pm) return "Prepaid";
+    const clean = pm.trim();
+    if (clean.toLowerCase() === "upi") return "UPI";
+    if (clean.toLowerCase() === "cod") return "Cash on Delivery";
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+  };
+
   const handleStatusChange = (newStatus: OrderStatus) => {
     onUpdateStatus(currentOrder.id, newStatus);
-    setCurrentOrder((prev) => (prev ? { ...prev, status: newStatus } : prev));
+    const newTimelineItem = {
+      status: newStatus,
+      timestamp: "Just now",
+      description: `Status updated to ${newStatus} via Admin Panel`,
+    };
+    setCurrentOrder((prev) =>
+      prev
+        ? {
+            ...prev,
+            status: newStatus,
+            timeline: [...(prev.timeline || []), newTimelineItem],
+          }
+        : prev
+    );
     showToast(`Order #${currentOrder.id} status changed to ${newStatus}`, "success");
   };
 
@@ -4456,18 +4507,18 @@ function OrderDeepInspectionModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-4xl w-full max-h-[92vh] flex flex-col border border-white/10 overflow-hidden"
+        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-4xl w-full h-[88vh] min-h-[580px] max-h-[880px] flex flex-col border border-white/10 overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
         <div className="px-6 py-5 bg-[var(--admin-surface)] text-white flex items-center justify-between border-b border-white/5 shrink-0">
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-warning)]/15 text-[var(--admin-warning)] flex items-center justify-center border border-[var(--admin-warning)]/30 shrink-0">
+            <div className="w-10 h-10 rounded-[14px] bg-white/5 text-white flex items-center justify-center border border-white/10 shrink-0">
               <Eye size={18} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-wider text-[var(--admin-text-muted)] font-semibold">
+                <span className="text-xs uppercase tracking-wider text-[var(--admin-text-muted)] font-semibold font-heading">
                   Order Deep Inspection
                 </span>
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono">
@@ -4483,7 +4534,7 @@ function OrderDeepInspectionModal({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/10 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Return to Orders (Esc)"
             >
               <ArrowLeft size={13} />
@@ -4492,16 +4543,16 @@ function OrderDeepInspectionModal({
 
             <button
               onClick={handleCopyOrderId}
-              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/10 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Copy Order ID"
             >
-              {isCopied ? <Check size={13} className="text-[var(--admin-success)]" /> : <Copy size={13} />}
+              {isCopied ? <Check size={13} className="text-[#00F59B]" /> : <Copy size={13} />}
               <span>{isCopied ? "Copied" : "Copy ID"}</span>
             </button>
 
             <button
               onClick={() => printOrDownloadOrderSlip(currentOrder)}
-              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-warning)] hover:bg-[var(--admin-warning)]/90 text-black text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/10 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Print official tax invoice slip"
             >
               <Printer size={13} />
@@ -4510,7 +4561,7 @@ function OrderDeepInspectionModal({
 
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
+              className="w-9 h-9 rounded-full hover:bg-white/10 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
               aria-label="Close modal"
             >
               <X size={18} />
@@ -4523,25 +4574,25 @@ function OrderDeepInspectionModal({
           <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
             <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Gross Total</span>
-              <IndianRupee size={13} className="text-[var(--admin-warning)]" />
+              <IndianRupee size={13} className="text-white/60" />
             </div>
-            <div className="text-base sm:text-lg font-heading font-extrabold text-white tracking-tight tabular-nums">
+            <div className="h-7 flex items-center text-lg font-heading font-extrabold text-white tracking-tight tabular-nums">
               ₹{currentOrder.total.toLocaleString("en-IN")}
             </div>
-            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 uppercase tracking-wide font-medium">
-              Payment: <strong className="text-white font-semibold">{currentOrder.paymentMethod || "Prepaid"}</strong>
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 tracking-wide font-medium">
+              Payment: <strong className="text-white font-semibold">{formatPaymentMethod(currentOrder.paymentMethod)}</strong>
             </div>
           </div>
 
           <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
             <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Fulfillment</span>
-              <Package size={13} className="text-[var(--admin-primary)]" />
+              <Package size={13} className="text-white/60" />
             </div>
-            <div className="mt-0.5">
+            <div className="h-7 flex items-center">
               <StatusPill status={currentOrder.status} />
             </div>
-            <div className="text-[11px] text-[var(--admin-text-muted)] mt-1">
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 tracking-wide font-medium">
               Est: <strong className="text-white font-semibold">{currentOrder.estimatedDelivery || "Standard"}</strong>
             </div>
           </div>
@@ -4549,12 +4600,15 @@ function OrderDeepInspectionModal({
           <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
             <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Package Items</span>
-              <Boxes size={13} className="text-[var(--admin-success)]" />
+              <Boxes size={13} className="text-white/60" />
             </div>
-            <div className="text-base sm:text-lg font-heading font-extrabold text-white tracking-tight tabular-nums">
-              {currentOrder.itemsCount || currentOrder.items?.length || 1} Products
+            <div className="h-7 flex items-center text-lg font-heading font-extrabold text-white tracking-tight tabular-nums">
+              {(() => {
+                const count = currentOrder.itemsCount || currentOrder.items?.length || 1;
+                return `${count} ${count === 1 ? "Product" : "Products"}`;
+              })()}
             </div>
-            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 tracking-wide font-medium">
               Total <strong className="text-white font-semibold">{totalUnits}</strong> physical units
             </div>
           </div>
@@ -4562,13 +4616,14 @@ function OrderDeepInspectionModal({
           <div className="bg-[var(--admin-surface)] p-3.5 rounded-[14px] border border-white/5">
             <div className="flex items-center justify-between text-[var(--admin-text-muted)] mb-1">
               <span className="text-[11px] font-medium uppercase tracking-wider">Order Date</span>
-              <Clock size={13} className="text-[var(--admin-info)]" />
+              <Clock size={13} className="text-white/60" />
             </div>
-            <div className="text-xs sm:text-sm font-heading font-bold text-white tracking-tight truncate tabular-nums">
+            <div className="h-7 flex items-center text-xs sm:text-sm font-heading font-bold text-white tracking-tight truncate tabular-nums">
               {currentOrder.date}
             </div>
-            <div className="text-[11px] text-[var(--admin-success)] mt-0.5 font-medium flex items-center gap-1">
-              <ShieldCheck size={12} /> Verified order
+            <div className="text-[11px] text-[var(--admin-text-muted)] mt-0.5 font-medium flex items-center gap-1.5">
+              <ShieldCheck size={12} className="text-[#00F59B]" />
+              <span>Verified order</span>
             </div>
           </div>
         </div>
@@ -4582,12 +4637,12 @@ function OrderDeepInspectionModal({
               <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
                 <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-white/5">
                   <div className="flex items-center gap-2">
-                    <ShoppingCart size={15} className="text-[var(--admin-primary)]" />
+                    <ShoppingCart size={15} className="text-white/60" />
                     <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                       Ordered Line Items ({currentOrder.items?.length || 0})
                     </h3>
                   </div>
-                  <span className="text-xs text-[var(--admin-text-muted)]">
+                  <span className="text-xs text-[var(--admin-text-muted)] font-mono">
                     Live Stock Allocation
                   </span>
                 </div>
@@ -4637,7 +4692,7 @@ function OrderDeepInspectionModal({
                               <Link
                                 href={`/product/${it.productSlug}`}
                                 target="_blank"
-                                className="text-[10px] text-[var(--admin-primary)] hover:underline font-semibold inline-flex items-center gap-1"
+                                className="text-[10px] text-white/60 hover:text-white font-semibold inline-flex items-center gap-1 transition-colors"
                               >
                                 <span>Inspect product page</span>
                                 <ExternalLink size={10} />
@@ -4658,7 +4713,7 @@ function OrderDeepInspectionModal({
               {/* Financial Bill Breakdown */}
               <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
                 <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
-                  <CreditCard size={15} className="text-[var(--admin-primary)]" />
+                  <CreditCard size={15} className="text-white/60" />
                   <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                     Financial Summary & Taxation
                   </h3>
@@ -4673,14 +4728,14 @@ function OrderDeepInspectionModal({
                   </div>
 
                   {currentOrder.bundleDiscount > 0 && (
-                    <div className="flex items-center justify-between text-[var(--admin-success)]">
+                    <div className="flex items-center justify-between text-emerald-400">
                       <span>Bundle Savings</span>
                       <span className="font-heading font-semibold tabular-nums">-₹{currentOrder.bundleDiscount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
 
                   {currentOrder.couponDiscount > 0 && (
-                    <div className="flex items-center justify-between text-[var(--admin-success)]">
+                    <div className="flex items-center justify-between text-emerald-400">
                       <span>
                         Coupon Discount {currentOrder.couponCode ? `(${currentOrder.couponCode})` : ""}
                       </span>
@@ -4690,14 +4745,16 @@ function OrderDeepInspectionModal({
 
                   <div className="flex items-center justify-between text-[var(--admin-text-muted)]">
                     <span>Express Shipping & Handling</span>
-                    <span className="font-semibold text-[var(--admin-success)]">
+                    <span className="font-semibold text-emerald-400">
                       {currentOrder.shippingCost === 0 ? "FREE (Atelier Complimentary)" : `₹${currentOrder.shippingCost}`}
                     </span>
                   </div>
 
                   <div className="pt-2 border-t border-white/5 flex items-center justify-between text-sm font-heading font-extrabold text-white">
                     <span>Grand Total Paid</span>
-                    <span className="text-base font-heading font-extrabold text-[var(--admin-primary)] tabular-nums">₹{currentOrder.total.toLocaleString("en-IN")}</span>
+                    <span className="text-base font-heading font-extrabold text-white tabular-nums">
+                      ₹{currentOrder.total.toLocaleString("en-IN")}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -4706,7 +4763,7 @@ function OrderDeepInspectionModal({
               <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <FileText size={15} className="text-[var(--admin-primary)]" />
+                    <FileText size={15} className="text-white/60" />
                     <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                       Internal Staff Notes
                     </h3>
@@ -4719,7 +4776,7 @@ function OrderDeepInspectionModal({
                   onChange={(e) => setAdminNote(e.target.value)}
                   placeholder="Record customer preferences, delivery instructions, packaging notes or escalation info..."
                   rows={3}
-                  className="w-full text-xs p-3 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] resize-none transition-all"
+                  className="w-full text-xs p-3 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-white/30 resize-none transition-all"
                 />
 
                 <div className="flex items-center gap-1.5 mt-2 flex-wrap">
@@ -4735,17 +4792,20 @@ function OrderDeepInspectionModal({
                         }}
                         className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white/90 font-medium border border-white/10 transition-colors cursor-pointer"
                       >
-                        <TagIcon size={12} className="text-[var(--admin-primary)] shrink-0" />
+                        <TagIcon size={12} className="text-white/60 shrink-0" />
                         <span>{tag.label}</span>
                       </button>
                     );
                   })}
                 </div>
 
-                <div className="flex justify-end mt-3">
+                <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/5">
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-mono">
+                    Private operational note
+                  </span>
                   <button
                     onClick={handleSaveNote}
-                    className="px-4 py-1.5 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold transition-colors cursor-pointer"
+                    className="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-white text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Save Operational Note
                   </button>
@@ -4758,7 +4818,7 @@ function OrderDeepInspectionModal({
               {/* Customer Dossier Card */}
               <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
                 <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
-                  <User size={15} className="text-[var(--admin-primary)]" />
+                  <User size={15} className="text-white/60" />
                   <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                     Customer Profile & Contact
                   </h3>
@@ -4775,7 +4835,7 @@ function OrderDeepInspectionModal({
                     <p className="text-xs text-[var(--admin-text-muted)] mt-0.5">
                       {currentOrder.shippingAddress?.phone || "No phone provided"}
                     </p>
-                    <span className="inline-block mt-1 text-[10px] px-2.5 py-0.5 rounded-full bg-[var(--admin-success)]/15 text-[var(--admin-success)] font-semibold border border-[var(--admin-success)]/30">
+                    <span className="inline-block mt-1 text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
                       Verified Buyer
                     </span>
                   </div>
@@ -4785,9 +4845,9 @@ function OrderDeepInspectionModal({
                   <div className="grid grid-cols-2 gap-2 mb-4">
                     <a
                       href={`tel:${cleanPhone}`}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/5 text-white text-xs font-semibold border border-white/10 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[var(--admin-surface-2)] hover:bg-white/10 text-white text-xs font-semibold border border-white/10 transition-colors"
                     >
-                      <Phone size={13} className="text-[var(--admin-text-muted)]" />
+                      <Phone size={13} className="text-white/60" />
                       <span>Call Client</span>
                     </a>
                     <a
@@ -4796,9 +4856,9 @@ function OrderDeepInspectionModal({
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[var(--admin-success)]/15 hover:bg-[var(--admin-success)]/25 text-[var(--admin-success)] text-xs font-semibold transition-colors border border-[var(--admin-success)]/30"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-full bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] text-xs font-semibold transition-colors border border-[#25D366]/25"
                     >
-                      <MessageSquare size={13} className="text-[var(--admin-success)]" />
+                      <MessageSquare size={13} className="text-[#25D366]" />
                       <span>WhatsApp</span>
                     </a>
                   </div>
@@ -4806,7 +4866,7 @@ function OrderDeepInspectionModal({
 
                 <div className="p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 text-xs space-y-1">
                   <div className="flex items-center gap-1.5 font-bold text-white mb-1">
-                    <MapPin size={13} className="text-[var(--admin-primary)]" />
+                    <MapPin size={13} className="text-white/60" />
                     <span>Shipping Destination</span>
                   </div>
                   <p className="text-white/80 leading-relaxed font-medium">
@@ -4814,45 +4874,160 @@ function OrderDeepInspectionModal({
                   </p>
                   {currentOrder.shippingAddress?.pincode && (
                     <p className="text-[var(--admin-text-muted)] text-[11px]">
-                      PIN / Postal Code: <strong className="text-white">{currentOrder.shippingAddress.pincode}</strong>
+                      PIN / Postal Code: <strong className="text-white font-mono">{currentOrder.shippingAddress.pincode}</strong>
                     </p>
                   )}
                 </div>
               </div>
 
-              {/* Chronological Tracking Audit Timeline */}
+              {/* Chronological Tracking Audit Timeline with Milestone Stepper */}
               <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
                 <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/5">
                   <div className="flex items-center gap-2">
-                    <Truck size={15} className="text-[var(--admin-primary)]" />
+                    <Truck size={15} className="text-white/60" />
                     <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
                       Fulfillment Journey
                     </h3>
                   </div>
-                  <span className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase">
-                    Audit Log
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[var(--admin-text-muted)] font-mono">
+                    {currentOrder.status}
                   </span>
                 </div>
 
-                <div className="space-y-3 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
+                {/* Horizontal Milestone Stepper */}
+                {currentOrder.status === "Cancelled" ? (
+                  <div className="p-3 rounded-[12px] bg-[#FF4B55]/10 border border-[#FF4B55]/20 flex items-center justify-between text-xs text-[#FF4B55] mb-3.5">
+                    <div className="flex items-center gap-2 font-semibold">
+                      <XCircle size={15} />
+                      <span>Order Cancelled</span>
+                    </div>
+                    <span className="text-[11px] text-white/50">Fulfillment Terminated</span>
+                  </div>
+                ) : (
+                  <div className="mb-4 pb-3.5 border-b border-white/5">
+                    {(() => {
+                      const statusLower = currentOrder.status.toLowerCase();
+                      let activeIdx = 0;
+                      if (statusLower.includes("deliver") || statusLower.includes("return")) activeIdx = 3;
+                      else if (statusLower.includes("ship") || statusLower.includes("out for")) activeIdx = 2;
+                      else if (statusLower.includes("process") || statusLower.includes("pack")) activeIdx = 1;
+                      else activeIdx = 0;
+
+                      return (
+                        <div className="grid grid-cols-4 gap-1 relative items-start">
+                          {/* Continuous Background Track */}
+                          <div className="absolute top-[10px] left-[12.5%] right-[12.5%] h-0.5 bg-white/10" />
+                          {/* Continuous Active Progress Track */}
+                          <div
+                            className="absolute top-[10px] left-[12.5%] h-0.5 bg-emerald-500/60 transition-all duration-300"
+                            style={{
+                              width: `${(Math.min(activeIdx, 3) / 3) * 75}%`,
+                            }}
+                          />
+
+                          {(["Confirmed", "Processing", "Shipped", "Delivered"] as const).map((stage, sIdx) => {
+                            const isCompleted = sIdx < activeIdx;
+                            const isCurrent = sIdx === activeIdx;
+
+                            return (
+                              <div key={stage} className="flex flex-col items-center text-center relative z-10">
+                                <div
+                                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${
+                                    isCompleted
+                                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                                      : isCurrent
+                                      ? "bg-white text-black ring-4 ring-white/15 shadow-sm"
+                                      : "bg-[var(--admin-surface)] text-white/30 border border-white/15"
+                                  }`}
+                                >
+                                  {isCompleted ? <Check size={10} strokeWidth={3} /> : sIdx + 1}
+                                </div>
+                                <span
+                                  className={`text-[10px] mt-1.5 font-medium tracking-tight ${
+                                    isCurrent
+                                      ? "text-white font-bold"
+                                      : isCompleted
+                                      ? "text-white/80"
+                                      : "text-white/30"
+                                  }`}
+                                >
+                                  {stage}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* Audit Log Header */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--admin-text-muted)]">
+                    Audit Log History
+                  </span>
+                  <span className="text-[10px] text-white/40 font-mono">
+                    {currentOrder.timeline?.length || 0} events
+                  </span>
+                </div>
+
+                {/* Audit Log Timeline (Contained with Scrollbar) */}
+                <div className="max-h-48 overflow-y-auto admin-scroll space-y-2.5 pr-1 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/5">
                   {currentOrder.timeline && currentOrder.timeline.length > 0 ? (
-                    currentOrder.timeline.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-3 relative z-10">
-                        <div className="w-6 h-6 rounded-full bg-[var(--admin-success)] text-black flex items-center justify-center shrink-0 ring-4 ring-[var(--admin-surface)]">
-                          <Check size={11} strokeWidth={3} />
-                        </div>
-                        <div className="flex-1 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-heading font-bold text-white">{item.status}</span>
-                            <span className="text-[10px] text-[var(--admin-text-muted)]">{item.timestamp}</span>
+                    currentOrder.timeline.map((item, idx) => {
+                      const stLower = item.status.toLowerCase();
+                      const isCancel = stLower.includes("cancel");
+                      const isDeliv = stLower.includes("deliver");
+                      const isShip = stLower.includes("ship") || stLower.includes("out for");
+                      const isProc = stLower.includes("process") || stLower.includes("pack");
+
+                      let nodeColor = "bg-white/10 text-white/70 border-white/15";
+                      let IconComp = Clock;
+                      if (isCancel) {
+                        nodeColor = "bg-[#FF4B55]/15 text-[#FF4B55] border-[#FF4B55]/30";
+                        IconComp = X;
+                      } else if (isDeliv) {
+                        nodeColor = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+                        IconComp = Check;
+                      } else if (isShip) {
+                        nodeColor = "bg-sky-500/15 text-sky-400 border-sky-500/30";
+                        IconComp = Truck;
+                      } else if (isProc) {
+                        nodeColor = "bg-amber-500/15 text-amber-400 border-amber-500/30";
+                        IconComp = Package;
+                      }
+
+                      return (
+                        <div key={idx} className="flex items-start gap-3 relative z-10">
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ring-4 ring-[var(--admin-surface)] border ${nodeColor}`}
+                          >
+                            <IconComp size={11} strokeWidth={isCancel || isDeliv ? 2.5 : 2} />
                           </div>
-                          <p className="text-[var(--admin-text-muted)] text-[11px] mt-0.5">{item.description}</p>
+                          <div className="flex-1 text-xs min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <span
+                                className={`font-heading font-bold truncate ${
+                                  isCancel ? "text-[#FF4B55]" : "text-white"
+                                }`}
+                              >
+                                {item.status}
+                              </span>
+                              <span className="text-[10px] text-[var(--admin-text-muted)] shrink-0 font-mono">
+                                {item.timestamp}
+                              </span>
+                            </div>
+                            <p className="text-[var(--admin-text-muted)] text-[11px] mt-0.5 leading-snug">
+                              {item.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
                     <div className="flex items-start gap-3 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-[var(--admin-warning)] text-black flex items-center justify-center shrink-0 ring-4 ring-[var(--admin-surface)]">
+                      <div className="w-6 h-6 rounded-full bg-white/10 text-white/70 flex items-center justify-center shrink-0 ring-4 ring-[var(--admin-surface)] border border-white/15">
                         <Clock size={11} />
                       </div>
                       <div className="flex-1 text-xs">
@@ -4866,64 +5041,84 @@ function OrderDeepInspectionModal({
 
               {/* Fast Quick Status Actions Bar */}
               <div className="bg-[var(--admin-surface)] rounded-[14px] border border-white/5 p-4.5">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
-                  <RotateCw size={15} className="text-[var(--admin-primary)]" />
-                  <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
-                    Quick Status Actions
-                  </h3>
+                <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/5">
+                  <div className="flex items-center gap-2">
+                    <RotateCw size={15} className="text-white/60" />
+                    <h3 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
+                      Quick Status Actions
+                    </h3>
+                  </div>
+                  <span className="text-[10px] text-[var(--admin-text-muted)] font-medium font-mono">
+                    State Transitions
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => handleStatusChange("Processing")}
-                    disabled={currentOrder.status === "Processing"}
-                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                      currentOrder.status === "Processing"
-                        ? "bg-[var(--admin-warning)]/20 text-[var(--admin-warning)] border border-[var(--admin-warning)]/30 cursor-not-allowed opacity-70"
-                        : "bg-[var(--admin-surface-2)] hover:bg-white/5 text-white border border-white/10"
-                    }`}
-                  >
-                    <span>Mark Processing</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleStatusChange("Shipped")}
-                    disabled={currentOrder.status === "Shipped"}
-                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                      currentOrder.status === "Shipped"
-                        ? "bg-[var(--admin-info)]/20 text-[var(--admin-info)] border border-[var(--admin-info)]/30 cursor-not-allowed opacity-70"
-                        : "bg-[var(--admin-info)]/15 hover:bg-[var(--admin-info)]/25 text-[var(--admin-info)] border border-[var(--admin-info)]/30"
-                    }`}
-                  >
-                    <Truck size={12} />
-                    <span>Mark Shipped</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleStatusChange("Delivered")}
-                    disabled={currentOrder.status === "Delivered"}
-                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                      currentOrder.status === "Delivered"
-                        ? "bg-[var(--admin-success)]/20 text-[var(--admin-success)] border border-[var(--admin-success)]/30 cursor-not-allowed opacity-70"
-                        : "bg-[var(--admin-success)] hover:opacity-90 text-black font-bold"
-                    }`}
-                  >
-                    <CheckCircle2 size={12} />
-                    <span>Mark Delivered</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleStatusChange("Cancelled")}
-                    disabled={currentOrder.status === "Cancelled"}
-                    className={`px-3 py-2 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                      currentOrder.status === "Cancelled"
-                        ? "bg-[var(--admin-danger)]/20 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30 cursor-not-allowed opacity-70"
-                        : "bg-[var(--admin-danger)]/15 hover:bg-[var(--admin-danger)]/25 text-[var(--admin-danger)] border border-[var(--admin-danger)]/30"
-                    }`}
-                  >
-                    <X size={12} />
-                    <span>Cancel Order</span>
-                  </button>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[
+                    {
+                      status: "Processing" as OrderStatus,
+                      label: "Mark Processing",
+                      activeLabel: "Processing (Active)",
+                      icon: Package,
+                      hoverBorder: "hover:border-amber-500/30",
+                      hoverBg: "hover:bg-amber-500/10",
+                      hoverText: "hover:text-amber-400",
+                      iconColor: "text-amber-400/80",
+                    },
+                    {
+                      status: "Shipped" as OrderStatus,
+                      label: "Mark Shipped",
+                      activeLabel: "Shipped (Active)",
+                      icon: Truck,
+                      hoverBorder: "hover:border-sky-500/30",
+                      hoverBg: "hover:bg-sky-500/10",
+                      hoverText: "hover:text-sky-400",
+                      iconColor: "text-sky-400/80",
+                    },
+                    {
+                      status: "Delivered" as OrderStatus,
+                      label: "Mark Delivered",
+                      activeLabel: "Delivered (Active)",
+                      icon: CheckCircle2,
+                      hoverBorder: "hover:border-emerald-500/30",
+                      hoverBg: "hover:bg-emerald-500/10",
+                      hoverText: "hover:text-emerald-400",
+                      iconColor: "text-emerald-400/80",
+                    },
+                    {
+                      status: "Cancelled" as OrderStatus,
+                      label: "Cancel Order",
+                      activeLabel: "Cancelled (Active)",
+                      icon: XCircle,
+                      hoverBorder: "hover:border-[#FF4B55]/30",
+                      hoverBg: "hover:bg-[#FF4B55]/10",
+                      hoverText: "hover:text-[#FF4B55]",
+                      iconColor: "text-[#FF4B55]/80",
+                    },
+                  ].map((action) => {
+                    const isCurrent = currentOrder.status === action.status;
+                    const ActionIcon = action.icon;
+                    return (
+                      <button
+                        key={action.status}
+                        onClick={() => handleStatusChange(action.status)}
+                        disabled={isCurrent}
+                        className={`h-9.5 px-3 rounded-[10px] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all whitespace-nowrap ${
+                          isCurrent
+                            ? "bg-white/5 text-white/40 border border-white/5 cursor-not-allowed"
+                            : `bg-[var(--admin-surface-2)] border border-white/10 text-white/90 ${action.hoverBorder} ${action.hoverBg} ${action.hoverText} cursor-pointer`
+                        }`}
+                      >
+                        <ActionIcon
+                          size={13}
+                          className={isCurrent ? "text-white/30" : action.iconColor}
+                        />
+                        <span className="truncate">
+                          {isCurrent ? action.activeLabel : action.label}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -4991,11 +5186,14 @@ function AllOrdersManagerModal({
   const counts = useMemo(() => {
     return {
       all: orders.length,
-      delivered: orders.filter((o) => o.status === "Delivered").length,
+      delivered: orders.filter((o) => {
+        const isRet = o.status === "Returned" || o.status === "Return Requested" || o.returnRequest?.status === "approved" || o.returnRequest?.status === "pending";
+        return o.status === "Delivered" && !isRet;
+      }).length,
       processing: orders.filter((o) => o.status === "Processing" || o.status === "Confirmed" || o.status === "Packed").length,
       shipped: orders.filter((o) => o.status === "Shipped" || o.status === "Out for Delivery").length,
       cancelled: orders.filter((o) => o.status === "Cancelled").length,
-      returned: orders.filter((o) => o.status === "Returned" || o.status === "Return Requested").length,
+      returned: orders.filter((o) => o.status === "Returned" || o.status === "Return Requested" || o.returnRequest?.status === "approved" || o.returnRequest?.status === "pending").length,
     };
   }, [orders]);
 
@@ -5004,11 +5202,12 @@ function AllOrdersManagerModal({
 
     if (statusFilter !== "All") {
       list = list.filter((o) => {
-        if (statusFilter === "Delivered") return o.status === "Delivered";
+        const isRet = o.status === "Returned" || o.status === "Return Requested" || o.returnRequest?.status === "approved" || o.returnRequest?.status === "pending";
+        if (statusFilter === "Delivered") return o.status === "Delivered" && !isRet;
         if (statusFilter === "Processing") return o.status === "Processing" || o.status === "Confirmed" || o.status === "Packed";
         if (statusFilter === "Shipped") return o.status === "Shipped" || o.status === "Out for Delivery";
         if (statusFilter === "Cancelled") return o.status === "Cancelled";
-        if (statusFilter === "Returned") return o.status === "Returned" || o.status === "Return Requested";
+        if (statusFilter === "Returned") return isRet;
         return true;
       });
     }
@@ -5053,45 +5252,40 @@ function AllOrdersManagerModal({
         }}
         exit={{ opacity: 0, scale: 0.95, y: 12 }}
         transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-5xl w-full max-h-[92vh] flex flex-col border border-white/10 overflow-hidden"
+        className="bg-[var(--admin-elevated)] rounded-[28px] max-w-6xl xl:max-w-7xl w-full h-[88vh] min-h-[580px] max-h-[880px] flex flex-col border border-white/10 overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 bg-[var(--admin-surface)] text-white flex items-center justify-between border-b border-white/5 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-primary)]/15 text-[var(--admin-primary)] flex items-center justify-center border border-[var(--admin-primary)]/30 shrink-0">
-              <ShoppingCart size={20} />
-            </div>
+        <div className="p-5 sm:p-6 bg-[var(--admin-surface)] border-b border-white/5 flex items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-3.5">
+            <AdminIconBadge variant="section" icon={ShoppingCart} />
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-wider text-[var(--admin-text-muted)] font-semibold">
-                  Orders Operations Center
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-white font-mono">
-                  {orders.length} total orders
-                </span>
-              </div>
-              <h2 className="text-lg sm:text-xl font-heading font-bold text-white tracking-tight">
-                All Orders & Shipments Management
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-white leading-tight tracking-tight">
+                All Orders &amp; Shipments Management
               </h2>
+              <p className="text-xs sm:text-[13px] text-[var(--admin-text-muted)] mt-1">
+                Real-time fulfillment pipeline, customer tracking, and dispatch operations ({orders.length} total orders)
+              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5">
             <button
+              type="button"
               onClick={() => {
                 downloadAllOrdersCSV(filteredOrders);
                 showToast(`Exported ${filteredOrders.length} orders to CSV`, "success");
               }}
-              className="px-3.5 py-1.5 rounded-full bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="flex items-center gap-2 h-9 px-4 rounded-[12px] bg-white/[0.05] hover:bg-white/10 text-white border border-white/10 text-xs sm:text-[13px] font-semibold transition-colors cursor-pointer"
             >
-              <FileSpreadsheet size={13} />
+              <FileSpreadsheet size={15} />
               <span>Export CSV</span>
             </button>
 
             <button
+              type="button"
               onClick={onClose}
-              className="w-9 h-9 rounded-full hover:bg-white/5 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
+              className="w-9 h-9 rounded-[12px] hover:bg-white/10 text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors cursor-pointer outline-none"
               aria-label="Close modal"
             >
               <X size={18} />
@@ -5099,56 +5293,31 @@ function AllOrdersManagerModal({
           </div>
         </div>
 
-        {/* Toolbar & Filter Bar */}
-        <div className="p-5 bg-[var(--admin-surface-2)] border-b border-white/5 space-y-3 shrink-0">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
-              <input
-                type="text"
-                value={modalSearch}
-                onChange={(e) => setModalSearch(e.target.value)}
-                placeholder="Search by Order ID, Customer, Phone, Product..."
-                className="w-full pl-9 pr-8 py-2 rounded-[14px] bg-[var(--admin-surface)] border border-white/10 text-xs text-white focus:outline-none focus:border-[var(--admin-primary)] transition-all placeholder:text-[var(--admin-text-muted)]"
-              />
-              {modalSearch && (
-                <button
-                  onClick={() => setModalSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer"
-                >
-                  <X size={13} />
-                </button>
-              )}
-            </div>
-
-            {/* Sort & Quick Summary */}
-            <div className="flex items-center gap-3 justify-between sm:justify-end">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--admin-text-muted)]">
-                <span className="font-heading font-bold text-white">{filteredOrders.length}</span>
-                <span>orders</span>
-                <span>•</span>
-                <span className="font-heading font-bold text-[var(--admin-primary)] tabular-nums">₹{totalGrossRevenue.toLocaleString("en-IN")}</span>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <ArrowUpDown size={13} className="text-[var(--admin-text-muted)]" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as "newest" | "oldest" | "highest" | "lowest")}
-                  className="text-xs py-1.5 px-3 rounded-[14px] bg-[var(--admin-surface)] border border-white/10 font-medium text-white outline-none focus:border-[var(--admin-primary)]"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="highest">Amount: High to Low</option>
-                  <option value="lowest">Amount: Low to High</option>
-                </select>
-              </div>
-            </div>
+        {/* Filters Bar */}
+        <div className="p-4 sm:p-5 border-b border-white/5 bg-[var(--admin-surface-2)] flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
+          {/* Search */}
+          <div className="relative flex-1 min-w-[240px] lg:min-w-[300px] max-w-sm">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)]" />
+            <input
+              type="text"
+              value={modalSearch}
+              onChange={(e) => setModalSearch(e.target.value)}
+              placeholder="Search Order ID, customer, product..."
+              className="w-full h-10 pl-10 pr-8 bg-[var(--admin-surface)] rounded-[12px] border border-white/10 text-xs sm:text-sm text-white placeholder:text-[var(--admin-text-muted)] focus:outline-none focus:border-[var(--admin-primary)] transition-colors"
+            />
+            {modalSearch && (
+              <button
+                type="button"
+                onClick={() => setModalSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--admin-text-muted)] hover:text-white cursor-pointer"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
 
           {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {[
               { id: "All", label: "All", count: counts.all },
               { id: "Delivered", label: "Delivered", count: counts.delivered },
@@ -5161,17 +5330,18 @@ function AllOrdersManagerModal({
               return (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setStatusFilter(tab.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  className={`h-9 px-3.5 rounded-[10px] text-xs sm:text-[13px] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
                     isActive
-                      ? "bg-[var(--admin-primary)] text-white"
-                      : "bg-white/5 hover:bg-white/10 text-[var(--admin-text-muted)] hover:text-white border border-white/10"
+                      ? "bg-white/15 text-white font-semibold border border-white/20 shadow-sm"
+                      : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent font-medium"
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isActive ? "bg-white/20 text-white" : "bg-white/10 text-[var(--admin-text-muted)]"
+                    className={`text-[11px] px-1.5 py-0.5 rounded-[6px] font-mono ${
+                      isActive ? "bg-white/20 text-white font-bold" : "bg-white/5 text-[var(--admin-text-muted)]"
                     }`}
                   >
                     {tab.count}
@@ -5180,26 +5350,38 @@ function AllOrdersManagerModal({
               );
             })}
           </div>
+
+          {/* Sort Dropdown */}
+          <div className="flex items-center gap-2">
+            <AdminSelect
+              value={sortBy}
+              onValueChange={(val) => setSortBy(val as "newest" | "oldest" | "highest" | "lowest")}
+              options={RECENT_ORDERS_SORT_OPTIONS}
+              className="w-52"
+              triggerClassName="h-10 text-xs sm:text-[13px] font-medium rounded-[12px]"
+              aria-label="Sort orders"
+            />
+          </div>
         </div>
 
         {/* Orders Table Container */}
         <div className="overflow-y-auto admin-scroll flex-1 min-h-0 overscroll-contain bg-[var(--admin-surface-2)]">
-          <table className="w-full text-left [border-collapse:separate] [border-spacing:0]" style={{ borderCollapse: "separate", borderSpacing: 0 }} role="table">
-            <thead className="text-xs font-semibold text-[var(--admin-text-muted)] select-none">
+          <table className="w-full text-left text-xs sm:text-[13px] [border-collapse:separate] [border-spacing:0]" style={{ borderCollapse: "separate", borderSpacing: 0 }} role="table">
+            <thead className="text-[var(--admin-text-muted)] font-bold text-[11px] sm:text-xs uppercase tracking-wider select-none">
               <tr>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 pl-6 pr-3 py-3">Order ID</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Customer</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Products</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Total</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Status</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 px-3 py-3">Date</th>
-                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 pl-3 pr-6 py-3 text-right">Actions</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 w-38 text-center">Order ID</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 w-56 min-w-[200px] text-left">Customer</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 min-w-[280px] text-left">Products</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-3 w-32 text-right">Total</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-3 w-32 text-center">Status</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 w-44 text-center">Date</th>
+                <th className="sticky top-0 z-20 bg-[var(--admin-surface)] border-b border-white/5 py-4 px-4 w-28 text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 px-6 text-center text-xs text-[var(--admin-text-muted)]">
+                  <td colSpan={7} className="py-16 px-6 text-center text-sm text-[var(--admin-text-muted)]">
                     No orders match your filter criteria.
                   </td>
                 </tr>
@@ -5207,34 +5389,41 @@ function AllOrdersManagerModal({
                 filteredOrders.map((order) => {
                   const customerName = order.shippingAddress?.name || "Customer";
                   const avatar = getCustomerAvatar(customerName);
+                  const firstItem = order.items?.[0];
+                  const primaryProductName = firstItem?.productName || order.itemNames?.[0] || "Custom Product";
                   const itemCount = order.itemsCount || order.items?.length || 1;
-                  const thumbUrl = order.items?.[0]?.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp";
+                  const otherCount = itemCount > 1 ? itemCount - 1 : 0;
+                  const thumbUrl = firstItem?.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp";
+                  const variantSummary = [
+                    firstItem?.selectedSize ? `Size: ${firstItem.selectedSize}` : null,
+                    firstItem?.colorName || null,
+                  ].filter(Boolean).join(" · ");
 
                   return (
                     <tr
                       key={order.id}
                       onClick={() => onSelectOrder(order)}
-                      className="hover:bg-white/[0.03] cursor-pointer transition-colors group border-b border-white/5"
+                      className="hover:bg-white/[0.04] cursor-pointer transition-colors group border-b border-white/5"
                       title="Click to deep inspect order"
                     >
                       {/* ID */}
-                      <td className="pl-6 pr-3 py-3.5 whitespace-nowrap text-xs font-mono font-bold text-white group-hover:text-[var(--admin-primary)]">
+                      <td className="px-4 py-4.5 whitespace-nowrap text-center text-[13px] sm:text-sm font-mono font-bold text-white group-hover:text-[var(--admin-primary)] transition-colors select-all">
                         {order.id}
                       </td>
 
                       {/* Customer */}
-                      <td className="px-3 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center gap-2.5">
+                      <td className="px-4 py-4.5 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
                           <div
-                            className={`w-7 h-7 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-xs font-bold shrink-0`}
+                            className={`w-8 h-8 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-xs font-bold shrink-0 border border-white/10`}
                           >
                             {avatar.initial}
                           </div>
-                          <div>
-                            <span className="text-xs sm:text-sm font-heading font-semibold text-white block">
+                          <div className="min-w-0">
+                            <span className="text-[14px] sm:text-[15px] font-semibold text-white block truncate leading-snug">
                               {customerName}
                             </span>
-                            <span className="text-[10px] text-[var(--admin-text-muted)] font-mono">
+                            <span className="text-[12px] text-[var(--admin-text-muted)] font-mono mt-0.5 block select-all">
                               {order.shippingAddress?.phone || "Prepaid"}
                             </span>
                           </div>
@@ -5242,49 +5431,70 @@ function AllOrdersManagerModal({
                       </td>
 
                       {/* Products */}
-                      <td className="px-3 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-[8px] bg-[var(--admin-surface)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                      <td className="px-4 py-4.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-[10px] bg-[var(--admin-surface)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-0.5 group-hover:border-white/20 transition-colors">
                             <Image
                               src={thumbUrl}
-                              alt="Thumbnail"
-                              width={28}
-                              height={28}
-                              className="w-full h-full object-cover"
+                              alt={primaryProductName}
+                              width={44}
+                              height={44}
+                              className="w-full h-full object-cover rounded-[8px]"
                             />
                           </div>
-                          <span className="text-xs text-[var(--admin-text-muted)] font-medium">
-                            {itemCount} {itemCount === 1 ? "item" : "items"}
-                          </span>
+                          <div className="min-w-0 max-w-[240px] sm:max-w-[280px] xl:max-w-[340px]">
+                            <div className="text-[14px] sm:text-[15px] font-semibold text-white truncate leading-snug group-hover:text-white transition-colors">
+                              {primaryProductName}
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {variantSummary ? (
+                                <span className="text-[12px] text-[var(--admin-text-muted)] truncate">
+                                  {variantSummary}
+                                </span>
+                              ) : (
+                                <span className="text-[12px] text-[var(--admin-text-muted)]">
+                                  Standard Order
+                                </span>
+                              )}
+                              {otherCount > 0 && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded-[5px] text-[10px] font-semibold bg-white/[0.08] text-white/90 border border-white/10 shrink-0">
+                                  +{otherCount} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </td>
 
                       {/* Total */}
-                      <td className="px-3 py-3.5 whitespace-nowrap">
-                        <span className="text-xs sm:text-sm font-heading font-extrabold text-white tabular-nums">
+                      <td className="px-3 py-4.5 whitespace-nowrap text-right">
+                        <span className="text-[15px] font-heading font-bold text-white tabular-nums">
                           ₹{order.total.toLocaleString("en-IN")}
                         </span>
                       </td>
 
                       {/* Status */}
-                      <td className="px-3 py-3.5 whitespace-nowrap">
+                      <td className="px-3 py-4.5 whitespace-nowrap text-center">
                         <StatusPill status={order.status} />
                       </td>
 
                       {/* Date */}
-                      <td className="px-3 py-3.5 whitespace-nowrap text-xs text-[var(--admin-text-muted)] tabular-nums">
+                      <td className="px-4 py-4.5 whitespace-nowrap text-center text-[13px] text-[var(--admin-text-muted)] tabular-nums">
                         {order.date}
                       </td>
 
-                      {/* Actions */}
-                      <td className="pl-3 pr-6 py-3.5 whitespace-nowrap text-right">
+                      {/* Action */}
+                      <td className="px-4 py-4.5 whitespace-nowrap text-center">
                         <button
-                          onClick={() => {
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             onSelectOrder(order);
                           }}
-                          className="w-8 h-8 rounded-full bg-[var(--admin-surface)] hover:bg-[var(--admin-primary)] text-[var(--admin-text-muted)] hover:text-white flex items-center justify-center transition-colors ml-auto cursor-pointer border border-white/10"
+                          className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-[9px] bg-white/[0.04] hover:bg-white/10 text-white/80 hover:text-white text-xs font-semibold border border-white/5 hover:border-white/15 transition-all cursor-pointer mx-auto"
                         >
-                          <Eye size={14} />
+                          <span>Inspect</span>
+                          <ChevronRight size={13} className="transition-transform group-hover:translate-x-0.5 text-white/50 group-hover:text-white" />
                         </button>
                       </td>
                     </tr>
@@ -5293,6 +5503,58 @@ function AllOrdersManagerModal({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Footer KPI Summary Bar */}
+        <div className="p-4 sm:p-5 bg-[var(--admin-surface)] border-t border-white/5 flex flex-wrap items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-6 sm:gap-8">
+            <div>
+              <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">Filtered Orders</div>
+              <div className="text-lg sm:text-xl font-heading font-bold text-white tabular-nums mt-0.5">
+                {filteredOrders.length} <span className="text-xs font-normal text-[var(--admin-text-muted)] font-sans">orders</span>
+              </div>
+            </div>
+
+            <div className="h-8 w-px bg-white/10 hidden sm:block" />
+
+            <div>
+              <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">Gross Value</div>
+              <div className="text-base sm:text-lg font-heading font-bold text-white tabular-nums mt-0.5">
+                ₹{totalGrossRevenue.toLocaleString("en-IN")}
+              </div>
+            </div>
+
+            <div className="h-8 w-px bg-white/10 hidden sm:block" />
+
+            <div>
+              <div className="text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">Delivered Rate</div>
+              <div className="text-base sm:text-lg font-heading font-bold text-[var(--admin-success)] tabular-nums mt-0.5">
+                {orders.length > 0 ? Math.round((counts.delivered / orders.length) * 100) : 0}%
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => {
+                downloadAllOrdersCSV(filteredOrders);
+                showToast(`Exported ${filteredOrders.length} orders to CSV`, "success");
+              }}
+              className="h-10 px-4 rounded-[12px] bg-white/[0.05] border border-white/10 hover:bg-white/10 text-white font-semibold text-xs sm:text-[13px] transition-colors cursor-pointer flex items-center gap-2"
+            >
+              <Download size={14} />
+              <span>Export All ({filteredOrders.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-10 px-5 rounded-[12px] bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] text-white text-xs sm:text-[13px] font-semibold transition-colors cursor-pointer shadow-md shadow-[var(--admin-primary)]/20"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -5361,18 +5623,6 @@ function NotificationIconBadge({ type }: { type: AdminNotificationItem["type"] }
         </div>
       );
   }
-}
-
-function AdminPortal({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || typeof document === "undefined") {
-    return null;
-  }
-  return createPortal(children, document.body);
 }
 
 // ─── MAIN ADMIN DASHBOARD COMPONENT ──────────────────────────────────────────
@@ -5485,6 +5735,13 @@ export default function AdminDashboard() {
 
 
 
+  // Dynamic calendar date anchors
+  const now = new Date();
+  const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const yDate = new Date(now);
+  yDate.setDate(now.getDate() - 1);
+  const yesterdayIso = `${yDate.getFullYear()}-${String(yDate.getMonth() + 1).padStart(2, "0")}-${String(yDate.getDate()).padStart(2, "0")}`;
+
   // Search filter
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -5493,7 +5750,7 @@ export default function AdminDashboard() {
     type: "all",
     label: "All Time (Till Date)",
     startDate: "2026-01-01",
-    endDate: "2026-10-03",
+    endDate: todayIso,
   });
 
   // Notifications state
@@ -5621,13 +5878,11 @@ export default function AdminDashboard() {
 
   // Selected Order Status filter from Donut Chart
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string | null>(null);
-  const [isDonutSpinning, setIsDonutSpinning] = useState(false);
+  const [donutKey, setDonutKey] = useState(0);
 
   const handleRefreshDonut = () => {
-    setIsDonutSpinning(true);
-    setTimeout(() => {
-      setIsDonutSpinning(false);
-    }, 750);
+    setDonutKey((prev) => prev + 1);
+    triggerToast("Order status metrics refreshed", "success");
   };
 
   // Click outside handlers
@@ -5689,17 +5944,18 @@ export default function AdminDashboard() {
       if (topProductsTimeframe === "period") {
         const real = realSalesByProduct[p.id];
         if (dateFilter.type === "all") {
-          // All Time / Till Date: show full accumulated volume up to today (03 Oct 2026)
+          // All Time / Till Date: show full accumulated volume up to today
           soldCount = p.timeframeStats.allTime.soldCount + (real ? real.soldCount : 0);
           revenue = p.timeframeStats.allTime.revenue + (real ? real.revenue : 0);
           growth = p.timeframeStats.allTime.growth;
         } else if (dateFilter.type === "day") {
           // Day-wise: specific single day sales volume
-          if (dateFilter.singleDay === "2026-10-03" || dateFilter.startDate === "2026-10-03") {
+          const activeDay = dateFilter.singleDay || dateFilter.startDate;
+          if (activeDay === todayIso) {
             soldCount = Math.max(p.timeframeStats.today.soldCount, real ? real.soldCount : 0);
             revenue = soldCount * p.unitPrice;
             growth = p.timeframeStats.today.growth;
-          } else if (dateFilter.singleDay === "2026-10-02" || dateFilter.startDate === "2026-10-02") {
+          } else if (activeDay === yesterdayIso) {
             soldCount = Math.max(1, Math.round(p.timeframeStats.today.soldCount * 0.8));
             revenue = soldCount * p.unitPrice;
             growth = 15.0;
@@ -5772,6 +6028,7 @@ export default function AdminDashboard() {
     dateFilter,
   ]);
 
+
   // Compute stats dynamically based on the filtered date period
   const stats = useMemo(() => {
     const list = dateFilteredOrders;
@@ -5788,11 +6045,17 @@ export default function AdminDashboard() {
     let returned = 0;
 
     list.forEach((o) => {
-      if (o.status === "Delivered") delivered++;
+      const isRet =
+        o.status === "Returned" ||
+        o.status === "Return Requested" ||
+        o.returnRequest?.status === "approved" ||
+        o.returnRequest?.status === "pending";
+
+      if (isRet) returned++;
+      else if (o.status === "Delivered") delivered++;
       else if (o.status === "Processing" || o.status === "Confirmed" || o.status === "Packed") processing++;
       else if (o.status === "Shipped" || o.status === "Out for Delivery") shipped++;
       else if (o.status === "Cancelled") cancelled++;
-      else if (o.status === "Returned" || o.status === "Return Requested") returned++;
     });
 
     return {
@@ -5814,22 +6077,34 @@ export default function AdminDashboard() {
 
     if (recentOrdersStatusFilter !== "All") {
       list = list.filter((o) => {
-        if (recentOrdersStatusFilter === "Delivered") return o.status === "Delivered";
+        const isRet =
+          o.status === "Returned" ||
+          o.status === "Return Requested" ||
+          o.returnRequest?.status === "approved" ||
+          o.returnRequest?.status === "pending";
+
+        if (recentOrdersStatusFilter === "Delivered") return o.status === "Delivered" && !isRet;
         if (recentOrdersStatusFilter === "Processing") return o.status === "Processing" || o.status === "Confirmed" || o.status === "Packed";
         if (recentOrdersStatusFilter === "Shipped") return o.status === "Shipped" || o.status === "Out for Delivery";
         if (recentOrdersStatusFilter === "Cancelled") return o.status === "Cancelled";
-        if (recentOrdersStatusFilter === "Returned") return o.status === "Returned" || o.status === "Return Requested";
+        if (recentOrdersStatusFilter === "Returned") return isRet;
         return true;
       });
     }
 
     if (selectedStatusFilter) {
       list = list.filter((o) => {
-        if (selectedStatusFilter === "Delivered") return o.status === "Delivered";
+        const isRet =
+          o.status === "Returned" ||
+          o.status === "Return Requested" ||
+          o.returnRequest?.status === "approved" ||
+          o.returnRequest?.status === "pending";
+
+        if (selectedStatusFilter === "Delivered") return o.status === "Delivered" && !isRet;
         if (selectedStatusFilter === "Processing") return o.status === "Processing" || o.status === "Confirmed" || o.status === "Packed";
         if (selectedStatusFilter === "Shipped") return o.status === "Shipped" || o.status === "Out for Delivery";
         if (selectedStatusFilter === "Cancelled") return o.status === "Cancelled";
-        if (selectedStatusFilter === "Returned") return o.status === "Returned" || o.status === "Return Requested";
+        if (selectedStatusFilter === "Returned") return isRet;
         return true;
       });
     }
@@ -5841,8 +6116,8 @@ export default function AdminDashboard() {
     return list;
   }, [dateFilteredOrders, recentOrdersStatusFilter, selectedStatusFilter, searchQuery]);
 
-  const RECENT_ORDERS_PAGE_SIZE = 5;
-  const TOP_PRODUCTS_VISIBLE = 7;
+  const RECENT_ORDERS_PAGE_SIZE = 10;
+  const TOP_PRODUCTS_VISIBLE = 10;
   const totalRecentOrdersPages = Math.max(1, Math.ceil(allFilteredRecentOrders.length / RECENT_ORDERS_PAGE_SIZE));
 
   // Current page displayed orders
@@ -5888,12 +6163,7 @@ export default function AdminDashboard() {
       const day = parseOrderDateToDayString(o.date);
       const existing = dayMap.get(day) || {
         date: day,
-        label:
-          day === "2026-10-03"
-            ? "Today (03 Oct)"
-            : day === "2026-10-02"
-            ? "Yesterday (02 Oct)"
-            : formatDayDisplay(day),
+        label: formatDayDisplay(day),
         count: 0,
         totalRevenue: 0,
       };
@@ -5940,7 +6210,7 @@ export default function AdminDashboard() {
       type: "all",
       label: "All Time (Till Date)",
       startDate: "2026-01-01",
-      endDate: "2026-10-03",
+      endDate: todayIso,
     });
     triggerToast("Switched to All Time (Till Date) cumulative scope", "info");
   };
@@ -5973,7 +6243,7 @@ export default function AdminDashboard() {
       totalOrd,
       avgDaily,
       peakIdx,
-      peakDate: chartData[peakIdx]?.dateStr || "Sep 30, 2026",
+      peakDate: chartData[peakIdx]?.dateStr || "Oct 23, 2026",
       peakVal: maxVal,
       growthPct: chartPeriod === "7d" ? "+14.2%" : chartPeriod === "30d" ? "+18.4%" : "+24.8%",
     };
@@ -5999,6 +6269,7 @@ export default function AdminDashboard() {
           onSelectOrder={(order) => {
             setSelectedOrderForModal(order);
           }}
+          pendingReturnsCount={pendingReturnsCount}
         />
 
         {/* Right header controls */}
@@ -6123,8 +6394,6 @@ export default function AdminDashboard() {
                         className={`group relative p-2.5 rounded-[14px] border flex items-start gap-2.5 cursor-pointer transition-all ${
                           n.isRead
                             ? "bg-[var(--admin-surface-2)] border-white/5 text-[var(--admin-text-muted)] hover:bg-white/[0.03]"
-                            : n.type === "return_request"
-                            ? "bg-[#FF4B55]/10 border-[#FF4B55]/20 hover:bg-[#FF4B55]/15 text-white"
                             : "bg-[var(--admin-surface-2)] border-white/10 hover:bg-white/[0.04] text-white"
                         }`}
                       >
@@ -6135,8 +6404,6 @@ export default function AdminDashboard() {
                             <p className={`font-semibold truncate leading-snug ${
                               n.isRead
                                 ? "text-[var(--admin-text-muted)]"
-                                : n.type === "return_request"
-                                ? "text-[#FF4B55] font-bold"
                                 : "text-white font-bold"
                             }`}>
                               {n.title}
@@ -6145,11 +6412,7 @@ export default function AdminDashboard() {
                               <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shrink-0" />
                             )}
                           </div>
-                          <p className={`text-[11px] mt-0.5 leading-tight truncate ${
-                            n.type === "return_request" && !n.isRead
-                              ? "text-white/80 font-medium"
-                              : "text-[var(--admin-text-muted)]"
-                          }`}>
+                          <p className="text-[11px] mt-0.5 leading-tight truncate text-[var(--admin-text-muted)]">
                             {n.subtitle}
                           </p>
                           <span className="text-[10px] text-[var(--admin-text-muted)] mt-1 block">
@@ -6226,8 +6489,8 @@ export default function AdminDashboard() {
 
       {/* ── GREETING & PAGE HEADER (TARGET UI DESIGN) ────────────────────── */}
       <AdminHeader
-        greeting="Welcome back 👋"
-        subtitle="This is what's happening in your store this month."
+        adminName="Santhosh"
+        subtitle="Here's what's happening in your store today."
         currentFilter={dateFilter}
         onSelectFilter={(newFilter) => {
           setDateFilter(newFilter);
@@ -6256,9 +6519,9 @@ export default function AdminDashboard() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Total Revenue</span>
-              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
+              <AdminIconBadge variant="kpi">
                 <ArrowUpRight size={18} className="group-hover:translate-x-[1px] group-hover:-translate-y-[1px] transition-transform duration-200" />
-              </div>
+              </AdminIconBadge>
             </div>
             <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
               <CountUp value={stats.totalRev} prefix="₹" />
@@ -6283,9 +6546,7 @@ export default function AdminDashboard() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Total Orders</span>
-              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
-                <ShoppingCart size={18} />
-              </div>
+              <AdminIconBadge variant="kpi" icon={ShoppingCart} />
             </div>
             <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
               <CountUp value={stats.totalOrd} />
@@ -6310,9 +6571,7 @@ export default function AdminDashboard() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Total Products</span>
-              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
-                <Package size={18} />
-              </div>
+              <AdminIconBadge variant="kpi" icon={Package} />
             </div>
             <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
               <CountUp value={stats.totalProd} />
@@ -6335,9 +6594,7 @@ export default function AdminDashboard() {
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[13px] font-medium text-[var(--admin-text-muted)]">Avg. Order Value</span>
-              <div className="w-9 h-9 rounded-full bg-[var(--admin-elevated)] border border-white/10 text-[var(--admin-text-muted)] flex items-center justify-center shrink-0">
-                <BarChart3 size={18} />
-              </div>
+              <AdminIconBadge variant="kpi" icon={BarChart3} />
             </div>
             <div className="text-[32px] font-heading font-bold text-white tracking-tight leading-none mt-4 mb-2.5 tabular-nums">
               <CountUp value={stats.aov} prefix="₹" />
@@ -6362,9 +6619,7 @@ export default function AdminDashboard() {
           {/* Header Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/5">
-                <BarChart3 size={18} className="text-[var(--admin-text-muted)]" />
-              </div>
+              <AdminIconBadge variant="section" icon={BarChart3} />
               <div>
                 <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
                   Revenue Overview
@@ -6391,7 +6646,7 @@ export default function AdminDashboard() {
                   <span
                     className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                       revenueMetricMode === "revenue"
-                        ? "bg-[#7C3AED]/20 text-[#7C3AED]"
+                        ? "bg-[#A855F7]/20 text-[#A855F7]"
                         : "bg-white/5 text-[var(--admin-text-muted)] group-hover:text-white"
                     }`}
                   >
@@ -6412,7 +6667,7 @@ export default function AdminDashboard() {
                   <span
                     className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                       revenueMetricMode === "orders"
-                        ? "bg-[#7C3AED]/20 text-[#7C3AED]"
+                        ? "bg-[#A855F7]/20 text-[#A855F7]"
                         : "bg-white/5 text-[var(--admin-text-muted)] group-hover:text-white"
                     }`}
                   >
@@ -6498,9 +6753,9 @@ export default function AdminDashboard() {
         <div className="lg:col-span-6 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-6 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] flex items-center justify-center text-[var(--admin-text-muted)] border border-white/5 shrink-0">
-                <StopwatchIcon className="w-5 h-5 text-[var(--admin-text-muted)]" />
-              </div>
+              <AdminIconBadge variant="section">
+                <StopwatchIcon className="w-4 h-4 text-[var(--admin-text-muted)]" />
+              </AdminIconBadge>
               <h2 className="text-[17px] font-bold text-white tracking-tight leading-tight">
                 Order Status
               </h2>
@@ -6517,6 +6772,7 @@ export default function AdminDashboard() {
           {/* Centered Donut & Legend Container without dead whitespace */}
           <div className="flex-1 flex flex-col justify-center my-auto py-1">
             <OrderStatusDonut
+              key={donutKey}
               deliveredCount={stats.delivered}
               processingCount={stats.processing}
               shippedCount={stats.shipped}
@@ -6524,7 +6780,6 @@ export default function AdminDashboard() {
               returnedCount={stats.returned}
               onSelectStatus={(status) => setSelectedStatusFilter(status)}
               selectedStatus={selectedStatusFilter}
-              isSpinning={isDonutSpinning}
             />
           </div>
 
@@ -6546,46 +6801,18 @@ export default function AdminDashboard() {
       </section>
 
       {/* ── BOTTOM ROW: RECENT ORDERS & TOP PRODUCTS ─────────────────────────── */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Left: Recent Orders Table (8 cols) */}
-        <div className="lg:col-span-8 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 overflow-hidden flex flex-col justify-between">
-          <div>
+        <div className="lg:col-span-8 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 overflow-hidden flex flex-col lg:h-[700px]">
+          <div className="flex-1 flex flex-col min-h-0">
             {/* Header */}
             <div className="flex items-center justify-between p-5 sm:p-6 pb-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/5">
-                  <ShoppingCart size={18} className="text-[var(--admin-text-muted)]" />
-                </div>
+                <AdminIconBadge variant="section" icon={ShoppingCart} />
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
-                      Recent Orders
-                    </h2>
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border flex items-center gap-1.5 ${
-                        dateFilter.type === "day"
-                          ? "bg-sky-500/15 text-sky-400 border-sky-500/20"
-                          : dateFilter.type === "custom"
-                          ? "bg-[#7C3AED]/15 text-[#7C3AED] border-[#7C3AED]/20"
-                          : "bg-[#00F59B]/15 text-[#00F59B] border-[#00F59B]/20"
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          dateFilter.type === "day"
-                            ? "bg-sky-400"
-                            : dateFilter.type === "custom"
-                            ? "bg-[#7C3AED]"
-                            : "bg-[#00F59B]"
-                        }`}
-                      />
-                      {dateFilter.type === "day"
-                        ? "Day-wise"
-                        : dateFilter.type === "custom"
-                        ? "Custom Range"
-                        : "Till Date"}
-                    </span>
-                  </div>
+                  <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
+                    Recent Orders
+                  </h2>
                   <p className="text-xs text-[var(--admin-text-muted)] font-normal mt-1 flex items-center gap-1.5 truncate">
                     <CalendarDays size={12} className="text-[var(--admin-text-muted)] shrink-0" />
                     <span className="truncate">
@@ -6620,18 +6847,19 @@ export default function AdminDashboard() {
 
             {/* Recent Orders Status & Date Controls Bar */}
             <div className="flex flex-wrap items-center justify-between gap-2.5 px-5 sm:px-6 pb-3.5 border-b border-white/5">
-              {/* Status Filter Tabs */}
-              <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+              {/* Status Filter Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                 {["All", "Delivered", "Processing", "Shipped", "Returned"].map((status) => {
                   const isActive = recentOrdersStatusFilter === status;
                   return (
                     <button
                       key={status}
+                      type="button"
                       onClick={() => setRecentOrdersStatusFilter(status)}
-                      className={`px-3 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      className={`h-8 px-3.5 rounded-[10px] text-xs font-medium transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center shrink-0 ${
                         isActive
-                          ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
-                          : "bg-[var(--admin-surface-2)] hover:bg-white/[0.04] text-[var(--admin-text-muted)] hover:text-white border border-white/5"
+                          ? "bg-white/15 text-white font-semibold border border-white/20 shadow-sm"
+                          : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent font-medium"
                       }`}
                     >
                       {status}
@@ -6640,54 +6868,8 @@ export default function AdminDashboard() {
                 })}
               </div>
 
-              {/* Date Scope Controls: Quick Switcher + Compact Picker */}
+              {/* Date Scope Control: Compact Date Range Picker */}
               <div className="flex items-center gap-2">
-                {/* 1-Click Quick Mode Switcher: "Till Date" vs "Day-wise" */}
-                <div className="flex items-center bg-[var(--admin-surface-2)] p-0.5 rounded-full border border-white/5 text-[10px] font-semibold shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDateFilter({
-                        type: "all",
-                        label: "All Time (Till Date)",
-                        startDate: "2026-01-01",
-                        endDate: "2026-10-03",
-                      });
-                      triggerToast("Showing store orders accumulated Till Date (03 Oct 2026)", "info");
-                    }}
-                    className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
-                      dateFilter.type === "all"
-                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
-                        : "text-[var(--admin-text-muted)] hover:text-white"
-                    }`}
-                    title="View orders accumulated till date (03 Oct 2026)"
-                  >
-                    <span>Till Date</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDateFilter({
-                        type: "day",
-                        label: "Today (03 Oct 2026)",
-                        startDate: "2026-10-03",
-                        endDate: "2026-10-03",
-                        singleDay: "2026-10-03",
-                      });
-                      triggerToast("Showing single-day orders for Today (03 Oct 2026)", "info");
-                    }}
-                    className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
-                      dateFilter.type === "day"
-                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
-                        : "text-[var(--admin-text-muted)] hover:text-white"
-                    }`}
-                    title="View single-day orders (Today: 03 Oct 2026)"
-                  >
-                    <span>Day-wise</span>
-                  </button>
-                </div>
-
-                {/* Inline Compact Date Range Picker */}
                 <AdminDateRangePicker
                   currentFilter={dateFilter}
                   onSelectFilter={(newFilter) => {
@@ -6754,7 +6936,7 @@ export default function AdminDashboard() {
                           type: "all",
                           label: "All Time (Till Date)",
                           startDate: "2026-01-01",
-                          endDate: "2026-10-03",
+                          endDate: todayIso,
                         });
                         triggerToast("Restored store orders accumulated Till Date", "info");
                       }}
@@ -6808,33 +6990,7 @@ export default function AdminDashboard() {
                   })}
                 </div>
               </div>
-            ) : dateFilter.type === "all" ? (
-              <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={13} className="text-[#00F59B] shrink-0" />
-                  <span>
-                    <strong className="text-white">Till Date Store History:</strong> All {orders.length} orders recorded from store launch (18 Sep 2026) till today (03 Oct 2026). Cumulative gross: <strong className="text-white">₹{lifetimeStoreRevenue.toLocaleString("en-IN")}</strong>
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDateFilter({
-                      type: "day",
-                      label: "Today (03 Oct 2026)",
-                      startDate: "2026-10-03",
-                      endDate: "2026-10-03",
-                      singleDay: "2026-10-03",
-                    });
-                    triggerToast("Switched to Day-Wise Breakdown for Today (03 Oct 2026)", "info");
-                  }}
-                  className="text-[#7C3AED] hover:text-[#9061F9] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0 ml-2"
-                >
-                  <span>Explore Day-Wise</span>
-                  <ArrowRight size={11} />
-                </button>
-              </div>
-            ) : (
+            ) : dateFilter.type === "custom" ? (
               <div className="mx-5 sm:mx-6 my-2 px-3.5 py-2 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex items-center justify-between text-xs text-[var(--admin-text-muted)] animate-in fade-in duration-150">
                 <div className="flex items-center gap-2">
                   <CalendarDays size={13} className="text-[#7C3AED] shrink-0" />
@@ -6849,7 +7005,7 @@ export default function AdminDashboard() {
                       type: "all",
                       label: "All Time (Till Date)",
                       startDate: "2026-01-01",
-                      endDate: "2026-10-03",
+                      endDate: todayIso,
                     });
                     triggerToast("Reset to All Time (Till Date)", "info");
                   }}
@@ -6859,7 +7015,7 @@ export default function AdminDashboard() {
                   <RotateCcw size={11} />
                 </button>
               </div>
-            )}
+            ) : null}
 
             {/* Active Search & Filter Banner */}
             {searchQuery.trim() && (
@@ -6879,23 +7035,23 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <div className="overflow-x-auto admin-scroll">
-              <table className="w-full text-left border-collapse" role="table">
-                <thead>
-                  <tr className="bg-[var(--admin-surface-2)] border-b border-white/5 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider">
-                    <th className="pl-6 py-3">Order ID</th>
-                    <th className="px-3 py-3">Customer</th>
-                    <th className="px-3 py-3">Products</th>
-                    <th className="px-3 py-3">Total</th>
-                    <th className="px-3 py-3">Status</th>
-                    <th className="px-3 py-3">Date</th>
-                    <th className="pr-6 py-3 text-right">Actions</th>
+            <div className="overflow-x-auto overflow-y-auto admin-scroll overscroll-x-contain flex-1 min-h-0">
+              <table className="w-full table-fixed text-left border-collapse" role="table">
+                <thead className="sticky top-0 z-10 bg-[var(--admin-surface-2)] shadow-xs">
+                  <tr className="border-b border-white/5 text-[11px] font-semibold text-[var(--admin-text-muted)] uppercase tracking-wider select-none">
+                    <th className="px-4 py-3.5 text-left w-[14%]">Order ID</th>
+                    <th className="px-4 py-3.5 text-left w-[19%]">Customer</th>
+                    <th className="px-4 py-3.5 text-left w-[26%]">Products</th>
+                    <th className="px-4 py-3.5 text-right w-[12%]">Total</th>
+                    <th className="px-3 py-3.5 text-center w-[11%]">Status</th>
+                    <th className="px-3 py-3.5 text-center w-[11%]">Date</th>
+                    <th className="px-1.5 py-3.5 text-center w-[7%]">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {displayedOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-12 text-center text-xs text-[var(--admin-text-muted)]">
+                      <td colSpan={7} className="py-24 text-center text-xs text-[var(--admin-text-muted)]">
                         <div className="flex flex-col items-center justify-center gap-2">
                           <Package size={24} className="text-[var(--admin-text-muted)]" />
                           <span>No orders found matching the active filters.</span>
@@ -6907,7 +7063,7 @@ export default function AdminDashboard() {
                                 type: "all",
                                 label: "All Time (Till Date)",
                                 startDate: "2026-01-01",
-                                endDate: "2026-10-03",
+                                endDate: todayIso,
                               });
                             }}
                             className="text-[#7C3AED] hover:underline font-semibold text-xs mt-1 cursor-pointer"
@@ -6921,288 +7077,232 @@ export default function AdminDashboard() {
                     displayedOrders.map((order) => {
                       const customerName = order.shippingAddress?.name || "Customer";
                       const avatar = getCustomerAvatar(customerName);
+                      const firstItem = order.items?.[0];
+                      const primaryProductName = firstItem?.productName || order.itemNames?.[0] || "Custom Product";
                       const itemCount = order.itemsCount || order.items?.length || 1;
-                      const thumbUrl =
-                        order.items?.[0]?.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp";
+                      const otherCount = itemCount > 1 ? itemCount - 1 : 0;
+                      const thumbUrl = firstItem?.imageUrl || "/products/shoes/veyro-shoe-01-primary.webp";
+                      const variantSummary = [
+                        firstItem?.selectedSize ? `Size: ${firstItem.selectedSize}` : null,
+                        firstItem?.colorName || null,
+                      ].filter(Boolean).join(" · ");
 
                       return (
                         <tr
                           key={order.id}
                           onClick={() => setSelectedOrderForModal(order)}
-                          className="hover:bg-white/[0.03] cursor-pointer transition-colors duration-150 group border-b border-white/5"
+                          className="hover:bg-white/[0.04] cursor-pointer transition-colors duration-150 group border-b border-white/5"
                           title="Click to deep inspect order"
                         >
-                          {/* ID */}
-                          <td className="pl-6 py-3.5 whitespace-nowrap text-xs font-mono font-medium text-white group-hover:text-[#7C3AED]">
-                            {order.id}
+                          {/* Order ID: Left-aligned for anchor clarity */}
+                          <td className="px-4 py-3.5 whitespace-nowrap text-left font-mono text-xs">
+                            <span className="font-bold text-white group-hover:text-[var(--admin-primary)] transition-colors select-all">
+                              {order.id}
+                            </span>
                           </td>
 
-                          {/* Customer */}
-                          <td className="px-3 py-3.5 whitespace-nowrap">
-                            <div className="flex items-center gap-2.5">
+                          {/* Customer: full width, no awkward truncation */}
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <div className="flex items-center gap-2.5 min-w-0">
                               <div
-                                className={`w-7 h-7 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-xs font-bold shrink-0`}
+                                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full ${avatar.bg} ${avatar.text} flex items-center justify-center text-xs font-bold shrink-0 border border-white/10`}
                               >
                                 {avatar.initial}
                               </div>
-                              <span className="text-xs sm:text-sm font-medium text-white">
-                                {customerName}
-                              </span>
+                              <div className="min-w-0 flex-1">
+                                <span className="text-xs sm:text-[13px] font-semibold text-white truncate block">
+                                  {customerName}
+                                </span>
+                                {order.shippingAddress?.phone ? (
+                                  <div className="text-[11px] text-[var(--admin-text-muted)] flex items-center gap-1 truncate mt-0.5">
+                                    <Phone size={10} className="shrink-0 text-[var(--admin-text-muted)]" />
+                                    <span className="truncate">{order.shippingAddress.phone}</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-[11px] text-[var(--admin-text-muted)] truncate mt-0.5">
+                                    Registered Buyer
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </td>
 
-                          {/* Products */}
-                          <td className="px-3 py-3.5 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-[8px] bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                          {/* Products: Thumbnail + Title + Variant pill */}
+                          <td className="px-4 py-3.5 min-w-0">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-8 h-8 rounded-[8px] bg-[var(--admin-surface-2)] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
                                 <Image
                                   src={thumbUrl}
-                                  alt="Product thumbnail"
-                                  width={28}
-                                  height={28}
+                                  alt={primaryProductName}
+                                  width={32}
+                                  height={32}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <span className="text-xs text-[var(--admin-text-muted)]">
-                                {itemCount} {itemCount === 1 ? "item" : "items"}
-                              </span>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-xs sm:text-[13px] font-semibold text-white truncate leading-tight group-hover:text-white transition-colors">
+                                  {primaryProductName}
+                                </div>
+                                <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+                                  <span className="text-[11px] text-[var(--admin-text-muted)] truncate">
+                                    {variantSummary || `${itemCount} item${itemCount === 1 ? "" : "s"}`}
+                                  </span>
+                                  {otherCount > 0 && (
+                                    <span className="text-[10px] px-1.5 py-0.2 rounded-[4px] bg-white/10 text-[var(--admin-primary)] font-bold shrink-0">
+                                      +{otherCount}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </td>
 
-                          {/* Total */}
-                          <td className="px-3 py-3.5 whitespace-nowrap">
-                            <div className="flex flex-col gap-0.5">
+                          {/* Total: Clear right alignment */}
+                          <td className="px-4 py-3.5 whitespace-nowrap text-right">
+                            <div className="flex flex-col items-end gap-0.5">
                               <span className="text-xs sm:text-sm font-bold text-white font-heading tabular-nums">
                                 ₹{order.total.toLocaleString("en-IN")}
                               </span>
-                              <span className="text-[10px] text-[var(--admin-text-muted)] font-medium uppercase tracking-wider flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] shrink-0" />
+                              <span className="inline-block px-1.5 py-0.2 rounded text-[9.5px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-[var(--admin-text-muted)]">
                                 {order.paymentMethod === "upi"
-                                  ? "UPI • Paid"
+                                  ? "UPI • PAID"
                                   : order.paymentMethod === "card"
-                                  ? "Card • Paid"
+                                  ? "CARD • PAID"
                                   : order.paymentMethod === "cod"
-                                  ? "Cash on Delivery"
-                                  : "Prepaid"}
+                                  ? "COD • PENDING"
+                                  : "PREPAID"}
                               </span>
                             </div>
                           </td>
 
-                          {/* Status */}
-                          <td className="px-3 py-3.5 whitespace-nowrap">
-                            <StatusPill status={order.status} />
+                          {/* Status: Centered clean pill */}
+                          <td className="px-3 py-3.5 whitespace-nowrap text-center">
+                            <div className="flex items-center justify-center">
+                              <StatusPill status={order.status} />
+                            </div>
                           </td>
 
-                          {/* Date */}
-                          <td className="px-3 py-3.5 whitespace-nowrap">
-                            <div className="flex flex-col gap-0.5">
-                              <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
-                                <span>{order.date.includes(",") ? order.date.split(",")[0].trim() : order.date}</span>
-                                {parseOrderDateToDayString(order.date) === "2026-10-03" ? (
-                                  <span className="px-1.5 py-0.2 rounded-full text-[9.5px] font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
-                                    Today
-                                  </span>
-                                ) : parseOrderDateToDayString(order.date) === "2026-10-02" ? (
-                                  <span className="px-1.5 py-0.2 rounded-full text-[9.5px] font-bold bg-white/10 text-white/80 border border-white/10">
-                                    Yesterday
-                                  </span>
-                                ) : null}
+                          {/* Date: Centered with clock icon */}
+                          <td className="px-3 py-3.5 whitespace-nowrap text-center">
+                            <div className="flex flex-col items-center justify-center gap-0.5">
+                              <div className="text-xs font-semibold text-white">
+                                {order.date.includes(",") ? order.date.split(",")[0].trim() : order.date}
                               </div>
-                              <div className="text-[11px] text-[var(--admin-text-muted)] flex items-center gap-1">
+                              <div className="text-[11px] text-[var(--admin-text-muted)] flex items-center justify-center gap-1">
                                 <Clock size={10} className="text-[var(--admin-text-muted)] shrink-0" />
                                 <span>{order.date.includes(",") ? order.date.split(",")[1].trim() : "Recorded"}</span>
                               </div>
                             </div>
                           </td>
 
-                          {/* Actions */}
-                          <td className="pr-6 py-3.5 whitespace-nowrap text-right" onClick={(e) => e.stopPropagation()}>
-                            <OrderRowMenu
-                              order={order}
-                              onUpdateStatus={(id, status) => {
-                                updateOrderStatus(id, status);
-                                triggerToast(`Order #${id} marked as ${status}`);
-                              }}
-                              onInspectOrder={(ord) => setSelectedOrderForModal(ord)}
-                              onDownloadSlip={(ord) => printOrDownloadOrderSlip(ord)}
-                              onCopyId={(id) => {
-                                navigator.clipboard.writeText(id);
-                                triggerToast(`Copied Order ID: ${id}`, "info");
-                              }}
-                            />
+                          {/* Actions: Centered 3-dots */}
+                          <td className="px-2 py-3.5 whitespace-nowrap text-center" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-center">
+                              <OrderRowMenu
+                                order={order}
+                                onUpdateStatus={(id, status) => {
+                                  updateOrderStatus(id, status);
+                                  triggerToast(`Order #${id} marked as ${status}`);
+                                }}
+                                onInspectOrder={(ord) => setSelectedOrderForModal(ord)}
+                                onDownloadSlip={(ord) => printOrDownloadOrderSlip(ord)}
+                                onCopyId={(id) => {
+                                  navigator.clipboard.writeText(id);
+                                  triggerToast(`Copied Order ID: ${id}`, "info");
+                                }}
+                              />
+                            </div>
                           </td>
                         </tr>
                       );
                     })
                   )}
+                  {displayedOrders.length > 0 && displayedOrders.length < RECENT_ORDERS_PAGE_SIZE && recentOrdersStatusFilter !== "All" && (
+                    <tr>
+                      <td colSpan={7} className="py-3 px-4 text-center text-xs text-[var(--admin-text-muted)] bg-white/[0.01]">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-primary)] shrink-0" />
+                          <span>Showing all {displayedOrders.length} {recentOrdersStatusFilter} orders for this period</span>
+                        </span>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
-
-            {/* Day Logistics Pulse when viewing single day with 1-2 orders (Guarantees zero blank space) */}
-            {dateFilter.type === "day" && displayedOrders.length > 0 && displayedOrders.length <= 2 && (
-              <div className="mx-5 sm:mx-6 my-3 p-3.5 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-in fade-in duration-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[var(--admin-surface)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/10">
-                    <Truck size={15} />
-                  </div>
-                  <div>
-                    <div className="font-bold text-white flex items-center gap-1.5">
-                      <span>Day Logistics &amp; Fulfillment Pulse</span>
-                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/20">
-                        100% On Schedule
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[var(--admin-text-muted)] mt-0.5">
-                      {allFilteredRecentOrders.length} {allFilteredRecentOrders.length === 1 ? "order" : "orders"} on {dateFilter.label} handled via BlueDart Express &amp; Delhivery • 0 returns
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 self-end sm:self-center shrink-0 text-[11px]">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDateFilter({
-                        type: "all",
-                        label: "All Time (Till Date)",
-                        startDate: "2026-01-01",
-                        endDate: "2026-10-03",
-                      });
-                      triggerToast("Restored store orders accumulated Till Date", "info");
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--admin-surface)] border border-white/10 hover:bg-white/[0.04] text-white font-semibold cursor-pointer transition-all text-xs"
-                  >
-                    <span>View All Orders (Till Date)</span>
-                    <ArrowRight size={13} className="text-[var(--admin-text-muted)]" />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* ── THE MASTERPIECE FOOTER (Fills the previous blank space!) ── */}
-          <div className="p-4 sm:p-5 bg-[var(--admin-surface-2)] border-t border-white/5 mt-auto flex flex-col gap-3">
-            {/* Upper Strip: Live Analytics Ribbon */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
-                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <IndianRupee size={10} className="text-[#7C3AED]" />
-                  <span>Period Revenue</span>
-                </div>
-                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
-                  ₹{recentOrdersMetrics.totalRev.toLocaleString("en-IN")}
-                </div>
-                <div className="text-[10px] text-[var(--admin-text-muted)] mt-0.5">
-                  {allFilteredRecentOrders.length} orders in scope
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
-                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <TrendingUp size={10} className="text-[#00F59B]" />
-                  <span>Avg Order Value</span>
-                </div>
-                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
-                  ₹{recentOrdersMetrics.aov.toLocaleString("en-IN")}
-                </div>
-                <div className="text-[10px] text-[#00F59B] font-medium mt-0.5">
-                  Healthy basket size
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
-                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <CheckCircle2 size={10} className="text-[#00F59B]" />
-                  <span>Delivered</span>
-                </div>
-                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
-                  {recentOrdersMetrics.deliveredCount} orders
-                </div>
-                <div className="text-[10px] text-[var(--admin-text-muted)] mt-0.5">
-                  ₹{recentOrdersMetrics.deliveredRev.toLocaleString("en-IN")} fulfilled
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-[14px] bg-[var(--admin-surface)] border border-white/5">
-                <div className="text-[10px] text-[var(--admin-text-muted)] font-semibold uppercase tracking-wider flex items-center gap-1">
-                  <Truck size={10} className="text-[#7C3AED]" />
-                  <span>Active Transit</span>
-                </div>
-                <div className="text-sm font-heading font-bold text-white mt-0.5 tabular-nums">
-                  {recentOrdersMetrics.shippedCount} shipped
-                </div>
-                <div className="text-[10px] text-[var(--admin-text-muted)] mt-0.5">
-                  {recentOrdersMetrics.processingCount} in packing
-                </div>
-              </div>
+          {/* ── CLEAN, HIGH-PRECISION ENTERPRISE FOOTER ── */}
+          <div className="mt-auto px-5 py-3.5 bg-[var(--admin-surface-2)] border-t border-white/5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+            {/* Left: Summary text with count */}
+            <div className="flex items-center gap-2 text-xs text-[var(--admin-text-muted)] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--admin-primary)] shrink-0" />
+              <span>
+                Showing{" "}
+                <strong className="text-white font-semibold">
+                  {allFilteredRecentOrders.length === 0 ? 0 : (recentOrdersPage - 1) * RECENT_ORDERS_PAGE_SIZE + 1}
+                </strong>
+                –
+                <strong className="text-white font-semibold">
+                  {Math.min(recentOrdersPage * RECENT_ORDERS_PAGE_SIZE, allFilteredRecentOrders.length)}
+                </strong>{" "}
+                of <strong className="text-white font-semibold">{allFilteredRecentOrders.length}</strong> orders
+              </span>
             </div>
 
-            {/* Lower Strip: Pagination & Quick Batch Operations */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/5">
+            {/* Right: Pagination + Quick Actions */}
+            <div className="flex items-center gap-3">
               {/* Pagination controls */}
-              <div className="flex items-center gap-2 text-xs text-[var(--admin-text-muted)]">
-                <span>
-                  Showing{" "}
-                  <strong className="text-white font-semibold">
-                    {allFilteredRecentOrders.length === 0 ? 0 : (recentOrdersPage - 1) * RECENT_ORDERS_PAGE_SIZE + 1}
-                  </strong>
-                  –
-                  <strong className="text-white font-semibold">
-                    {Math.min(recentOrdersPage * RECENT_ORDERS_PAGE_SIZE, allFilteredRecentOrders.length)}
-                  </strong>{" "}
-                  of <strong className="text-white font-semibold">{allFilteredRecentOrders.length}</strong>
-                </span>
-
-                {totalRecentOrdersPages > 1 && (
-                  <div className="flex items-center gap-1 ml-2">
-                    <button
-                      type="button"
-                      onClick={() => setRecentOrdersPage((p) => Math.max(1, p - 1))}
-                      disabled={recentOrdersPage === 1}
-                      className="p-1 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
-                      title="Previous Page"
-                    >
-                      <ChevronLeft size={13} />
-                    </button>
-                    {Array.from({ length: totalRecentOrdersPages }).map((_, i) => {
-                      const pageNum = i + 1;
-                      return (
-                        <button
-                          key={pageNum}
-                          type="button"
-                          onClick={() => setRecentOrdersPage(pageNum)}
-                          className={`w-6 h-6 rounded-full text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
-                            recentOrdersPage === pageNum
-                              ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
-                              : "text-[var(--admin-text-muted)] hover:text-white"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    })}
-                    <button
-                      type="button"
-                      onClick={() => setRecentOrdersPage((p) => Math.min(totalRecentOrdersPages, p + 1))}
-                      disabled={recentOrdersPage === totalRecentOrdersPages}
-                      className="p-1 rounded-full border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
-                      title="Next Page"
-                    >
-                      <ChevronRight size={13} />
-                    </button>
-                  </div>
-                )}
-              </div>
+              {totalRecentOrdersPages > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setRecentOrdersPage((p) => Math.max(1, p - 1))}
+                    disabled={recentOrdersPage === 1}
+                    className="w-7 h-7 rounded-lg border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] disabled:opacity-25 disabled:pointer-events-none flex items-center justify-center transition-colors cursor-pointer"
+                    title="Previous Page"
+                  >
+                    <ChevronLeft size={13} />
+                  </button>
+                  {Array.from({ length: totalRecentOrdersPages }).map((_, i) => {
+                    const pageNum = i + 1;
+                    const isActive = recentOrdersPage === pageNum;
+                    return (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => setRecentOrdersPage(pageNum)}
+                        className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
+                          isActive
+                            ? "bg-[var(--admin-elevated)] text-white border border-white/15 font-bold shadow-xs"
+                            : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04]"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => setRecentOrdersPage((p) => Math.min(totalRecentOrdersPages, p + 1))}
+                    disabled={recentOrdersPage === totalRecentOrdersPages}
+                    className="w-7 h-7 rounded-lg border border-white/10 text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] disabled:opacity-25 disabled:pointer-events-none flex items-center justify-center transition-colors cursor-pointer"
+                    title="Next Page"
+                  >
+                    <ChevronRight size={13} />
+                  </button>
+                </div>
+              )}
 
               {/* Batch Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 border-l border-white/10 pl-3">
                 <button
                   type="button"
                   onClick={() => {
                     downloadAllOrdersCSV(allFilteredRecentOrders);
                     triggerToast(`Exported ${allFilteredRecentOrders.length} orders to CSV`, "success");
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-white/[0.05] text-white text-xs font-semibold transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-[var(--admin-surface)] hover:bg-white/[0.05] text-white text-xs font-semibold transition-all cursor-pointer"
                   title="Export currently filtered orders dataset as CSV"
                 >
                   <Download size={12} className="text-[var(--admin-text-muted)]" />
@@ -7218,7 +7318,7 @@ export default function AdminDashboard() {
                       triggerToast("No orders available to print", "info");
                     }
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[var(--admin-surface)] hover:bg-white/[0.05] text-white text-xs font-semibold transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-[var(--admin-surface)] hover:bg-white/[0.05] text-white text-xs font-semibold transition-all cursor-pointer"
                   title="Print latest order dispatch slip"
                 >
                   <Printer size={12} className="text-[var(--admin-text-muted)]" />
@@ -7230,45 +7330,17 @@ export default function AdminDashboard() {
         </div>
 
         {/* Right: Top Products (4 cols) */}
-        <div className="lg:col-span-4 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 sm:p-6 flex flex-col h-full">
+        <div className="lg:col-span-4 bg-[var(--admin-surface)] rounded-[28px] border border-white/5 p-5 flex flex-col lg:h-[700px] overflow-hidden">
           {/* a) Header + date/metric toggle + category chips (shrink-0) */}
           <div className="shrink-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-3.5">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-[14px] bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] flex items-center justify-center shrink-0 border border-white/5">
-                  <Sparkles size={18} />
-                </div>
+                <AdminIconBadge variant="section" icon={Sparkles} />
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
-                      Top Products
-                    </h2>
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-tight border flex items-center gap-1.5 ${
-                        dateFilter.type === "day"
-                          ? "bg-sky-500/15 text-sky-400 border-sky-500/20"
-                          : dateFilter.type === "custom"
-                          ? "bg-[#7C3AED]/15 text-[#7C3AED] border-[#7C3AED]/20"
-                          : "bg-[#00F59B]/15 text-[#00F59B] border-[#00F59B]/20"
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          dateFilter.type === "day"
-                            ? "bg-sky-400"
-                            : dateFilter.type === "custom"
-                            ? "bg-[#7C3AED]"
-                            : "bg-[#00F59B]"
-                        }`}
-                      />
-                      {dateFilter.type === "day"
-                        ? "Day-wise"
-                        : dateFilter.type === "custom"
-                        ? "Custom Range"
-                        : "Till Date"}
-                    </span>
-                  </div>
+                  <h2 className="text-[17px] font-bold text-white leading-tight tracking-tight">
+                    Top Products
+                  </h2>
                   <p className="text-xs text-[var(--admin-text-muted)] font-normal mt-1 flex items-center gap-1.5 truncate">
                     <CalendarDays size={12} className="text-[var(--admin-text-muted)] shrink-0" />
                     <span className="truncate">
@@ -7321,7 +7393,7 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setTopProductsMetric("revenue")}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
                       topProductsMetric === "revenue"
                         ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
                         : "text-[var(--admin-text-muted)] hover:text-white"
@@ -7338,7 +7410,7 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setTopProductsMetric("units")}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
                       topProductsMetric === "units"
                         ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
                         : "text-[var(--admin-text-muted)] hover:text-white"
@@ -7355,180 +7427,103 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Row 2: Category Micro-Chips (Left) & Dedicated Till Date vs Day-wise Toggle (Right) */}
-              <div className="flex items-center justify-between gap-2">
-                {/* Category Chips */}
-                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                  {[
-                    { key: "all", label: "All" },
-                    { key: "T-Shirts", label: "Tees" },
-                    { key: "Shoes", label: "Shoes" },
-                    { key: "Watches", label: "Watches" },
-                  ].map((c) => (
-                    <button
-                      key={c.key}
-                      type="button"
-                      onClick={() => setTopProductsCategory(c.key)}
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold transition-all cursor-pointer shrink-0 ${
-                        topProductsCategory === c.key
-                          ? "bg-[var(--admin-elevated)] text-white border border-white/10 font-bold"
-                          : "text-[var(--admin-text-muted)] hover:text-white bg-[var(--admin-surface-2)] hover:bg-white/[0.04] border border-white/5"
-                      }`}
-                    >
-                      {c.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* 1-Click Quick Mode Switcher: "Till Date" vs "Day-wise" */}
-                <div className="flex items-center bg-[var(--admin-surface-2)] p-0.5 rounded-full border border-white/5 text-[10px] font-semibold shrink-0">
+              {/* Row 2: Category Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+                {[
+                  { key: "all", label: "All" },
+                  { key: "T-Shirts", label: "Tees" },
+                  { key: "Shoes", label: "Shoes" },
+                  { key: "Watches", label: "Watches" },
+                ].map((c) => (
                   <button
+                    key={c.key}
                     type="button"
-                    onClick={() => {
-                      setDateFilter({
-                        type: "all",
-                        label: "All Time (Till Date)",
-                        startDate: "2026-01-01",
-                        endDate: "2026-10-03",
-                      });
-                      setTopProductsTimeframe("period");
-                      triggerToast("Showing store-wide sales volume accumulated Till Date (03 Oct 2026)", "info");
-                    }}
-                    className={`px-2 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
-                      dateFilter.type === "all"
-                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
-                        : "text-[var(--admin-text-muted)] hover:text-white"
+                    onClick={() => setTopProductsCategory(c.key)}
+                    className={`h-7 px-3 rounded-[10px] text-xs transition-colors cursor-pointer shrink-0 flex items-center justify-center ${
+                      topProductsCategory === c.key
+                        ? "bg-white/10 text-white font-semibold border border-white/15"
+                        : "text-[var(--admin-text-muted)] hover:text-white hover:bg-white/[0.04] border border-transparent font-medium"
                     }`}
-                    title="View total sales accumulated till date (03 Oct 2026)"
                   >
-                    <span>Till Date</span>
+                    {c.label}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDateFilter({
-                        type: "day",
-                        label: "Today (03 Oct 2026)",
-                        startDate: "2026-10-03",
-                        endDate: "2026-10-03",
-                        singleDay: "2026-10-03",
-                      });
-                      setTopProductsTimeframe("period");
-                      triggerToast("Showing single-day sales volume for Today (03 Oct 2026)", "info");
-                    }}
-                    className={`px-2 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1 ${
-                      dateFilter.type === "day"
-                        ? "bg-[var(--admin-elevated)] text-white font-bold border border-white/10"
-                        : "text-[var(--admin-text-muted)] hover:text-white"
-                    }`}
-                    title="View single-day sales volume (Today: 03 Oct 2026)"
-                  >
-                    <span>Day-wise</span>
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* b) The product list (flex-1 min-h-0, admin-scroll with overflow-y-auto as a safety net) */}
-          <div className="flex-1 min-h-0 overflow-y-auto admin-scroll space-y-1.5">
+          {/* b) The product list (flex-1 min-h-0, admin-scroll with overflow-y-auto, px-1.5) */}
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-scroll space-y-1 px-1.5">
             {activeTopProducts.slice(0, TOP_PRODUCTS_VISIBLE).map((item, idx) => {
-                return (
-                  <div
-                    key={`${item.id || item.name || "prod"}-${idx}`}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setSelectedTopProduct(item)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setSelectedTopProduct(item);
-                      }
-                    }}
-                    className="flex items-center justify-between gap-3 group cursor-pointer p-2.5 -mx-1.5 rounded-[14px] hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-                    title={`Click to view deep analytics & stock actions for ${item.name}`}
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {/* Rank Medal */}
-                      {idx === 0 ? (
-                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-600 text-white flex items-center justify-center font-black text-[10px] shrink-0 ring-1 ring-amber-300/60">
-                          1
-                        </div>
-                      ) : idx === 1 ? (
-                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-slate-500 text-white flex items-center justify-center font-black text-[10px] shrink-0 ring-1 ring-slate-300/50">
-                          2
-                        </div>
-                      ) : idx === 2 ? (
-                        <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-br from-amber-700 via-amber-800 to-yellow-900 text-white flex items-center justify-center font-black text-[10px] shrink-0 ring-1 ring-amber-700/40">
-                          3
-                        </div>
-                      ) : (
-                        <div className="w-5.5 h-5.5 rounded-full bg-[var(--admin-surface-2)] text-[var(--admin-text-muted)] border border-white/5 flex items-center justify-center font-bold text-[10px] shrink-0">
-                          {idx + 1}
-                        </div>
-                      )}
+              return (
+                <div
+                  key={`${item.id || item.name || "prod"}-${idx}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedTopProduct(item)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedTopProduct(item);
+                    }
+                  }}
+                  className="grid grid-cols-[24px_40px_1fr_auto] gap-3 items-center py-2 px-2.5 rounded-[14px] hover:bg-white/[0.04] transition-colors cursor-pointer border border-transparent hover:border-white/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-white/20 group"
+                  title={`Click to view deep analytics & stock actions for ${item.name}`}
+                >
+                  {/* Rank Badge (24px) */}
+                  <div className="w-6 h-6 rounded-[8px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0 text-white/80 font-heading font-semibold text-[11px] tabular-nums group-hover:border-white/20 group-hover:bg-white/[0.06] transition-colors">
+                    {idx + 1}
+                  </div>
 
-                      {/* Thumbnail */}
-                      <div className="w-11 h-11 rounded-[14px] bg-[var(--admin-surface-2)] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center relative group-hover:scale-105 transition-transform duration-200">
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          width={44}
-                          height={44}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                  {/* Thumb (40px) */}
+                  <div className="w-10 h-10 rounded-[10px] bg-[var(--admin-surface-2)] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-                      {/* Text info */}
-                      <div className="min-w-0 flex-1">
-                        <div className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-[#7C3AED] transition-colors leading-snug">
-                          {item.name}
-                        </div>
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--admin-text-muted)] mt-0.5">
-                          <span>
-                            {item.category} • {item.soldCount} sold
-                          </span>
-                          {item.stock <= 10 ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#F59E0B] bg-[#F59E0B]/15 border border-[#F59E0B]/20 px-1.5 py-0.5 rounded-full leading-none">
-                              <AlertTriangle size={10} strokeWidth={2.4} className="text-[#F59E0B] shrink-0" />
-                              {item.stock} left
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#00F59B] bg-[#00F59B]/15 border border-[#00F59B]/20 px-1.5 py-0.5 rounded-full leading-none">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] shrink-0" />
-                              {item.stock} in stock
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                  {/* Text column */}
+                  <div className="min-w-0">
+                    <div className="font-medium text-[13px] text-white truncate">
+                      {item.name}
                     </div>
+                    <div className="text-[11px] text-white/50 truncate mt-0.5">
+                      {item.soldCount} sold · ₹{item.unitPrice.toLocaleString("en-IN")} ·{" "}
+                      <span className={item.stock <= 10 ? "text-[var(--admin-warning)] font-medium" : ""}>
+                        {item.stock <= 10 ? `${item.stock} left` : `${item.stock} in stock`}
+                      </span>
+                    </div>
+                  </div>
 
-                    {/* Revenue / Units Metric & Growth */}
-                    <div className="text-right shrink-0 flex flex-col items-end justify-center">
+                  {/* Metric column (right) */}
+                  <div className="text-right shrink-0">
+                    <div className="font-heading font-bold text-[13px] text-white tabular-nums">
+                      {topProductsMetric === "units"
+                        ? `${item.soldCount.toLocaleString("en-IN")} sold`
+                        : `₹${item.revenue.toLocaleString("en-IN")}`}
+                    </div>
+                    <div className="text-[11px] tabular-nums mt-0.5">
                       {topProductsMetric === "units" ? (
-                        <>
-                          <span className="text-xs sm:text-sm font-heading font-bold text-white block tracking-tight tabular-nums">
-                            {item.soldCount.toLocaleString("en-IN")}{" "}
-                            <span className="text-[11px] font-medium text-[var(--admin-text-muted)]">sold</span>
-                          </span>
-                          <span className="text-[10px] font-semibold text-[var(--admin-text-muted)] mt-0.5">
-                            ₹{item.revenue.toLocaleString("en-IN")}
-                          </span>
-                        </>
+                        <span className="text-white/50">₹{item.revenue.toLocaleString("en-IN")}</span>
+                      ) : item.growth >= 0 ? (
+                        <span className="text-[var(--admin-success)]">+{item.growth}%</span>
                       ) : (
-                        <>
-                          <span className="text-xs sm:text-sm font-heading font-bold text-white block tracking-tight tabular-nums">
-                            ₹{item.revenue.toLocaleString("en-IN")}
-                          </span>
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-[#00F59B] bg-[#00F59B]/15 border border-[#00F59B]/20 px-1.5 py-0.5 rounded-full mt-0.5">
-                            <TrendingUp size={9} strokeWidth={2.4} />+{item.growth}%
-                          </span>
-                        </>
+                        <span className="text-[var(--admin-danger)]">{item.growth}%</span>
                       )}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
+            {activeTopProducts.length > 0 && activeTopProducts.length <= 4 && topProductsCategory !== "all" && (
+              <div className="text-center py-2.5 px-3 text-xs text-[var(--admin-text-muted)] bg-white/[0.02] rounded-[10px] border border-white/5 mt-2 flex items-center justify-center gap-1.5">
+                <span>Showing all {activeTopProducts.length} items in &quot;{topProductsCategory}&quot;</span>
+              </div>
+            )}
           </div>
 
           {/* c) Footer ("Top N of M catalog items" and "View Full Leaderboard") pinned with mt-auto, border-t white/5 */}

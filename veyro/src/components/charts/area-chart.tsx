@@ -158,6 +158,17 @@ function ChartInner({
 }: ChartInnerProps) {
   const lines = useMemo(() => extractAreaConfigs(children), [children]);
 
+  const effectiveMargin = useMemo(() => {
+    if (
+      height <= 100 &&
+      margin.top === DEFAULT_MARGIN.top &&
+      margin.bottom === DEFAULT_MARGIN.bottom
+    ) {
+      return { top: 6, right: 8, bottom: 6, left: 8 };
+    }
+    return margin;
+  }, [height, margin]);
+
   return (
     <TimeSeriesChartInner
       animationDuration={animationDuration}
@@ -170,7 +181,7 @@ function ChartInner({
       height={height}
       lines={lines}
       loadingLabel={loadingLabel}
-      margin={margin}
+      margin={effectiveMargin}
       onPhaseChange={onPhaseChange}
       revealSignature={revealSignature}
       tweenYDomainOnXDomainChange={tweenYDomainOnXDomainChange}

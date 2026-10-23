@@ -1,7 +1,7 @@
 "use client";
 
 import { type MotionValue, motion, useSpring } from "motion/react";
-import { memo, type RefObject, useLayoutEffect, useMemo, useRef } from "react";
+import { memo, type RefObject, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
 const TICKER_ITEM_HEIGHT = 24;
 const TICKER_SPRING = { stiffness: 400, damping: 35 };
@@ -33,7 +33,7 @@ function useActiveItemWidth(
       }
       widthsRef.current = Array.from(
         stack.querySelectorAll<HTMLElement>("[data-ticker-item]"),
-        (node) => node.getBoundingClientRect().width
+        (node) => Math.max(14, Math.ceil(node.getBoundingClientRect().width) + 2)
       );
       const next = widthsRef.current[activeIndexRef.current];
       if (next === undefined) {
@@ -69,14 +69,15 @@ const DateTickerCompact = memo(function DateTickerCompact({
   currentIndex,
   labels,
 }: Omit<DateTickerProps, "visible">) {
-  const label = labels[currentIndex] ?? labels[0] ?? "";
+  const safeIndex = Math.max(0, Math.min(currentIndex, labels.length - 1));
+  const label = labels[safeIndex] ?? labels[0] ?? "";
   const labelItems = useMemo(() => [label], [label]);
   const stackRef = useRef<HTMLDivElement>(null);
-  const width = useSpring(0, TICKER_SPRING);
+  const width = useSpring(48, TICKER_SPRING);
   useActiveItemWidth(stackRef, labelItems, 0, width);
 
   return (
-    <div className="overflow-hidden rounded-full bg-zinc-900 px-4 py-1 text-white shadow-lg dark:bg-zinc-100 dark:text-zinc-900">
+    <div className="overflow-hidden rounded-full bg-white px-3.5 py-0.5 text-zinc-950 shadow-xl border border-white/60">
       <motion.div className="relative h-6" style={{ width }}>
         <motion.div
           className="absolute top-0 left-1/2 flex h-6 items-center"
@@ -84,7 +85,7 @@ const DateTickerCompact = memo(function DateTickerCompact({
           style={{ x: "-50%" }}
         >
           <span
-            className="whitespace-nowrap font-medium text-sm"
+            className="whitespace-nowrap font-bold text-xs text-zinc-950 leading-none"
             data-ticker-item
           >
             {label}
@@ -99,12 +100,24 @@ const DateTickerInner = memo(function DateTickerInner({
   currentIndex,
   labels,
 }: Omit<DateTickerProps, "visible">) {
+  const safeIndex = Math.max(0, Math.min(currentIndex, labels.length - 1));
+
   // Parse labels into month and day parts
   const parsedLabels = useMemo(() => {
     return labels.map((label, index) => {
-      const parts = label.split(" ");
-      const month = parts[0] || "";
-      const day = parts[1] || "";
+      const parts = label.trim().split(/\s+/);
+      let month = "";
+      let day = "";
+      if (parts.length >= 2) {
+        month = parts[0];
+        day = parts.slice(1).join(" ");
+      } else if (parts.length === 1) {
+        if (/^\d+$/.test(parts[0])) {
+          day = parts[0];
+        } else {
+          month = parts[0];
+        }
+      }
       return { month, day, full: label, key: `${label}::${index}` };
     });
   }, [labels]);
@@ -129,51 +142,49 @@ const DateTickerInner = memo(function DateTickerInner({
 
   // Index into monthSegments for the current data point
   const currentMonthIndex = useMemo(() => {
-    if (currentIndex < 0 || currentIndex >= parsedLabels.length) {
+    if (safeIndex < 0 || safeIndex >= parsedLabels.length) {
       return 0;
     }
     for (let i = monthSegments.length - 1; i >= 0; i--) {
       const segment = monthSegments[i];
-      if (segment && segment.startIndex <= currentIndex) {
+      if (segment && segment.startIndex <= safeIndex) {
         return i;
       }
     }
     return 0;
-  }, [currentIndex, parsedLabels.length, monthSegments]);
+  }, [safeIndex, parsedLabels.length, monthSegments]);
 
-  // Track previous month index
-  const prevMonthIndexRef = useRef(-1);
-
-  // Animated Y offsets
-  const dayY = useSpring(0, TICKER_SPRING);
-  const monthY = useSpring(0, TICKER_SPRING);
+  // Animated Y offsets initialized at target so they don't scroll from 0 on first render
+  const initialDayY = -safeIndex * TICKER_ITEM_HEIGHT;
+  const initialMonthY = -currentMonthIndex * TICKER_ITEM_HEIGHT;
+  const dayY = useSpring(initialDayY, TICKER_SPRING);
+  const monthY = useSpring(initialMonthY, TICKER_SPRING);
 
   // Each stack's width follows its active item, so the pill resizes per label.
   const monthStackRef = useRef<HTMLDivElement>(null);
   const dayStackRef = useRef<HTMLDivElement>(null);
-  const monthWidth = useSpring(0, TICKER_SPRING);
-  const dayWidth = useSpring(0, TICKER_SPRING);
+  const monthWidth = useSpring(32, TICKER_SPRING);
+  const dayWidth = useSpring(20, TICKER_SPRING);
+
   useActiveItemWidth(
     monthStackRef,
     monthSegments,
     currentMonthIndex,
     monthWidth
   );
-  useActiveItemWidth(dayStackRef, parsedLabels, currentIndex, dayWidth);
+  useActiveItemWidth(dayStackRef, parsedLabels, safeIndex, dayWidth);
 
-  dayY.set(-currentIndex * TICKER_ITEM_HEIGHT);
+  // Smoothly roll numbers as user moves between data points
+  dayY.set(-safeIndex * TICKER_ITEM_HEIGHT);
 
-  if (currentMonthIndex >= 0) {
-    const isFirstRender = prevMonthIndexRef.current === -1;
-    const monthChanged = prevMonthIndexRef.current !== currentMonthIndex;
-    if (isFirstRender || monthChanged) {
+  useEffect(() => {
+    if (currentMonthIndex >= 0) {
       monthY.set(-currentMonthIndex * TICKER_ITEM_HEIGHT);
-      prevMonthIndexRef.current = currentMonthIndex;
     }
-  }
+  }, [currentMonthIndex, monthY]);
 
   return (
-    <div className="overflow-hidden rounded-full bg-zinc-900 px-4 py-1 text-white shadow-lg dark:bg-zinc-100 dark:text-zinc-900">
+    <div className="overflow-hidden rounded-full bg-white px-3.5 py-0.5 text-zinc-950 shadow-xl border border-white/60">
       <div className="relative h-6 overflow-hidden">
         <div className="flex items-center justify-center gap-1">
           {/* Month stack */}
@@ -192,7 +203,7 @@ const DateTickerInner = memo(function DateTickerInner({
                   data-ticker-item
                   key={segment.key}
                 >
-                  <span className="whitespace-nowrap font-medium text-sm">
+                  <span className="whitespace-nowrap font-bold text-xs text-zinc-950 leading-none">
                     {segment.month}
                   </span>
                 </div>
@@ -216,7 +227,7 @@ const DateTickerInner = memo(function DateTickerInner({
                   data-ticker-item
                   key={label.key}
                 >
-                  <span className="whitespace-nowrap font-medium text-sm">
+                  <span className="whitespace-nowrap font-bold text-xs text-zinc-950 leading-none">
                     {label.day}
                   </span>
                 </div>

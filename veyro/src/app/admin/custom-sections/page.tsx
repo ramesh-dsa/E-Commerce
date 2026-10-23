@@ -38,6 +38,23 @@ import {
   type CustomSectionProduct,
   type CustomSectionFilter,
 } from "@/context/CustomSectionsContext";
+import { AdminSelect } from "@/components/admin/AdminSelect";
+
+const BADGE_OPTIONS = [
+  { value: "", label: "No Badge" },
+  { value: "NEW", label: "NEW" },
+  { value: "SALE", label: "SALE" },
+  { value: "BESTSELLER", label: "BESTSELLER" },
+  { value: "LIMITED", label: "LIMITED" },
+  { value: "TRENDING", label: "TRENDING" },
+  { value: "PREMIUM", label: "PREMIUM" },
+  { value: "EXCLUSIVE", label: "EXCLUSIVE" },
+];
+
+const FILTER_TYPE_OPTIONS = [
+  { value: "checkbox", label: "Checkbox (Multi-select)" },
+  { value: "radio", label: "Radio (Single-select)" },
+];
 
 // ── Toast Component ──────────────────────────────────────────────────────────
 function AdminToast({ message, type, onClose }: { message: string; type: "success" | "error"; onClose: () => void }) {
@@ -1247,20 +1264,14 @@ function ProductFormModal({
             </div>
             <div>
               <label className="block text-xs font-semibold text-white/90 mb-1.5">Badge</label>
-              <select
+              <AdminSelect
                 value={badge}
-                onChange={(e) => setBadge(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white focus:outline-none focus:border-[var(--admin-primary)] cursor-pointer"
-              >
-                <option value="" className="bg-[var(--admin-surface-2)] text-white">No Badge</option>
-                <option value="NEW" className="bg-[var(--admin-surface-2)] text-white">NEW</option>
-                <option value="SALE" className="bg-[var(--admin-surface-2)] text-white">SALE</option>
-                <option value="BESTSELLER" className="bg-[var(--admin-surface-2)] text-white">BESTSELLER</option>
-                <option value="LIMITED" className="bg-[var(--admin-surface-2)] text-white">LIMITED</option>
-                <option value="TRENDING" className="bg-[var(--admin-surface-2)] text-white">TRENDING</option>
-                <option value="PREMIUM" className="bg-[var(--admin-surface-2)] text-white">PREMIUM</option>
-                <option value="EXCLUSIVE" className="bg-[var(--admin-surface-2)] text-white">EXCLUSIVE</option>
-              </select>
+                onValueChange={setBadge}
+                options={BADGE_OPTIONS}
+                className="w-full"
+                triggerClassName="h-10 text-sm"
+                aria-label="Product badge"
+              />
             </div>
           </div>
 
@@ -1478,14 +1489,14 @@ function FilterFormModal({
             <label className="block text-xs font-semibold text-white/90 mb-1.5">
               Filter Type
             </label>
-            <select
+            <AdminSelect
               value={type}
-              onChange={(e) => setType(e.target.value as CustomSectionFilter["type"])}
-              className="w-full px-3.5 py-2.5 bg-[var(--admin-surface-2)] border border-white/10 rounded-[14px] text-sm text-white focus:outline-none focus:border-[var(--admin-primary)] cursor-pointer"
-            >
-              <option value="checkbox" className="bg-[var(--admin-surface-2)] text-white">Checkbox (Multi-select)</option>
-              <option value="radio" className="bg-[var(--admin-surface-2)] text-white">Radio (Single-select)</option>
-            </select>
+              onValueChange={(val) => setType(val as CustomSectionFilter["type"])}
+              options={FILTER_TYPE_OPTIONS}
+              className="w-full"
+              triggerClassName="h-10 text-sm"
+              aria-label="Filter type"
+            />
           </div>
 
           <div>

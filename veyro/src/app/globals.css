@@ -270,14 +270,14 @@ body {
 .admin-scroll-container {
   color-scheme: dark;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
   -webkit-overflow-scrolling: touch;
 }
 
 .admin-scroll::-webkit-scrollbar,
 .admin-scroll-container::-webkit-scrollbar {
   width: 5px;
-  height: 5px;
+  height: 4px;
 }
 .admin-scroll::-webkit-scrollbar-track,
 .admin-scroll-container::-webkit-scrollbar-track {
@@ -294,7 +294,9 @@ body {
 }
 .admin-scroll::-webkit-scrollbar-button,
 .admin-scroll-container::-webkit-scrollbar-button {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 .admin-scroll::-webkit-scrollbar-corner,
 .admin-scroll-container::-webkit-scrollbar-corner {
@@ -1200,6 +1202,7 @@ footer input:-webkit-autofill:active,
   --admin-radius-card: 28px;
   --admin-radius-input: 14px;
   --admin-radius-inner: 14px;
+  --admin-radius-item: 10px;
   --admin-radius-pill: 9999px;
 
   /* Sidebar expand/collapse shared timing (duration 250ms, cubic-bezier(0.32, 0.72, 0, 1)) */

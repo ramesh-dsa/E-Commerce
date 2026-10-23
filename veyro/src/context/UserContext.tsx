@@ -70,14 +70,21 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["King Seiko Automatic (Silver Steel / 37mm Case)"],
-    status: "Delivered",
+    status: "Return Requested",
     deliveredDate: "2026-10-03T13:50:00.000Z",
-    estimatedDelivery: "Delivered on 03 Oct",
+    estimatedDelivery: "Return Requested · Awaiting Review",
+    returnRequest: {
+      requestedAt: "03 Oct 2026, 02:15 PM",
+      reason: "Dial bezel has slight scratch on arrival",
+      status: "pending",
+      details: "Micro-abrasion near 3 o'clock position noted right after unboxing.",
+    },
     timeline: [
       { status: "Confirmed", timestamp: "03 Oct 2026, 09:10 AM", description: "Order confirmed" },
       { status: "Packed", timestamp: "03 Oct 2026, 10:30 AM", description: "Packed at Chennai Hub" },
       { status: "Shipped", timestamp: "03 Oct 2026, 11:45 AM", description: "Dispatched via Express" },
       { status: "Delivered", timestamp: "03 Oct 2026, 01:50 PM", description: "Delivered to Boopesh" },
+      { status: "Return Requested", timestamp: "03 Oct 2026, 02:15 PM", description: "Return claim filed by Boopesh" },
     ],
     shippingAddress: {
       name: "Boopesh",
@@ -122,11 +129,20 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["Blanc Court Sneaker", "Ease Oversized Tee"],
-    status: "Packed",
-    estimatedDelivery: "Arriving by 05 Oct",
+    status: "Returned",
+    deliveredDate: "2026-10-02T10:20:00.000Z",
+    estimatedDelivery: "Return Approved · Reverse Pickup Scheduled",
+    returnRequest: {
+      requestedAt: "02 Oct 2026, 04:40 PM",
+      reason: "Size too tight, request exchange for UK 10",
+      status: "approved",
+      details: "Toe box is narrow for my foot, need one size larger.",
+    },
     timeline: [
       { status: "Confirmed", timestamp: "02 Oct 2026, 10:20 AM", description: "Payment verified" },
       { status: "Packed", timestamp: "02 Oct 2026, 11:00 AM", description: "Order is packed and ready to ship" },
+      { status: "Delivered", timestamp: "02 Oct 2026, 02:30 PM", description: "Delivered to Karthik R" },
+      { status: "Returned", timestamp: "02 Oct 2026, 04:40 PM", description: "Return approved & exchange initiated" },
     ],
     shippingAddress: {
       name: "Karthik R",
@@ -160,12 +176,21 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["Mark Graphic Oversized Tee (Washed Black / L)"],
-    status: "Shipped",
-    estimatedDelivery: "Arriving Tomorrow",
+    status: "Returned",
+    deliveredDate: "2026-10-01T18:15:00.000Z",
+    estimatedDelivery: "Return Approved · Replacement Dispatched",
+    returnRequest: {
+      requestedAt: "02 Oct 2026, 11:10 AM",
+      reason: "Color / wash appears lighter than catalog",
+      status: "approved",
+      details: "Fabric shade looks faded grey rather than deep washed black.",
+    },
     timeline: [
       { status: "Confirmed", timestamp: "01 Oct 2026, 06:15 PM", description: "Order received" },
       { status: "Packed", timestamp: "02 Oct 2026, 09:30 AM", description: "Packed in eco-box" },
       { status: "Shipped", timestamp: "02 Oct 2026, 02:00 PM", description: "In transit with BlueDart" },
+      { status: "Delivered", timestamp: "02 Oct 2026, 05:00 PM", description: "Delivered to Priya S" },
+      { status: "Returned", timestamp: "02 Oct 2026, 06:30 PM", description: "Return approved for color variance" },
     ],
     shippingAddress: {
       name: "Priya S",
@@ -210,13 +235,20 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["Daniel Wellington Classic St Mawes", "Range Oversized Tee x2"],
-    status: "Delivered",
+    status: "Return Requested",
     deliveredDate: "2026-09-30T11:42:00.000Z",
-    estimatedDelivery: "Delivered on 30 Sep",
+    estimatedDelivery: "Return Requested · Awaiting Review",
+    returnRequest: {
+      requestedAt: "01 Oct 2026, 01:25 PM",
+      reason: "Strap buckle mechanism is stiff and sticking",
+      status: "pending",
+      details: "Leather strap clasp requires excessive force to open.",
+    },
     timeline: [
       { status: "Confirmed", timestamp: "28 Sep 2026, 10:00 AM", description: "Order confirmed" },
       { status: "Shipped", timestamp: "29 Sep 2026, 03:00 PM", description: "Dispatched from Mumbai" },
       { status: "Delivered", timestamp: "30 Sep 2026, 11:42 AM", description: "Delivered to Arjun M" },
+      { status: "Return Requested", timestamp: "01 Oct 2026, 01:25 PM", description: "Return claim filed by Arjun M" },
     ],
     shippingAddress: {
       name: "Arjun M",
@@ -294,8 +326,8 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
     returnRequest: {
       requestedAt: "29 Sep 2026, 11:20 AM",
       reason: "Size too tight, request exchange for UK 9",
-      status: "pending",
-      details: "Need size replacement for comfortable fit",
+      status: "rejected",
+      details: "Exceeded 7-day return window",
     },
     timeline: [
       { status: "Confirmed", timestamp: "26 Sep 2026, 12:00 PM", description: "Order confirmed" },
@@ -333,12 +365,19 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["King Seiko Automatic (Silver Steel)"],
-    status: "Delivered",
+    status: "Returned",
     deliveredDate: "2026-09-27T11:15:00.000Z",
-    estimatedDelivery: "Delivered on 27 Sep",
+    estimatedDelivery: "Return Approved · Replacement Under Inspection",
+    returnRequest: {
+      requestedAt: "28 Sep 2026, 06:10 PM",
+      reason: "Crown adjustment feels loose",
+      status: "approved",
+      details: "Winding mechanism skips occasionally, replacement requested.",
+    },
     timeline: [
       { status: "Confirmed", timestamp: "25 Sep 2026, 04:10 PM", description: "Order placed" },
       { status: "Delivered", timestamp: "27 Sep 2026, 11:15 AM", description: "Signed by Rahul" },
+      { status: "Returned", timestamp: "28 Sep 2026, 06:10 PM", description: "Return approved: Crown adjustment defect" },
     ],
     shippingAddress: {
       name: "Rahul V",
@@ -372,9 +411,9 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     itemNames: ["Mark Graphic Oversized Tee (Black / M)"],
-    status: "Delivered",
+    status: "Return Requested",
     deliveredDate: "2026-09-25T14:40:00.000Z",
-    estimatedDelivery: "Delivered on 25 Sep",
+    estimatedDelivery: "Return Requested · Awaiting Review",
     returnRequest: {
       requestedAt: "26 Sep 2026, 04:15 PM",
       reason: "Defective stitching on right sleeve hem",
@@ -384,6 +423,7 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
     timeline: [
       { status: "Confirmed", timestamp: "23 Sep 2026, 01:00 PM", description: "Order confirmed" },
       { status: "Delivered", timestamp: "25 Sep 2026, 02:40 PM", description: "Delivered successfully" },
+      { status: "Return Requested", timestamp: "26 Sep 2026, 04:15 PM", description: "Return claim filed by Ananya M" },
     ],
     shippingAddress: {
       name: "Ananya M",
@@ -420,6 +460,12 @@ const DEFAULT_DEMO_ORDERS: OrderRecord[] = [
     status: "Delivered",
     deliveredDate: "2026-09-23T09:20:00.000Z",
     estimatedDelivery: "Delivered on 23 Sep",
+    returnRequest: {
+      requestedAt: "24 Sep 2026, 03:30 PM",
+      reason: "Outsole shows outdoor wear and scuffs",
+      status: "rejected",
+      details: "Product returned in used condition with removed tags. Policy violation.",
+    },
     timeline: [
       { status: "Confirmed", timestamp: "21 Sep 2026, 11:30 AM", description: "Order confirmed" },
       { status: "Delivered", timestamp: "23 Sep 2026, 09:20 AM", description: "Delivered to Vikram" },
@@ -540,7 +586,33 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
               return { ...it, imageUrl: img };
             }),
           }));
-          setOrders(normalized);
+
+          // Merge demo returnRequests if saved orders has fewer than 7 returns
+          const demoReturnMap = new Map(
+            DEFAULT_DEMO_ORDERS.filter((d) => d.returnRequest).map((d) => [d.id, d.returnRequest])
+          );
+          const returnsCount = normalized.filter((o: OrderRecord) => !!o.returnRequest).length;
+          const merged = returnsCount < 7
+            ? normalized.map((o: OrderRecord) => {
+                if (!o.returnRequest && demoReturnMap.has(o.id)) {
+                  return { ...o, returnRequest: demoReturnMap.get(o.id) };
+                }
+                return o;
+              })
+            : normalized;
+
+          // Auto-heal status consistency between returnRequest and top-level order status
+          const healed = merged.map((o: OrderRecord) => {
+            if (o.returnRequest?.status === "approved" && o.status !== "Returned") {
+              return { ...o, status: "Returned" as OrderStatus };
+            }
+            if (o.returnRequest?.status === "pending" && (o.status === "Delivered" || !o.status)) {
+              return { ...o, status: "Return Requested" as OrderStatus };
+            }
+            return o;
+          });
+
+          setOrders(healed);
         }
       } else {
         // Preload demo orders for rich realistic e-commerce experience
