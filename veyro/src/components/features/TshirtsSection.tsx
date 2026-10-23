@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -50,26 +50,37 @@ export function TshirtsSection() {
     }
   };
 
-  useEffect(() => {
-    if (contentRef.current) {
-      const height = contentRef.current.offsetHeight;
-      if (height > 0) {
-        setMinHeight(height);
-      }
-    }
-  }, [selectedFit, displayedTees, isHydrated]);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (contentRef.current) {
-        const height = contentRef.current.offsetHeight;
+  // Dynamic height stabilization: immediately measures when a new tab mounts & adapts on resize
+  const setContentRef = useCallback((node: HTMLDivElement | null) => {
+    contentRef.current = node;
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
+    }
+    if (node) {
+      const updateHeight = () => {
+        const height = node.offsetHeight;
         if (height > 0) {
           setMinHeight(height);
         }
-      }
+      };
+
+      updateHeight();
+      requestAnimationFrame(updateHeight);
+
+      const ro = new ResizeObserver(() => {
+        updateHeight();
+      });
+      ro.observe(node);
+      resizeObserverRef.current = ro;
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      resizeObserverRef.current?.disconnect();
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const gridVariants: Variants = {
@@ -212,7 +223,7 @@ export function TshirtsSection() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={selectedFit}
-                ref={contentRef}
+                ref={setContentRef}
                 role="tabpanel"
                 id={`panel-tshirts-${selectedFit.toLowerCase()}`}
                 aria-labelledby={`tab-tshirts-${selectedFit.toLowerCase()}`}
@@ -220,6 +231,12 @@ export function TshirtsSection() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
+                onAnimationComplete={(definition) => {
+                  if (definition === "visible" && contentRef.current) {
+                    const h = contentRef.current.offsetHeight;
+                    if (h > 0) setMinHeight(h);
+                  }
+                }}
                 className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr"
               >
                 {displayedTees.map((product, index) => {

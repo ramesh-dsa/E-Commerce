@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -58,26 +58,37 @@ export function NewArrivalsSection() {
     }
   };
 
-  useEffect(() => {
-    if (contentRef.current) {
-      const height = contentRef.current.offsetHeight;
-      if (height > 0) {
-        setMinHeight(height);
-      }
-    }
-  }, [activeTab, filteredProducts, isHydrated]);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (contentRef.current) {
-        const height = contentRef.current.offsetHeight;
+  // Dynamic height stabilization: immediately measures when a new tab mounts & adapts on resize
+  const setContentRef = useCallback((node: HTMLDivElement | null) => {
+    contentRef.current = node;
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
+    }
+    if (node) {
+      const updateHeight = () => {
+        const height = node.offsetHeight;
         if (height > 0) {
           setMinHeight(height);
         }
-      }
+      };
+
+      updateHeight();
+      requestAnimationFrame(updateHeight);
+
+      const ro = new ResizeObserver(() => {
+        updateHeight();
+      });
+      ro.observe(node);
+      resizeObserverRef.current = ro;
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      resizeObserverRef.current?.disconnect();
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const gridVariants: Variants = {
@@ -192,12 +203,12 @@ export function NewArrivalsSection() {
           {!isHydrated ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               {Array.from({ length: 5 }).map((_, index) => {
-                const isFeatured = index === 0;
+                const isFeatured = activeTab === "ALL" && index === 0;
                 return (
                   <ProductCardSkeleton
                     key={index}
                     isFeatured={isFeatured}
-                    className={isFeatured ? "col-span-2 md:row-span-2" : ""}
+                    className={isFeatured ? "col-span-2 md:row-span-2" : "col-span-1"}
                   />
                 );
               })}
@@ -206,7 +217,7 @@ export function NewArrivalsSection() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={activeTab}
-                ref={contentRef}
+                ref={setContentRef}
                 role="tabpanel"
                 id={`panel-arrivals-${activeTab.toLowerCase()}`}
                 aria-labelledby={`tab-arrivals-${activeTab.toLowerCase()}`}
@@ -214,10 +225,19 @@ export function NewArrivalsSection() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
+                onAnimationComplete={(definition) => {
+                  if (definition === "visible" && contentRef.current) {
+                    const h = contentRef.current.offsetHeight;
+                    if (h > 0) setMinHeight(h);
+                  }
+                }}
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
               >
                 {filteredProducts.map((product, index) => {
-                  const isFeatured = index === 0;
+                  const isFeatured =
+                    activeTab === "ALL" &&
+                    filteredProducts.length >= 4 &&
+                    index === 0;
                   return (
                     <motion.div
                       key={product.id}
