@@ -297,17 +297,25 @@ export default function FaqPage() {
         setActiveTab("account");
         setOpenId("account-5");
       } else if (hash === "#contact" || hash === "#team" || hash === "#contact-team") {
-        const contactEl = document.getElementById("contact-team");
-        if (contactEl) {
-          contactEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
+        const scrollToContact = () => {
+          const contactEl = document.getElementById("contact-team");
+          if (contactEl) {
+            contactEl.scrollIntoView({
+              behavior: shouldReduceMotion ? "auto" : "smooth",
+              block: "start",
+            });
+          }
+        };
+
+        // Resilient delay so page transition & DOM layout finish settling
+        setTimeout(scrollToContact, 150);
       }
     };
 
     applyHash();
     window.addEventListener("hashchange", applyHash);
     return () => window.removeEventListener("hashchange", applyHash);
-  }, []);
+  }, [shouldReduceMotion]);
 
   // Filter FAQs based on active category tab and live search query
   const filteredFaqs = useMemo(() => {

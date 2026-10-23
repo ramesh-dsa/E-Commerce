@@ -689,13 +689,13 @@ export default function OrdersPage() {
                     <p className="text-xs text-neutral-500 font-normal mt-0.5 mb-3 leading-normal">
                       Our support team is here to help.
                     </p>
-                    <button
-                      type="button"
+                    <Link
+                      href="/faq#contact"
                       className="inline-flex items-center justify-center gap-2 bg-white text-neutral-950 rounded-full px-4 py-2 text-xs font-semibold shadow-xs hover:shadow-sm hover:bg-neutral-50/90 active:scale-[0.98] transition-all cursor-pointer"
                     >
                       <span>Contact Support</span>
                       <ArrowRight size={13} className="stroke-[2.2]" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
