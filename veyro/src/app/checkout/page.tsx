@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo, useRef, useSyncExternalStore } fro
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useProducts } from "@/context/ProductsContext";
 import { useUser } from "@/context/UserContext";
@@ -936,29 +935,8 @@ export default function CheckoutPage() {
     );
   }
 
-  // Empty cart or no available items fallback
-  if (items.length === 0 || inStockCount === 0) {
-    if (orderPlacedRef.current || paymentStatus === "success") {
-      return (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-neutral-100 space-y-4"
-          >
-            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 animate-pulse">
-              <CheckCircle2 size={32} />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-neutral-900">Payment Verified</h3>
-              <p className="text-xs text-neutral-500 font-mono mt-1">Opening your order confirmation...</p>
-            </div>
-          </motion.div>
-        </div>
-      );
-    }
-
+  // Empty cart or no available items fallback (do not render if order was placed and redirecting)
+  if ((items.length === 0 || inStockCount === 0) && !orderPlacedRef.current && paymentStatus !== "success") {
     return (
       <div className="min-h-[80vh] bg-neutral-50/50 flex items-center justify-center px-4 py-16">
         <div className="max-w-md w-full bg-white border border-neutral-200/90 rounded-2xl p-8 sm:p-10 text-center shadow-xs">
@@ -2946,26 +2924,30 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || paymentStatus === "success" || orderPlacedRef.current}
                   className="group relative w-full bg-gradient-to-r from-neutral-950 via-neutral-900 to-neutral-950 text-white hover:from-black hover:to-neutral-900 py-4.5 px-6 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-3 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl hover:scale-[1.01] active:scale-[0.985] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden border border-neutral-800/80 hover:border-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                 >
                   {/* Ambient Periodic Sheen Light Wave (Every 3.2s) */}
-                  {!isSubmitting && (
+                  {!isSubmitting && paymentStatus !== "success" && !orderPlacedRef.current && (
                     <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/12 to-transparent pointer-events-none animate-order-sheen" />
                   )}
 
                   {/* High-speed Hover Light Ray Sweep */}
-                  {!isSubmitting && (
+                  {!isSubmitting && paymentStatus !== "success" && !orderPlacedRef.current && (
                     <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out pointer-events-none" />
                   )}
 
                   {/* Subtle Bottom Emerald Glow Line on Hover */}
                   <span className="absolute bottom-0 inset-x-8 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                  {isSubmitting ? (
+                  {isSubmitting || paymentStatus === "success" || orderPlacedRef.current ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span className="tracking-widest">Securing Order & Payment...</span>
+                      <span className="tracking-widest">
+                        {paymentStatus === "success" || orderPlacedRef.current
+                          ? "Order Placed • Redirecting..."
+                          : "Securing Order & Payment..."}
+                      </span>
                     </>
                   ) : paymentStatus === "failed" ? (
                     <>
@@ -3232,26 +3214,6 @@ export default function CheckoutPage() {
           </div>
         </form>
       </main>
-
-      {/* LUXURY ORDER CONFIRMATION TRANSITION OVERLAY */}
-      {(orderPlacedRef.current || paymentStatus === "success") && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-neutral-100 space-y-4"
-          >
-            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 animate-pulse">
-              <CheckCircle2 size={32} />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-neutral-900">Payment Verified</h3>
-              <p className="text-xs text-neutral-500 font-mono mt-1">Opening your order confirmation...</p>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 }
