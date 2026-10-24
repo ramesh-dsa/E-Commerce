@@ -229,7 +229,7 @@ To maintain a clean geometric rhythm, only 4 corner radii and 3 shadow levels ar
 | `rounded-lg` | 8px | Form inputs, select dropdowns, image display frames |
 | `rounded-md` | 6px | Small toggles, micro switches |
 
-*Prohibited*: `rounded-none`, `rounded-sm`, `rounded-2xl` (16px), `rounded-3xl` (24px), or arbitrary pixel radii like `rounded-[2px]`.
+*Prohibited*: `rounded-none` (permitted only for full-bleed containers), `rounded-xs`, `rounded-sm`, plain `rounded`, `rounded-2xl` (16px), `rounded-3xl` (24px), and arbitrary pixel radii like `rounded-[2px]`.
 
 #### Elevation & Shadows
 
@@ -378,14 +378,29 @@ An honest audit of the gaps between this standard and the current code on this b
 | Priority & Area | Current Code Measurements | Standard to Adopt | Remediation Effort |
 |---|---|---|---|
 | **1. Colour Consolidation** | 553 hardcoded `#111111` occurrences across 38 files; 170 hardcoded `#fcd017` occurrences across 29 files; 13 prohibited grey tokens (8 `zinc`, 5 `slate`); non-standard hexes (`#666666`, `#888888`, `#E8E8E5`, `#555555`). | Consolidate onto `@theme` tokens (`text-veyro-black`, `bg-veyro-black`, `bg-veyro-yellow`) and the canonical Tailwind `neutral` ramp (`neutral-900` to `neutral-400`). Eliminate all raw hex literals. | Medium |
-| **2. Typography (Fonts & Arbitrary Sizes)** | 5 font families loaded in `layout.tsx` (Geist Sans, Geist Mono, Dancing Script, Montserrat, Outfit); 739 arbitrary text sizes (`text-[...px]`) across 32 distinct sizes (led by `text-[11px]`: 312, `text-[10px]`: 178, `text-[13px]`: 54). | Consolidate onto 2 fonts: Archivo for headings and Inter for body/UI. Replace all arbitrary sizes with standard Tailwind scale tokens (`text-2xs` through `text-6xl`). | Medium |
+| **2. Typography (Fonts & Arbitrary Sizes)** | 5 font families loaded in `layout.tsx` (Geist Sans, Geist Mono, Dancing Script, Montserrat, Outfit); 796 arbitrary text sizes (`text-[0-9.]+px`) across 39 distinct sizes (led by `text-[11px]`: 312, `text-[10px]`: 178, `text-[13px]`: 54). | Consolidate onto 2 fonts: Archivo for headings and Inter for body/UI. Replace all arbitrary sizes with standard Tailwind scale tokens (`text-2xs` through `text-6xl`). | Medium |
 | **3. Shared Button Primitive & UI Primitives** | Shared `ui/Button.tsx` imported in index but rendered **0 times** across the storefront; 312 raw `<button>` tags across 44 files with inconsistent styles; lack of shared `Input`, `Card`, and `Modal` primitives. | Adopt `ui/Button` universally across all interactive actions (Primary Gold, Secondary Ink, Ghost/Outline with `rounded-full`). Build shared `Input` (`rounded-lg`), `Card` (`rounded-xl`), and `Modal` (`rounded-xl`). | High |
 | **4. Section Rhythm & Containers** | `Container.tsx` defines non-standard `max-w-[1540px]` with arbitrary padding `px-4 sm:px-8 xl:px-10`; irregular section paddings across pages. | Adopt the 4 standard container recipes (Wide `1440px`, Standard `7xl`, Reading `3xl`, Form `md`) with universal padding `px-4 sm:px-6 lg:px-8` and standardized section rhythm (`py-16 sm:py-20 lg:py-24`). | Medium |
-| **5. Scale Leaks: Radius, Shadows, Z-Index, Motion** | 103 non-standard radii (84 `rounded-2xl`, 14 `rounded-3xl`, 3 `rounded-sm`, 2 `rounded-none`); 49 distinct shadow definitions (118 `shadow-xs`, 55 `shadow-md`, 47 `shadow-2xs`); arbitrary z-indices (`z-[70]`, `z-[100]`, `z-[150]`, `z-1`); 223 occurrences of `transition-all`; 2 animation libraries (35 files with `motion/react` vs 7 files with `framer-motion`). | Restrict to 4 radii (`rounded-full`, `rounded-xl`, `rounded-lg`, `rounded-md`), 3 shadows (`shadow-sm`, `shadow-lg`, `shadow-2xl`), and the canonical 7-tier z-index ladder. Eliminate `transition-all` in favor of specific transitions. Consolidate exclusively on `motion/react`. | Medium |
-| **6. Theme Consistency & Accessibility** | Dark islands in storefront: `AccountModal` (`bg-[#0c0c0e]`), `BrandPillarsSection` (`bg-[#0a0a0a]`), `Footer` (`bg-[#0a0a0a]`); only 16 buttons (5.1%) have explicit focus styling, while 296 buttons (94.9%) lack focus rings. | Enforce light theme across all storefront views and modals ("Light Everywhere, No Dark Islands"). Apply universal 2px focus ring to all 312 interactive buttons. | Medium |
+| **5. Scale Leaks: Radius, Shadows, Z-Index, Motion** | 277 non-standard radii (110 arbitrary `rounded-[...]`, 84 `rounded-2xl`, 52 plain `rounded`, 14 `rounded-xs`, 14 `rounded-3xl`, 3 `rounded-sm`); 49 distinct shadow definitions (118 `shadow-xs`, 55 `shadow-md`, 47 `shadow-2xs`); arbitrary z-indices (`z-[70]`, `z-[100]`, `z-[150]`, `z-1`); 223 occurrences of `transition-all`; 2 animation libraries (35 files with `motion/react` vs 7 files with `framer-motion`). | Restrict to 4 radii (`rounded-full`, `rounded-xl`, `rounded-lg`, `rounded-md`), 3 shadows (`shadow-sm`, `shadow-lg`, `shadow-2xl`), and the canonical 7-tier z-index ladder. Eliminate `transition-all` in favor of specific transitions. Consolidate exclusively on `motion/react`. | Medium |
+| **6. Theme Consistency & Accessibility** | Dark islands in storefront: `AccountModal` (modal shell `bg-[#0c0c0e]` on line 412, inner panel `bg-[#101013]` on line 472), `BrandPillarsSection` (`bg-[#0a0a0a]` on line 150), `Footer` (`bg-[#050505]` on line 164); only 16 buttons (5.1%) have explicit focus styling, while 296 buttons (94.9%) lack focus rings. | Enforce light theme across all storefront views and modals ("Light Everywhere, No Dark Islands"). Apply universal 2px focus ring to all 312 interactive buttons. | Medium |
 
 #### How Counts Were Measured
-All storefront counts were measured across the exactly 178 storefront source files in `veyro/src/` (including `src/app/globals.css`, storefront layouts, pages, feature modules, context providers, and UI primitives). Excluded from the audit: `src/app/admin/**`, `src/components/admin/**`, and the documentation page `src/app/design-guidelines/**`. Static AST analysis and regex pattern matching were used to parse class tokens, style attributes, and imports.
+All storefront counts were measured across the exactly 178 storefront source files in `veyro/src/` (including `src/app/globals.css`, storefront layouts, pages, feature modules, context providers, and UI primitives). Excluded from the audit: `src/app/admin/**`, `src/components/admin/**`, and the documentation page `src/app/design-guidelines/**`. Static AST analysis and regex pattern matching were used to parse class tokens, style attributes, and imports:
+
+- **Arbitrary text sizes (796 occurrences, 39 distinct sizes)**:
+  `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "text-\[[0-9.]+px\]" src/app src/components src/context src/lib | wc -l`
+  Top 3 sizes: `text-[11px]` (312), `text-[10px]` (178), `text-[13px]` (54).
+- **Non-standard radii (277 total outside canonical scale)**:
+  - `rounded-2xl` (84): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-2xl\b" src/app src/components src/context src/lib | wc -l`
+  - `rounded-3xl` (14): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-3xl\b" src/app src/components src/context src/lib | wc -l`
+  - plain `rounded` (52): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "(^|[^a-zA-Z0-9_-])rounded([^a-zA-Z0-9_-]|$)" src/app src/components src/context src/lib | wc -l`
+  - `rounded-sm` (3): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-sm\b" src/app src/components src/context src/lib | wc -l`
+  - `rounded-xs` (14): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-xs\b" src/app src/components src/context src/lib | wc -l`
+  - arbitrary `rounded-[...]` (110): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "rounded-\[[^]]+\]" src/app src/components src/context src/lib | wc -l`
+- **Dark islands identified in code**:
+  - `AccountModal.tsx`: modal shell `bg-[#0c0c0e]` (line 412), inner panel `bg-[#101013]` (line 472)
+  - `BrandPillarsSection.tsx`: section `bg-[#0a0a0a]` (line 150)
+  - `Footer.tsx`: footer `bg-[#050505]` (line 164)
 
 A prototype of these migrations exists on the `design-system` branch.
 

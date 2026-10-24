@@ -280,7 +280,7 @@ const TRANSITION_ITEMS = [
   {
     num: "2",
     area: "Typography (Fonts & Arbitrary Sizes)",
-    measurement: "5 font families loaded in layout.tsx (Geist Sans, Geist Mono, Dancing Script, Montserrat, Outfit); 739 arbitrary text sizes (text-[...px]) across 32 distinct sizes (led by text-[11px]: 312, text-[10px]: 178, text-[13px]: 54).",
+    measurement: "5 font families loaded in layout.tsx (Geist Sans, Geist Mono, Dancing Script, Montserrat, Outfit); 796 arbitrary text sizes (text-[0-9.]+px) across 39 distinct sizes (led by text-[11px]: 312, text-[10px]: 178, text-[13px]: 54).",
     standard: "Consolidate onto 2 fonts: Archivo for headings and Inter for body/UI. Replace all arbitrary sizes with standard Tailwind scale tokens (text-2xs through text-6xl).",
     effort: "Medium",
   },
@@ -301,14 +301,14 @@ const TRANSITION_ITEMS = [
   {
     num: "5",
     area: "Scale Leaks: Radius, Shadows, Z-Index, Motion",
-    measurement: "103 non-standard radii (84 rounded-2xl, 14 rounded-3xl, 3 rounded-sm, 2 rounded-none); 49 distinct shadow definitions (118 shadow-xs, 55 shadow-md, 47 shadow-2xs); arbitrary z-indices (z-[70], z-[100], z-[150], z-1); 223 occurrences of transition-all; 2 animation libraries (35 files with motion/react vs 7 files with framer-motion).",
+    measurement: "277 non-standard radii (110 arbitrary rounded-[...], 84 rounded-2xl, 52 plain rounded, 14 rounded-xs, 14 rounded-3xl, 3 rounded-sm); 49 distinct shadow definitions (118 shadow-xs, 55 shadow-md, 47 shadow-2xs); arbitrary z-indices (z-[70], z-[100], z-[150], z-1); 223 occurrences of transition-all; 2 animation libraries (35 files with motion/react vs 7 files with framer-motion).",
     standard: "Restrict to 4 radii (rounded-full, rounded-xl, rounded-lg, rounded-md), 3 shadows (shadow-sm, shadow-lg, shadow-2xl), and the canonical 7-tier z-index ladder. Eliminate transition-all in favor of specific transitions. Consolidate exclusively on motion/react.",
     effort: "Medium",
   },
   {
     num: "6",
     area: "Theme Consistency & Accessibility",
-    measurement: "Dark islands in storefront: AccountModal (bg-[#0c0c0e]), BrandPillarsSection (bg-[#0a0a0a]), Footer (bg-[#0a0a0a]); only 16 buttons (5.1%) have explicit focus styling, while 296 buttons (94.9%) lack focus rings.",
+    measurement: "Dark islands in storefront: AccountModal (modal shell bg-[#0c0c0e] on line 412, inner panel bg-[#101013] on line 472), BrandPillarsSection (bg-[#0a0a0a] on line 150), Footer (bg-[#050505] on line 164); only 16 buttons (5.1%) have explicit focus styling, while 296 buttons (94.9%) lack focus rings.",
     standard: "Enforce light theme across all storefront views and modals (\"Light Everywhere, No Dark Islands\"). Apply universal 2px focus ring to all 312 interactive buttons.",
     effort: "Medium",
   },
@@ -1197,7 +1197,7 @@ export default function DesignGuidelinesPage() {
                     </div>
                   </div>
                   <p className="text-xs text-neutral-500 italic">
-                    Prohibited: rounded-none, rounded-sm, rounded-2xl (16px), rounded-3xl (24px), or arbitrary pixel radii like rounded-[2px].
+                    Prohibited: rounded-none (permitted only for full-bleed containers), rounded-xs, rounded-sm, plain rounded, rounded-2xl (16px), rounded-3xl (24px), and arbitrary pixel radii like rounded-[2px].
                   </p>
                 </div>
 
@@ -1682,13 +1682,18 @@ export default function DesignGuidelinesPage() {
                 </div>
 
                 {/* Measurement Methodology Note */}
-                <div className="border border-[#E8E8E5] rounded-xl p-5 bg-[#F8F8F6] space-y-2 text-xs text-neutral-600 leading-relaxed">
+                <div className="border border-[#E8E8E5] rounded-xl p-5 bg-[#F8F8F6] space-y-3 text-xs text-neutral-600 leading-relaxed">
                   <span className="font-bold uppercase tracking-wider text-neutral-900 block">
                     How Counts Were Measured
                   </span>
                   <p>
-                    All storefront counts were measured across the exactly 178 storefront source files in <code className="font-mono text-neutral-800">veyro/src/</code> (including globals.css, storefront layouts, pages, feature components, and UI primitives). Excluded: <code className="font-mono text-neutral-800">src/app/admin/**</code>, <code className="font-mono text-neutral-800">src/components/admin/**</code>, and the documentation page <code className="font-mono text-neutral-800">src/app/design-guidelines/**</code>. Static AST extraction and regex pattern analysis were executed directly across the codebase on this branch.
+                    All storefront counts were measured across the exactly 178 storefront source files in <code className="font-mono text-neutral-800">veyro/src/</code> (including globals.css, storefront layouts, pages, feature components, and UI primitives). Excluded: <code className="font-mono text-neutral-800">src/app/admin/**</code>, <code className="font-mono text-neutral-800">src/components/admin/**</code>, and the documentation page <code className="font-mono text-neutral-800">src/app/design-guidelines/**</code>. Static AST extraction and regex pattern analysis were executed directly across the codebase on this branch:
                   </p>
+                  <ul className="space-y-1.5 list-disc list-inside font-mono text-[11px] text-neutral-700">
+                    <li>Arbitrary text sizes (796 occurrences, 39 distinct sizes): <code className="text-neutral-900">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;text-\[[0-9.]+px\]&quot; src/app src/components src/context src/lib | wc -l</code> (Top 3: text-[11px]: 312, text-[10px]: 178, text-[13px]: 54)</li>
+                    <li>Non-standard radii (277 total outside canonical scale): rounded-2xl (84), rounded-3xl (14), plain rounded (52), rounded-sm (3), rounded-xs (14), arbitrary rounded-[...] (110)</li>
+                    <li>Dark islands identified in code: AccountModal.tsx line 412 (bg-[#0c0c0e]) &amp; line 472 (bg-[#101013]); BrandPillarsSection.tsx line 150 (bg-[#0a0a0a]); Footer.tsx line 164 (bg-[#050505])</li>
+                  </ul>
                   <p className="font-medium text-neutral-900 pt-1">
                     A prototype of these migrations exists on the design-system branch.
                   </p>
