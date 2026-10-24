@@ -387,9 +387,22 @@ An honest audit of the gaps between this standard and the current code on this b
 #### How Counts Were Measured
 All storefront counts were measured across the exactly 178 storefront source files in `veyro/src/` (including `src/app/globals.css`, storefront layouts, pages, feature modules, context providers, and UI primitives). Excluded from the audit: `src/app/admin/**`, `src/components/admin/**`, and the documentation page `src/app/design-guidelines/**`. Static AST analysis and regex pattern matching were used to parse class tokens, style attributes, and imports:
 
+- **Colors & Greys**:
+  - Raw hex values: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "#[0-9a-fA-F]{3,8}" src/app src/components src/context src/lib` (`#111111`: 553 in 38 files, `#fcd017`: 170 in 29 files).
+  - Grey ramps: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "(text|bg|border)-(neutral|zinc|slate)-[0-9]+" src/app src/components src/context src/lib` (`neutral`: 2,104, `zinc`: 8, `slate`: 5).
 - **Arbitrary text sizes (796 occurrences, 39 distinct sizes)**:
   `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "text-\[[0-9.]+px\]" src/app src/components src/context src/lib | wc -l`
   Top 3 sizes: `text-[11px]` (312), `text-[10px]` (178), `text-[13px]` (54).
+- **Standard text sizes (1,083 occurrences)**:
+  `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\btext-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl)\b" src/app src/components src/context src/lib | wc -l`
+- **Font weights & tracking**:
+  - Weights: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\bfont-(light|normal|medium|semibold|bold|extrabold|black)\b" src/app src/components src/context src/lib | wc -l` (1,342 occurrences).
+  - Tracking: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\btracking-(tight|normal|wide|wider|widest)\b" src/app src/components src/context src/lib | wc -l` (451 occurrences).
+- **Layout widths & paddings**:
+  - Max-widths: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\bmax-w-(xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|full|\[[^]]+\])\b" src/app src/components src/context src/lib`
+  - Horizontal paddings: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\bpx-(4|6|8|10|12|\[[^]]+\])\b" src/app src/components src/context src/lib`
+- **Allowed radii (733 occurrences)**:
+  `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-(full|xl|lg|md|none)\b" src/app src/components src/context src/lib | wc -l`
 - **Non-standard radii (277 total outside canonical scale)**:
   - `rounded-2xl` (84): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-2xl\b" src/app src/components src/context src/lib | wc -l`
   - `rounded-3xl` (14): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-3xl\b" src/app src/components src/context src/lib | wc -l`
@@ -397,6 +410,18 @@ All storefront counts were measured across the exactly 178 storefront source fil
   - `rounded-sm` (3): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-sm\b" src/app src/components src/context src/lib | wc -l`
   - `rounded-xs` (14): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\brounded-xs\b" src/app src/components src/context src/lib | wc -l`
   - arbitrary `rounded-[...]` (110): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "rounded-\[[^]]+\]" src/app src/components src/context src/lib | wc -l`
+- **Shadows (115 standard vs 282 non-standard)**:
+  `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\bshadow-(2xs|xs|sm|md|lg|xl|2xl|inner|none|\[[^]]+\])\b" src/app src/components src/context src/lib`
+- **Motion & transitions**:
+  - `transition-all` (223 occurrences): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\btransition-all\b" src/app src/components src/context src/lib | wc -l`
+  - Animation libraries: `motion/react` in 35 files, `framer-motion` in 7 files.
+  - Geometry-animating files (5 files animating height, width, left, top, or margin).
+- **Z-Index ladder**:
+  - Canonical tiers: `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "\bz-(0|10|20|30|40|50)\b" src/app src/components src/context src/lib | wc -l` (172 occurrences).
+  - Arbitrary & non-standard: `z-[100]` (2), `z-[70]` (1), `z-[150]` (1), `z-1` (9).
+- **Components**:
+  - Raw `<button>` tags (312 occurrences in 44 files): `grep -roE --exclude-dir=admin --exclude-dir=design-guidelines "<button\b" src/app src/components src/context src/lib | wc -l`
+  - Shared `ui/Button` renders (0): `grep -rE --exclude-dir=admin --exclude-dir=design-guidelines "<Button\b" src/app src/components src/context src/lib`
 - **Dark islands identified in code**:
   - `AccountModal.tsx`: modal shell `bg-[#0c0c0e]` (line 412), inner panel `bg-[#101013]` (line 472)
   - `BrandPillarsSection.tsx`: section `bg-[#0a0a0a]` (line 150)
@@ -424,6 +449,83 @@ A concise 12-row summary of canonical standards versus anti-patterns:
 | **10. Motion Library** | `import { motion } from "motion/react"` | `import { motion } from "framer-motion"` |
 | **11. Z-Index Ladder** | Canonical 7 tiers: `z-0`, `z-10`, `z-20`, `z-30`, `z-40`, `z-50`, `z-60` | Arbitrary numbers: `z-[70]`, `z-[100]`, `z-[150]`, `z-[9999]`, `z-1` |
 | **12. Components** | Shared primitives: `<Button variant="primary" />` (`rounded-full`), `<Input />` (`rounded-lg`) | Raw `<button>` or `<input>` elements without shared styling or focus rings |
+
+---
+
+## Appendix: Current state on main (measured)
+
+This appendix provides a full, measured baseline of the storefront codebase on the `main` branch across all 178 storefront source files (`src/app`, `src/components`, `src/context`, `src/lib`, excluding admin and design-guidelines).
+
+### 03 Color Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Declared `@theme` Tokens** | 14 tokens in `globals.css` (`--color-veyro-yellow: #fcd017;`, `--color-veyro-black: #111111;`, etc.) | Full palette mapped to CSS theme tokens |
+| **Top Hardcoded Hex Values** | `#111111` (553 in 38 files), `#FCD017` (170 in 29 files), `#666666` (39), `#FFFFFF` (34), `#101828` (34 in FAQ), `#888888` (34), `#E8E8E5` (27), `#555555` (23), `#FAFAFA` (21), `#8E8E8E` (20), `#EAEAEA` (20), `#F0F0F0` (20) | Zero raw hex literals in component files; use semantic theme tokens |
+| **Grey Families in Use** | `neutral` (2,104 occurrences), `zinc` (8 occurrences), `slate` (5 occurrences) | Exclusively Tailwind `neutral` scale (`neutral-50` through `neutral-950`) |
+| **Dark Surfaces in Storefront** | `AccountModal.tsx` (`bg-[#0c0c0e]` line 412, `bg-[#101013]` line 472), `BrandPillarsSection.tsx` (`bg-[#0a0a0a]` line 150), `Footer.tsx` (`bg-[#050505]` line 164) | 100% Light surfaces throughout storefront ("Light Everywhere, No Dark Islands") |
+| **Standard Adoption** | Grey ramp: 2,104 of 2,117 (99.4% neutral) | See [Section 12 Transition Guidance](#12-transition-guidance) |
+
+### 04 Typography Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Loaded Font Families** | 5 families in `layout.tsx`: `Geist Sans` (`--font-geist-sans`, default UI across 178 files), `Geist Mono` (`--font-geist-mono`, 157 uses), `Dancing Script` (`--font-dancing-script`, 19 uses for script tags), `Montserrat` (`--font-montserrat`, 17 uses), `Outfit` (`--font-outfit`, 12 uses) | 2 families: Archivo (`font-heading`, Display/Headings) and Inter (`font-sans`, Body/UI) |
+| **Standard Font Sizes** | 1,083 occurrences: `text-xs` (578), `text-sm` (219), `text-3xl` (67), `text-2xl` (65), `text-4xl` (37), `text-base` (32), `text-xl` (31), `text-lg` (27), `text-5xl` (14), `text-6xl` (8), `text-7xl` (5) | Standard Tailwind typography scale (`text-2xs` through `text-6xl`) |
+| **Arbitrary Font Sizes** | 796 occurrences across 39 distinct sizes. Top 8: `text-[11px]` (312), `text-[10px]` (178), `text-[13px]` (54), `text-[14px]` (45), `text-[9px]` (37), `text-[12px]` (20), `text-[15px]` (18), `text-[10.5px]` (17) | 0 arbitrary font sizes; use canonical tokens |
+| **Font Weights** | `font-bold` (587), `font-semibold` (295), `font-medium` (215), `font-black` (141), `font-normal` (55), `font-extrabold` (31), `font-light` (18) | 4 weights: `normal` (400), `medium` (500), `semibold` (600), `bold` (700) |
+| **Letter Spacing (Tracking)** | `tracking-wider` (241), `tracking-tight` (107), `tracking-widest` (59), `tracking-wide` (44), arbitrary bracketed (65) | Canonical tokens: `tight`, `wide`, `wider`, `widest` |
+| **Standard Adoption** | Standard text sizes: 1,083 of 1,879 (57.6%) | See [Section 12 Transition Guidance](#12-transition-guidance) |
+
+### 05 Layout and Spacing Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Container Widths** | `Container.tsx`: default `max-w-[1540px]`, wide `max-w-[1600px]`, narrow `max-w-[1200px]`, full `max-w-full`. Storefront classes: `max-w-md` (19), `max-w-full` (15), `max-w-2xl` (13), `max-w-sm` (11), `max-w-xl` (10), `max-w-xs` (10), `max-w-6xl` (8), `max-w-lg` (6), `max-w-7xl` (2), `max-w-[1300px]` (3), `max-w-[1536px]` (2) | 4 recipes: Wide `max-w-[1440px]`, Standard `max-w-7xl`, Reading `max-w-3xl`, Form `max-w-md` |
+| **Horizontal Paddings** | `Container.tsx`: `px-4 sm:px-8 xl:px-10`. Widely used elsewhere: `px-4 sm:px-6 lg:px-8` | Universal container gutter: `px-4 sm:px-6 lg:px-8` |
+| **Section Padding Patterns** | Non-standard paddings: `py-24 sm:py-40` (`BrandPillarsSection.tsx:153`), `py-16 sm:py-24` (`Footer.tsx:164`), `py-14` (`Footer.tsx:372`), `py-8 sm:py-12` (catalog pages) | Standard: `py-16 sm:py-20 lg:py-24`; Compact: `py-10 sm:py-14` |
+| **Product Grid Breakpoints** | `grid-cols-2` (mobile), `sm:grid-cols-3` (tablet), `xl:grid-cols-4` (desktop) | `grid-cols-2` (mobile), `grid-cols-3` (tablet), `grid-cols-4` (desktop) |
+| **Standard Adoption** | Grid columns: 100% compliant with standard responsive column rhythm | See [Section 12 Transition Guidance](#12-transition-guidance) |
+
+### 06 Shape and Elevation Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Corner Radius Classes** | Standard: `rounded-full` (395), `rounded-lg` (187), `rounded-xl` (135), `rounded-md` (14), `rounded-none` (2) = 733. Non-standard: arbitrary `rounded-[...]` (110), `rounded-2xl` (84), plain `rounded` (52), `rounded-xs` (14), `rounded-3xl` (14), `rounded-sm` (3) = 277 | 4 canonical tokens: `rounded-full`, `rounded-xl`, `rounded-lg`, `rounded-md` (`rounded-none` only full-bleed) |
+| **Elevation & Shadow Classes** | Standard: `shadow-sm` (75), `shadow-lg` (21), `shadow-2xl` (19) = 115. Non-standard: `shadow-xs` (118), `shadow-md` (55), `shadow-2xs` (47), arbitrary `shadow-[...]` (39), `shadow-xl` (11), `shadow-inner` (7), `shadow-none` (5) = 282 | 3 levels: `shadow-sm` (subtle), `shadow-lg` (interactive), `shadow-2xl` (overlay) |
+| **Most-Used by Element Type** | Cards: `rounded-xl` (111) vs `rounded-2xl` (74); Buttons: no radius (218), `rounded-full` (33), `rounded-lg` (40), `rounded-xl` (16), `rounded` (21); Inputs: `rounded-lg` (catalogs), `rounded-xl` (`AccountModal.tsx`); Modals: `rounded-2xl sm:rounded-3xl` | Cards: `rounded-xl`; Buttons: `rounded-full`; Inputs: `rounded-lg`; Modals: `rounded-xl` |
+| **Standard Adoption** | Allowed corner radii: 733 of 1,010 (72.6%) | See [Section 12 Transition Guidance](#12-transition-guidance) |
+
+### 07 Motion Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Durations** | `duration-200` (131), `duration-300` (113), `duration-150` (41), `duration-500` (21), `duration-700` (19), `duration-100` (4), `duration-1000` (2), `duration-260` (1) | Micro: `duration-150`; Standard: `duration-200`; Moderate: `duration-300` |
+| **Easings** | `ease-out` (105), `ease-in` (18) | Standard: `ease-out`; Micro: `ease-in-out` |
+| **Transition Properties** | `transition-all` (223 occurrences), specific transitions (`transition-colors`, `transition-transform`, `transition-opacity`: 108 occurrences) | Specific property transitions only; `transition-all` is prohibited |
+| **Animation Libraries** | `motion/react` in 35 files; `framer-motion` in 7 files | Single library: `motion/react` |
+| **Geometry Animating Files** | 5 files animate `height`, `width`, `left`, `top`, or `margin`: `src/app/faq/page.tsx`, `src/components/features/CartDrawer.tsx`, `src/app/orders/[id]/page.tsx`, `src/app/orders/[id]/return/page.tsx`, `src/components/charts/chart-reveal-clip.tsx` | GPU-accelerated `transform` and `opacity` only; never animate layout geometry |
+| **Standard Adoption** | Specific property transitions: 108 of 331 (32.6%) | See [Section 12 Transition Guidance](#12-transition-guidance) |
+
+### 08 Z-Index Ladder Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Canonical Tiers in Use** | `z-10` (99), `z-20` (25), `z-50` (22), `z-30` (11), `z-0` (8), `z-40` (7) = 172 uses | Canonical 7 tiers: `z-0` (0), `z-10` (10), `z-20` (20), `z-30` (30), `z-40` (40), `z-50` (50), `z-60` (60) |
+| **Non-Standard & Arbitrary** | `z-1` (9 uses); arbitrary: `z-[100]` (2 uses in `Navbar.tsx:497`, `section/[slug]/page.tsx:222`), `z-[70]` (1 use in `AccountModal.tsx:390`), `z-[150]` (1 use in `ProductSearch.tsx:243`) = 13 uses | 0 non-standard or arbitrary bracketed z-index values |
+| **Standard Adoption** | Canonical z-index tokens: 172 of 185 (93.0%) | See [Section 12 Transition Guidance](#12-transition-guidance) |
+
+### 09 Components Baseline
+
+| Metric / Dimension | Current in code (main) | Standard Required |
+|---|---|---|
+| **Raw `<button>` Elements** | 312 raw `<button>` elements across 44 files | 0 raw buttons; all interactive actions use shared `ui/Button` primitive |
+| **Shared `ui/Button` Renders** | Rendered **0 times** across the storefront (only declared in `ui/Button.tsx` and exported) | 100% of storefront buttons rendered through `ui/Button` |
+| **Primary Button Styles** | 8 distinct styling variations in active use (e.g. `bg-black`, `bg-[#111111]`, `bg-[#fcd017]`, `bg-neutral-900` with varying radii from no radius to `rounded-full`) | Unified Primary CTA: `bg-veyro-yellow text-neutral-900 rounded-full font-semibold` |
+| **Input Style Variations** | 3 distinct styling recipes across catalog filters, login modal, and newsletter forms | Shared `ui/Input` with `rounded-lg border-neutral-300 focus-visible:outline-2` |
+| **Card Style Variations** | 5 distinct card containers with mixed radii (`rounded-xl` vs `rounded-2xl`) and varying shadows | Shared `ui/Card` with `rounded-xl border border-neutral-200 shadow-sm` |
+| **Modals & Drawers** | `AccountModal.tsx` (`bg-[#0c0c0e]`, `z-[70]`, `rounded-2xl sm:rounded-3xl`), `CartDrawer.tsx` (`bg-white`, `z-50`), `ProductSearch.tsx` (`bg-white`, `z-[150]`), `WatchFilterSidebar.tsx` (`bg-white`, `z-50`) | Standard `rounded-xl` modal shell, `bg-white`, overlay `z-50` (`shadow-2xl`) |
+| **Standard Adoption** | Shared `ui/Button` adoption: 0 of 312 action buttons (0.0%) | See [Section 12 Transition Guidance](#12-transition-guidance) |
 
 ---
 
