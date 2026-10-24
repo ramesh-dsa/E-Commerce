@@ -1,0 +1,419 @@
+# VEYRO Brand & Design Guidelines
+
+**Version 1.0 — Updated October 2026**  
+**The Single Source of Truth for the VEYRO Storefront**
+
+All user interface development, refactoring, and component creation across the storefront, modals, and drawers must strictly adhere to this document. When a rule and existing code disagree, the rule wins and the code is scheduled for migration.
+
+---
+
+## Foundations
+
+### 01 Brand Essence
+
+The VEYRO brand system is anchored by five fundamental principles:
+
+1. **One Brand Colour Story**: A unified, high-contrast palette centered on Ink (`#111111`), disciplined Gold (`#FCD017`) accents, and clean off-white surfaces (`#FFFFFF`, `#F8F8F6`, `#F3F3F0`).
+2. **One Neutral Family**: Exclusively use the Tailwind **neutral** palette (`neutral-50` through `neutral-950`). Mixing grey families (`gray`, `zinc`, `stone`, `slate`) is prohibited.
+3. **Tokens Before Literals**: No hardcoded hex values or arbitrary utility classes (such as `[#111111]`, `text-[15px]`, or `rounded-[2px]`) in JSX or styles. Every colour, spacing, radius, and typography value must reference defined design tokens.
+4. **Motion is Intentional**: Continuous and frequent animations must animate **only `transform` and `opacity`** to preserve 60fps execution and prevent layout reflows. Never animate geometry (`top`, `left`, `width`, `height`, `margin`).
+5. **Shared Component Architecture**: All UI elements must use shared primitives (`ui/Button`, `ui/Input`, `ui/Card`, `ui/Modal`, `ui/Drawer`, `ui/Container`). Inline ad-hoc components and raw buttons for primary actions are prohibited.
+
+When a rule in this specification and existing code disagree, the rule wins and the code is scheduled for migration.
+
+#### The Studio Voice
+
+The studio voice is architectural, brutalist, and declarative:  
+*"Built For The Archive. We reject seasonal trends. Every piece is engineered with obsessive attention to fabric weight, structural drape, and minimalist utility."* (`src/components/features/BrandPillarsSection.tsx:163`)  
+*"Engineered for the modern Indian uniform. Architectural cuts, premium textiles, and brutalist silhouettes."* (`src/components/layout/Footer.tsx:181`)
+
+#### The Three Value Pillars
+
+Defined in `src/components/features/BrandPillarsSection.tsx`:
+
+| Pillar ID | Pillar Title | Code Description |
+|---|---|---|
+| `01` | 240+ GSM HEAVYWEIGHT | 100% long-staple Indian combed cotton. Architectural drape that retains shape wash after wash. Engineered to feel substantial on the body. |
+| `02` | CRAFTED IN TIRUPUR | Direct partnerships with India's most respected artisanal garment mills. Every stitch is placed with precision by master craftsmen. |
+| `03` | ZERO MIDDLEMEN | Pure direct-to-consumer model. We bypass traditional retail markups to bring you premium luxury-grade fabrics at honest, accessible prices. |
+
+---
+
+### 02 Logo
+
+The VEYRO visual identity is defined in `src/components/ui/Logo.tsx` with two exported vector primitives: the full geometric wordmark (`Logo`) and the standalone glyph mark (`VeyroMark`).
+
+#### Logo Specifications
+
+| Property | Wordmark (`Logo`) | Glyph (`VeyroMark`) |
+|---|---|---|
+| ViewBox | `160 55 658 140` | `170 65 115 121` |
+| Vector Geometry | Letter paths V, E, Y, R, O with modern squircle O | Exact letter V path: `VEYRO_V_PATH` |
+| Default Height | `28px` (`height={28}`) | `20px` (`w-5 h-5`) |
+| Minimum Height | `26px` (used in mobile navigation & AccountModal) | `16px` (`w-4 h-4`) |
+| Fill Mode | Geometric vector fill (`fill="#0B0B0B"` or `#FFFFFF`) | `fill="currentColor"` |
+| Clear Space | Minimum 50% glyph height on all four sides | Minimum 8px clear boundary |
+
+#### Variants in Code
+
+- `black` (default): Fills letterforms with `#0B0B0B`. Used on white storefront backgrounds.
+- `white`: Fills letterforms with `#FFFFFF`. Used on dark backgrounds, modals, and footers.
+- `accent`: Includes a 5px gold top accent bar (`<rect fill="#FFD400" height="5" rx="2.5" />`) positioned above the wordmark.
+
+#### Where the Logo Appears
+
+- `src/components/layout/Navbar.tsx` (Desktop): `<Logo height={29} className="sm:h-[31px] lg:h-[33px]" />` (variant `black`).
+- `src/components/layout/Navbar.tsx` (Mobile Menu): `<Logo height={26} />` (variant `black`).
+- `src/components/layout/Footer.tsx`: `<Logo height={32} variant="white" />`.
+- `src/components/features/AccountModal.tsx`: `<Logo variant="white" height={26} />`.
+
+#### Logo Do and Don't
+
+- **Do** maintain the 50% clear space boundary around the wordmark at all times.
+- **Do** render the `black` variant on pure white backgrounds and the `white` variant on dark surfaces.
+- **Don't** compress, stretch, tilt, or alter the vector aspect ratio of the wordmark.
+- **Don't** apply gradients, drop shadows, or outlines to the letterforms.
+- **Don't** render the wordmark smaller than 26px in height.
+
+---
+
+### 03 Color
+
+The VEYRO palette is disciplined and luminous. Light surfaces dominate every screen, contrasted with authoritative Ink and focused Gold highlights.
+
+#### Core Brand Tokens
+
+| Token | Hex | Name / Class | Role & Usage | Contrast on White | WCAG Rating |
+|---|---|---|---|---|---|
+| Ink | `#111111` | `--color-veyro-black` | Primary text, high-contrast UI elements, primary logos | 18.88:1 | AAA |
+| Gold | `#FCD017` | `--color-veyro-yellow` | Primary CTAs, active badges, focus accents. **Never text on light surfaces.** | 1.48:1 | Fail (Use as background only) |
+| Gold Hover | `#E5BC05` | `--color-veyro-yellow-dark` | Hover and active state for Gold buttons | 1.82:1 | Fail (Use as background only) |
+| Gold Tint | `#FFF8E7` | `--color-veyro-yellow-tint` | Background tint for high-priority status chips | — | — |
+
+#### Surface & Border Scale
+
+| Token | Hex | Class | Role & Usage |
+|---|---|---|---|
+| Page White | `#FFFFFF` | `bg-white` | Universal application background canvas |
+| Section Surface | `#F8F8F6` | `bg-veyro-surface` | Default alternating section background |
+| Alternate Surface | `#F3F3F0` | `bg-veyro-surface-alt` | Card backgrounds, table headers, secondary surfaces |
+| Border | `#E8E8E5` | `border-veyro-border` | Standard card borders, section dividers |
+| Light Border | `#F0F0ED` | `border-veyro-border-light` | Subtle dividers, nested list borders |
+
+#### Text Hierarchy (Tailwind Neutral Ramp)
+
+| Token | Hex | Class | Purpose | Contrast on White | WCAG Rating |
+|---|---|---|---|---|---|
+| Primary Text | `#171717` | `text-neutral-900` | Headings, titles, primary body copy | 17.93:1 | AAA |
+| Secondary Text | `#525252` | `text-neutral-600` | Subtitles, supporting copy, table headers | 7.81:1 | AAA |
+| Muted Text | `#737373` | `text-neutral-500` | Metadata, timestamps, SKU numbers, eyebrows | 4.74:1 | AA |
+| Placeholder | `#A3A3A3` | `text-neutral-400` | Form input placeholders, decorative icons only | 2.52:1 | Fail (Restricted to non-text) |
+
+#### Status Colours (Strict Functional Set Only)
+
+| State | Text Class | Background Class | Border Class | Contrast on White | WCAG Rating |
+|---|---|---|---|---|---|
+| Success | `text-emerald-600` | `bg-emerald-50` | `border-emerald-200` | 3.77:1 | AA Large |
+| Error | `text-red-600` | `bg-red-50` | `border-red-200` | 4.83:1 | AA |
+| Warning | `text-amber-600` | `bg-amber-50` | `border-amber-200` | 3.19:1 | AA Large |
+| Info | `text-blue-600` | `bg-blue-50` | `border-blue-200` | 5.17:1 | AA |
+
+#### Gold Usage Rule
+Gold (`#FCD017`) is exclusively an accent and background colour for primary buttons, notification dots, and active badges. Gold text on light surfaces produces an unacceptable 1.48:1 contrast ratio and is strictly prohibited. When Gold is used as a background, pair it with Ink (`#111111`) text for an authoritative 12.74:1 contrast ratio.
+
+#### Prohibited Colours
+The colour families `gray`, `zinc`, `stone`, `slate`, `terracotta`, `cyan`, `indigo`, `rose`, `teal`, and any ad-hoc hex literals are not part of the system and must be replaced with defined tokens.
+
+#### Theme & Surfaces Rule
+- **Light Everywhere**: Pure light mode is enforced across the entire application — storefront, catalog, product details, cart, checkout, account, modals, drawers, login, and admin views.
+- **No Dark Islands**: Inverted dark cards, dark sections, or dark popover islands are strictly forbidden. All surfaces remain luminous and consistent.
+
+---
+
+### 04 Typography
+
+The typography system uses two distinct typefaces: **Archivo** for architectural headings and **Inter** for readable body and interface elements.
+
+#### Families & Roles
+
+1. **Heading Font: Archivo**
+   - **Weights**: `500` (Medium), `600` (SemiBold), `700` (Bold)
+   - **Usage**: `h1` through `h6`, hero display titles, section titles, product names.
+   - **Styling**: Rendered in uppercase with `tracking-tight` on major section titles.
+   - **CSS Variable**: `var(--font-archivo)` (`font-heading`)
+
+2. **Body & UI Font: Inter**
+   - **Weights**: `400` (Regular), `500` (Medium), `600` (SemiBold), `700` (Bold)
+   - **Usage**: Body copy, descriptions, buttons, inputs, prices, tables, labels, and metadata.
+   - **CSS Variable**: `var(--font-inter)` (`font-body`, default `font-sans`)
+
+3. **Eyebrows & Micro Labels**
+   - **Specification**: `Inter`, `text-xs`, `font-semibold`, `uppercase`, `tracking-wider`, `text-neutral-500`.
+
+#### Type Scale & Usage
+
+| Token | Size | Line Height | Usage |
+|---|---|---|---|
+| `text-2xs` | 11px | 16px | Micro badges, status indicators, fine metadata only |
+| `text-xs` | 12px | 16px | Eyebrows, uppercase tags, compact labels |
+| `text-sm` | 14px | 20px | Secondary copy, input text, table cells |
+| `text-base` | 16px | 24px | Default body copy, standard buttons |
+| `text-lg` | 18px | 28px | Sub-headings, emphasized copy, pricing callouts |
+| `text-xl` | 20px | 28px | Card titles, compact section headings |
+| `text-2xl` | 24px | 32px | Modal titles, sub-section headers |
+| `text-3xl` | 30px | 36px | Major section titles, category headings |
+| `text-4xl` | 36px | 40px | High-level page headers |
+| `text-5xl` | 48px | 48px | Display titles |
+| `text-6xl` | 60px | 60px | Hero display headings only |
+
+*Arbitrary font sizes like `text-[11px]`, `text-[10px]`, or `text-[15px]` are outside the system and prohibited.*
+
+#### Allowed Font Weights
+- `font-normal` (400) — Body text and secondary descriptions.
+- `font-medium` (500) — Interactive labels and input content.
+- `font-semibold` (600) — Buttons, navigation items, subheadings.
+- `font-bold` (700) — Headings (`h1` - `h6`), major display titles.
+- *Prohibited*: `font-light`, `font-extrabold`, and `font-black`.
+
+#### Letter Spacing (Tracking)
+- `tracking-tight`: Hero display and large heading titles.
+- `tracking-wide`, `tracking-wider`: Eyebrows, uppercase tags, button text.
+- `tracking-widest`: Reserved for micro-spaced badges.
+- *Prohibited*: Arbitrary tracking classes (e.g. `tracking-[0.15em]`).
+
+#### Prohibited Fonts
+Geist, Geist Mono, Dancing Script, Montserrat, Outfit, serif fonts (`font-serif`), monospace fonts (`font-mono`), or decorative script fonts are outside the standard and scheduled for migration.
+
+---
+
+## System
+
+### 05 Layout and Spacing
+
+Layout geometry is governed by four container recipes, unified padding gutters, and consistent vertical section rhythm.
+
+#### Container Max-Width Scale
+
+| Recipe | Max Width | Purpose |
+|---|---|---|
+| **Wide** | `max-w-[1440px]` | Home page layouts, hero banners, wide catalog showcases |
+| **Standard** | `max-w-7xl` (1280px) | Shopping cart, checkout, account dashboard, order history |
+| **Reading** | `max-w-3xl` (768px) | Policies, articles, FAQs, rich documentation |
+| **Form** | `max-w-md` (448px) | Authentication, login dialogs, single-column forms |
+
+#### Horizontal Padding
+Universal container horizontal gutter across all views: `px-4 sm:px-6 lg:px-8`.
+
+#### Section Spacing & Rhythm
+- **Standard Section**: `py-16 sm:py-20 lg:py-24`
+- **Compact Section**: `py-10 sm:py-14`
+
+#### Flexbox & Grid Gaps
+Permitted gap tokens: `gap-4` (16px), `gap-6` (24px), `gap-8` (32px). Arbitrary spacing values (e.g. `gap-[18px]`) are prohibited.
+
+#### Responsive Breakpoints
+Standard Tailwind breakpoints: `sm` (640px), `md` (768px), `lg` (1024px), `xl` (1280px), `2xl` (1536px).
+
+---
+
+### 06 Shape and Elevation
+
+To maintain a clean geometric rhythm, only 4 corner radii and 3 shadow levels are permitted.
+
+#### Corner Radius Scale
+
+| Token | Value | Application |
+|---|---|---|
+| `rounded-full` | 9999px | Action buttons, pill chips, icon buttons, status badges |
+| `rounded-xl` | 12px | Product cards, feature cards, modal dialogs |
+| `rounded-lg` | 8px | Form inputs, select dropdowns, image display frames |
+| `rounded-md` | 6px | Small toggles, micro switches |
+
+*Prohibited*: `rounded-none`, `rounded-sm`, `rounded-2xl` (16px), `rounded-3xl` (24px), or arbitrary pixel radii like `rounded-[2px]`.
+
+#### Elevation & Shadows
+
+| Token | Class | Application |
+|---|---|---|
+| Subtle | `shadow-sm` | Card elevation at rest |
+| Interactive | `shadow-lg` | Hovered interactive cards, popovers, navigation dropdowns |
+| Overlay | `shadow-2xl` | Modal dialogs, slide-over sheets, full cart drawers |
+
+*Prohibited*: `shadow-xs`, `shadow-md`, `shadow-xl`, `shadow-inner`, or custom bracketed shadows like `shadow-[0_4px_20px_rgba(0,0,0,0.1)]`.
+
+---
+
+### 07 Motion
+
+Animations must feel precise, confident, and lightweight.
+
+#### Durations & Easings
+- `duration-200`: Micro-interactions, hover states, toggles.
+- `duration-300`: Standard card shifts, tab transitions, dropdown reveals.
+- `duration-500`: Modal entrances, page reveals, hero animations.
+- **Easing**: `ease-out` for entrances; `ease-in` for exits. Standard curve: `cubic-bezier(0.16, 1, 0.3, 1)`.
+
+#### What Animates
+- Animate **only `transform` and `opacity`** properties.
+- **Never use `transition-all`**. Always explicitly declare `transition-colors`, `transition-transform`, or `transition-opacity`.
+- Never animate geometry properties (`top`, `left`, `width`, `height`, `margin`) as they trigger continuous layout reflows.
+
+#### The Accordion Exception
+Smooth height expansion is permitted only when using CSS grid `grid-template-rows: 0fr -> 1fr` transitions or Radix accordion primitives with `overflow-hidden`.
+
+#### Motion Library
+Standardize on `"motion"` (`import { motion } from "motion/react"`). Deprecate and remove `framer-motion`.
+
+#### Reduced Motion
+Every animation and transition must respect `prefers-reduced-motion` using Tailwind's `motion-reduce:transition-none` and `motion-reduce:animate-none` classes.
+
+---
+
+### 08 Z-Index Ladder
+
+All stacking contexts must strictly follow this canonical 7-tier ladder:
+
+| Token / Class | Z-Index | Layer Name | Stacking Elements |
+|---|---|---|---|
+| `z-0` | 0 | Canvas | Deep canvas, background patterns, grid lines |
+| `z-10` | 10 | Content | Standard page content, text, media, card grids |
+| `z-20` | 20 | Sub-Navigation | In-section sticky filter bars, sub-nav bars |
+| `z-30` | 30 | Popovers | Dropdown menus, autocomplete lists, tooltips |
+| `z-40` (`z-header`) | 40 | Navigation | Announcement bar, primary navigation navbar |
+| `z-50` (`z-overlay`) | 50 | Overlays | Drawers, cart sheet, modal dialogs, backdrop overlays |
+| `z-60` (`z-toast`) | 60 | Notifications | Global notification toasts, urgent alert banners |
+
+*Strict Rule: No arbitrary z-index values (e.g. `z-1`, `z-[70]`, `z-[100]`, `z-[150]`, `z-[9999]`) may be used.*
+
+---
+
+## Application
+
+### 09 Components
+
+All user interface development must use shared primitives rather than ad-hoc inline elements.
+
+#### Button Primitives (`ui/Button`)
+- **Primary**: Background Gold (`#FCD017`), text Ink (`#111111`), `rounded-full`, `font-semibold`.
+- **Secondary**: Background Ink (`#111111`), text White (`#FFFFFF`), `rounded-full`, `hover:bg-neutral-800`.
+- **Outline / Ghost**: Border `border-neutral-300`, text Ink (`#111111`), `rounded-full`, `hover:border-neutral-900`.
+- **Sizes**: `sm` (px-4 py-1.5 text-xs), `md` (px-6 py-2.5 text-sm), `lg` (px-8 py-3.5 text-base).
+- **Focus State**: Universal 2px focus ring (`focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]`).
+
+#### Form Inputs (`ui/Input`)
+- Clean light background (`bg-white`), border `border-[#E8E8E5]`, `rounded-lg`, padding `px-4 py-2.5 text-sm text-neutral-900`.
+- Focus state: `focus-visible:border-neutral-900 focus-visible:ring-1 focus-visible:ring-neutral-900`.
+- Label: `text-xs font-semibold uppercase tracking-wider text-neutral-700`.
+
+#### Cards (`ui/Card`)
+- Container: `bg-white`, border `border-[#E8E8E5]`, `rounded-xl`, `shadow-sm`.
+- Hover state: `hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 ease-out`.
+
+#### Badges (`ui/Badge`)
+- Geometry: `rounded-full`, uppercase font, tracking `tracking-wider`.
+- Variants: Standard Neutral (`bg-neutral-100 text-neutral-800`), Gold Tint (`bg-[#FFF8E7] text-neutral-900 border border-[#FCD017]/30`), Success (`bg-emerald-50 text-emerald-700 border border-emerald-200`).
+
+#### Modals & Drawers
+- **Modals (`ui/Modal`)**: Centered dialogs with `rounded-xl`, `shadow-2xl`, white surface, and backdrop blur (`backdrop-blur-sm bg-black/40`).
+- **Drawers (`ui/Drawer`)**: Right-side slide-over sheet with full viewport height, `shadow-2xl`, white surface, `z-50`.
+
+#### Media & Icons
+- **Images**: Always use `next/image` with explicit width/height or `fill`, defined aspect ratio container, `quality={80}`, and descriptive `alt` text.
+- **Icons**: Exclusively use `lucide-react` (with 1.5px stroke width) and curated vector glyphs from `ui/Logo.tsx` and `ui/Icons.tsx`.
+- **Photo Overlays**: When rendering text over photography, always use the overlay sandwich: photo bottom layer, dark gradient scrim (`bg-gradient-to-t from-black/80 via-black/40 to-transparent`), text top layer.
+
+---
+
+### 10 Architecture
+
+The repository adheres to a clean, domain-separated modular architecture.
+
+#### Directory Structure
+
+```
+veyro/src/
+├── app/                  # Next.js App Router (storefront routes, layouts, API endpoints)
+├── components/
+│   ├── layout/           # Global shell (Navbar, Footer, AnnouncementBar, SmoothScrolling)
+│   ├── features/         # Feature modules (Catalog, Cart, ProductDetail, BrandPillars, AccountModal)
+│   ├── ui/               # Shared design system primitives (Logo, Button, Container, Badge, etc.)
+│   └── charts/           # Admin data visualizations (excluded from storefront)
+├── context/              # React Context state providers (Cart, Wishlist, User, Reviews)
+├── lib/                  # Utilities, formatters, class merging (utils.ts)
+├── types/                # Global TypeScript declarations
+└── data/                 # Static catalog data and products
+```
+
+#### Naming Conventions
+- Component files use PascalCase: `ProductCard.tsx`, `SortDropdown.tsx`.
+- Utilities, hooks, and helpers use camelCase: `formatPrice.ts`, `useCart.ts`.
+
+#### Client Component Boundaries
+Mark files with `"use client"` only when interactive state, browser events, or window APIs are required. Push client boundaries as far down the component tree as possible.
+
+#### Class Merging (`cn()`)
+Use `cn()` defined in `src/lib/utils.ts` (combining `clsx` and `tailwind-merge`) whenever combining dynamic and static class names.
+
+---
+
+### 11 Accessibility (a11y)
+
+Accessibility is mandatory across every component:
+
+- **Focus Rings**: Every interactive element must display a visible 2px outline with 2px offset: `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]`.
+- **Icon-Only Buttons**: Every button without visible text must have an explicit, descriptive `aria-label`.
+- **Contrast**: Text contrast must meet or exceed WCAG 2.1 AA (minimum 4.5:1 against light surfaces for normal text, 3:1 for large headings).
+- **Touch Targets**: Minimum tap target size on mobile devices is 44px x 44px.
+- **Reduced Motion**: Respect `prefers-reduced-motion` at all times.
+- **Heading Order**: Exactly one `h1` per page; follow strict logical hierarchy (`h2` -> `h3` -> `h4`) without skipping levels.
+
+---
+
+## Governance
+
+### 12 Transition Guidance
+
+An honest audit of the gaps between this standard and the current code on this branch, listed in order of impact:
+
+| Priority & Area | Current Code Measurements | Standard to Adopt | Remediation Effort |
+|---|---|---|---|
+| **1. Colour Consolidation** | 553 hardcoded `#111111` occurrences across 38 files; 170 hardcoded `#fcd017` occurrences across 29 files; 13 prohibited grey tokens (8 `zinc`, 5 `slate`); non-standard hexes (`#666666`, `#888888`, `#E8E8E5`, `#555555`). | Consolidate onto `@theme` tokens (`text-veyro-black`, `bg-veyro-black`, `bg-veyro-yellow`) and the canonical Tailwind `neutral` ramp (`neutral-900` to `neutral-400`). Eliminate all raw hex literals. | Medium |
+| **2. Typography (Fonts & Arbitrary Sizes)** | 5 font families loaded in `layout.tsx` (Geist Sans, Geist Mono, Dancing Script, Montserrat, Outfit); 739 arbitrary text sizes (`text-[...px]`) across 32 distinct sizes (led by `text-[11px]`: 312, `text-[10px]`: 178, `text-[13px]`: 54). | Consolidate onto 2 fonts: Archivo for headings and Inter for body/UI. Replace all arbitrary sizes with standard Tailwind scale tokens (`text-2xs` through `text-6xl`). | Medium |
+| **3. Shared Button Primitive & UI Primitives** | Shared `ui/Button.tsx` imported in index but rendered **0 times** across the storefront; 312 raw `<button>` tags across 44 files with inconsistent styles; lack of shared `Input`, `Card`, and `Modal` primitives. | Adopt `ui/Button` universally across all interactive actions (Primary Gold, Secondary Ink, Ghost/Outline with `rounded-full`). Build shared `Input` (`rounded-lg`), `Card` (`rounded-xl`), and `Modal` (`rounded-xl`). | High |
+| **4. Section Rhythm & Containers** | `Container.tsx` defines non-standard `max-w-[1540px]` with arbitrary padding `px-4 sm:px-8 xl:px-10`; irregular section paddings across pages. | Adopt the 4 standard container recipes (Wide `1440px`, Standard `7xl`, Reading `3xl`, Form `md`) with universal padding `px-4 sm:px-6 lg:px-8` and standardized section rhythm (`py-16 sm:py-20 lg:py-24`). | Medium |
+| **5. Scale Leaks: Radius, Shadows, Z-Index, Motion** | 103 non-standard radii (84 `rounded-2xl`, 14 `rounded-3xl`, 3 `rounded-sm`, 2 `rounded-none`); 49 distinct shadow definitions (118 `shadow-xs`, 55 `shadow-md`, 47 `shadow-2xs`); arbitrary z-indices (`z-[70]`, `z-[100]`, `z-[150]`, `z-1`); 223 occurrences of `transition-all`; 2 animation libraries (35 files with `motion/react` vs 7 files with `framer-motion`). | Restrict to 4 radii (`rounded-full`, `rounded-xl`, `rounded-lg`, `rounded-md`), 3 shadows (`shadow-sm`, `shadow-lg`, `shadow-2xl`), and the canonical 7-tier z-index ladder. Eliminate `transition-all` in favor of specific transitions. Consolidate exclusively on `motion/react`. | Medium |
+| **6. Theme Consistency & Accessibility** | Dark islands in storefront: `AccountModal` (`bg-[#0c0c0e]`), `BrandPillarsSection` (`bg-[#0a0a0a]`), `Footer` (`bg-[#0a0a0a]`); only 16 buttons (5.1%) have explicit focus styling, while 296 buttons (94.9%) lack focus rings. | Enforce light theme across all storefront views and modals ("Light Everywhere, No Dark Islands"). Apply universal 2px focus ring to all 312 interactive buttons. | Medium |
+
+#### How Counts Were Measured
+All storefront counts were measured across the exactly 178 storefront source files in `veyro/src/` (including `src/app/globals.css`, storefront layouts, pages, feature modules, context providers, and UI primitives). Excluded from the audit: `src/app/admin/**`, `src/components/admin/**`, and the documentation page `src/app/design-guidelines/**`. Static AST analysis and regex pattern matching were used to parse class tokens, style attributes, and imports.
+
+A prototype of these migrations exists on the `design-system` branch.
+
+---
+
+### 13 Quick Reference
+
+A concise 12-row summary of canonical standards versus anti-patterns:
+
+| Category | Follow (The Standard) | Avoid (Anti-Pattern) |
+|---|---|---|
+| **1. Primary Text** | `text-neutral-900` or `text-veyro-black` | Inline `#111111`, `#000000`, or deep navy `#101828` |
+| **2. Primary Action / CTA** | `bg-veyro-yellow text-neutral-900 hover:bg-veyro-yellow-dark` | `bg-black`, `bg-[#111111]`, or terracotta literals |
+| **3. Gold Accent Usage** | Gold as background (`bg-[#FCD017]`) or accent bar with Ink text | Gold text on white surfaces (`text-[#FCD017]` fails at 1.48:1) |
+| **4. Neutral Greys** | Tailwind `neutral` scale (`neutral-50` through `neutral-950`) | `zinc`, `slate`, `gray`, `stone`, or hardcoded grey hexes |
+| **5. Heading Typography** | Archivo (`font-heading`, `font-bold uppercase tracking-tight`) | Geist Sans headings, Montserrat, Dancing Script, serif fonts |
+| **6. Font Sizes** | Standard Tailwind scale (`text-2xs` through `text-6xl`) | Arbitrary pixel sizes (`text-[11px]`, `text-[10px]`, `text-[13px]`) |
+| **7. Corner Radii** | Canonical 4 tokens: `rounded-full`, `rounded-xl`, `rounded-lg`, `rounded-md` | `rounded-2xl`, `rounded-3xl`, `rounded-none`, `rounded-[2px]` |
+| **8. Elevation & Shadows** | Canonical 3 tokens: `shadow-sm`, `shadow-lg`, `shadow-2xl` | `shadow-xs`, `shadow-md`, `shadow-xl`, custom `shadow-[...]` |
+| **9. Transitions** | Specific transitions (`transition-transform`, `transition-opacity`, `duration-200/300`) | `transition-all`, animating `width`, `height`, `top`, `left` |
+| **10. Motion Library** | `import { motion } from "motion/react"` | `import { motion } from "framer-motion"` |
+| **11. Z-Index Ladder** | Canonical 7 tiers: `z-0`, `z-10`, `z-20`, `z-30`, `z-40`, `z-50`, `z-60` | Arbitrary numbers: `z-[70]`, `z-[100]`, `z-[150]`, `z-[9999]`, `z-1` |
+| **12. Components** | Shared primitives: `<Button variant="primary" />` (`rounded-full`), `<Input />` (`rounded-lg`) | Raw `<button>` or `<input>` elements without shared styling or focus rings |
+
+---
+
+### The Living Source
+
+These guidelines are maintained as `DESIGN.md` in the repository and rendered here.
+
+[Download DESIGN.md](/DESIGN.md)
