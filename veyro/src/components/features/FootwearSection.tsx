@@ -471,7 +471,7 @@ export function FootwearSection() {
           
           {/* Left Static Text (Takes up ~25% on desktop to give maximum space to the carousel) */}
           <div className="w-full lg:w-[25%] shrink-0 flex flex-col justify-center pr-0 lg:pr-4 xl:pr-8 z-20 mb-4 sm:mb-6 lg:mb-0">
-            <ScrollReveal y={24} duration={0.65} amount={0.15}>
+            <ScrollReveal y={16} duration={0.5} amount={0.05}>
               <p className="text-neutral-400 text-2xs sm:text-xs font-semibold tracking-[0.2em] uppercase mb-1">
                 FOOTWEAR ARCHIVE
               </p>

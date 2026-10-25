@@ -6,6 +6,7 @@ import { useProducts } from "@/context/ProductsContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { ProductCard } from "@/components/features/ProductCard";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
 import {
   Grid2X2,
@@ -410,13 +411,22 @@ export function AllProductsCatalog() {
                   : "grid-cols-1 sm:grid-cols-2"
               }`}
             >
-              {allFilteredProducts.map((product) => (
-                <ProductCard
+              {allFilteredProducts.map((product, index) => (
+                <ScrollReveal
                   key={product.id}
-                  product={product}
-                  isWishlisted={isInWishlist(product.id)}
-                  onWishlistToggle={() => toggleWishlist(product)}
-                />
+                  className="h-full flex flex-col"
+                  y={16}
+                  scale={0.985}
+                  duration={0.48}
+                  delay={(index % (gridColumns || 4)) * 0.04}
+                  amount={0.05}
+                >
+                  <ProductCard
+                    product={product}
+                    isWishlisted={isInWishlist(product.id)}
+                    onWishlistToggle={() => toggleWishlist(product)}
+                  />
+                </ScrollReveal>
               ))}
             </div>
           </section>
@@ -457,13 +467,22 @@ export function AllProductsCatalog() {
                       : "grid-cols-1 sm:grid-cols-2"
                   }`}
                 >
-                  {apparelProducts.map((product) => (
-                    <ProductCard
+                  {apparelProducts.map((product, index) => (
+                    <ScrollReveal
                       key={product.id}
-                      product={product}
-                      isWishlisted={isInWishlist(product.id)}
-                      onWishlistToggle={() => toggleWishlist(product)}
-                    />
+                      className="h-full flex flex-col"
+                      y={16}
+                      scale={0.985}
+                      duration={0.48}
+                      delay={(index % (gridColumns || 4)) * 0.04}
+                      amount={0.05}
+                    >
+                      <ProductCard
+                        product={product}
+                        isWishlisted={isInWishlist(product.id)}
+                        onWishlistToggle={() => toggleWishlist(product)}
+                      />
+                    </ScrollReveal>
                   ))}
                 </div>
               </section>
@@ -503,13 +522,22 @@ export function AllProductsCatalog() {
                       : "grid-cols-1 sm:grid-cols-2"
                   }`}
                 >
-                  {footwearProducts.map((product) => (
-                    <ProductCard
+                  {footwearProducts.map((product, index) => (
+                    <ScrollReveal
                       key={product.id}
-                      product={product}
-                      isWishlisted={isInWishlist(product.id)}
-                      onWishlistToggle={() => toggleWishlist(product)}
-                    />
+                      className="h-full flex flex-col"
+                      y={16}
+                      scale={0.985}
+                      duration={0.48}
+                      delay={(index % (gridColumns || 4)) * 0.04}
+                      amount={0.05}
+                    >
+                      <ProductCard
+                        product={product}
+                        isWishlisted={isInWishlist(product.id)}
+                        onWishlistToggle={() => toggleWishlist(product)}
+                      />
+                    </ScrollReveal>
                   ))}
                 </div>
               </section>
@@ -549,13 +577,22 @@ export function AllProductsCatalog() {
                       : "grid-cols-1 sm:grid-cols-2"
                   }`}
                 >
-                  {watchProducts.map((product) => (
-                    <ProductCard
+                  {watchProducts.map((product, index) => (
+                    <ScrollReveal
                       key={product.id}
-                      product={product}
-                      isWishlisted={isInWishlist(product.id)}
-                      onWishlistToggle={() => toggleWishlist(product)}
-                    />
+                      className="h-full flex flex-col"
+                      y={16}
+                      scale={0.985}
+                      duration={0.48}
+                      delay={(index % (gridColumns || 4)) * 0.04}
+                      amount={0.05}
+                    >
+                      <ProductCard
+                        product={product}
+                        isWishlisted={isInWishlist(product.id)}
+                        onWishlistToggle={() => toggleWishlist(product)}
+                      />
+                    </ScrollReveal>
                   ))}
                 </div>
               </section>
@@ -587,13 +624,22 @@ export function AllProductsCatalog() {
                       : "grid-cols-1 sm:grid-cols-2"
                   }`}
                 >
-                  {otherProducts.map((product) => (
-                    <ProductCard
+                  {otherProducts.map((product, index) => (
+                    <ScrollReveal
                       key={product.id}
-                      product={product}
-                      isWishlisted={isInWishlist(product.id)}
-                      onWishlistToggle={() => toggleWishlist(product)}
-                    />
+                      className="h-full flex flex-col"
+                      y={16}
+                      scale={0.985}
+                      duration={0.48}
+                      delay={(index % (gridColumns || 4)) * 0.04}
+                      amount={0.05}
+                    >
+                      <ProductCard
+                        product={product}
+                        isWishlisted={isInWishlist(product.id)}
+                        onWishlistToggle={() => toggleWishlist(product)}
+                      />
+                    </ScrollReveal>
                   ))}
                 </div>
               </section>

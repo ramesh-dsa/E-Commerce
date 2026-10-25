@@ -153,7 +153,7 @@ export function BrandPillarsSection() {
       {/* Intro Hook (Normal Scroll) */}
       <div className="w-full py-24 sm:py-40 flex items-center justify-center border-b border-neutral-800">
         <Container>
-          <ScrollReveal y={24} duration={0.65} amount={0.15}>
+          <ScrollReveal y={16} duration={0.5} amount={0.05}>
             <div className="max-w-3xl mx-auto text-center">
               <span className="text-xs font-mono tracking-widest text-neutral-400 mb-8 block uppercase">
                 [ 001 ] The Standard
@@ -193,7 +193,7 @@ export function BrandPillarsSection() {
 
             {/* Massive Editorial Content Overlay */}
             <Container className="relative z-20 w-full">
-              <ScrollReveal y={24} duration={0.6} amount={0.15}>
+              <ScrollReveal y={16} duration={0.5} amount={0.05}>
                 <div className="max-w-4xl pt-20">
                   <div className="mb-6 sm:mb-10">
                     <span className="text-xl sm:text-3xl font-mono tracking-widest text-white/50">

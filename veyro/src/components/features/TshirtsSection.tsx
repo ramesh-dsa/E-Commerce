@@ -128,7 +128,7 @@ export function TshirtsSection() {
     <section id="clothing" className="w-full py-16 sm:py-24 bg-white border-t border-veyro-border-light">
       <Container>
         {/* Section Header & Tabs Scroll Reveal */}
-        <ScrollReveal y={20} duration={0.65} amount={0.15}>
+        <ScrollReveal y={16} duration={0.5} amount={0.05}>
           <SectionHeading
             eyebrow="CLOTHING ARCHIVE • 240+ GSM"
             title="THE T-SHIRT COLLECTION"
@@ -201,7 +201,7 @@ export function TshirtsSection() {
         </ScrollReveal>
 
         {/* Asymmetric Product Gallery with Scroll Reveal */}
-        <ScrollReveal y={28} duration={0.7} delay={0.1} amount={0.1}>
+        <ScrollReveal y={16} scale={0.99} duration={0.55} delay={0.06} amount={0.05}>
           <div
             ref={containerRef}
             style={{ minHeight: minHeight ? `${minHeight}px` : undefined }}

@@ -137,7 +137,7 @@ export function NewArrivalsSection() {
     <section id="new-arrivals" className="w-full py-14 sm:py-20 bg-white">
       <Container>
         {/* Section Header & Tabs Scroll Reveal */}
-        <ScrollReveal y={20} duration={0.65} amount={0.15}>
+        <ScrollReveal y={16} duration={0.5} amount={0.05}>
           <SectionHeading
             eyebrow="NEW DROPS • SEASON 01"
             title="LATEST ARRIVALS"
@@ -199,7 +199,7 @@ export function NewArrivalsSection() {
         </ScrollReveal>
 
         {/* Editorial Asymmetrical Grid with Height Stabilization & Scroll Reveal */}
-        <ScrollReveal y={28} duration={0.7} delay={0.1} amount={0.1}>
+        <ScrollReveal y={16} scale={0.99} duration={0.55} delay={0.06} amount={0.05}>
           <div
             ref={containerRef}
             style={{ minHeight: minHeight ? `${minHeight}px` : undefined }}

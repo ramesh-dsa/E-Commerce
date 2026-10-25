@@ -564,11 +564,21 @@ export function ClothingCatalog() {
                   ? calculateDiscountPercentage(product.price, product.originalPrice)
                   : null;
 
+              const cardDelay = (index % (gridColumns || 4)) * 0.04;
+
               return (
                 <React.Fragment key={product.id}>
                   {/* Embedded Luxury 3-Tees Bundle Pass Card at slot #4 (After full 4-col first row) */}
                   {index === 4 && (
-                    <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-neutral-900 text-white rounded-sm relative isolate overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
+                    <ScrollReveal
+                      className="col-span-2 h-full"
+                      y={16}
+                      scale={0.985}
+                      duration={0.5}
+                      delay={0.03}
+                      amount={0.05}
+                    >
+                      <article className="h-full flex flex-col justify-between p-6 sm:p-9 bg-neutral-900 text-white rounded-sm relative isolate overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
                       {/* High-Fashion Editorial Photography Background: 3 Models Trio */}
                       <Image
                         src="/images/bundle-pass-campaign.jpg"
@@ -614,10 +624,19 @@ export function ClothingCatalog() {
                       {/* Subtle Ambient Glow */}
                       <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-veyro-yellow/10 rounded-full blur-3xl pointer-events-none" />
                     </article>
+                    </ScrollReveal>
                   )}
 
                   {/* Standard Clothing Product Card */}
-                  <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl">
+                  <ScrollReveal
+                    className="h-full flex flex-col"
+                    y={16}
+                    scale={0.985}
+                    duration={0.48}
+                    delay={cardDelay}
+                    amount={0.05}
+                  >
+                    <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl h-full">
                     {/* Image Stage Container */}
                     <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-veyro-surface-alt transition-colors duration-300">
                       <Link
@@ -726,6 +745,7 @@ export function ClothingCatalog() {
                       </div>
                     </div>
                   </article>
+                  </ScrollReveal>
                 </React.Fragment>
               );
             })}

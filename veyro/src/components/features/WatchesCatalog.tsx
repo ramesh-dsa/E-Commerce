@@ -749,67 +749,77 @@ export function WatchesCatalog() {
                       ? calculateDiscountPercentage(product.price, product.originalPrice)
                       : null;
 
+                  const cardDelay = (index % (gridColumns || 4)) * 0.04;
+
                   return (
                     <React.Fragment key={product.id}>
-
-                      {/* Minimalist Watch Card */}
-                      <article className="group flex flex-col relative isolate transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-2xl">
-                        {/* Image Stage Container */}
-                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-veyro-surface transition-colors duration-300">
-                          <Link
-                            href={`/product/${product.slug}`}
-                            className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
-                            aria-label={product.name}
-                          >
-                            {/* Primary Image */}
-                            <Image
-                              src={product.imageUrl}
-                              alt={product.name}
-                              fill
-                              quality={80}
-                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                              className="object-cover object-center"
-                            />
-                          </Link>
-
-                          {/* Wishlist Heart Button (Right) */}
-                          <div className="absolute top-2.5 right-2.5 z-10 transition-opacity duration-200">
-                            <WishlistButton product={product} isWishlisted={isWishlisted} />
-                          </div>
-                        </div>
-
-                        {/* Metadata Stage */}
-                        <div className="pt-3.5 pb-2 flex flex-col items-center text-center flex-grow">
-                          {/* Line 1: Maker / Brand Line */}
-                          <span className="font-luxury text-[11.5px] font-medium uppercase tracking-[0.12em] text-veyro-black">
-                            {product.subcategoryTag ? `${product.subcategoryTag.toUpperCase()} ARCHIVE` : "VEYRO HOROLOGY"}
-                          </span>
-
-                          {/* Line 2: Gender | Model Name */}
-                          <h3 className="font-luxury text-xs font-normal uppercase tracking-[0.06em] text-neutral-600 mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
-                            <Link href={`/product/${product.slug}`}>
-                              {product.gender || "UNISEX"} | {product.name.replace(/^VEYRO\s+/i, "")}
+                      <ScrollReveal
+                        className="h-full flex flex-col"
+                        y={16}
+                        scale={0.985}
+                        duration={0.48}
+                        delay={cardDelay}
+                        amount={0.05}
+                      >
+                        {/* Minimalist Watch Card */}
+                        <article className="group flex flex-col relative isolate transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-2xl h-full">
+                          {/* Image Stage Container */}
+                          <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-veyro-surface transition-colors duration-300">
+                            <Link
+                              href={`/product/${product.slug}`}
+                              className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
+                              aria-label={product.name}
+                            >
+                              {/* Primary Image */}
+                              <Image
+                                src={product.imageUrl}
+                                alt={product.name}
+                                fill
+                                quality={80}
+                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                className="object-cover object-center"
+                              />
                             </Link>
-                          </h3>
 
-                          {/* Line 3: Pricing Block */}
-                          <div className="mt-1.5 flex items-baseline justify-center gap-2">
-                            <span className="text-[13.5px] sm:text-sm font-bold text-veyro-black font-mono">
-                              {formatPrice(product.price)}
-                            </span>
-                            {product.originalPrice && product.originalPrice > product.price && (
-                              <span className="text-xs text-veyro-muted line-through font-mono">
-                                {formatPrice(product.originalPrice)}
-                              </span>
-                            )}
-                            {discountPercent && (
-                              <span className="text-xs font-bold text-red-600 font-mono">
-                                ({discountPercent}% OFF)
-                              </span>
-                            )}
+                            {/* Wishlist Heart Button (Right) */}
+                            <div className="absolute top-2.5 right-2.5 z-10 transition-opacity duration-200">
+                              <WishlistButton product={product} isWishlisted={isWishlisted} />
+                            </div>
                           </div>
-                        </div>
-                      </article>
+
+                          {/* Metadata Stage */}
+                          <div className="pt-3.5 pb-2 flex flex-col items-center text-center flex-grow">
+                            {/* Line 1: Maker / Brand Line */}
+                            <span className="font-luxury text-[11.5px] font-medium uppercase tracking-[0.12em] text-veyro-black">
+                              {product.subcategoryTag ? `${product.subcategoryTag.toUpperCase()} ARCHIVE` : "VEYRO HOROLOGY"}
+                            </span>
+
+                            {/* Line 2: Gender | Model Name */}
+                            <h3 className="font-luxury text-xs font-normal uppercase tracking-[0.06em] text-neutral-600 mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
+                              <Link href={`/product/${product.slug}`}>
+                                {product.gender || "UNISEX"} | {product.name.replace(/^VEYRO\s+/i, "")}
+                              </Link>
+                            </h3>
+
+                            {/* Line 3: Pricing Block */}
+                            <div className="mt-1.5 flex items-baseline justify-center gap-2">
+                              <span className="text-[13.5px] sm:text-sm font-bold text-veyro-black font-mono">
+                                {formatPrice(product.price)}
+                              </span>
+                              {product.originalPrice && product.originalPrice > product.price && (
+                                <span className="text-xs text-veyro-muted line-through font-mono">
+                                  {formatPrice(product.originalPrice)}
+                                </span>
+                              )}
+                              {discountPercent && (
+                                <span className="text-xs font-bold text-red-600 font-mono">
+                                  ({discountPercent}% OFF)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </article>
+                      </ScrollReveal>
                     </React.Fragment>
                   );
                 })}

@@ -6,9 +6,11 @@ import { motion, useReducedMotion, type Variants } from "motion/react";
 export interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   delay?: number;
   duration?: number;
   y?: number;
+  scale?: number;
   staggerChildren?: number;
   once?: boolean;
   amount?: number | "some" | "all";
@@ -19,27 +21,31 @@ const LUXURY_EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 export function ScrollReveal({
   children,
   className = "",
+  style,
   delay = 0,
-  duration = 0.65,
-  y = 24,
+  duration = 0.5,
+  y = 16,
+  scale,
   staggerChildren,
   once = true,
-  amount = 0.15,
+  amount = 0.05,
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion();
 
   if (shouldReduceMotion) {
-    return <div className={className}>{children}</div>;
+    return <div className={className} style={style}>{children}</div>;
   }
 
   const containerVariants: Variants = {
     hidden: {
       opacity: 0,
       y,
+      ...(scale !== undefined ? { scale } : {}),
     },
     visible: {
       opacity: 1,
       y: 0,
+      ...(scale !== undefined ? { scale: 1 } : {}),
       transition: {
         duration,
         delay,
@@ -47,7 +53,7 @@ export function ScrollReveal({
         ...(staggerChildren
           ? {
               staggerChildren,
-              delayChildren: delay || 0.05,
+              delayChildren: delay || 0.03,
             }
           : {}),
       },
@@ -61,6 +67,7 @@ export function ScrollReveal({
       viewport={{ once, amount }}
       variants={containerVariants}
       className={className}
+      style={style}
     >
       {children}
     </motion.div>
@@ -70,12 +77,14 @@ export function ScrollReveal({
 export function ScrollRevealItem({
   children,
   className = "",
-  y = 20,
-  duration = 0.6,
+  y = 16,
+  scale,
+  duration = 0.5,
 }: {
   children: React.ReactNode;
   className?: string;
   y?: number;
+  scale?: number;
   duration?: number;
 }) {
   const shouldReduceMotion = useReducedMotion();
@@ -85,10 +94,15 @@ export function ScrollRevealItem({
   }
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y },
+    hidden: {
+      opacity: 0,
+      y,
+      ...(scale !== undefined ? { scale } : {}),
+    },
     visible: {
       opacity: 1,
       y: 0,
+      ...(scale !== undefined ? { scale: 1 } : {}),
       transition: {
         duration,
         ease: LUXURY_EASE,

@@ -12,6 +12,7 @@ import { ProductBackButton } from "@/components/features/ProductBackButton";
 import { ProductReviewsSection } from "@/components/features/ProductReviewsSection";
 import { ProductDetailSkeleton } from "@/components/features/ProductDetailSkeleton";
 import { Container } from "@/components/ui/Container";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ArrowLeft, PackageX } from "lucide-react";
 
 interface ProductDetailViewProps {
@@ -389,20 +390,23 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
         </div>
 
         {/* Dedicated Customer Reviews Section */}
-        <ProductReviewsSection product={product} />
+        <ScrollReveal y={16} duration={0.5} amount={0.05}>
+          <ProductReviewsSection product={product} />
+        </ScrollReveal>
 
         {/* Dynamic Recommendation Carousels */}
         {carouselSections.map((section, idx) => {
           const num = idx + 2;
           const formattedNumber = num < 10 ? `[ 00${num} ]` : `[ 0${num} ]`;
           return (
-            <ProductCarousel
-              key={section.title}
-              products={section.products}
-              categoryNumber={formattedNumber}
-              title={section.title}
-              subtitle={section.subtitle}
-            />
+            <ScrollReveal key={section.title} y={16} duration={0.5} amount={0.05}>
+              <ProductCarousel
+                products={section.products}
+                categoryNumber={formattedNumber}
+                title={section.title}
+                subtitle={section.subtitle}
+              />
+            </ScrollReveal>
           );
         })}
       </Container>

@@ -10,6 +10,7 @@ import { useUser } from "@/context/UserContext";
 import { Container } from "@/components/ui/Container";
 import { Toast } from "@/components/ui/Toast";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ProductCard } from "@/components/features/ProductCard";
 import { AtelierGiftSuite } from "@/components/features/AtelierGiftSuite";
 import { useProducts } from "@/context/ProductsContext";
@@ -835,8 +836,18 @@ export default function CartPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {recommendedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {recommendedProducts.map((product, index) => (
+              <ScrollReveal
+                key={product.id}
+                className="h-full flex flex-col"
+                y={16}
+                scale={0.985}
+                duration={0.48}
+                delay={(index % 4) * 0.04}
+                amount={0.05}
+              >
+                <ProductCard product={product} />
+              </ScrollReveal>
             ))}
           </div>
         </div>
