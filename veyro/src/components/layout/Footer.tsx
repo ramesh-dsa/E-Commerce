@@ -161,10 +161,10 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-veyro-black text-white pt-16 sm:pt-24 pb-12 border-t border-white/10 overflow-hidden">
+    <footer className="relative w-full bg-[#050505] text-white pt-16 sm:pt-24 pb-12 border-t border-[#1a1a1a] overflow-hidden">
       <Container>
         {/* Newsletter & Brand Statement Strip */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 pb-16 border-b border-neutral-800/80">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 pb-16 border-b border-[#1a1a1a]">
           {/* Brand Vision */}
           <div className="lg:col-span-6 flex flex-col justify-between">
             <div>
@@ -354,7 +354,7 @@ export function Footer() {
         </div>
 
         {/* Links Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-14 border-b border-neutral-800/80">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-14 border-b border-[#1a1a1a]">
           {/* Col 1: Shop */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4 font-mono">
@@ -427,7 +427,7 @@ export function Footer() {
             </div>
 
             {/* Social Presence */}
-            <div className="mt-5 pt-4 border-t border-neutral-800/80">
+            <div className="mt-5 pt-4 border-t border-[#1a1a1a]">
               <span className="block text-xs font-bold uppercase tracking-widest text-neutral-300 mb-2.5 font-mono">
                 Follow @veyro.in
               </span>
