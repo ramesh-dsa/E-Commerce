@@ -1,28 +1,44 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useSyncExternalStore } from "react";
+import {
+  Sparkles,
+  Shapes,
+  Palette,
+  Type,
+  LayoutGrid,
+  Box,
+  Activity,
+  ChevronsUpDown,
+  Component,
+  Terminal,
+  Eye,
+  ArrowRightLeft,
+  ShieldCheck,
+} from "lucide-react";
 
 export interface SectionItem {
   id: string;
   number: string;
   title: string;
   group: "Foundations" | "System" | "Application" | "Governance";
+  icon: React.ElementType;
 }
 
 export const SECTIONS: SectionItem[] = [
-  { id: "brand-essence", number: "01", title: "Brand Essence", group: "Foundations" },
-  { id: "logo", number: "02", title: "Logo", group: "Foundations" },
-  { id: "color", number: "03", title: "Color", group: "Foundations" },
-  { id: "typography", number: "04", title: "Typography", group: "Foundations" },
-  { id: "layout-spacing", number: "05", title: "Layout and Spacing", group: "System" },
-  { id: "shape-elevation", number: "06", title: "Shape and Elevation", group: "System" },
-  { id: "motion", number: "07", title: "Motion", group: "System" },
-  { id: "z-index-ladder", number: "08", title: "Z-Index Ladder", group: "System" },
-  { id: "components", number: "09", title: "Components", group: "Application" },
-  { id: "architecture", number: "10", title: "Architecture", group: "Application" },
-  { id: "accessibility", number: "11", title: "Accessibility", group: "Application" },
-  { id: "transition-guidance", number: "12", title: "Transition Guidance", group: "Governance" },
-  { id: "quick-reference", number: "13", title: "Quick Reference", group: "Governance" },
+  { id: "brand-essence", number: "01", title: "Brand Essence", group: "Foundations", icon: Sparkles },
+  { id: "logo", number: "02", title: "Logo", group: "Foundations", icon: Shapes },
+  { id: "color", number: "03", title: "Color", group: "Foundations", icon: Palette },
+  { id: "typography", number: "04", title: "Typography", group: "Foundations", icon: Type },
+  { id: "layout-spacing", number: "05", title: "Layout and Spacing", group: "System", icon: LayoutGrid },
+  { id: "shape-elevation", number: "06", title: "Shape and Elevation", group: "System", icon: Box },
+  { id: "motion", number: "07", title: "Motion", group: "System", icon: Activity },
+  { id: "z-index-ladder", number: "08", title: "Z-Index Ladder", group: "System", icon: ChevronsUpDown },
+  { id: "components", number: "09", title: "Components", group: "Application", icon: Component },
+  { id: "architecture", number: "10", title: "Architecture", group: "Application", icon: Terminal },
+  { id: "accessibility", number: "11", title: "Accessibility", group: "Application", icon: Eye },
+  { id: "transition-guidance", number: "12", title: "Transition Guidance", group: "Governance", icon: ArrowRightLeft },
+  { id: "quick-reference", number: "13", title: "Quick Reference", group: "Governance", icon: ShieldCheck },
 ];
 
 export interface GuidelinesTreeSidebarProps {
@@ -348,8 +364,15 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
       {/* ── Mobile & Tablet Sticky Bar (< lg) ── */}
       <div className="lg:hidden sticky top-0 z-30 bg-white border-b border-neutral-200 px-4 py-3">
         <div className="flex items-center justify-between min-h-[44px]">
-          <div className="truncate pr-3">
-            <span className="text-sm font-semibold text-[#111111]">
+          <div className="flex items-center gap-2 truncate pr-3">
+            {activeSection.icon && (
+              <activeSection.icon
+                size={14}
+                className="text-[#111111] shrink-0"
+                aria-hidden="true"
+              />
+            )}
+            <span className="text-sm font-semibold text-[#111111] truncate">
               {activeSection.number} &nbsp;{activeSection.title}
             </span>
           </div>
@@ -436,6 +459,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                       <ul className="space-y-1">
                         {group.items.map((item) => {
                           const isActive = activeId === item.id;
+                          const ItemIcon = item.icon;
                           return (
                             <li key={item.id}>
                               <a
@@ -445,15 +469,24 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                                   navigateToSection(item.id);
                                   setSheetOpen(false);
                                 }}
-                                className={`min-h-[44px] flex items-center px-2 py-2 text-sm rounded-md transition-colors duration-200 ${
+                                className={`min-h-[44px] flex items-center gap-2.5 px-2 py-2 text-sm rounded-md transition-colors duration-200 ${
                                   isActive
                                     ? "text-[#111111] font-semibold bg-neutral-100"
                                     : "text-neutral-500 hover:text-neutral-900"
                                 } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
                                 aria-current={isActive ? "location" : undefined}
                               >
-                                <span className="font-mono text-xs">{item.number}</span>
-                                <span className="ml-2 truncate">{item.title}</span>
+                                <ItemIcon
+                                  size={14}
+                                  className={`shrink-0 ${
+                                    isActive ? "text-[#111111]" : "text-neutral-400"
+                                  }`}
+                                  aria-hidden="true"
+                                />
+                                <span className="font-mono text-xs text-neutral-400 shrink-0">
+                                  {item.number}
+                                </span>
+                                <span className="truncate">{item.title}</span>
                               </a>
                             </li>
                           );
@@ -560,6 +593,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                   <ul className="space-y-1">
                     {group.items.map((item) => {
                       const isActive = activeId === item.id;
+                      const ItemIcon = item.icon;
                       return (
                         <li key={item.id}>
                           <a
@@ -571,15 +605,26 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                               e.preventDefault();
                               navigateToSection(item.id);
                             }}
-                            className={`block py-1 text-sm rounded-md transition-colors duration-200 select-none ${
+                            className={`group flex items-center gap-2.5 py-1 text-sm rounded-md transition-colors duration-200 select-none ${
                               isActive
                                 ? "text-[#111111] font-semibold"
                                 : "text-neutral-500 hover:text-neutral-900"
                             } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
                             aria-current={isActive ? "location" : undefined}
                           >
-                            <span className="font-mono text-xs">{item.number}</span>
-                            <span className="ml-2 truncate">{item.title}</span>
+                            <ItemIcon
+                              size={13}
+                              className={`shrink-0 transition-colors duration-200 ${
+                                isActive
+                                  ? "text-[#111111]"
+                                  : "text-neutral-400 group-hover:text-neutral-700"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <span className="font-mono text-xs text-neutral-400 shrink-0">
+                              {item.number}
+                            </span>
+                            <span className="truncate">{item.title}</span>
                           </a>
                         </li>
                       );
