@@ -771,15 +771,6 @@ export function WatchesCatalog() {
                             />
                           </Link>
 
-                          {/* Top Badges (Left) */}
-                          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 pointer-events-none z-10">
-                            {discountPercent && (
-                              <span className="px-1.5 py-0.5 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider rounded-sm">
-                                {discountPercent}% OFF
-                              </span>
-                            )}
-                          </div>
-
                           {/* Wishlist Heart Button (Right) */}
                           <div className="absolute top-2.5 right-2.5 z-10 transition-opacity duration-200">
                             <WishlistButton product={product} isWishlisted={isWishlisted} />
