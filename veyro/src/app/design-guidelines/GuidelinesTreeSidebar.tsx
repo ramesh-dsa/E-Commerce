@@ -292,7 +292,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <span className="font-mono tabular-nums text-xs font-semibold text-neutral-500">
+            <span className="font-mono tabular-nums text-xs font-bold text-neutral-700">
               {activeSection.number} / {SECTIONS.length.toString().padStart(2, "0")}
             </span>
             <button
@@ -328,7 +328,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
               <div className="space-y-4">
                 {groupedSections.map((group) => (
                   <div key={group.name} className="space-y-1">
-                    <span className="text-xs uppercase tracking-wider text-neutral-500 font-semibold block px-1">
+                    <span className="text-xs uppercase tracking-wider text-neutral-700 font-bold block px-1">
                       {group.name}
                     </span>
                     <ul className="space-y-1">
@@ -347,18 +347,19 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                               className={`min-h-[44px] flex items-center gap-2.5 px-2 py-2 text-sm rounded-md transition-colors duration-200 ${
                                 isActive
                                   ? "text-[#111111] font-semibold bg-neutral-100"
-                                  : "text-neutral-500 hover:text-neutral-900"
+                                  : "text-neutral-700 hover:text-neutral-950 font-medium"
                               } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
                               aria-current={isActive ? "location" : undefined}
                             >
                               <ItemIcon
-                                size={14}
+                                size={15}
+                                strokeWidth={isActive ? 2 : 1.8}
                                 className={`shrink-0 ${
-                                  isActive ? "text-[#111111]" : "text-neutral-400"
+                                  isActive ? "text-[#111111]" : "text-neutral-600"
                                 }`}
                                 aria-hidden="true"
                               />
-                              <span className="font-mono text-xs text-neutral-400 shrink-0">
+                              <span className="font-mono text-xs text-neutral-500 font-medium shrink-0">
                                 {item.number}
                               </span>
                               <span className="truncate">{item.title}</span>
@@ -379,7 +380,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
       <aside
         className={`hidden lg:block lg:sticky lg:top-[max(6rem,calc(50vh-280px))] max-h-[calc(100vh-7rem)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-64 shrink-0 pb-16 pt-1 select-none ${className}`}
       >
-        <p className="mb-3 pl-[14px] font-sans text-xs font-semibold uppercase tracking-wider text-neutral-400 select-none">
+        <p className="mb-3 pl-[14px] font-sans text-xs font-bold uppercase tracking-wider text-neutral-600 select-none">
           Contents
         </p>
 
@@ -408,8 +409,8 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
 
                 {/* Section Group Title */}
                 <div
-                  className={`py-1 text-[13.5px] font-semibold transition-colors duration-200 select-none ${
-                    isGroupActive ? "text-[#111111]" : "text-neutral-500"
+                  className={`py-1.5 text-sm font-bold tracking-tight transition-colors duration-200 select-none ${
+                    isGroupActive ? "text-neutral-950" : "text-neutral-800"
                   }`}
                 >
                   {group.name}
@@ -437,10 +438,10 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                           e.preventDefault();
                           navigateToSection(item.id);
                         }}
-                        className={`group absolute left-0 right-0 flex items-center gap-2 pl-[40px] pr-2 text-[13px] select-none transition-colors duration-200 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 ${
+                        className={`group absolute left-0 right-0 flex items-center gap-2 pl-[40px] pr-2 text-sm select-none transition-colors duration-200 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2 ${
                           isActive
                             ? "text-[#111111] font-semibold"
-                            : "text-neutral-500 hover:text-neutral-900 font-normal"
+                            : "text-neutral-700 hover:text-neutral-950 font-medium"
                         }`}
                         style={{
                           top: `${6 + 30 * index}px`,
@@ -449,12 +450,12 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
                         aria-current={isActive ? "location" : undefined}
                       >
                         <ItemIcon
-                          size={14}
-                          strokeWidth={isActive ? 2 : 1.7}
+                          size={15}
+                          strokeWidth={isActive ? 2 : 1.8}
                           className={`shrink-0 transition-colors duration-200 ${
                             isActive
                               ? "text-[#111111]"
-                              : "text-neutral-400 group-hover:text-neutral-700"
+                              : "text-neutral-600 group-hover:text-neutral-950"
                           }`}
                           aria-hidden="true"
                         />
