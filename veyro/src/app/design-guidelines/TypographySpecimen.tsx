@@ -618,30 +618,6 @@ export default function TypographySpecimen() {
         </div>
       </div>
 
-      {/* 5. Minimal System Rules Banner */}
-      <div className="p-4 bg-neutral-50 rounded-xl border border-[#E8E8E5] flex flex-wrap items-center justify-between gap-3 text-xs text-neutral-800">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-bold text-neutral-950">Typography Rules:</span>
-          <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
-            Primary Base: Geist Sans (font-sans)
-          </span>
-          <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
-            Data &amp; SKUs: Geist Mono (font-mono)
-          </span>
-          <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
-            Minimum Body Size: 14px (text-sm)
-          </span>
-          <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
-            Exactly One &lt;h1&gt; per Page
-          </span>
-        </div>
-        <a
-          href="#transition-guidance"
-          className="text-neutral-900 hover:text-black font-bold underline underline-offset-2 ml-auto"
-        >
-          View Section 12 Audit →
-        </a>
-      </div>
     </div>
   );
 }
