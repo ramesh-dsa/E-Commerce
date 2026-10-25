@@ -227,16 +227,8 @@ export function Footer() {
               </form>
             ) : (
               <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
-                {!isTorn && (
-                  <div className="flex items-center justify-end text-xs">
-                    <span className="text-xs text-neutral-400 font-mono">
-                      Drag or tap right stub to tear →
-                    </span>
-                  </div>
-                )}
-
-                {/* The Luxury Tear Ticket Container with elevated glassmorphic charcoal border */}
-                <div className="w-full overflow-visible flex items-center justify-center py-6 px-4 sm:px-6 relative min-h-[270px] bg-[#121214] border border-white/10 rounded-2xl shadow-2xl shadow-black/80">
+                {/* The Luxury Tear Ticket */}
+                <div className="w-full overflow-visible flex justify-center py-4 relative min-h-[260px]">
                   <TearTicket
                     image="/images/veyro-vip-pass-artwork.jpg"
                     imageAlt="VEYRO Luxury Atelier VIP Pass"
