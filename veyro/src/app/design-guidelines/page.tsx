@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Archivo, Inter } from "next/font/google";
 import { Logo, VeyroMark } from "@/components/ui/Logo";
 import GuidelinesTreeSidebar from "./GuidelinesTreeSidebar";
@@ -10,15 +9,11 @@ import ShapeElevationSpecimen from "./ShapeElevationSpecimen";
 import MotionSpecimen from "./MotionSpecimen";
 import ZIndexSpecimen from "./ZIndexSpecimen";
 import ComponentsSpecimen from "./ComponentsSpecimen";
+import TransitionGuidanceSpecimen from "./TransitionGuidanceSpecimen";
 import {
   Download,
   Check,
   X,
-  Layers,
-  ArrowRight,
-  ShieldCheck,
-  ExternalLink,
-  Code2,
   Info,
 } from "lucide-react";
 
@@ -230,51 +225,6 @@ const TYPE_SCALE = [
   { token: "text-4xl", size: "36px", lh: "40px", usage: "High-level page headers" },
   { token: "text-5xl", size: "48px", lh: "48px", usage: "Display titles" },
   { token: "text-6xl", size: "60px", lh: "60px", usage: "Hero display headings only" },
-];
-
-const TRANSITION_ITEMS = [
-  {
-    num: "1",
-    area: "Colour Consolidation",
-    measurement: "553 hardcoded #111111 occurrences across 38 files; 170 hardcoded #fcd017 occurrences across 29 files; 13 prohibited grey tokens (8 zinc, 5 slate); non-standard hexes (#666666, #888888, #E8E8E5, #555555).",
-    standard: "Consolidate onto @theme tokens (text-veyro-black, bg-veyro-black, bg-veyro-yellow) and canonical Tailwind neutral ramp (neutral-900 to neutral-400). Eliminate all raw hex literals.",
-    effort: "Medium",
-  },
-  {
-    num: "2",
-    area: "Typography (Fonts & Arbitrary Sizes)",
-    measurement: "5 font families loaded in layout.tsx (Geist Sans, Geist Mono, Dancing Script, Montserrat, Outfit); 796 arbitrary text sizes (text-[0-9.]+px) across 39 distinct sizes (led by text-[11px]: 312, text-[10px]: 178, text-[13px]: 54).",
-    standard: "Consolidate onto 2 fonts: Archivo for headings and Inter for body/UI. Replace all arbitrary sizes with standard Tailwind scale tokens (text-2xs through text-6xl).",
-    effort: "Medium",
-  },
-  {
-    num: "3",
-    area: "Shared Button Primitive & UI Primitives",
-    measurement: "ui/Button.tsx imported in index but rendered 0 times across the storefront; 312 raw <button> tags across 44 files with divergent styles; lack of shared Input, Card, and Modal primitives.",
-    standard: "Adopt ui/Button universally across all interactive actions (Primary Gold, Secondary Ink, Ghost/Outline with rounded-full). Build shared Input (rounded-lg), Card (rounded-xl), and Modal (rounded-xl).",
-    effort: "High",
-  },
-  {
-    num: "4",
-    area: "Section Rhythm & Containers",
-    measurement: "Container.tsx defines non-standard max-w-[1540px] with arbitrary padding px-4 sm:px-8 xl:px-10; irregular section paddings across pages.",
-    standard: "Adopt the 4 standard container recipes (Wide 1440px, Standard 7xl, Reading 3xl, Form md) with universal padding px-4 sm:px-6 lg:px-8 and standardized section rhythm (py-16 sm:py-20 lg:py-24).",
-    effort: "Medium",
-  },
-  {
-    num: "5",
-    area: "Scale Leaks: Radius, Shadows, Z-Index, Motion",
-    measurement: "277 non-standard radii (110 arbitrary rounded-[...], 84 rounded-2xl, 52 plain rounded, 14 rounded-xs, 14 rounded-3xl, 3 rounded-sm); 49 distinct shadow definitions (118 shadow-xs, 55 shadow-md, 47 shadow-2xs); arbitrary z-indices (z-[70], z-[100], z-[150], z-1); 223 occurrences of transition-all; 2 animation libraries (35 files with motion/react vs 7 files with framer-motion).",
-    standard: "Restrict to 4 radii (rounded-full, rounded-xl, rounded-lg, rounded-md), 3 shadows (shadow-sm, shadow-lg, shadow-2xl), and the canonical 7-tier z-index ladder. Eliminate transition-all in favor of specific transitions. Consolidate exclusively on motion/react.",
-    effort: "Medium",
-  },
-  {
-    num: "6",
-    area: "Theme Consistency & Accessibility",
-    measurement: "Dark islands in storefront: AccountModal (modal shell bg-[#0c0c0e] on line 412, inner panel bg-[#101013] on line 472), BrandPillarsSection (bg-[#0a0a0a] on line 150), Footer (bg-[#050505] on line 164); only 16 buttons (5.1%) have explicit focus styling, while 296 buttons (94.9%) lack focus rings.",
-    standard: "Enforce light theme across all storefront views and modals (\"Light Everywhere, No Dark Islands\"). Apply universal 2px focus ring to all 312 interactive buttons.",
-    effort: "Medium",
-  },
 ];
 
 const QUICK_REFERENCE = [
@@ -1016,74 +966,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    An honest audit of gaps between the standard and the current branch code, in order of impact.
+                    Storefront architecture modernization roadmap, token migration recipes, and continuous verification audits.
                   </p>
                 </div>
 
-                {/* Transition Guidance Table */}
-                <div className="border border-[#E8E8E5] rounded-xl overflow-hidden bg-white shadow-2xs">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs sm:text-sm">
-                      <thead className="bg-neutral-100/70 border-b border-[#E8E8E5] text-neutral-900 uppercase font-bold text-xs tracking-wider">
-                        <tr>
-                          <th className="py-3 px-4 w-12">#</th>
-                          <th className="py-3 px-4 w-48">Area</th>
-                          <th className="py-3 px-4">Current Code Measurements</th>
-                          <th className="py-3 px-4">Standard to Adopt</th>
-                          <th className="py-3 px-4 w-24">Effort</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#E8E8E5] text-neutral-700 leading-relaxed">
-                        {TRANSITION_ITEMS.map((item) => (
-                          <tr key={item.num} className="hover:bg-neutral-50/50 transition-colors">
-                            <td className="py-3 px-4 font-mono font-bold text-neutral-900">{item.num}</td>
-                            <td className="py-3 px-4 font-bold text-neutral-950">{item.area}</td>
-                            <td className="py-3 px-4 leading-relaxed text-neutral-700">{item.measurement}</td>
-                            <td className="py-3 px-4 leading-relaxed font-semibold text-neutral-900">{item.standard}</td>
-                            <td className="py-3 px-4 font-bold">
-                              <span
-                                className={`px-2 py-0.5 rounded-full text-[11px] uppercase font-semibold ${
-                                  item.effort === "High"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-amber-100 text-amber-800"
-                                }`}
-                              >
-                                {item.effort}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Measurement Methodology Note */}
-                <div className="border border-[#E8E8E5] rounded-xl p-6 bg-[#F8F8F6] space-y-3 text-[13.5px] sm:text-sm text-neutral-700 leading-relaxed">
-                  <span className="font-bold uppercase tracking-wider text-neutral-950 block text-xs">
-                    How Counts Were Measured
-                  </span>
-                  <p>
-                    All storefront counts were measured across the exactly 178 storefront source files in <code className="font-mono text-neutral-900 bg-neutral-200/60 px-1 py-0.5 rounded text-xs">veyro/src/</code> (including globals.css, storefront layouts, pages, feature components, and UI primitives). Excluded: <code className="font-mono text-neutral-900 bg-neutral-200/60 px-1 py-0.5 rounded text-xs">src/app/admin/**</code>, <code className="font-mono text-neutral-900 bg-neutral-200/60 px-1 py-0.5 rounded text-xs">src/components/admin/**</code>, and the documentation page <code className="font-mono text-neutral-900 bg-neutral-200/60 px-1 py-0.5 rounded text-xs">src/app/design-guidelines/**</code>. Static AST extraction and regex pattern analysis were executed directly across the codebase on this branch:
-                  </p>
-                  <ul className="space-y-2 list-disc list-inside font-mono text-xs text-neutral-800">
-                    <li><strong className="text-neutral-950 font-sans">Colors &amp; Greys:</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;#[0-9a-fA-F]{'{3,8}'}&quot; src/app src/components src/context src/lib</code> (#111111: 553 in 38 files, #fcd017: 170 in 29 files); <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;(text|bg|border)-(neutral|zinc|slate)-[0-9]+&quot;</code> (neutral: 2,104, zinc: 8, slate: 5)</li>
-                    <li><strong className="text-neutral-950 font-sans">Arbitrary text sizes (796 occurrences, 39 distinct sizes):</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;text-\[[0-9.]+px\]&quot; src/app src/components src/context src/lib | wc -l</code> (Top 3: text-[11px]: 312, text-[10px]: 178, text-[13px]: 54)</li>
-                    <li><strong className="text-neutral-950 font-sans">Standard text sizes (1,083 occurrences):</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;\btext-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl)\b&quot; src/app src/components src/context src/lib | wc -l</code></li>
-                    <li><strong className="text-neutral-950 font-sans">Font weights &amp; tracking:</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;\bfont-(light|normal|medium|semibold|bold|extrabold|black)\b&quot;</code> (1,342); <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE &quot;\btracking-(tight|normal|wide|wider|widest)\b&quot;</code> (451)</li>
-                    <li><strong className="text-neutral-950 font-sans">Layout widths &amp; paddings:</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;\bmax-w-(xs|sm|md|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|full|\[[^]]+\])\b&quot;</code>; <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE &quot;\bpx-(4|6|8|10|12|\[[^]]+\])\b&quot;</code></li>
-                    <li><strong className="text-neutral-950 font-sans">Allowed radii (733 occurrences):</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">grep -roE --exclude-dir=admin --exclude-dir=design-guidelines &quot;\brounded-(full|xl|lg|md|none)\b&quot; src/app src/components src/context src/lib | wc -l</code></li>
-                    <li><strong className="text-neutral-950 font-sans">Non-standard radii (277 total outside canonical scale):</strong> rounded-2xl (84: <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\brounded-2xl\b</code>), rounded-3xl (14: <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\brounded-3xl\b</code>), plain rounded (52: <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">(^|[^a-zA-Z0-9_-])rounded([^a-zA-Z0-9_-]|$)</code>), rounded-sm (3: <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\brounded-sm\b</code>), rounded-xs (14: <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\brounded-xs\b</code>), arbitrary rounded-[...] (110: <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">rounded-\[[^]]+\]</code>)</li>
-                    <li><strong className="text-neutral-950 font-sans">Shadows (115 standard vs 282 non-standard):</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\bshadow-(2xs|xs|sm|md|lg|xl|2xl|inner|none|\[[^]]+\])\b&quot; src/app src/components src/context src/lib</code></li>
-                    <li><strong className="text-neutral-950 font-sans">Motion &amp; transitions:</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\btransition-all\b&quot;</code> (223); <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">motion/react</code> (35 files); <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">framer-motion</code> (7 files); 5 files animating geometry (height, width, left, top, margin)</li>
-                    <li><strong className="text-neutral-950 font-sans">Z-index ladder:</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">\bz-(0|10|20|30|40|50)\b&quot;</code> (172); arbitrary: z-[100] (2), z-[70] (1), z-[150] (1), z-1 (9)</li>
-                    <li><strong className="text-neutral-950 font-sans">Components:</strong> <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">&lt;button\b&quot; src/app src/components src/context src/lib | wc -l</code> (312 raw buttons across 44 files); <code className="text-neutral-950 bg-neutral-200/60 px-1 py-0.5 rounded">&lt;Button\b</code> renders: 0</li>
-                    <li><strong className="text-neutral-950 font-sans">Dark islands identified in code:</strong> AccountModal.tsx line 412 (bg-[#0c0c0e]) &amp; line 472 (bg-[#101013]); BrandPillarsSection.tsx line 150 (bg-[#0a0a0a]); Footer.tsx line 164 (bg-[#050505])</li>
-                  </ul>
-                  <p className="font-semibold text-neutral-950 pt-1">
-                    A prototype of these migrations exists on the design-system branch.
-                  </p>
-                </div>
+                <TransitionGuidanceSpecimen />
               </section>
 
               {/* SECTION 13: QUICK REFERENCE */}
