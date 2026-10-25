@@ -10,6 +10,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import {
   ClothingFilterSidebar,
@@ -737,62 +738,64 @@ export function ClothingCatalog() {
       {/* ── 5. "ENGINEERED WITH FOOTWEAR" CURATED PAIRINGS ─────────────────── */}
       <section className="w-full max-w-full overflow-x-clip bg-veyro-surface-alt border-t border-b border-veyro-border py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
         <div className="mx-auto max-w-screen-2xl">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
-            <div>
-              <span className="text-2xs font-bold uppercase tracking-[0.15em] text-veyro-yellow bg-veyro-black px-2.5 py-1 rounded-xs inline-block mb-2">
-                COMPLETE THE LOOK
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-veyro-black">
-                Engineered With Footwear Pairings
-              </h3>
-              <p className="mt-1 text-xs sm:text-sm text-neutral-500">
-                Archival sneakers designed to anchor the drape of heavyweight oversized t-shirts.
-              </p>
-            </div>
-            <Link
-              href="/#footwear"
-              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-veyro-black hover:text-neutral-600 transition-colors"
-            >
-              <span>Explore All 9 Footwear Silhouettes</span>
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {footwearPairings.map((shoe) => (
+          <ScrollReveal y={24} duration={0.65} amount={0.15}>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
+              <div>
+                <span className="text-2xs font-bold uppercase tracking-[0.15em] text-veyro-yellow bg-veyro-black px-2.5 py-1 rounded-xs inline-block mb-2">
+                  COMPLETE THE LOOK
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-veyro-black">
+                  Engineered With Footwear Pairings
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-neutral-500">
+                  Archival sneakers designed to anchor the drape of heavyweight oversized t-shirts.
+                </p>
+              </div>
               <Link
-                key={shoe.id}
-                href={`/product/${shoe.slug}`}
-                className="group flex flex-col bg-white border border-veyro-border p-3 rounded-xs transition duration-300 hover:shadow-lg"
+                href="/#footwear"
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-veyro-black hover:text-neutral-600 transition-colors"
               >
-                <div className="relative w-full aspect-[4/3] bg-veyro-surface-alt rounded-xs overflow-hidden mb-3">
-                  <Image
-                    src={shoe.imageUrl}
-                    alt={shoe.name}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {shoe.badge && (
-                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-xs bg-veyro-black text-veyro-yellow text-[9px] font-extrabold uppercase">
-                      {shoe.badge}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xs font-semibold text-veyro-subtle uppercase">
-                    {shoe.subcategoryTag} Sneaker
-                  </span>
-                  <span className="text-xs font-bold text-veyro-black">
-                    {formatPrice(shoe.price)}
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-veyro-black group-hover:text-neutral-600 transition-colors mt-0.5">
-                  {shoe.name}
-                </h4>
+                <span>Explore All 9 Footwear Silhouettes</span>
+                <ArrowRight size={14} />
               </Link>
-            ))}
-          </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {footwearPairings.map((shoe) => (
+                <Link
+                  key={shoe.id}
+                  href={`/product/${shoe.slug}`}
+                  className="group flex flex-col bg-white border border-veyro-border p-3 rounded-xs transition duration-300 hover:shadow-lg"
+                >
+                  <div className="relative w-full aspect-[4/3] bg-veyro-surface-alt rounded-xs overflow-hidden mb-3">
+                    <Image
+                      src={shoe.imageUrl}
+                      alt={shoe.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {shoe.badge && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-xs bg-veyro-black text-veyro-yellow text-[9px] font-extrabold uppercase">
+                        {shoe.badge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xs font-semibold text-veyro-subtle uppercase">
+                      {shoe.subcategoryTag} Sneaker
+                    </span>
+                    <span className="text-xs font-bold text-veyro-black">
+                      {formatPrice(shoe.price)}
+                    </span>
+                  </div>
+                  <h4 className="text-sm font-bold text-veyro-black group-hover:text-neutral-600 transition-colors mt-0.5">
+                    {shoe.name}
+                  </h4>
+                </Link>
+              ))}
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 

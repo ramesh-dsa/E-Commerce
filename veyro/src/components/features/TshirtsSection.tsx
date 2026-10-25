@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProductCard } from "@/components/features/ProductCard";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 export function TshirtsSection() {
   const { products, isHydrated } = useProducts();
@@ -126,139 +127,144 @@ export function TshirtsSection() {
   return (
     <section id="clothing" className="w-full py-16 sm:py-24 bg-white border-t border-veyro-border-light">
       <Container>
-        <SectionHeading
-          eyebrow="CLOTHING ARCHIVE • 240+ GSM"
-          title="THE T-SHIRT COLLECTION"
-          subtitle="Heavyweight cotton, architectural drop-shoulders, and high-density ribbed collars."
-          actionText="Shop All T-Shirts (15)"
-          actionHref="/clothing"
-        />
+        {/* Section Header & Tabs Scroll Reveal */}
+        <ScrollReveal y={20} duration={0.65} amount={0.15}>
+          <SectionHeading
+            eyebrow="CLOTHING ARCHIVE • 240+ GSM"
+            title="THE T-SHIRT COLLECTION"
+            subtitle="Heavyweight cotton, architectural drop-shoulders, and high-density ribbed collars."
+            actionText="Shop All T-Shirts (15)"
+            actionHref="/clothing"
+          />
 
-        {/* Editorial Fit Filters */}
-        <div
-          role="tablist"
-          aria-label="T-shirt silhouette categories"
-          className="flex items-center sm:flex-wrap overflow-x-auto sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 mb-8 sm:mb-12 border-b border-neutral-200 sm:border-transparent scrollbar-none gap-5 sm:gap-0"
-        >
-          {fits.map((fit, index) => {
-            const isActive = selectedFit === fit;
-            return (
-              <React.Fragment key={fit}>
-                <button
-                  ref={(el) => {
-                    tabRefs.current[index] = el;
-                  }}
-                  type="button"
-                  role="tab"
-                  id={`tab-tshirts-${fit.toLowerCase()}`}
-                  aria-controls={`panel-tshirts-${fit.toLowerCase()}`}
-                  aria-selected={isActive}
-                  tabIndex={isActive ? 0 : -1}
-                  onClick={() => handleFitSelect(fit, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  className={`relative pb-2.5 sm:pb-1 text-xs sm:text-sm font-bold sm:font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
-                    isActive
-                      ? "text-veyro-black"
-                      : "text-neutral-400 hover:text-neutral-700"
-                  }`}
-                >
-                  {fit === "ALL" ? (
-                    <>
-                      <span className="sm:hidden">All Fits</span>
-                      <span className="hidden sm:inline">All Silhouettes</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="sm:hidden">{fit}</span>
-                      <span className="hidden sm:inline">{fit} Fit</span>
-                    </>
-                  )}
-                  {/* Animated Active Underline */}
-                  {isActive && (
-                    <motion.span
-                      layoutId="tshirts-tab-underline"
-                      transition={
-                        shouldReduceMotion
-                          ? { duration: 0 }
-                          : { type: "spring", stiffness: 400, damping: 35 }
-                      }
-                      className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-veyro-black pointer-events-none"
-                    />
-                  )}
-                </button>
-                {index < fits.length - 1 && (
-                  <span className="hidden sm:inline text-veyro-muted/30 mx-5 font-light text-lg pb-1 pointer-events-none">
-                    /
-                  </span>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
-
-        {/* Asymmetric Product Gallery */}
-        <div
-          ref={containerRef}
-          style={{ minHeight: minHeight ? `${minHeight}px` : undefined }}
-          className="transition-[min-height] duration-200 ease-out"
-        >
-          {!isHydrated ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr">
-              {Array.from({ length: 9 }).map((_, index) => {
-                const isFirst = index === 0;
-                return (
-                  <div
-                    key={index}
-                    className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
+          {/* Editorial Fit Filters */}
+          <div
+            role="tablist"
+            aria-label="T-shirt silhouette categories"
+            className="flex items-center sm:flex-wrap overflow-x-auto sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 mb-8 sm:mb-12 border-b border-neutral-200 sm:border-transparent scrollbar-none gap-5 sm:gap-0"
+          >
+            {fits.map((fit, index) => {
+              const isActive = selectedFit === fit;
+              return (
+                <React.Fragment key={fit}>
+                  <button
+                    ref={(el) => {
+                      tabRefs.current[index] = el;
+                    }}
+                    type="button"
+                    role="tab"
+                    id={`tab-tshirts-${fit.toLowerCase()}`}
+                    aria-controls={`panel-tshirts-${fit.toLowerCase()}`}
+                    aria-selected={isActive}
+                    tabIndex={isActive ? 0 : -1}
+                    onClick={() => handleFitSelect(fit, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    className={`relative pb-2.5 sm:pb-1 text-xs sm:text-sm font-bold sm:font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
+                      isActive
+                        ? "text-veyro-black"
+                        : "text-neutral-400 hover:text-neutral-700"
+                    }`}
                   >
-                    <ProductCardSkeleton
-                      isFeatured={isFirst}
-                      className="h-full"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={selectedFit}
-                ref={setContentRef}
-                role="tabpanel"
-                id={`panel-tshirts-${selectedFit.toLowerCase()}`}
-                aria-labelledby={`tab-tshirts-${selectedFit.toLowerCase()}`}
-                variants={gridVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onAnimationComplete={(definition) => {
-                  if (definition === "visible" && contentRef.current) {
-                    const h = contentRef.current.offsetHeight;
-                    if (h > 0) setMinHeight(h);
-                  }
-                }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr"
-              >
-                {displayedTees.map((product, index) => {
-                  const isFirst = selectedFit === "ALL" && index === 0;
+                    {fit === "ALL" ? (
+                      <>
+                        <span className="sm:hidden">All Fits</span>
+                        <span className="hidden sm:inline">All Silhouettes</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="sm:hidden">{fit}</span>
+                        <span className="hidden sm:inline">{fit} Fit</span>
+                      </>
+                    )}
+                    {/* Animated Active Underline */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="tshirts-tab-underline"
+                        transition={
+                          shouldReduceMotion
+                            ? { duration: 0 }
+                            : { type: "spring", stiffness: 400, damping: 35 }
+                        }
+                        className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-veyro-black pointer-events-none"
+                      />
+                    )}
+                  </button>
+                  {index < fits.length - 1 && (
+                    <span className="hidden sm:inline text-veyro-muted/30 mx-5 font-light text-lg pb-1 pointer-events-none">
+                      /
+                    </span>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+
+        {/* Asymmetric Product Gallery with Scroll Reveal */}
+        <ScrollReveal y={28} duration={0.7} delay={0.1} amount={0.1}>
+          <div
+            ref={containerRef}
+            style={{ minHeight: minHeight ? `${minHeight}px` : undefined }}
+            className="transition-[min-height] duration-200 ease-out"
+          >
+            {!isHydrated ? (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr">
+                {Array.from({ length: 9 }).map((_, index) => {
+                  const isFirst = index === 0;
                   return (
-                    <motion.div 
-                      key={product.id} 
-                      variants={cardVariants}
+                    <div
+                      key={index}
                       className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
                     >
-                      <ProductCard 
-                        product={product} 
-                        isFeatured={isFirst} 
+                      <ProductCardSkeleton
+                        isFeatured={isFirst}
                         className="h-full"
                       />
-                    </motion.div>
+                    </div>
                   );
                 })}
-              </motion.div>
-            </AnimatePresence>
-          )}
-        </div>
+              </div>
+            ) : (
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={selectedFit}
+                  ref={setContentRef}
+                  role="tabpanel"
+                  id={`panel-tshirts-${selectedFit.toLowerCase()}`}
+                  aria-labelledby={`tab-tshirts-${selectedFit.toLowerCase()}`}
+                  variants={gridVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onAnimationComplete={(definition) => {
+                    if (definition === "visible" && contentRef.current) {
+                      const h = contentRef.current.offsetHeight;
+                      if (h > 0) setMinHeight(h);
+                    }
+                  }}
+                  className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:gap-8 lg:auto-rows-fr"
+                >
+                  {displayedTees.map((product, index) => {
+                    const isFirst = selectedFit === "ALL" && index === 0;
+                    return (
+                      <motion.div 
+                        key={product.id} 
+                        variants={cardVariants}
+                        className={isFirst ? "col-span-2 lg:row-span-2" : "col-span-1 row-span-1"}
+                      >
+                        <ProductCard 
+                          product={product} 
+                          isFeatured={isFirst} 
+                          className="h-full"
+                        />
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
+        </ScrollReveal>
       </Container>
     </section>
   );

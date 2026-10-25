@@ -10,6 +10,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { formatPrice, calculateDiscountPercentage } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { WishlistButton } from "@/components/ui/WishlistButton";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { SortDropdown, SortOptionItem } from "@/components/ui/SortDropdown";
 import { ActiveFilterChips, FilterChipItem } from "./ActiveFilterChips";
@@ -821,67 +822,69 @@ export function WatchesCatalog() {
       {/* ── 4. CROSS-CATEGORY CURATED PAIRINGS (FOOTWEAR) ───────────── */}
       <section className="w-full bg-veyro-surface border-t border-b border-veyro-border py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
         <div className="mx-auto max-w-screen-2xl">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
-            <div>
-              <span className="text-2xs font-extrabold uppercase tracking-[0.2em] text-veyro-subtle block mb-1">
-                CURATED ARCHIVE ROTATION
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-veyro-black">
-                Pair With Vulcanized Footwear
-              </h3>
-              <p className="text-xs sm:text-sm text-neutral-600 mt-1">
-                Italian vulcanized rubber soles and minimal court silhouettes designed to complement surgical steel timepieces.
-              </p>
-            </div>
-            <Link
-              href="/shoes"
-              className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-xs"
-            >
-              <span className="relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-veyro-black after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
-                Explore Footwear Catalog (9)
-              </span>
-              <ArrowRight
-                size={14}
-                className="stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-1.5 motion-reduce:transform-none"
-              />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {footwearPairings.map((shoe) => (
+          <ScrollReveal y={24} duration={0.65} amount={0.15}>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
+              <div>
+                <span className="text-2xs font-extrabold uppercase tracking-[0.2em] text-veyro-subtle block mb-1">
+                  CURATED ARCHIVE ROTATION
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-veyro-black">
+                  Pair With Vulcanized Footwear
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-600 mt-1">
+                  Italian vulcanized rubber soles and minimal court silhouettes designed to complement surgical steel timepieces.
+                </p>
+              </div>
               <Link
-                key={shoe.id}
-                href={`/product/${shoe.slug}`}
-                className="group flex flex-col bg-white p-4 rounded-sm border border-veyro-border card-hover-lift"
+                href="/shoes"
+                className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-xs"
               >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-veyro-surface-alt rounded-sm mb-3">
-                  <Image
-                    src={shoe.imageUrl}
-                    alt={shoe.name}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {shoe.badge && (
-                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-sm bg-veyro-black text-veyro-yellow text-[9px] font-extrabold uppercase">
-                      {shoe.badge}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xs font-semibold text-veyro-subtle uppercase">
-                    {shoe.subcategoryTag} Sneaker
-                  </span>
-                  <span className="text-xs font-bold text-veyro-black">
-                    {formatPrice(shoe.price)}
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-veyro-black group-hover:text-neutral-600 transition-colors mt-0.5">
-                  {shoe.name}
-                </h4>
+                <span className="relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-veyro-black after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+                  Explore Footwear Catalog (9)
+                </span>
+                <ArrowRight
+                  size={14}
+                  className="stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-1.5 motion-reduce:transform-none"
+                />
               </Link>
-            ))}
-          </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {footwearPairings.map((shoe) => (
+                <Link
+                  key={shoe.id}
+                  href={`/product/${shoe.slug}`}
+                  className="group flex flex-col bg-white p-4 rounded-sm border border-veyro-border card-hover-lift"
+                >
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-veyro-surface-alt rounded-sm mb-3">
+                    <Image
+                      src={shoe.imageUrl}
+                      alt={shoe.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {shoe.badge && (
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-sm bg-veyro-black text-veyro-yellow text-[9px] font-extrabold uppercase">
+                        {shoe.badge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xs font-semibold text-veyro-subtle uppercase">
+                      {shoe.subcategoryTag} Sneaker
+                    </span>
+                    <span className="text-xs font-bold text-veyro-black">
+                      {formatPrice(shoe.price)}
+                    </span>
+                  </div>
+                  <h4 className="text-sm font-bold text-veyro-black group-hover:text-neutral-600 transition-colors mt-0.5">
+                    {shoe.name}
+                  </h4>
+                </Link>
+              ))}
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 

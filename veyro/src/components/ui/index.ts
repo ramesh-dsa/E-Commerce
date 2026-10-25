@@ -11,3 +11,4 @@ export * from "./WishlistButton";
 export * from "./Toast";
 export * from "./Skeleton";
 export * from "./ScrollArea";
+export * from "./ScrollReveal";

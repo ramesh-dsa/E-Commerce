@@ -8,6 +8,8 @@ import { ProductCard } from "@/components/features/ProductCard";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
 
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
+
 type TabType = "ALL" | "OVERSIZED" | "FOOTWEAR" | "TEXTURED";
 
 export function NewArrivalsSection() {
@@ -134,128 +136,132 @@ export function NewArrivalsSection() {
   return (
     <section id="new-arrivals" className="w-full py-14 sm:py-20 bg-white">
       <Container>
-        {/* Section Header */}
-        <SectionHeading
-          eyebrow="NEW DROPS • SEASON 01"
-          title="LATEST ARRIVALS"
-          subtitle="Engineered fits, heavyweight drapes, and vulcanized sneakers built for daily rotation."
-          actionText="View All New Drops"
-          actionHref="/clothing"
-        />
+        {/* Section Header & Tabs Scroll Reveal */}
+        <ScrollReveal y={20} duration={0.65} amount={0.15}>
+          <SectionHeading
+            eyebrow="NEW DROPS • SEASON 01"
+            title="LATEST ARRIVALS"
+            subtitle="Engineered fits, heavyweight drapes, and vulcanized sneakers built for daily rotation."
+            actionText="View All New Drops"
+            actionHref="/clothing"
+          />
 
-        {/* Filter Category Tabs */}
-        <div
-          role="tablist"
-          aria-label="New arrivals categories"
-          className="flex items-center gap-4 sm:gap-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 mb-8 sm:mb-10 border-b border-neutral-200 scrollbar-none"
-        >
-          {tabs.map((tab, index) => {
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                ref={(el) => {
-                  tabRefs.current[index] = el;
-                }}
-                type="button"
-                role="tab"
-                id={`tab-arrivals-${tab.toLowerCase()}`}
-                aria-controls={`panel-arrivals-${tab.toLowerCase()}`}
-                aria-selected={isActive}
-                tabIndex={isActive ? 0 : -1}
-                onClick={() => handleTabSelect(tab, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                className={`relative pb-3 text-xs sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
-                  isActive ? "text-veyro-black" : "text-neutral-400 hover:text-neutral-700"
-                }`}
-              >
-                {tab === "ALL" ? (
-                  <>
-                    <span className="sm:hidden">All Drops</span>
-                    <span className="hidden sm:inline">All New Drops</span>
-                  </>
-                ) : (
-                  tab
-                )}
-                {/* Animated Underline */}
-                {isActive && (
-                  <motion.span
-                    layoutId="new-arrivals-tab-underline"
-                    transition={
-                      shouldReduceMotion
-                        ? { duration: 0 }
-                        : { type: "spring", stiffness: 400, damping: 35 }
-                    }
-                    className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-veyro-black pointer-events-none"
-                  />
-                )}
-              </button>
-            );
-          })}
-        </div>
+          {/* Filter Category Tabs */}
+          <div
+            role="tablist"
+            aria-label="New arrivals categories"
+            className="flex items-center gap-4 sm:gap-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 mb-8 sm:mb-10 border-b border-neutral-200 scrollbar-none"
+          >
+            {tabs.map((tab, index) => {
+              const isActive = activeTab === tab;
+              return (
+                <button
+                  key={tab}
+                  ref={(el) => {
+                    tabRefs.current[index] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`tab-arrivals-${tab.toLowerCase()}`}
+                  aria-controls={`panel-arrivals-${tab.toLowerCase()}`}
+                  aria-selected={isActive}
+                  tabIndex={isActive ? 0 : -1}
+                  onClick={() => handleTabSelect(tab, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className={`relative pb-3 text-xs sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
+                    isActive ? "text-veyro-black" : "text-neutral-400 hover:text-neutral-700"
+                  }`}
+                >
+                  {tab === "ALL" ? (
+                    <>
+                      <span className="sm:hidden">All Drops</span>
+                      <span className="hidden sm:inline">All New Drops</span>
+                    </>
+                  ) : (
+                    tab
+                  )}
+                  {/* Animated Underline */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="new-arrivals-tab-underline"
+                      transition={
+                        shouldReduceMotion
+                          ? { duration: 0 }
+                          : { type: "spring", stiffness: 400, damping: 35 }
+                      }
+                      className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-veyro-black pointer-events-none"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </ScrollReveal>
 
-        {/* Editorial Asymmetrical Grid with Height Stabilization */}
-        <div
-          ref={containerRef}
-          style={{ minHeight: minHeight ? `${minHeight}px` : undefined }}
-          className="transition-[min-height] duration-200 ease-out"
-        >
-          {!isHydrated ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-              {Array.from({ length: 5 }).map((_, index) => {
-                const isFeatured = activeTab === "ALL" && index === 0;
-                return (
-                  <ProductCardSkeleton
-                    key={index}
-                    isFeatured={isFeatured}
-                    className={isFeatured ? "col-span-2 md:row-span-2" : "col-span-1"}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={activeTab}
-                ref={setContentRef}
-                role="tabpanel"
-                id={`panel-arrivals-${activeTab.toLowerCase()}`}
-                aria-labelledby={`tab-arrivals-${activeTab.toLowerCase()}`}
-                variants={gridVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onAnimationComplete={(definition) => {
-                  if (definition === "visible" && contentRef.current) {
-                    const h = contentRef.current.offsetHeight;
-                    if (h > 0) setMinHeight(h);
-                  }
-                }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
-              >
-                {filteredProducts.map((product, index) => {
-                  const isFeatured =
-                    activeTab === "ALL" &&
-                    filteredProducts.length >= 4 &&
-                    index === 0;
+        {/* Editorial Asymmetrical Grid with Height Stabilization & Scroll Reveal */}
+        <ScrollReveal y={28} duration={0.7} delay={0.1} amount={0.1}>
+          <div
+            ref={containerRef}
+            style={{ minHeight: minHeight ? `${minHeight}px` : undefined }}
+            className="transition-[min-height] duration-200 ease-out"
+          >
+            {!isHydrated ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                {Array.from({ length: 5 }).map((_, index) => {
+                  const isFeatured = activeTab === "ALL" && index === 0;
                   return (
-                    <motion.div
-                      key={product.id}
-                      variants={cardVariants}
+                    <ProductCardSkeleton
+                      key={index}
+                      isFeatured={isFeatured}
                       className={isFeatured ? "col-span-2 md:row-span-2" : "col-span-1"}
-                    >
-                      <ProductCard
-                        product={product}
-                        isFeatured={isFeatured}
-                        className={isFeatured ? "h-full" : ""}
-                      />
-                    </motion.div>
+                    />
                   );
                 })}
-              </motion.div>
-            </AnimatePresence>
-          )}
-        </div>
+              </div>
+            ) : (
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeTab}
+                  ref={setContentRef}
+                  role="tabpanel"
+                  id={`panel-arrivals-${activeTab.toLowerCase()}`}
+                  aria-labelledby={`tab-arrivals-${activeTab.toLowerCase()}`}
+                  variants={gridVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onAnimationComplete={(definition) => {
+                    if (definition === "visible" && contentRef.current) {
+                      const h = contentRef.current.offsetHeight;
+                      if (h > 0) setMinHeight(h);
+                    }
+                  }}
+                  className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
+                >
+                  {filteredProducts.map((product, index) => {
+                    const isFeatured =
+                      activeTab === "ALL" &&
+                      filteredProducts.length >= 4 &&
+                      index === 0;
+                    return (
+                      <motion.div
+                        key={product.id}
+                        variants={cardVariants}
+                        className={isFeatured ? "col-span-2 md:row-span-2" : "col-span-1"}
+                      >
+                        <ProductCard
+                          product={product}
+                          isFeatured={isFeatured}
+                          className={isFeatured ? "h-full" : ""}
+                        />
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
+        </ScrollReveal>
       </Container>
     </section>
   );

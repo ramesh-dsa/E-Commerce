@@ -7,6 +7,7 @@ import { useLenis } from "lenis/react";
 import { ProductCard } from "@/components/features/ProductCard";
 import { ProductCardSkeleton } from "@/components/features/ProductCardSkeleton";
 import { useProducts } from "@/context/ProductsContext";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 export function FootwearSection() {
   const { products, isHydrated } = useProducts();
@@ -470,27 +471,29 @@ export function FootwearSection() {
           
           {/* Left Static Text (Takes up ~25% on desktop to give maximum space to the carousel) */}
           <div className="w-full lg:w-[25%] shrink-0 flex flex-col justify-center pr-0 lg:pr-4 xl:pr-8 z-20 mb-4 sm:mb-6 lg:mb-0">
-            <p className="text-neutral-400 text-2xs sm:text-xs font-semibold tracking-[0.2em] uppercase mb-1">
-              FOOTWEAR ARCHIVE
-            </p>
-            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-veyro-yellow tracking-normal block mb-1 font-normal select-none">
-              the sneaker vault
-            </span>
-            <h2 className="text-3xl sm:text-4xl xl:text-6xl font-bold tracking-tight mb-2 sm:mb-4 leading-[1.05]">
-              VULCANIZED<br className="hidden lg:block"/> SILHOUETTES
-            </h2>
-            <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-sm lg:max-w-xs mb-4 sm:mb-6">
-              Engineered for all-day comfort. Retro runners and modern vulcanized silhouettes built for Indian streetscapes.
-            </p>
+            <ScrollReveal y={24} duration={0.65} amount={0.15}>
+              <p className="text-neutral-400 text-2xs sm:text-xs font-semibold tracking-[0.2em] uppercase mb-1">
+                FOOTWEAR ARCHIVE
+              </p>
+              <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-veyro-yellow tracking-normal block mb-1 font-normal select-none">
+                the sneaker vault
+              </span>
+              <h2 className="text-3xl sm:text-4xl xl:text-6xl font-bold tracking-tight mb-2 sm:mb-4 leading-[1.05]">
+                VULCANIZED<br className="hidden lg:block"/> SILHOUETTES
+              </h2>
+              <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-sm lg:max-w-xs mb-4 sm:mb-6">
+                Engineered for all-day comfort. Retro runners and modern vulcanized silhouettes built for Indian streetscapes.
+              </p>
 
-            {/* Direct CTA to full Footwear Catalog */}
-            <Link
-              href="/shoes"
-              className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-veyro-yellow border border-veyro-yellow hover:bg-white hover:border-white text-veyro-black hover:text-veyro-black font-bold text-2xs sm:text-xs uppercase tracking-[0.18em] rounded-full transition-colors duration-300 group/btn mb-4 sm:mb-8 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            >
-              <span>Explore Sneaker Vault (9)</span>
-              <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
-            </Link>
+              {/* Direct CTA to full Footwear Catalog */}
+              <Link
+                href="/shoes"
+                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-veyro-yellow border border-veyro-yellow hover:bg-white hover:border-white text-veyro-black hover:text-veyro-black font-bold text-2xs sm:text-xs uppercase tracking-[0.18em] rounded-full transition-colors duration-300 group/btn mb-4 sm:mb-8 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                <span>Explore Sneaker Vault (9)</span>
+                <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
+            </ScrollReveal>
 
             {/* Interactive Brutalist Filters & Mobile Carousel Controls */}
             <div className="flex items-center justify-between gap-3 w-full">

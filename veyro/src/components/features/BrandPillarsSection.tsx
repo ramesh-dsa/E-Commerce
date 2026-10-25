@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import Image from "next/image";
 import { useLenis } from "lenis/react";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const pillars = [
   {
@@ -152,17 +153,19 @@ export function BrandPillarsSection() {
       {/* Intro Hook (Normal Scroll) */}
       <div className="w-full py-24 sm:py-40 flex items-center justify-center border-b border-neutral-800">
         <Container>
-          <div className="max-w-3xl mx-auto text-center">
-            <span className="text-xs font-mono tracking-widest text-neutral-400 mb-8 block uppercase">
-              [ 001 ] The Standard
-            </span>
-            <h2 className="text-5xl sm:text-7xl lg:text-[6rem] font-bold tracking-tighter uppercase leading-[0.9]">
-              Built For<br />The Archive.
-            </h2>
-            <p className="mt-8 text-lg sm:text-xl text-neutral-400 mx-auto leading-relaxed max-w-lg">
-              We reject seasonal trends. Every piece is engineered with obsessive attention to fabric weight, structural drape, and minimalist utility. 
-            </p>
-          </div>
+          <ScrollReveal y={24} duration={0.65} amount={0.15}>
+            <div className="max-w-3xl mx-auto text-center">
+              <span className="text-xs font-mono tracking-widest text-neutral-400 mb-8 block uppercase">
+                [ 001 ] The Standard
+              </span>
+              <h2 className="text-5xl sm:text-7xl lg:text-[6rem] font-bold tracking-tighter uppercase leading-[0.9]">
+                Built For<br />The Archive.
+              </h2>
+              <p className="mt-8 text-lg sm:text-xl text-neutral-400 mx-auto leading-relaxed max-w-lg">
+                We reject seasonal trends. Every piece is engineered with obsessive attention to fabric weight, structural drape, and minimalist utility. 
+              </p>
+            </div>
+          </ScrollReveal>
         </Container>
       </div>
 
@@ -190,19 +193,21 @@ export function BrandPillarsSection() {
 
             {/* Massive Editorial Content Overlay */}
             <Container className="relative z-20 w-full">
-              <div className="max-w-4xl pt-20">
-                <div className="mb-6 sm:mb-10">
-                  <span className="text-xl sm:text-3xl font-mono tracking-widest text-white/50">
-                    {pillar.id}
-                  </span>
+              <ScrollReveal y={24} duration={0.6} amount={0.15}>
+                <div className="max-w-4xl pt-20">
+                  <div className="mb-6 sm:mb-10">
+                    <span className="text-xl sm:text-3xl font-mono tracking-widest text-white/50">
+                      {pillar.id}
+                    </span>
+                  </div>
+                  <h3 className="text-5xl sm:text-7xl lg:text-[7rem] font-bold tracking-tighter uppercase text-white leading-[0.85] mb-6 sm:mb-10 drop-shadow-2xl break-words">
+                    {pillar.title}
+                  </h3>
+                  <p className="text-lg sm:text-3xl text-white/90 font-medium leading-[1.5] max-w-2xl drop-shadow-lg">
+                    {pillar.desc}
+                  </p>
                 </div>
-                <h3 className="text-5xl sm:text-7xl lg:text-[7rem] font-bold tracking-tighter uppercase text-white leading-[0.85] mb-6 sm:mb-10 drop-shadow-2xl break-words">
-                  {pillar.title}
-                </h3>
-                <p className="text-lg sm:text-3xl text-white/90 font-medium leading-[1.5] max-w-2xl drop-shadow-lg">
-                  {pillar.desc}
-                </p>
-              </div>
+              </ScrollReveal>
             </Container>
           </div>
         ))}
