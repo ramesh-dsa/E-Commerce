@@ -377,7 +377,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
 
       {/* ── Desktop Branched Tree Rail (>= lg) ── */}
       <aside
-        className={`hidden lg:block lg:sticky lg:top-28 h-fit w-64 shrink-0 pb-16 pt-1 select-none ${className}`}
+        className={`hidden lg:block lg:sticky lg:top-[max(6rem,calc(50vh-280px))] max-h-[calc(100vh-7rem)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-64 shrink-0 pb-16 pt-1 select-none ${className}`}
       >
         <p className="mb-3 pl-[14px] font-sans text-xs font-semibold uppercase tracking-wider text-neutral-400 select-none">
           Contents
