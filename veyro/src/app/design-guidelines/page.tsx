@@ -250,8 +250,8 @@ const QUICK_REFERENCE = [
   },
   {
     category: "5. Heading Typography",
-    follow: "Archivo (font-heading, font-bold uppercase tracking-tight)",
-    avoid: "Geist Sans headings, Montserrat, Dancing Script, serif fonts",
+    follow: "Geist Sans, Montserrat, Outfit (uppercase tracking-tight)",
+    avoid: "Unloaded external fonts, serif fonts, unoptimized web fonts",
   },
   {
     category: "6. Font Sizes",
@@ -260,13 +260,13 @@ const QUICK_REFERENCE = [
   },
   {
     category: "7. Corner Radii",
-    follow: "Canonical 4 tokens: rounded-full, rounded-xl, rounded-lg, rounded-md",
-    avoid: "rounded-2xl, rounded-3xl, rounded-none, rounded-[2px]",
+    follow: "Canonical 5 tokens: rounded-full, rounded-2xl, rounded-xl, rounded-lg, rounded-md",
+    avoid: "Arbitrary bracketed radii (rounded-[2px], rounded-[14px])",
   },
   {
     category: "8. Elevation & Shadows",
-    follow: "Canonical 3 tokens: shadow-sm, shadow-lg, shadow-2xl",
-    avoid: "shadow-xs, shadow-md, shadow-xl, custom shadow-[...]",
+    follow: "Tailwind scale: shadow-2xs, shadow-xs, shadow-sm, shadow-md, shadow-lg, shadow-2xl",
+    avoid: "Ad-hoc inline shadow strings shadow-[0_4px_20px_...]",
   },
   {
     category: "9. Transitions",
@@ -280,8 +280,8 @@ const QUICK_REFERENCE = [
   },
   {
     category: "11. Z-Index Ladder",
-    follow: "Canonical 7 tiers: z-0, z-10, z-20, z-30, z-40, z-50, z-60",
-    avoid: "Arbitrary numbers: z-[70], z-[100], z-[150], z-[9999], z-1",
+    follow: "Canonical 10 tiers: z-0 through z-[150] (Navbar z-40, Modal z-50, Toast z-[70])",
+    avoid: "Unmapped arbitrary z-indices: z-[9999], z-[999]",
   },
   {
     category: "12. Components",
