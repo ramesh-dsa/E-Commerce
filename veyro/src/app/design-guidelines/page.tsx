@@ -6,6 +6,7 @@ import GuidelinesTreeSidebar from "./GuidelinesTreeSidebar";
 import ColorPaletteSpecimen from "./ColorPaletteSpecimen";
 import TypographySpecimen from "./TypographySpecimen";
 import LayoutSpacingSpecimen from "./LayoutSpacingSpecimen";
+import ShapeElevationSpecimen from "./ShapeElevationSpecimen";
 import {
   Download,
   Check,
@@ -792,125 +793,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active corner radii and shadows versus the 4-radius / 3-shadow standard.
+                    Corner radii architecture, elevation shadow hierarchy, and interactive component preview.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Radii Uses in Code (1,010 total):</span>
-                          <ul className="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• rounded-full: 395</li>
-                            <li>• rounded-lg: 187</li>
-                            <li>• rounded-xl: 135</li>
-                            <li className="text-red-700 font-bold">• rounded-2xl: 84</li>
-                            <li className="text-red-700 font-bold">• plain rounded: 52</li>
-                            <li className="text-red-700 font-bold">• rounded-xs: 14</li>
-                            <li>• rounded-md: 14</li>
-                            <li className="text-red-700 font-bold">• rounded-3xl: 14</li>
-                            <li className="text-red-700 font-bold">• rounded-sm: 3</li>
-                            <li>• rounded-none: 2</li>
-                            <li className="text-red-700 font-bold col-span-2">• arbitrary rounded-[...]: 110</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Active Shadows in Code (421 uses across 49 values):</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 leading-relaxed text-neutral-800">
-                            shadow-xs (118), shadow-sm (75), shadow-md (55), shadow-2xs (47), shadow-lg (21), shadow-2xl (19), shadow-xl (11), shadow-inner (7), arbitrary shadow-[...] (39).
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Most-Used Radii per Element Type:</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• Cards: split between rounded-xl (111) and rounded-2xl (74)</li>
-                            <li>• Buttons: raw tags have no radius (218), rounded-full (33), rounded-lg (40)</li>
-                            <li>• Inputs: rounded-lg in catalogs; rounded-xl in AccountModal</li>
-                            <li>• Modals: AccountModal uses rounded-2xl sm:rounded-3xl</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <span className="font-bold text-neutral-900">Standard adoption: 733 of 1,010 (72.6% allowed radii)</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div className="grid grid-cols-2 gap-2.5">
-                          <div className="p-3 border border-[#E8E8E5] rounded-xl text-center bg-[#F8F8F6]">
-                            <div className="w-10 h-10 bg-[#FCD017] rounded-full mx-auto mb-1.5 flex items-center justify-center text-xs font-bold text-neutral-950">Full</div>
-                            <strong className="text-neutral-950 block text-xs">rounded-full</strong>
-                            <span className="text-xs text-neutral-600 font-medium">Buttons, chips, badges</span>
-                          </div>
-
-                          <div className="p-3 border border-[#E8E8E5] rounded-xl text-center bg-[#F8F8F6]">
-                            <div className="w-10 h-10 bg-[#111111] text-white rounded-xl mx-auto mb-1.5 flex items-center justify-center text-xs font-bold">12px</div>
-                            <strong className="text-neutral-950 block text-xs">rounded-xl</strong>
-                            <span className="text-xs text-neutral-600 font-medium">Cards, modal dialogs</span>
-                          </div>
-
-                          <div className="p-3 border border-[#E8E8E5] rounded-xl text-center bg-[#F8F8F6]">
-                            <div className="w-10 h-10 bg-white border border-[#E8E8E5] rounded-lg mx-auto mb-1.5 flex items-center justify-center text-xs font-bold text-neutral-900">8px</div>
-                            <strong className="text-neutral-950 block text-xs">rounded-lg</strong>
-                            <span className="text-xs text-neutral-600 font-medium">Form inputs, frames</span>
-                          </div>
-
-                          <div className="p-3 border border-[#E8E8E5] rounded-xl text-center bg-[#F8F8F6]">
-                            <div className="w-10 h-10 bg-white border border-[#E8E8E5] rounded-md mx-auto mb-1.5 flex items-center justify-center text-xs font-bold text-neutral-900">6px</div>
-                            <strong className="text-neutral-950 block text-xs">rounded-md</strong>
-                            <span className="text-xs text-neutral-600 font-medium">Toggles, micro switches</span>
-                          </div>
-                        </div>
-
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-950 leading-relaxed">
-                          <strong className="font-bold text-red-900">Prohibited:</strong> <code className="font-mono font-bold">rounded-2xl</code>, <code className="font-mono font-bold">rounded-3xl</code>, plain <code className="font-mono font-bold">rounded</code>, <code className="font-mono font-bold">rounded-sm</code>, <code className="font-mono font-bold">rounded-xs</code>, and arbitrary pixel radii.
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2.5 text-center text-xs font-bold">
-                          <div className="p-2.5 border border-[#E8E8E5] rounded-lg shadow-sm bg-white text-neutral-900">shadow-sm</div>
-                          <div className="p-2.5 border border-[#E8E8E5] rounded-lg shadow-lg bg-white text-neutral-900">shadow-lg</div>
-                          <div className="p-2.5 border border-[#E8E8E5] rounded-lg shadow-2xl bg-white text-neutral-900">shadow-2xl</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard Scale: Exactly 4 corner radii and 3 elevation shadow levels.
-                    </div>
-                  </div>
-                </div>
+                <ShapeElevationSpecimen />
               </section>
 
               {/* SECTION 07: MOTION */}
