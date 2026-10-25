@@ -154,16 +154,16 @@ const STATUS_CONFIG: Record<
   },
   "Out for Delivery": {
     label: "Out for Delivery",
-    bg: "bg-[#FEF7D6]",
-    text: "text-[#8A440E]",
+    bg: "bg-amber-50",
+    text: "text-amber-800",
     border: "border-transparent",
     rounded: "rounded-lg",
     icon: <YellowDeliveryTruckIcon className="w-4 h-4 shrink-0" />,
   },
   Delivered: {
     label: "Delivered",
-    bg: "bg-[#E6F8EE]",
-    text: "text-[#136F3F]",
+    bg: "bg-emerald-50",
+    text: "text-emerald-800",
     border: "border-transparent",
     rounded: "rounded-lg",
     icon: <GreenCheckmarkIcon className="w-3.5 h-3.5 shrink-0" />,
@@ -551,7 +551,7 @@ export default function OrdersPage() {
               </button>
 
               <div
-                className="overflow-hidden transition-all duration-200"
+                className="overflow-hidden transition-colors duration-200"
                 style={{
                   maxHeight: statusSectionOpen ? "400px" : "0px",
                   opacity: statusSectionOpen ? 1 : 0,
@@ -625,7 +625,7 @@ export default function OrdersPage() {
               </button>
 
               <div
-                className="overflow-hidden transition-all duration-200"
+                className="overflow-hidden transition-colors duration-200"
                 style={{
                   maxHeight: timeSectionOpen ? "300px" : "0px",
                   opacity: timeSectionOpen ? 1 : 0,
@@ -679,7 +679,7 @@ export default function OrdersPage() {
 
             {/* ── Support CTA Card ── */}
             <div className="p-4 pt-1">
-              <div className="bg-[#FEF5D4] rounded-2xl p-4 sm:p-5">
+              <div className="bg-amber-50 rounded-2xl p-4 sm:p-5">
                 <div className="flex items-start gap-3.5">
                   <Headset size={26} className="text-neutral-950 stroke-[2.2] shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
@@ -691,7 +691,7 @@ export default function OrdersPage() {
                     </p>
                     <Link
                       href="/faq#contact"
-                      className="inline-flex items-center justify-center gap-2 bg-white text-neutral-950 rounded-full px-4 py-2 text-xs font-semibold shadow-xs hover:shadow-sm hover:bg-neutral-50/90 active:scale-[0.98] transition-all cursor-pointer"
+                      className="inline-flex items-center justify-center gap-2 bg-white text-neutral-950 rounded-full px-4 py-2 text-xs font-semibold shadow-xs hover:shadow-sm hover:bg-neutral-50/90 active:scale-[0.98] transition cursor-pointer"
                     >
                       <span>Contact Support</span>
                       <ArrowRight size={13} className="stroke-[2.2]" />
@@ -751,7 +751,7 @@ export default function OrdersPage() {
                 <button
                   type="button"
                   onClick={() => setIsSortOpen((v) => !v)}
-                  className="h-11 bg-white border border-neutral-300 hover:border-neutral-400 rounded-xl px-3.5 sm:px-4 flex items-center gap-2.5 text-xs sm:text-[13px] font-semibold text-neutral-900 shadow-xs hover:shadow-sm transition-all cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-black/10"
+                  className="h-11 bg-white border border-neutral-300 hover:border-neutral-400 rounded-xl px-3.5 sm:px-4 flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-neutral-900 shadow-xs hover:shadow-sm transition cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-black/10"
                   aria-expanded={isSortOpen}
                   aria-haspopup="listbox"
                   aria-label="Sort orders"
@@ -776,7 +776,7 @@ export default function OrdersPage() {
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: -6 }}
                       transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute right-0 top-full mt-2 w-56 sm:w-60 bg-white border border-neutral-200/90 rounded-2xl shadow-[0_14px_38px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.04)] p-1.5 z-40 origin-top-right focus:outline-none"
+                      className="absolute right-0 top-full mt-2 w-56 sm:w-60 bg-white border border-neutral-200/90 rounded-2xl shadow-[0_14px_38px_rgba(0,0,0,0.1),0_4px_12px_rgba(0,0,0,0.04)] p-1.5 z-20 origin-top-right focus:outline-none"
                       role="listbox"
                       aria-label="Sort options"
                     >
@@ -793,9 +793,9 @@ export default function OrdersPage() {
                               setIsSortOpen(false);
                             }}
                             whileTap={{ scale: 0.98 }}
-                            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-[13px] transition-colors cursor-pointer select-none ${
+                            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm transition-colors cursor-pointer select-none ${
                               isSelected
-                                ? "bg-[#FEF5D4] text-neutral-950 font-bold"
+                                ? "bg-amber-50 text-neutral-950 font-bold"
                                 : "text-neutral-800 hover:bg-neutral-100/70 font-medium"
                             }`}
                           >
@@ -836,7 +836,7 @@ export default function OrdersPage() {
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                       isSelected
                         ? "bg-black text-white shadow-xs"
-                        : "bg-[#EDEDEE] text-neutral-800 hover:bg-[#E2E2E5]"
+                        : "bg-neutral-50 text-neutral-800 hover:bg-neutral-100"
                     }`}
                   >
                     <span>{TAB_LABELS[key]}</span>
@@ -868,7 +868,7 @@ export default function OrdersPage() {
                     {/* Body */}
                     <div className="p-5 flex flex-col md:flex-row gap-5 items-start">
                       <div className="flex items-center gap-4 flex-1">
-                        <Skeleton className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg shrink-0 bg-[#f4f2ee]" />
+                        <Skeleton className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg shrink-0 bg-veyro-surface-alt" />
                         <div className="space-y-2 flex-1">
                           <Skeleton className="w-3/5 h-4 rounded-full" />
                           <Skeleton className="w-28 h-3 rounded-full" />
@@ -911,7 +911,7 @@ export default function OrdersPage() {
                         {/* Meta columns */}
                         <div className="flex items-center gap-4 sm:gap-5 flex-wrap flex-1 min-w-0">
                           <div>
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block">
+                            <span className="text-2xs uppercase font-bold tracking-wider text-neutral-400 block">
                               Order Placed
                             </span>
                             <span className="text-xs font-semibold text-neutral-900">
@@ -920,7 +920,7 @@ export default function OrdersPage() {
                           </div>
                           <div className="h-6 w-px bg-neutral-200 hidden sm:block" aria-hidden="true" />
                           <div>
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block">
+                            <span className="text-2xs uppercase font-bold tracking-wider text-neutral-400 block">
                               Order ID
                             </span>
                             <span className="font-mono text-xs text-neutral-700 font-medium">
@@ -929,7 +929,7 @@ export default function OrdersPage() {
                           </div>
                           <div className="h-6 w-px bg-neutral-200 hidden sm:block" aria-hidden="true" />
                           <div>
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block">
+                            <span className="text-2xs uppercase font-bold tracking-wider text-neutral-400 block">
                               Total
                             </span>
                             <span className="text-xs font-bold text-neutral-900">
@@ -950,7 +950,7 @@ export default function OrdersPage() {
                           <div className="h-6 w-px bg-neutral-200 hidden sm:block" aria-hidden="true" />
 
                           <div className="text-right hidden md:block">
-                            <span className="text-[11px] text-neutral-500 block">
+                            <span className="text-xs text-neutral-500 block">
                               {isDelivered ? "Delivered on" : "Delivery by"}
                             </span>
                             <span className="text-xs font-bold text-neutral-900 block">
@@ -1060,7 +1060,7 @@ export default function OrdersPage() {
                           )}
                           <Link
                             href={`/orders/${order.id}`}
-                            className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-[#EDEDEE] hover:bg-[#E2E2E5] text-neutral-900 rounded-lg px-4 py-2.5 text-xs font-semibold transition-colors"
+                            className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-neutral-50 hover:bg-neutral-100 text-neutral-900 rounded-lg px-4 py-2.5 text-xs font-semibold transition-colors"
                           >
                             <FileText size={14} className="stroke-[2]" />
                             <span>View Details</span>
@@ -1068,7 +1068,7 @@ export default function OrdersPage() {
                           {isDelivered && (
                             <button
                               type="button"
-                              className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-[#EDEDEE] hover:bg-[#E2E2E5] text-neutral-900 rounded-lg px-4 py-2.5 text-xs font-semibold cursor-pointer transition-colors"
+                              className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-neutral-50 hover:bg-neutral-100 text-neutral-900 rounded-lg px-4 py-2.5 text-xs font-semibold cursor-pointer transition-colors"
                             >
                               <ShoppingBag size={14} className="stroke-[2]" />
                               <span>Buy Again</span>
@@ -1099,7 +1099,7 @@ export default function OrdersPage() {
                               return isEligible ? (
                                 <Link
                                   href={`/orders/${order.id}/return`}
-                                  className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-[#EDEDEE] hover:bg-[#E2E2E5] text-neutral-900 rounded-lg px-4 py-2.5 text-xs font-semibold cursor-pointer transition-colors"
+                                  className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-neutral-50 hover:bg-neutral-100 text-neutral-900 rounded-lg px-4 py-2.5 text-xs font-semibold cursor-pointer transition-colors"
                                 >
                                   <RotateCw size={14} className="stroke-[2.2]" />
                                   <span>Return</span>
@@ -1109,7 +1109,7 @@ export default function OrdersPage() {
                                   type="button"
                                   title={reason}
                                   disabled
-                                  className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-[#F3F4F6] text-neutral-400 rounded-lg px-4 py-2.5 text-xs font-semibold cursor-not-allowed transition-colors"
+                                  className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-neutral-100 text-neutral-400 rounded-lg px-4 py-2.5 text-xs font-semibold cursor-not-allowed transition-colors"
                                 >
                                   <RotateCw size={14} className="stroke-[2.2]" />
                                   <span>Return</span>

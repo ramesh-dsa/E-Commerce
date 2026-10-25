@@ -39,7 +39,7 @@ export function BlurText({
       {elements.map((el, i) => (
         <span
           key={i}
-          className="inline-block transition-all duration-700 ease-out will-change-transform"
+          className="inline-block transition-colors duration-700 ease-out will-change-transform"
           style={{
             opacity: isReady ? 1 : 0,
             filter: isReady ? "blur(0px)" : "blur(10px)",

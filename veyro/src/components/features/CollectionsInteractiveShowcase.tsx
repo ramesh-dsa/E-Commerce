@@ -45,7 +45,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     originalPriceFormatted: "₹1,599",
     rating: 4.8,
     ratingCount: 128,
-    bgAccent: "bg-[#fcd017]/15", // Warm yellow tone like Card 1 in video
+    bgAccent: "bg-veyro-yellow/15", // Warm yellow tone like Card 1 in video
   },
   {
     product: allProducts.find((p) => p.id === "vey-tsh-ovr-002") || allProducts[1],
@@ -55,7 +55,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     originalPriceFormatted: "₹1,699",
     rating: 4.7,
     ratingCount: 94,
-    bgAccent: "bg-[#f97316]/15", // Orange tone like Card 2 in video
+    bgAccent: "bg-orange-500/15", // Orange tone like Card 2 in video
   },
   {
     product: allProducts.find((p) => p.id === "vey-tsh-ovr-003") || allProducts[2],
@@ -65,7 +65,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     originalPriceFormatted: "₹1,299",
     rating: 4.6,
     ratingCount: 82,
-    bgAccent: "bg-[#84cc16]/15", // Warm green/beige tone like Card 3 in video
+    bgAccent: "bg-lime-500/15", // Warm green/beige tone like Card 3 in video
   },
   {
     product: allProducts.find((p) => p.id === "vey-tsh-ovr-004") || allProducts[3],
@@ -75,7 +75,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     originalPriceFormatted: "₹1,799",
     rating: 4.9,
     ratingCount: 246,
-    bgAccent: "bg-[#ea580c]/15", // Studio rust tone like Card 4 in video
+    bgAccent: "bg-orange-600/15", // Studio rust tone like Card 4 in video
   },
   {
     product: allProducts.find((p) => p.id === "vey-ftw-std-001") || allProducts[4],
@@ -85,7 +85,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     originalPriceFormatted: "₹3,299",
     rating: 4.8,
     ratingCount: 110,
-    bgAccent: "bg-[#06b6d4]/15", // Cyan/teal studio tone like Card 5 in video
+    bgAccent: "bg-cyan-500/15", // Cyan/teal studio tone like Card 5 in video
   },
   {
     product: allProducts.find((p) => p.id === "vey-tsh-reg-001") || allProducts[5],
@@ -95,7 +95,7 @@ const SHOWCASE_ITEMS: ShowcaseItem[] = [
     originalPriceFormatted: "₹1,499",
     rating: 4.7,
     ratingCount: 76,
-    bgAccent: "bg-[#f59e0b]/15", // Warm studio tone like Card 6 in video
+    bgAccent: "bg-amber-500/15", // Warm studio tone like Card 6 in video
   },
 ];
 
@@ -238,15 +238,15 @@ export function CollectionsInteractiveShowcase() {
   return (
     <section
       aria-label="Interactive Curated Collections Showcase"
-      className="relative w-full bg-white border-b border-[#e8e8e5] overflow-hidden py-12 sm:py-20 select-none"
+      className="relative w-full bg-white border-b border-veyro-border overflow-hidden py-12 sm:py-20 select-none"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {/* ── TOP CONTROLS & DEMO SWITCHER ── */}
-      <div className="max-w-[1536px] mx-auto px-4 sm:px-8 lg:px-14">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-8 lg:px-14">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6 sm:mb-10">
           {/* Segmented Mode Selector */}
-          <div className="inline-flex items-center p-1 bg-[#f0eee9] rounded-full border border-neutral-300/60 shadow-inner">
+          <div className="inline-flex items-center p-1 bg-neutral-100 rounded-full border border-neutral-300/60 shadow-inner">
             <button
               type="button"
               onClick={() => {
@@ -261,12 +261,12 @@ export function CollectionsInteractiveShowcase() {
               {stage === "fan" && (
                 <motion.div
                   layoutId="activeShowcaseTab"
-                  className="absolute inset-0 bg-[#111111] rounded-full shadow-sm"
+                  className="absolute inset-0 bg-veyro-black rounded-full shadow-sm"
                   transition={{ type: "spring", stiffness: 450, damping: 32 }}
                 />
               )}
               <span className="relative z-10 flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[#fcd017]" />
+                <Layers className="w-3.5 h-3.5 text-veyro-yellow" />
                 The Fan Deck
               </span>
             </button>
@@ -287,12 +287,12 @@ export function CollectionsInteractiveShowcase() {
               {(stage === "rail" || stage === "detail") && (
                 <motion.div
                   layoutId="activeShowcaseTab"
-                  className="absolute inset-0 bg-[#111111] rounded-full shadow-sm"
+                  className="absolute inset-0 bg-veyro-black rounded-full shadow-sm"
                   transition={{ type: "spring", stiffness: 450, damping: 32 }}
                 />
               )}
               <span className="relative z-10 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#fcd017]" />
+                <Sparkles className="w-3.5 h-3.5 text-veyro-yellow" />
                 Best Sellers Rail
               </span>
             </button>
@@ -302,15 +302,15 @@ export function CollectionsInteractiveShowcase() {
           <button
             type="button"
             onClick={() => setIsAutoPlaying((prev) => !prev)}
-            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border transition-all cursor-pointer ${
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border transition-colors cursor-pointer ${
               isAutoPlaying
-                ? "bg-[#111111] text-[#fcd017] border-[#111111] shadow-sm animate-pulse"
+                ? "bg-veyro-black text-veyro-yellow border-veyro-black shadow-sm animate-pulse"
                 : "bg-white text-neutral-700 border-neutral-300 hover:border-black"
             }`}
           >
             {isAutoPlaying ? (
               <>
-                <Pause className="w-3.5 h-3.5 fill-[#fcd017]" />
+                <Pause className="w-3.5 h-3.5 fill-veyro-yellow" />
                 <span>Playing Video Flow</span>
               </>
             ) : (
@@ -331,7 +331,7 @@ export function CollectionsInteractiveShowcase() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="relative w-full max-w-5xl mx-auto bg-white rounded-3xl border border-[#e8e8e5] p-6 sm:p-10 shadow-[0_24px_70px_rgba(0,0,0,0.09)] mb-12"
+              className="relative w-full max-w-5xl mx-auto bg-white rounded-3xl border border-veyro-border p-6 sm:p-10 shadow-[0_24px_70px_rgba(0,0,0,0.09)] mb-12"
             >
               {/* Back / Close Bar */}
               <div className="flex items-center justify-between pb-6 border-b border-neutral-100 mb-8">
@@ -377,7 +377,7 @@ export function CollectionsInteractiveShowcase() {
                   </motion.div>
 
                   {/* Frosted tag on top-right */}
-                  <span className="absolute top-4 right-4 z-10 px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-mono font-bold uppercase rounded-full shadow-sm text-neutral-800">
+                  <span className="absolute top-4 right-4 z-10 px-3 py-1 bg-white/90 backdrop-blur-md text-2xs font-mono font-bold uppercase rounded-full shadow-sm text-neutral-800">
                     {selectedItem.tag}
                   </span>
                 </div>
@@ -389,12 +389,12 @@ export function CollectionsInteractiveShowcase() {
                   transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
                   className="flex flex-col"
                 >
-                  <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#111111]">
+                  <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-veyro-black">
                     {selectedItem.displayTitle.toUpperCase()}
                   </h3>
 
                   <div className="flex items-center gap-3 mt-2 mb-4">
-                    <span className="text-2xl sm:text-3xl font-extrabold text-[#111111]">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-veyro-black">
                       {selectedItem.priceFormatted}
                     </span>
                     {selectedItem.originalPriceFormatted && (
@@ -403,7 +403,7 @@ export function CollectionsInteractiveShowcase() {
                       </span>
                     )}
                     <div className="flex items-center gap-1 ml-auto text-xs font-bold text-neutral-700 bg-neutral-100 px-2.5 py-1 rounded-full">
-                      <Star className="w-3.5 h-3.5 fill-[#fcd017] text-[#fcd017]" />
+                      <Star className="w-3.5 h-3.5 fill-veyro-yellow text-veyro-yellow" />
                       <span>{selectedItem.rating}</span>
                       <span className="text-neutral-400">({selectedItem.ratingCount})</span>
                     </div>
@@ -426,9 +426,9 @@ export function CollectionsInteractiveShowcase() {
                           key={size}
                           type="button"
                           onClick={() => setSelectedSize(size)}
-                          className={`min-w-[48px] h-10 px-3.5 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
+                          className={`min-w-[48px] h-10 px-3.5 text-xs font-bold rounded-lg border transition-colors cursor-pointer ${
                             selectedSize === size
-                              ? "bg-[#111111] text-white border-[#111111] shadow-sm"
+                              ? "bg-veyro-black text-white border-veyro-black shadow-sm"
                               : "bg-white text-neutral-700 border-neutral-300 hover:border-black"
                           }`}
                         >
@@ -454,7 +454,7 @@ export function CollectionsInteractiveShowcase() {
                           type="button"
                           onClick={() => setSelectedColor(c.name)}
                           aria-label={`Select ${c.name} color`}
-                          className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
+                          className={`w-7 h-7 rounded-full border-2 transition-colors cursor-pointer ${
                             selectedColor === c.name
                               ? "border-black scale-110 shadow-md ring-2 ring-black/20"
                               : "border-neutral-300 hover:border-neutral-500"
@@ -469,10 +469,10 @@ export function CollectionsInteractiveShowcase() {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className={`w-full py-4 px-6 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-md ${
+                    className={`w-full py-4 px-6 rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase transition-colors flex items-center justify-center gap-2.5 cursor-pointer shadow-md ${
                       addedSuccess
                         ? "bg-emerald-600 text-white"
-                        : "bg-[#111111] hover:bg-neutral-800 text-white"
+                        : "bg-veyro-black hover:bg-neutral-800 text-white"
                     }`}
                   >
                     {addedSuccess ? (
@@ -482,7 +482,7 @@ export function CollectionsInteractiveShowcase() {
                       </>
                     ) : (
                       <>
-                        <ShoppingBag className="w-4 h-4 text-[#fcd017]" />
+                        <ShoppingBag className="w-4 h-4 text-veyro-yellow" />
                         <span>ADD TO CART</span>
                       </>
                     )}
@@ -507,7 +507,7 @@ export function CollectionsInteractiveShowcase() {
               <h2 className="text-xl sm:text-3xl font-medium text-neutral-800">
                 The Ultimate
               </h2>
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-[#111111]">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-veyro-black">
                 COLLECTIONS
               </h1>
             </motion.div>
@@ -518,13 +518,13 @@ export function CollectionsInteractiveShowcase() {
               <motion.div
                 animate={shouldReduceMotion ? {} : { y: [0, -8, 0] }}
                 transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-2 sm:top-6 left-2 sm:left-12 z-40"
+                className="absolute top-2 sm:top-6 left-2 sm:left-12 z-30"
               >
-                <div className="relative bg-[#06b6d4] text-white text-[11px] sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                <div className="relative bg-cyan-500 text-white text-xs sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-white" />
                   <span>Get up to 50% Off</span>
                   {/* Speech triangle tail pointing towards cards */}
-                  <div className="absolute -bottom-1.5 left-4 w-3 h-3 bg-[#06b6d4] rotate-45" />
+                  <div className="absolute -bottom-1.5 left-4 w-3 h-3 bg-cyan-500 rotate-45" />
                 </div>
               </motion.div>
 
@@ -532,12 +532,12 @@ export function CollectionsInteractiveShowcase() {
               <motion.div
                 animate={shouldReduceMotion ? {} : { y: [0, 8, 0] }}
                 transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-2 sm:top-6 right-2 sm:right-12 z-40"
+                className="absolute top-2 sm:top-6 right-2 sm:right-12 z-30"
               >
-                <div className="relative bg-[#f97316] text-white text-[11px] sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                <div className="relative bg-orange-500 text-white text-xs sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
                   <span>New Season</span>
                   {/* Speech triangle tail pointing towards cards */}
-                  <div className="absolute -bottom-1.5 right-4 w-3 h-3 bg-[#f97316] rotate-45" />
+                  <div className="absolute -bottom-1.5 right-4 w-3 h-3 bg-orange-500 rotate-45" />
                 </div>
               </motion.div>
 
@@ -600,11 +600,11 @@ export function CollectionsInteractiveShowcase() {
 
                     {/* Bottom Preview Cue */}
                     <div className="flex items-center justify-between pt-1">
-                      <span className="text-[11px] font-bold text-neutral-800 truncate">
+                      <span className="text-xs font-bold text-neutral-800 truncate">
                         {item.displayTitle}
                       </span>
-                      <span className="w-5 h-5 rounded-full bg-[#111111] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Eye className="w-2.5 h-2.5 text-[#fcd017]" />
+                      <span className="w-5 h-5 rounded-full bg-veyro-black text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Eye className="w-2.5 h-2.5 text-veyro-yellow" />
                       </span>
                     </div>
                   </motion.div>
@@ -625,7 +625,7 @@ export function CollectionsInteractiveShowcase() {
               <button
                 type="button"
                 onClick={() => setStage("rail")}
-                className="mt-4 px-7 py-3 bg-[#111111] hover:bg-neutral-800 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 group"
+                className="mt-4 px-7 py-3 bg-veyro-black hover:bg-neutral-800 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-md flex items-center gap-2 group"
               >
                 <span>Explore More</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -647,7 +647,7 @@ export function CollectionsInteractiveShowcase() {
               <h2 className="text-xl sm:text-2xl font-medium text-neutral-800">
                 Best Selling Product Of The
               </h2>
-              <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-[#111111]">
+              <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-veyro-black">
                 COLLECTION
               </h1>
             </motion.div>
@@ -690,7 +690,7 @@ export function CollectionsInteractiveShowcase() {
                     key={item.product.id}
                     layoutId={`product-image-${item.product.id}`}
                     onClick={() => handleSelectCard(item)}
-                    className={`flex-shrink-0 w-[230px] sm:w-[260px] rounded-2xl sm:rounded-3xl border border-[#e8e8e5] p-3.5 cursor-pointer group shadow-sm hover:shadow-xl transition-all duration-300 bg-white ${
+                    className={`flex-shrink-0 w-[230px] sm:w-[260px] rounded-2xl sm:rounded-3xl border border-veyro-border p-3.5 cursor-pointer group shadow-sm hover:shadow-xl transition duration-300 bg-white ${
                       isCenter ? "ring-2 ring-black/10 scale-[1.02]" : ""
                     }`}
                     initial={{ opacity: 0, y: 30 }}
@@ -719,8 +719,8 @@ export function CollectionsInteractiveShowcase() {
 
                       {/* Hover Overlay */}
                       <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="px-3 py-1.5 bg-[#111111] text-white text-xs font-bold rounded-full shadow-lg flex items-center gap-1.5">
-                          <Eye className="w-3.5 h-3.5 text-[#fcd017]" />
+                        <span className="px-3 py-1.5 bg-veyro-black text-white text-xs font-bold rounded-full shadow-lg flex items-center gap-1.5">
+                          <Eye className="w-3.5 h-3.5 text-veyro-yellow" />
                           Quick View
                         </span>
                       </div>
@@ -733,8 +733,8 @@ export function CollectionsInteractiveShowcase() {
                         <span>{item.priceFormatted}</span>
                       </div>
 
-                      <div className="flex items-center gap-1.5 mt-1 text-[11px] text-neutral-500">
-                        <Star className="w-3 h-3 fill-[#fcd017] text-[#fcd017]" />
+                      <div className="flex items-center gap-1.5 mt-1 text-xs text-neutral-500">
+                        <Star className="w-3 h-3 fill-veyro-yellow text-veyro-yellow" />
                         <span className="font-semibold text-neutral-800">({item.rating})</span>
                       </div>
                     </div>
@@ -747,7 +747,7 @@ export function CollectionsInteractiveShowcase() {
             <div className="mt-8 flex items-center justify-center">
               <Link
                 href="/collections/all"
-                className="px-8 py-3 bg-[#111111] hover:bg-neutral-800 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 group"
+                className="px-8 py-3 bg-veyro-black hover:bg-neutral-800 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-md flex items-center gap-2 group"
               >
                 <span>See All Product</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />

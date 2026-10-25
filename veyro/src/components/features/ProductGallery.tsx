@@ -96,7 +96,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                   setActiveIndex(index);
                 }}
                 aria-label={`Switch to angle ${index + 1}`}
-                className={`relative w-20 h-26 rounded-lg overflow-hidden bg-[#f4f2ee] shrink-0 transition-all cursor-pointer ${
+                className={`relative w-20 h-26 rounded-lg overflow-hidden bg-veyro-surface-alt shrink-0 transition-colors cursor-pointer ${
                   isSelected
                     ? "ring-2 ring-veyro-black opacity-100 scale-[1.02] shadow-xs"
                     : "opacity-60 hover:opacity-100 ring-1 ring-veyro-border"
@@ -121,7 +121,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
       {/* Main Studio Frame Stage */}
       <div className="flex-1 flex flex-col gap-3">
         <div
-          className={`relative w-full aspect-[3/4] bg-[#f4f2ee] rounded-lg overflow-hidden border border-veyro-border transition-colors ${
+          className={`relative w-full aspect-[3/4] bg-veyro-surface-alt rounded-lg overflow-hidden border border-veyro-border transition-colors ${
             isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
           }`}
           onClick={() => setIsZoomed((prev) => !prev)}
@@ -147,9 +147,9 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           {/* Rating Pill */}
           {reviewsCount > 0 && (
             <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1 bg-white/90 backdrop-blur-md px-2.5 py-1.5 rounded-full shadow-sm border border-black/5 pointer-events-none transition-opacity duration-200">
-              <span className="text-[11px] sm:text-xs font-bold text-veyro-black leading-none">{rating.toFixed(1)}</span>
+              <span className="text-xs sm:text-xs font-bold text-veyro-black leading-none">{rating.toFixed(1)}</span>
               <Star size={11} className="fill-emerald-600 text-emerald-600" />
-              <span className="text-[11px] sm:text-xs font-medium text-veyro-muted leading-none">({reviewsCount})</span>
+              <span className="text-xs sm:text-xs font-medium text-veyro-muted leading-none">({reviewsCount})</span>
             </div>
           )}
 
@@ -161,7 +161,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               setIsZoomed((prev) => !prev);
             }}
             aria-label={isZoomed ? "Exit zoom" : "Inspect fabric texture"}
-            className="absolute top-4 right-4 z-20 bg-white/90 hover:bg-white text-veyro-black border border-veyro-border px-2.5 py-1.5 rounded-[2px] shadow-xs transition-all flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider cursor-pointer"
+            className="absolute top-4 right-4 z-20 bg-white/90 hover:bg-white text-veyro-black border border-veyro-border px-2.5 py-1.5 rounded-sm shadow-xs transition-colors flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider cursor-pointer"
           >
             {isZoomed ? (
               <>
@@ -183,7 +183,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous view"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-veyro-black flex items-center justify-center shadow-md transition-all z-20 cursor-pointer"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-veyro-black flex items-center justify-center shadow-md transition-colors z-20 cursor-pointer"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -191,7 +191,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                 type="button"
                 onClick={handleNext}
                 aria-label="Next view"
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-veyro-black flex items-center justify-center shadow-md transition-all z-20 cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-veyro-black flex items-center justify-center shadow-md transition-colors z-20 cursor-pointer"
               >
                 <ChevronRight size={18} />
               </button>
@@ -210,7 +210,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                   type="button"
                   onClick={() => setActiveIndex(index)}
                   aria-label={`View angle ${index + 1}`}
-                  className={`relative w-16 h-20 rounded-lg overflow-hidden bg-[#f4f2ee] shrink-0 transition-all cursor-pointer ${
+                  className={`relative w-16 h-20 rounded-lg overflow-hidden bg-veyro-surface-alt shrink-0 transition-colors cursor-pointer ${
                     isSelected
                       ? "ring-2 ring-veyro-black opacity-100"
                       : "opacity-60 hover:opacity-100 ring-1 ring-veyro-border"

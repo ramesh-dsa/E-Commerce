@@ -130,21 +130,21 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
   );
 
   return (
-    <div className="w-full bg-[#fbfbf9] text-[#111111]">
+    <div className="w-full bg-neutral-50 text-veyro-black">
       {/* ── 1. EDITORIAL LOOKBOOK HEADER ─────────────────────────── */}
       {showHeroHeader ? (
-        <section className="w-full border-b border-[#e8e8e5] bg-white py-14 sm:py-20 px-5 sm:px-8 lg:px-14">
-          <div className="max-w-[1536px] mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <section className="w-full border-b border-veyro-border bg-white py-14 sm:py-20 px-5 sm:px-8 lg:px-14">
+          <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <div className="flex items-center gap-2.5 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-2">
                 <span>VEYRO ARCHIVE</span>
                 <span>•</span>
-                <span className="text-[#111111]">CURATED EDITIONS</span>
+                <span className="text-veyro-black">CURATED EDITIONS</span>
               </div>
-              <span className="font-script text-3xl sm:text-5xl text-[#111111] tracking-normal block -mb-1 font-bold">
+              <span className="font-script text-3xl sm:text-5xl text-veyro-black tracking-normal block -mb-1 font-bold">
                 the signature capsules
               </span>
-              <h1 className="text-3xl sm:text-6xl font-black uppercase tracking-tight text-[#111111] leading-none">
+              <h1 className="text-3xl sm:text-6xl font-black uppercase tracking-tight text-veyro-black leading-none">
                 ARCHIVE COLLECTIONS
               </h1>
               <p className="mt-3 text-xs sm:text-sm text-neutral-600 max-w-xl leading-relaxed">
@@ -155,7 +155,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
           {/* Segmented Pill Filter Bar (Luxury Minimalist with Liquid Hover) */}
           <div className="w-full md:w-auto overflow-x-auto scrollbar-none overscroll-x-contain -mx-5 px-5 sm:mx-0 sm:px-0 py-1 sm:py-0">
             <div 
-              className="inline-flex items-center p-1 sm:p-1.5 bg-[#f0eee9] rounded-full border border-neutral-300/60 shadow-inner shrink-0"
+              className="inline-flex items-center p-1 sm:p-1.5 bg-neutral-100 rounded-full border border-neutral-300/60 shadow-inner shrink-0"
               onMouseLeave={() => setHoveredTab(null)}
             >
               {[
@@ -173,7 +173,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                     type="button"
                     onClick={() => setActiveCategory(tab.key as typeof activeCategory)}
                     onMouseEnter={() => setHoveredTab(tab.key)}
-                    className={`relative px-3 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
+                    className={`relative px-3 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-xs uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
                       isActive
                         ? "text-white font-bold"
                         : isHovered
@@ -185,7 +185,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                     {isActive && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-[#111111] rounded-full shadow-md"
+                        className="absolute inset-0 bg-veyro-black rounded-full shadow-md"
                         style={{ zIndex: 0 }}
                         transition={{
                           type: "spring",
@@ -198,7 +198,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
 
                     {/* Hover Pill — Solid dark bg on hover */}
                     <div
-                      className={`absolute inset-0 bg-[#111111] rounded-full shadow-sm transition-opacity duration-150 ease-out ${
+                      className={`absolute inset-0 bg-veyro-black rounded-full shadow-sm transition-opacity duration-150 ease-out ${
                         isHovered ? "opacity-100" : "opacity-0"
                       }`}
                       style={{ zIndex: 0 }}
@@ -222,22 +222,22 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
       {/* ── 2. ASYMMETRICAL LUXURY EDITORIAL BENTO GRID ─────────── */}
       <section
         id="capsule-editions"
-        className={`w-full max-w-[1536px] mx-auto px-5 sm:px-8 lg:px-14 ${
+        className={`w-full max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-14 ${
           showHeroHeader ? "py-12 sm:py-16" : "pt-14 sm:pt-20 pb-16 sm:pb-24"
         }`}
       >
         {!showHeroHeader && (
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8 sm:mb-10">
             <div>
-              <div className="flex items-center gap-2 text-[11px] sm:text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-2">
+              <div className="flex items-center gap-2 text-xs sm:text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-2">
                 <span>CURATED CAPSULES</span>
                 <span className="text-neutral-300">•</span>
-                <span className="text-[#111111]">ARCHIVE VOLUMES</span>
+                <span className="text-veyro-black">ARCHIVE VOLUMES</span>
               </div>
               <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-0.5">
                 the signature capsules
               </span>
-              <h2 className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111] leading-none mt-1">
+              <h2 className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-veyro-black leading-none mt-1">
                 SIGNATURE CAPSULE EDITIONS
               </h2>
             </div>
@@ -263,7 +263,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                       type="button"
                       onClick={() => setActiveCategory(tab.key as typeof activeCategory)}
                       onMouseEnter={() => setHoveredTab(tab.key)}
-                      className={`relative px-3.5 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-[family-name:var(--font-outfit)] uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
+                      className={`relative px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-xs font-[family-name:var(--font-outfit)] uppercase tracking-wider rounded-full cursor-pointer whitespace-nowrap z-10 transition-colors duration-150 ${
                         isActive
                           ? "text-white font-bold"
                           : isHovered
@@ -274,7 +274,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                       {isActive && (
                         <motion.div
                           layoutId="activeTabCompact"
-                          className="absolute inset-0 bg-[#111111] rounded-full shadow-sm"
+                          className="absolute inset-0 bg-veyro-black rounded-full shadow-sm"
                           style={{ zIndex: 0 }}
                           transition={{
                             type: "spring",
@@ -334,7 +334,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                 <SpotlightBentoCard
                   spotlightColor="rgba(255, 255, 255, 0.05)"
                   enableTilt={true}
-                  className="w-full h-full min-h-[350px] sm:min-h-[460px] lg:min-h-[500px] flex flex-col justify-between shadow-[0_12px_36px_rgba(0,0,0,0.18)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl border border-white/10"
+                  className="w-full h-full min-h-[350px] sm:min-h-[460px] lg:min-h-[500px] flex flex-col justify-between shadow-[0_12px_36px_rgba(0,0,0,0.18)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition duration-500 hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl border border-white/10"
                 >
                   {/* Background High-Res Image Stage */}
                   <div className="absolute inset-0 z-0 overflow-hidden">
@@ -352,7 +352,7 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                       className={`object-cover ${col.imagePosition || "object-center"} transition-transform duration-700 ease-out group-hover:scale-108`}
                     />
                     {/* Refined, Lighter Editorial Scrim (Preserves vibrant colors and texture) */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 z-1" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10 z-0" />
                   </div>
 
                   {/* Top Row: Pure Editorial Typography (No tech pill, no glowing dot) */}
@@ -360,20 +360,20 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
                     className="relative z-10 p-5 sm:p-7 flex items-center justify-between w-full transition-transform duration-300"
                     style={{ transform: "translateZ(28px)" }}
                   >
-                    <div className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-white/90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+                    <div className="flex items-center gap-2 text-xs sm:text-xs font-semibold tracking-[0.22em] uppercase text-white/90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
                       <span>{col.volNumber.split("//")[0].trim()}</span>
                       <span className="text-white/40 font-light">—</span>
                       <span className="text-white/75">{col.itemCount}</span>
                     </div>
 
-                    <span className="w-8 h-8 rounded-full border border-white/25 bg-black/25 backdrop-blur-xs flex items-center justify-center text-white transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white group-hover:scale-105 shadow-sm">
+                    <span className="w-8 h-8 rounded-full border border-white/25 bg-black/25 backdrop-blur-xs flex items-center justify-center text-white transition duration-300 group-hover:bg-white group-hover:text-black group-hover:border-white group-hover:scale-105 shadow-sm">
                       <ArrowUpRight size={15} />
                     </span>
                   </div>
 
                   {/* Bottom Editorial Content */}
                   <div className="relative z-10 p-5 sm:p-6 lg:p-7 space-y-1.5 sm:space-y-2">
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#fcd017] block">
+                    <span className="text-2xs sm:text-xs font-bold uppercase tracking-[0.2em] text-veyro-yellow block">
                       {col.tag}
                     </span>
                     <h2
@@ -397,14 +397,14 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
       </section>
 
       {/* ── 3. ARCHITECTURAL BRAND ASSURANCE FOOTER STRIP ───────── */}
-      <section className="w-full border-t border-[#e8e8e5] bg-white py-12 px-5 sm:px-8 lg:px-14">
-        <div className="max-w-[1536px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <section className="w-full border-t border-veyro-border bg-white py-12 px-5 sm:px-8 lg:px-14">
+        <div className="max-w-screen-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f7f7f5] border border-neutral-200 flex items-center justify-center text-[#111111] shadow-xs shrink-0">
-              <Zap size={20} className="fill-[#111111]" />
+            <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-veyro-black shadow-xs shrink-0">
+              <Zap size={20} className="fill-veyro-black" />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-veyro-black">
                 Free Express Shipping
               </h3>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -414,11 +414,11 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f7f7f5] border border-neutral-200 flex items-center justify-center text-[#111111] shadow-xs shrink-0">
+            <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-veyro-black shadow-xs shrink-0">
               <ShieldCheck size={20} />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-veyro-black">
                 Easy 7-Day Returns
               </h3>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -428,11 +428,11 @@ export function CollectionsCatalog({ showHeroHeader = true }: CollectionsCatalog
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f7f7f5] border border-neutral-200 flex items-center justify-center text-[#111111] shadow-xs shrink-0">
+            <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-veyro-black shadow-xs shrink-0">
               <Layers size={20} />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-veyro-black">
                 240+ GSM Heavyweight
               </h3>
               <p className="text-xs text-neutral-500 mt-0.5">

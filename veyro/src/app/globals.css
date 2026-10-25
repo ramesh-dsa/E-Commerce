@@ -15,6 +15,7 @@
   --color-veyro-surface: #f8f8f6;
   --color-veyro-surface-alt: #f3f3f0;
   --color-veyro-card: #ffffff;
+  --color-veyro-white: #ffffff;
   --color-veyro-accent: #c44d25;
   --color-veyro-accent-hover: #a33c1a;
   --color-veyro-accent-light: #fdf3ef;
@@ -22,6 +23,8 @@
   /* Typography */
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
 }
 
 :root {

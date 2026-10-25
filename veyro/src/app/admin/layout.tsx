@@ -80,12 +80,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ).length;
   }, [orders]);
 
+  const isLoginPage = pathname === "/admin/login" || pathname === "/admin/login/";
+
   // Auth guard — redirect non-admins to login safely inside useEffect
   useEffect(() => {
-    if (isHydrated && !isAdmin && pathname !== "/admin/login") {
+    if (isHydrated && !isAdmin && !isLoginPage) {
       router.replace("/admin/login");
     }
-  }, [isHydrated, isAdmin, pathname, router]);
+  }, [isHydrated, isAdmin, isLoginPage, router]);
 
   // Ensure body inherits admin-theme for Radix/shadcn portals (Dialog, Select, Popover)
   useEffect(() => {
@@ -96,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   // Login page — no sidebar, just render children
-  if (pathname === "/admin/login") {
+  if (isLoginPage) {
     return (
       <div
         className={`${plusJakarta.variable} ${inter.variable} admin-theme fixed inset-0 z-[9999] bg-[#0D0D11] text-white overflow-y-auto admin-scroll font-sans`}

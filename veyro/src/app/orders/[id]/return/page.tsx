@@ -82,7 +82,7 @@ export default function ReturnPage() {
           <button
             type="button"
             onClick={openAccountModal}
-            className="inline-flex items-center gap-2 bg-[#fcd017] text-black px-8 py-3.5 text-sm font-bold rounded-xl hover:bg-[#e6bd15] transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 bg-veyro-yellow text-black px-8 py-3.5 text-sm font-bold rounded-xl hover:bg-veyro-yellow-dark transition-colors cursor-pointer"
           >
             <span>SIGN IN</span>
             <ArrowRight size={16} />
@@ -108,7 +108,7 @@ export default function ReturnPage() {
           </p>
           <Link
             href="/orders"
-            className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 text-sm font-bold rounded-xl hover:bg-neutral-800 transition-all"
+            className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 text-sm font-bold rounded-xl hover:bg-neutral-800 transition-colors"
           >
             <ArrowLeft size={16} />
             <span>BACK TO ORDERS</span>
@@ -134,7 +134,7 @@ export default function ReturnPage() {
           <p className="text-sm text-neutral-500 mb-8">{ineligibilityReason}</p>
           <Link
             href={`/orders/${order.id}`}
-            className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 text-sm font-bold rounded-xl hover:bg-neutral-800 transition-all"
+            className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 text-sm font-bold rounded-xl hover:bg-neutral-800 transition-colors"
           >
             <ArrowLeft size={16} />
             <span>Back to Order</span>
@@ -178,7 +178,7 @@ export default function ReturnPage() {
           </p>
           <Link
             href={`/orders/${order.id}`}
-            className="inline-flex items-center justify-center bg-[#fcd017] text-black px-8 py-4 text-sm font-bold rounded-xl hover:bg-[#e6bd15] transition-colors w-full sm:w-auto"
+            className="inline-flex items-center justify-center bg-veyro-yellow text-black px-8 py-4 text-sm font-bold rounded-xl hover:bg-veyro-yellow-dark transition-colors w-full sm:w-auto"
           >
             Return to Order
           </Link>
@@ -209,8 +209,8 @@ export default function ReturnPage() {
   const isFormValid = selectedIndices.length > 0 && reason !== "";
 
   return (
-    <div className="bg-[#fafafa] min-h-screen pb-24 font-sans text-neutral-900 overflow-x-hidden">
-      <Container className="px-4 sm:px-8 max-w-[1200px] mx-auto py-8">
+    <div className="bg-neutral-50 min-h-screen pb-24 font-sans text-neutral-900 overflow-x-hidden">
+      <Container className="px-4 sm:px-8 max-w-7xl mx-auto py-8">
         
         {/* BREADCRUMBS */}
         <motion.div 
@@ -218,15 +218,15 @@ export default function ReturnPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-3 md:gap-4 text-sm text-neutral-500 mb-8"
         >
-          <Link href={`/orders/${order.id}`} className="group flex items-center gap-1.5 hover:text-[#111111] transition-colors font-medium">
+          <Link href={`/orders/${order.id}`} className="group flex items-center gap-1.5 hover:text-veyro-black transition-colors font-medium">
             <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> Back
           </Link>
           <span className="text-neutral-300 px-1 md:px-2">|</span>
-          <Link href="/" className="hover:text-[#111111] transition-colors">Home</Link>
-          <span className="text-neutral-400 text-[10px] px-0.5">&gt;</span>
-          <Link href="/orders" className="hover:text-[#111111] transition-colors">Orders</Link>
-          <span className="text-neutral-400 text-[10px] px-0.5">&gt;</span>
-          <span className="text-[#111111] font-bold">Return Request</span>
+          <Link href="/" className="hover:text-veyro-black transition-colors">Home</Link>
+          <span className="text-neutral-400 text-2xs px-0.5">&gt;</span>
+          <Link href="/orders" className="hover:text-veyro-black transition-colors">Orders</Link>
+          <span className="text-neutral-400 text-2xs px-0.5">&gt;</span>
+          <span className="text-veyro-black font-bold">Return Request</span>
         </motion.div>
 
         {/* HEADER */}
@@ -256,7 +256,7 @@ export default function ReturnPage() {
           
           {/* Animated Yellow Progress Line */}
           <motion.div 
-             className="absolute top-1/2 left-0 h-[2px] -translate-y-1/2 bg-[#fcd017] z-0 rounded-full"
+             className="absolute top-1/2 left-0 h-[2px] -translate-y-1/2 bg-veyro-yellow z-0 rounded-full"
              initial={{ width: "16%" }}
              animate={{ width: lineWidth }}
              transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -278,7 +278,7 @@ export default function ReturnPage() {
              const isCompleted = isUnlocked && !isActive;
 
              return (
-               <div key={step.id} className="relative z-10 flex flex-col items-center bg-[#fafafa] px-2 transition-all">
+               <div key={step.id} className="relative z-10 flex flex-col items-center bg-neutral-50 px-2 transition-colors">
                   
                   <div className="relative flex items-center justify-center">
                     {/* The actual circle */}
@@ -317,7 +317,7 @@ export default function ReturnPage() {
                     </motion.div>
                   </div>
 
-                  <span className={`text-[11px] mt-2 transition-colors duration-300 ${isUnlocked ? 'font-bold text-neutral-900' : 'font-medium text-neutral-400'}`}>
+                  <span className={`text-xs mt-2 transition-colors duration-300 ${isUnlocked ? 'font-bold text-neutral-900' : 'font-medium text-neutral-400'}`}>
                     {step.label}
                   </span>
                </div>
@@ -435,7 +435,7 @@ export default function ReturnPage() {
                       <div className="flex flex-col items-center justify-center pt-2 md:pt-0 shrink-0 pl-1 z-10 relative">
                         <motion.div 
                           layout
-                          className={`w-5 h-5 rounded-[4px] border flex items-center justify-center transition-colors duration-300 ${
+                          className={`w-5 h-5 rounded border flex items-center justify-center transition-colors duration-300 ${
                             isSelected ? "bg-neutral-900 border-neutral-900 text-white" : "border-neutral-300 bg-white text-transparent"
                           }`}
                         >
@@ -472,10 +472,10 @@ export default function ReturnPage() {
                         
                         {/* Eligibility Tags */}
                         <div className="flex flex-col items-start md:items-end gap-1.5 shrink-0">
-                           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-green-100 text-green-800">
+                           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-green-100 text-green-800">
                              Eligible for return
                            </span>
-                           <span className="text-[11px] text-neutral-500">
+                           <span className="text-xs text-neutral-500">
                              Return valid until {new Date(order.deliveredDate || Date.now()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                            </span>
                         </div>
@@ -515,7 +515,7 @@ export default function ReturnPage() {
                       <button
                         type="button"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className={`w-full flex items-center justify-between bg-white border ${isDropdownOpen ? 'border-neutral-900 ring-1 ring-neutral-900' : 'border-neutral-300 hover:border-neutral-400'} text-sm rounded-lg px-4 py-3.5 transition-all outline-none shadow-sm`}
+                        className={`w-full flex items-center justify-between bg-white border ${isDropdownOpen ? 'border-neutral-900 ring-1 ring-neutral-900' : 'border-neutral-300 hover:border-neutral-400'} text-sm rounded-lg px-4 py-3.5 transition-colors outline-none shadow-sm`}
                       >
                         <div className="flex items-center gap-3">
                           <AnimatePresence mode="wait">
@@ -598,9 +598,9 @@ export default function ReturnPage() {
                           onChange={(e) => setDetails(e.target.value.slice(0, 500))}
                           placeholder="Any other feedback? (e.g. fit, quality, packaging)"
                           rows={4}
-                          className="w-full bg-white border border-neutral-300 text-sm rounded-lg px-4 py-3.5 focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 resize-none transition-all shadow-sm"
+                          className="w-full bg-white border border-neutral-300 text-sm rounded-lg px-4 py-3.5 focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 resize-none transition-colors shadow-sm"
                         />
-                        <span className="absolute bottom-3 right-3 text-[11px] text-neutral-400">
+                        <span className="absolute bottom-3 right-3 text-xs text-neutral-400">
                           {details.length}/500
                         </span>
                       </div>
@@ -633,7 +633,7 @@ export default function ReturnPage() {
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="flex items-start gap-3 p-3 bg-[#fafafa] border border-neutral-100 rounded-lg mb-6"
+                      className="flex items-start gap-3 p-3 bg-neutral-50 border border-neutral-100 rounded-lg mb-6"
                     >
                       <div className="relative w-16 h-16 rounded-md overflow-hidden bg-white shrink-0 shadow-sm border border-neutral-200/50">
                          {order.items?.[selectedIndices[0]]?.imageUrl && (
@@ -641,10 +641,10 @@ export default function ReturnPage() {
                          )}
                       </div>
                       <div className="flex-1 min-w-0 py-0.5">
-                         <h4 className="text-[13px] font-bold text-neutral-900 leading-tight line-clamp-2 pr-2">{order.items?.[selectedIndices[0]]?.productName}</h4>
-                         <p className="text-[11px] text-neutral-500 mt-1 truncate">{order.items?.[selectedIndices[0]]?.colorName} • Size {order.items?.[selectedIndices[0]]?.selectedSize} • Qty 1</p>
+                         <h4 className="text-sm font-bold text-neutral-900 leading-tight line-clamp-2 pr-2">{order.items?.[selectedIndices[0]]?.productName}</h4>
+                         <p className="text-xs text-neutral-500 mt-1 truncate">{order.items?.[selectedIndices[0]]?.colorName} • Size {order.items?.[selectedIndices[0]]?.selectedSize} • Qty 1</p>
                       </div>
-                      <div className="text-[13px] font-bold text-neutral-900 py-0.5">
+                      <div className="text-sm font-bold text-neutral-900 py-0.5">
                          {formatPrice(order.items?.[selectedIndices[0]]?.unitPrice || 0)}
                       </div>
                    </motion.div>
@@ -691,15 +691,15 @@ export default function ReturnPage() {
                     {formatPrice(estimatedRefund)}
                   </span>
                 </div>
-                <p className="text-[11px] text-neutral-500">Refund to original payment method.</p>
+                <p className="text-xs text-neutral-500">Refund to original payment method.</p>
               </div>
 
               {/* Timeline Box */}
-              <div className="bg-[#fafafa] border border-neutral-200 rounded-lg p-4 flex gap-3 mb-6">
+              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 flex gap-3 mb-6">
                  <Calendar size={18} className="text-neutral-700 shrink-0 mt-0.5" />
                  <div>
-                    <h4 className="text-[12px] font-bold text-neutral-900 mb-1">Refund Timeline</h4>
-                    <p className="text-[11px] text-neutral-500 leading-snug">
+                    <h4 className="text-xs font-bold text-neutral-900 mb-1">Refund Timeline</h4>
+                    <p className="text-xs text-neutral-500 leading-snug">
                       Estimated within 5-7 business days<br/>
                       You'll receive an update via email once processed.
                     </p>
@@ -712,7 +712,7 @@ export default function ReturnPage() {
                 whileTap={isFormValid ? { scale: 0.98, y: 0 } : {}}
                 type="submit"
                 disabled={!isFormValid}
-                className="relative overflow-hidden w-full bg-[#fcd017] text-black px-6 py-4 text-sm font-bold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+                className="relative overflow-hidden w-full bg-veyro-yellow text-black px-6 py-4 text-sm font-bold rounded-lg transition-opacity duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
               >
                 {/* Shimmer Effect */}
                 {isFormValid && (

@@ -48,9 +48,9 @@ export function SplitText({
         return (
           <span
             key={index}
-            className={`inline-block will-change-transform transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`inline-block will-change-transform transition-colors duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               enableHoverSpring
-                ? "hover:-translate-y-2 hover:scale-[1.14] hover:text-[#fcd017] cursor-pointer"
+                ? "hover:-translate-y-2 hover:scale-[1.14] hover:text-veyro-yellow cursor-pointer"
                 : ""
             } ${charClassName}`}
             style={{

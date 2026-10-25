@@ -124,7 +124,7 @@ export function TshirtsSection() {
   };
 
   return (
-    <section id="clothing" className="w-full py-16 sm:py-24 bg-white border-t border-[#f0f0ed]">
+    <section id="clothing" className="w-full py-16 sm:py-24 bg-white border-t border-veyro-border-light">
       <Container>
         <SectionHeading
           eyebrow="CLOTHING ARCHIVE • 240+ GSM"
@@ -138,7 +138,7 @@ export function TshirtsSection() {
         <div
           role="tablist"
           aria-label="T-shirt silhouette categories"
-          className="flex items-center sm:flex-wrap overflow-x-auto sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 mb-8 sm:mb-12 border-b border-[#eae6df] sm:border-transparent scrollbar-none gap-5 sm:gap-0"
+          className="flex items-center sm:flex-wrap overflow-x-auto sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0 mb-8 sm:mb-12 border-b border-neutral-200 sm:border-transparent scrollbar-none gap-5 sm:gap-0"
         >
           {fits.map((fit, index) => {
             const isActive = selectedFit === fit;
@@ -156,7 +156,7 @@ export function TshirtsSection() {
                   tabIndex={isActive ? 0 : -1}
                   onClick={() => handleFitSelect(fit, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
-                  className={`relative pb-2.5 sm:pb-1 text-[11px] sm:text-[14px] font-bold sm:font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
+                  className={`relative pb-2.5 sm:pb-1 text-xs sm:text-sm font-bold sm:font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
                     isActive
                       ? "text-veyro-black"
                       : "text-neutral-400 hover:text-neutral-700"

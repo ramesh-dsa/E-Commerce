@@ -25,8 +25,8 @@ export function ProductCardSkeleton({
       <div
         className={`relative w-full overflow-hidden rounded-lg ${
           isDark
-            ? "bg-[#121212] border border-white/[0.08]"
-            : "bg-[#f4f2ee]"
+            ? "bg-neutral-800 border border-white/[0.08]"
+            : "bg-veyro-surface-alt"
         } ${
           isFeatured
             ? "aspect-[3/4] lg:h-full lg:aspect-auto"
@@ -35,7 +35,7 @@ export function ProductCardSkeleton({
       >
         <div
           className={`w-full h-full relative overflow-hidden ${
-            isDark ? "bg-[#1a1a1a]" : "bg-veyro-surface"
+            isDark ? "bg-neutral-900" : "bg-veyro-surface"
           }`}
         >
           <div

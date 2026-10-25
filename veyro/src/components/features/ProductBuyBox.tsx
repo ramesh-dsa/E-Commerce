@@ -276,21 +276,21 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
   };
 
   return (
-    <div className="w-full flex flex-col select-none max-w-[540px]">
+    <div className="w-full flex flex-col select-none max-w-xl">
       {/* 1. Availability Status & Merchandising Badges */}
       <div className="flex items-center gap-2 mb-3.5">
         {isOutOfStock ? (
-          <span className="inline-flex items-center justify-center bg-neutral-900 text-white text-[11px] font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase shadow-2xs">
+          <span className="inline-flex items-center justify-center bg-neutral-900 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase shadow-2xs">
             Sold Out
           </span>
         ) : (
-          <span className="inline-flex items-center justify-center bg-neutral-100 text-neutral-800 border border-neutral-200/90 text-[11px] font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase">
+          <span className="inline-flex items-center justify-center bg-neutral-100 text-neutral-800 border border-neutral-200/90 text-xs font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase">
             In Stock
           </span>
         )}
         {product.badge && (
           <span
-            className={`inline-flex items-center justify-center text-[11px] font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase ${
+            className={`inline-flex items-center justify-center text-xs font-semibold px-3.5 py-1.5 rounded-full tracking-wider uppercase ${
               product.badge === "SALE"
                 ? "bg-red-50 text-red-700 border border-red-200"
                 : "bg-neutral-100 text-neutral-800 border border-neutral-200/90"
@@ -348,18 +348,18 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
         </span>
 
         {discountPercent && (
-          <span className="bg-veyro-yellow text-veyro-black text-[11px] font-black px-2.5 py-0.5 rounded-full tracking-wider uppercase shadow-2xs">
+          <span className="bg-veyro-yellow text-veyro-black text-xs font-black px-2.5 py-0.5 rounded-full tracking-wider uppercase shadow-2xs">
             {discountPercent}% OFF
           </span>
         )}
       </div>
-      <p className="text-[11px] font-medium tracking-wide text-veyro-subtle uppercase mb-6">
+      <p className="text-xs font-medium tracking-wide text-veyro-subtle uppercase mb-6">
         MRP Inclusive of all taxes • Standard Express Delivery
       </p>
 
       {/* 4. Authentic VEYRO Bundle Pass Banner */}
       {product.category === "Clothing" && (
-        <div className="relative overflow-hidden bg-gradient-to-r from-[#fcd017] via-[#ffe040] to-[#fcd017] rounded-2xl p-3.5 flex items-center justify-between mb-6 group cursor-pointer shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.99]">
+        <div className="relative overflow-hidden bg-gradient-to-r from-veyro-yellow via-[#ffe040] to-veyro-yellow rounded-2xl p-3.5 flex items-center justify-between mb-6 group cursor-pointer shadow-sm hover:shadow-md transition duration-200 active:scale-[0.99]">
           {/* Subtle shimmer sweep */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
           <div className="flex items-center gap-3 relative z-10">
@@ -370,7 +370,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               <span className="text-xs font-black uppercase tracking-wide text-veyro-black">
                 Buy any 3 Archive T-Shirts for ₹1,199
               </span>
-              <span className="text-[10px] text-veyro-black/60 font-medium">
+              <span className="text-2xs text-veyro-black/60 font-medium">
                 Discount auto-applied at checkout
               </span>
             </div>
@@ -428,7 +428,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                 key={size}
                 type="button"
                 onClick={() => handleSizeSelect(size)}
-                className={`h-11 px-5 flex items-center justify-center text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer border-2 active:scale-[0.96] ${
+                className={`h-11 px-5 flex items-center justify-center text-xs font-bold uppercase tracking-wider rounded-full transition-transform duration-200 cursor-pointer border-2 active:scale-[0.96] ${
                   isSelected
                     ? "bg-veyro-black text-white border-veyro-black shadow-md scale-[1.03]"
                     : "bg-white text-veyro-black border-neutral-200 hover:border-veyro-black hover:shadow-sm"
@@ -489,7 +489,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               <button
                 type="button"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition-all cursor-pointer border border-neutral-200"
+                className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition cursor-pointer border border-neutral-200"
                 aria-label="Decrease quantity"
               >
                 <Minus size={12} className="stroke-[2.5]" />
@@ -500,7 +500,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               <button
                 type="button"
                 onClick={() => setQuantity((q) => q + 1)}
-                className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition-all cursor-pointer border border-neutral-200"
+                className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-veyro-black hover:bg-neutral-50 active:scale-90 transition cursor-pointer border border-neutral-200"
                 aria-label="Increase quantity"
               >
                 <Plus size={12} className="stroke-[2.5]" />
@@ -523,7 +523,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
             <button
               type="button"
               onClick={handleAddToCart}
-              className={`flex-1 h-12 px-6 rounded-2xl text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 transition-all duration-200 cursor-pointer shadow-md ${
+              className={`flex-1 h-12 px-6 rounded-2xl text-xs font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 transition-colors duration-200 cursor-pointer shadow-md ${
                 isAdding
                   ? "bg-emerald-600 text-white shadow-emerald-200"
                   : "bg-veyro-black text-white hover:bg-veyro-charcoal hover:shadow-lg active:scale-[0.98]"
@@ -548,7 +548,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
             type="button"
             onClick={() => toggleWishlist(product, selectedSize || undefined)}
             aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-            className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-200 cursor-pointer shrink-0 active:scale-90 ${
+            className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-transform duration-200 cursor-pointer shrink-0 active:scale-90 ${
               isWishlisted
                 ? "bg-red-50 border-red-300 shadow-sm shadow-red-100"
                 : "border-neutral-200 text-veyro-black hover:border-neutral-400 bg-white hover:shadow-sm"
@@ -576,7 +576,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           <button
             type="button"
             onClick={handleBuyNow}
-            className="group w-full h-13 px-6 rounded-full text-xs font-black uppercase tracking-[0.18em] bg-veyro-yellow text-veyro-black hover:bg-veyro-yellow-dark active:scale-[0.99] flex items-center justify-center gap-2.5 transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
+            className="group w-full h-13 px-6 rounded-full text-xs font-black uppercase tracking-[0.18em] bg-veyro-yellow text-veyro-black hover:bg-veyro-yellow-dark active:scale-[0.99] flex items-center justify-center gap-2.5 transition duration-200 shadow-md hover:shadow-lg cursor-pointer"
           >
             <span>Buy Now</span>
             <ArrowRight size={15} className="stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1.5" />
@@ -595,7 +595,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
                 Notify Me When Restocked
               </h4>
-              <p className="text-[11px] text-neutral-500 mt-0.5 leading-relaxed">
+              <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
                 Join the priority waitlist for this piece. We&apos;ll alert you the moment inventory is replenished.
               </p>
             </div>
@@ -619,7 +619,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                 />
                 <button
                   type="submit"
-                  className="bg-neutral-950 hover:bg-black text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all cursor-pointer shrink-0"
+                  className="bg-neutral-950 hover:bg-black text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-colors cursor-pointer shrink-0"
                 >
                   Notify Me
                 </button>
@@ -633,26 +633,26 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
       <div className="grid grid-cols-3 gap-3 py-4 border-y border-veyro-border-light my-2 text-center">
         <div className="flex flex-col items-center">
           <Truck size={16} className="text-veyro-black mb-1 stroke-[1.75]" />
-          <span className="text-[10px] font-bold uppercase tracking-wider text-veyro-black">
+          <span className="text-2xs font-bold uppercase tracking-wider text-veyro-black">
             Free Shipping
           </span>
-          <span className="text-[10px] text-veyro-muted">On orders ₹999+</span>
+          <span className="text-2xs text-veyro-muted">On orders ₹999+</span>
         </div>
         <div className="flex flex-col items-center border-x border-veyro-border-light px-2">
           <RotateCcw size={16} className="text-veyro-black mb-1 stroke-[1.75]" />
-          <span className="text-[10px] font-bold uppercase tracking-wider text-veyro-black">
+          <span className="text-2xs font-bold uppercase tracking-wider text-veyro-black">
             {isWatch ? "Authenticity Guaranteed" : "7-Day Returns"}
           </span>
-          <span className="text-[10px] text-veyro-muted">
+          <span className="text-2xs text-veyro-muted">
             {isWatch ? "Swiss Movement / 1-Year Warranty" : isFootwear ? "Free doorstep swap" : "Doorstep pickup"}
           </span>
         </div>
         <div className="flex flex-col items-center">
           <Sparkles size={16} className="text-veyro-black mb-1 stroke-[1.75]" />
-          <span className="text-[10px] font-bold uppercase tracking-wider text-veyro-black">
+          <span className="text-2xs font-bold uppercase tracking-wider text-veyro-black">
             {isWatch ? "Premium Materials" : isFootwear ? "Vulcanized Grip" : "240+ GSM Cotton"}
           </span>
-          <span className="text-[10px] text-veyro-muted">
+          <span className="text-2xs text-veyro-muted">
             {isWatch ? "Sapphire Crystal" : isFootwear ? "High-traction rubber" : "Tirupur mill-grade"}
           </span>
         </div>
@@ -678,7 +678,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           />
           <button
             type="submit"
-            className="px-6 py-2.5 bg-[#111111] hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-2xs"
+            className="px-6 py-2.5 bg-veyro-black hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-2xs"
           >
             Check
           </button>
@@ -712,7 +712,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
           {openSection === "specs" && (
             <div className="pt-3 text-xs text-veyro-charcoal leading-relaxed space-y-3">
               <p className="text-veyro-subtle">{product.shortDescription}</p>
-              <div className="grid grid-cols-2 gap-y-2 pt-2 border-t border-veyro-border-light text-[11px]">
+              <div className="grid grid-cols-2 gap-y-2 pt-2 border-t border-veyro-border-light text-xs">
                 <div>
                   <span className="text-veyro-muted uppercase block font-mono">
                     {isWatch ? "Case & Crystal" : isFootwear ? "Upper & Outsole" : "Fabric Composition"}
@@ -873,7 +873,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-4 border-b border-neutral-100 mb-4">
               <div>
-                <span className="text-[10px] font-bold tracking-widest text-neutral-600 uppercase block font-mono">
+                <span className="text-2xs font-bold tracking-widest text-neutral-600 uppercase block font-mono">
                   {isWatch
                     ? "Horology Fit & Case Proportions"
                     : isFootwear
@@ -895,7 +895,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
                 aria-label="Close size guide"
-                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -916,7 +916,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                   <button
                     type="button"
                     onClick={() => setUnitMode("in")}
-                    className={`px-3.5 py-1 font-bold rounded-full transition-all cursor-pointer ${
+                    className={`px-3.5 py-1 font-bold rounded-full transition-colors cursor-pointer ${
                       unitMode === "in"
                         ? "bg-neutral-950 text-white shadow-xs"
                         : "text-neutral-600 hover:text-black"
@@ -927,7 +927,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                   <button
                     type="button"
                     onClick={() => setUnitMode("cm")}
-                    className={`px-3.5 py-1 font-bold rounded-full transition-all cursor-pointer ${
+                    className={`px-3.5 py-1 font-bold rounded-full transition-colors cursor-pointer ${
                       unitMode === "cm"
                         ? "bg-neutral-950 text-white shadow-xs"
                         : "text-neutral-600 hover:text-black"
@@ -942,7 +942,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               <div className="border border-neutral-200/90 rounded-2xl overflow-hidden shadow-xs bg-white">
                 {isWatch ? (
                   <table className="w-full text-xs">
-                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-[11px] tracking-wider border-b border-neutral-200">
+                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-xs tracking-wider border-b border-neutral-200">
                       <tr>
                         <th className="py-3 px-3.5 text-left">Case Size</th>
                         <th className="py-3 px-3 text-center">Lug-to-Lug</th>
@@ -989,7 +989,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                             <td className="py-3.5 px-3 text-center font-bold text-neutral-950">
                               {unitMode === "in" ? row.wristIn : row.wristCm}
                             </td>
-                            <td className="py-3.5 px-3.5 text-left font-medium text-neutral-700 text-[11px]">{row.profile}</td>
+                            <td className="py-3.5 px-3.5 text-left font-medium text-neutral-700 text-xs">{row.profile}</td>
                           </tr>
                         );
                       })}
@@ -997,7 +997,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                   </table>
                 ) : isFootwear ? (
                   <table className="w-full text-xs">
-                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-[11px] tracking-wider border-b border-neutral-200">
+                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-xs tracking-wider border-b border-neutral-200">
                       <tr>
                         <th className="py-3 px-4 text-left w-1/4">UK (India)</th>
                         <th className="py-3 px-4 text-center w-1/4">US Men</th>
@@ -1041,7 +1041,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
                   </table>
                 ) : (
                   <table className="w-full text-xs">
-                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-[11px] tracking-wider border-b border-neutral-200">
+                    <thead className="bg-neutral-100/90 text-neutral-900 font-extrabold uppercase text-xs tracking-wider border-b border-neutral-200">
                       <tr>
                         <th className="py-3 px-4 text-left w-1/4">Size</th>
                         <th className="py-3 px-4 text-center w-1/4">Chest ({unitMode.toUpperCase()})</th>
@@ -1195,7 +1195,7 @@ export function ProductBuyBox({ product }: ProductBuyBoxProps) {
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="w-full bg-[#111111] hover:bg-neutral-800 active:scale-[0.99] text-white py-3.5 text-xs font-bold uppercase tracking-wider rounded-full shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full bg-veyro-black hover:bg-neutral-800 active:scale-[0.99] text-white py-3.5 text-xs font-bold uppercase tracking-wider rounded-full shadow-md transition cursor-pointer flex items-center justify-center gap-2"
               >
                 {selectedSize ? `Continue with ${selectedSize}` : "Back to Product"}
               </button>

@@ -519,11 +519,11 @@ export function WatchesCatalog() {
   };
 
   return (
-    <div className="w-full bg-white text-[#111111] selection:bg-[#111111] selection:text-white">
+    <div className="w-full bg-white text-veyro-black selection:bg-veyro-black selection:text-white">
       {/* ── 1. FULL-WIDTH HOROLOGY EDITORIAL HERO CAROUSEL ───────────────── */}
       <section className="w-full mb-2 relative group">
         <h1 className="sr-only">All Watches — Time Lives Different Here | VEYRO Horology Archive</h1>
-        <div className="relative w-full overflow-hidden bg-[#e8e2d9] aspect-[3/1] min-h-[170px] sm:min-h-[240px] md:min-h-[320px] max-h-[640px]">
+        <div className="relative w-full overflow-hidden bg-neutral-200 aspect-[3/1] min-h-[170px] sm:min-h-[240px] md:min-h-[320px] max-h-[640px]">
           {CAROUSEL_BANNERS.map((banner, index) => (
             <div
               key={banner.id}
@@ -549,14 +549,14 @@ export function WatchesCatalog() {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-white/75 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:scale-110 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 z-20 cursor-pointer bg-transparent focus-visible:outline-none"
+          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-white/75 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:scale-110 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition duration-300 z-20 cursor-pointer bg-transparent focus-visible:outline-none"
           aria-label="Previous slide"
         >
           <ChevronLeft size={36} strokeWidth={1.8} />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-white/75 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:scale-110 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 z-20 cursor-pointer bg-transparent focus-visible:outline-none"
+          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-2 flex items-center justify-center text-white/75 hover:text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:scale-110 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition duration-300 z-20 cursor-pointer bg-transparent focus-visible:outline-none"
           aria-label="Next slide"
         >
           <ChevronRight size={36} strokeWidth={1.8} />
@@ -569,7 +569,7 @@ export function WatchesCatalog() {
               key={index}
               onClick={() => setCurrentSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+              className={`h-2 rounded-full transition-colors duration-300 cursor-pointer ${
                 index === currentSlide ? "bg-white w-6" : "bg-white/50 hover:bg-white/80 w-2"
               }`}
             />
@@ -578,36 +578,36 @@ export function WatchesCatalog() {
       </section>
 
       {/* ── 2. SUB-BAR: BREADCRUMBS, PRODUCT COUNT & SORT ───────────── */}
-      <section className="w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-md bg-white/95">
-        <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
+      <section className="w-full bg-white border-b border-veyro-border-light py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-md bg-white/95">
+        <div className="mx-auto max-w-screen-2xl flex flex-wrap items-center justify-between gap-3">
           {/* Left: Mobile Filter Button, Breadcrumbs, Product Count */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             {/* Mobile Filter Drawer Trigger Button */}
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-[2px] bg-[#111111] text-white text-xs font-bold uppercase tracking-wider shadow-xs hover:bg-[#333333] transition-colors cursor-pointer"
+              className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-veyro-black text-white text-xs font-bold uppercase tracking-wider shadow-xs hover:bg-neutral-800 transition-colors cursor-pointer"
               aria-label="Open filter sidebar"
             >
-              <SlidersHorizontal size={13} className="text-[#fcd017]" />
+              <SlidersHorizontal size={13} className="text-veyro-yellow" />
               <span>FILTERS</span>
               {activeFilterCount > 0 && (
-                <span className="px-1.5 py-0.2 bg-[#fcd017] text-[#111111] text-[10px] font-black rounded-[2px]">
+                <span className="px-1.5 py-0.2 bg-veyro-yellow text-veyro-black text-2xs font-black rounded-sm">
                   {activeFilterCount}
                 </span>
               )}
             </button>
 
             {/* Breadcrumbs */}
-            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em]">
-              <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
+            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-sm uppercase tracking-[0.04em]">
+              <Link href="/" className="text-neutral-600 font-medium hover:text-veyro-black transition-colors">
                 HOME
               </Link>
-              <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
-              <span className="text-[#111111] font-bold">WATCHES</span>
+              <span className="text-neutral-500 font-semibold text-xs">&gt;</span>
+              <span className="text-veyro-black font-bold">WATCHES</span>
             </nav>
 
-            <span className="hidden sm:inline-block text-[#555555] text-xs font-semibold pl-3 border-l border-[#dcdcd8]">
+            <span className="hidden sm:inline-block text-neutral-600 text-xs font-semibold pl-3 border-l border-neutral-300">
               {filteredProducts.length} {filteredProducts.length === 1 ? "Timepiece" : "Timepieces"} Available
             </span>
           </div>
@@ -635,7 +635,7 @@ export function WatchesCatalog() {
               <button
                 type="button"
                 onClick={() => setGridColumns(4)}
-                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
                   gridColumns === 4 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
                 }`}
                 aria-label="4-column grid view"
@@ -645,7 +645,7 @@ export function WatchesCatalog() {
               <button
                 type="button"
                 onClick={() => setGridColumns(2)}
-                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
                   gridColumns === 2 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
                 }`}
                 aria-label="2-column editorial view"
@@ -668,7 +668,7 @@ export function WatchesCatalog() {
       </section>
 
       {/* ── 3. MAIN WORKSPACE: VERTICAL SIDEBAR + PRODUCT GRID ─────────── */}
-      <main className="mx-auto max-w-[1536px] px-5 sm:px-8 lg:px-12 py-10">
+      <main className="mx-auto max-w-screen-2xl px-5 sm:px-8 lg:px-12 py-10">
         <div className="flex items-start gap-8 xl:gap-10">
           {/* Vertical Sidebar Filter (Desktop sticky + Mobile slide-over) */}
           <WatchFilterSidebar
@@ -709,7 +709,7 @@ export function WatchesCatalog() {
               </div>
             ) : filteredProducts.length === 0 ? (
               /* Empty State */
-              <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
+              <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-veyro-surface rounded-sm border border-dashed border-neutral-300">
                 <div className="relative w-28 h-28 mb-5 rounded-full overflow-hidden shadow-md border-2 border-white transform transition-transform hover:rotate-180 duration-1000 ease-in-out">
                   <Image 
                     src="/images/watches-carousel/empty-state-icon.jpg" 
@@ -719,16 +719,16 @@ export function WatchesCatalog() {
                     className="object-cover" 
                   />
                 </div>
-                <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
+                <h3 className="text-xl font-bold uppercase tracking-tight text-veyro-black">
                   No Archival Timepieces Found
                 </h3>
-                <p className="mt-2 text-sm text-[#777777] max-w-md">
+                <p className="mt-2 text-sm text-neutral-500 max-w-md">
                   We couldn&apos;t find any watches matching your selected combination of movement, strap, price, and color filters.
                 </p>
                 <button
                   type="button"
                   onClick={handleClearAll}
-                  className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-[2px] hover:bg-[#333333] transition-colors cursor-pointer"
+                  className="mt-6 px-6 py-2.5 bg-veyro-black text-white text-xs font-bold uppercase tracking-[0.1em] rounded-sm hover:bg-neutral-800 transition-colors cursor-pointer"
                 >
                   Reset All Filters
                 </button>
@@ -754,10 +754,10 @@ export function WatchesCatalog() {
                       {/* Minimalist Watch Card */}
                       <article className="group flex flex-col relative isolate transition-transform duration-300 hover:-translate-y-1.5 cursor-pointer rounded-2xl">
                         {/* Image Stage Container */}
-                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-[#f8f8f6] transition-all duration-300">
+                        <div className="relative w-full aspect-[4/5] overflow-hidden rounded-2xl bg-veyro-surface transition-colors duration-300">
                           <Link
                             href={`/product/${product.slug}`}
-                            className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
+                            className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
                             aria-label={product.name}
                           >
                             {/* Primary Image */}
@@ -774,7 +774,7 @@ export function WatchesCatalog() {
                           {/* Top Badges (Left) */}
                           <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 pointer-events-none z-10">
                             {discountPercent && (
-                              <span className="px-1.5 py-0.5 bg-[#d9381e] text-white text-[9px] font-black uppercase tracking-wider rounded-[2px]">
+                              <span className="px-1.5 py-0.5 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider rounded-sm">
                                 {discountPercent}% OFF
                               </span>
                             )}
@@ -789,12 +789,12 @@ export function WatchesCatalog() {
                         {/* Metadata Stage */}
                         <div className="pt-3.5 pb-2 flex flex-col items-center text-center flex-grow">
                           {/* Line 1: Maker / Brand Line */}
-                          <span className="font-luxury text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#111111]">
+                          <span className="font-luxury text-[11.5px] font-medium uppercase tracking-[0.12em] text-veyro-black">
                             {product.subcategoryTag ? `${product.subcategoryTag.toUpperCase()} ARCHIVE` : "VEYRO HOROLOGY"}
                           </span>
 
                           {/* Line 2: Gender | Model Name */}
-                          <h3 className="font-luxury text-[11px] font-normal uppercase tracking-[0.06em] text-[#666666] mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
+                          <h3 className="font-luxury text-xs font-normal uppercase tracking-[0.06em] text-neutral-600 mt-0.5 line-clamp-1 group-hover:text-black transition-colors">
                             <Link href={`/product/${product.slug}`}>
                               {product.gender || "UNISEX"} | {product.name.replace(/^VEYRO\s+/i, "")}
                             </Link>
@@ -802,16 +802,16 @@ export function WatchesCatalog() {
 
                           {/* Line 3: Pricing Block */}
                           <div className="mt-1.5 flex items-baseline justify-center gap-2">
-                            <span className="text-[13.5px] sm:text-[14px] font-bold text-[#111111] font-mono">
+                            <span className="text-[13.5px] sm:text-sm font-bold text-veyro-black font-mono">
                               {formatPrice(product.price)}
                             </span>
                             {product.originalPrice && product.originalPrice > product.price && (
-                              <span className="text-xs text-[#999999] line-through font-mono">
+                              <span className="text-xs text-veyro-muted line-through font-mono">
                                 {formatPrice(product.originalPrice)}
                               </span>
                             )}
                             {discountPercent && (
-                              <span className="text-[11px] font-bold text-[#d9381e] font-mono">
+                              <span className="text-xs font-bold text-red-600 font-mono">
                                 ({discountPercent}% OFF)
                               </span>
                             )}
@@ -828,25 +828,25 @@ export function WatchesCatalog() {
       </main>
 
       {/* ── 4. CROSS-CATEGORY CURATED PAIRINGS (FOOTWEAR) ───────────── */}
-      <section className="w-full bg-[#f8f8f6] border-t border-b border-[#e8e8e5] py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
-        <div className="mx-auto max-w-[1536px]">
+      <section className="w-full bg-veyro-surface border-t border-b border-veyro-border py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
+        <div className="mx-auto max-w-screen-2xl">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8">
             <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#8e8e8e] block mb-1">
+              <span className="text-2xs font-extrabold uppercase tracking-[0.2em] text-veyro-subtle block mb-1">
                 CURATED ARCHIVE ROTATION
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111111]">
+              <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-veyro-black">
                 Pair With Vulcanized Footwear
               </h3>
-              <p className="text-xs sm:text-sm text-[#666666] mt-1">
+              <p className="text-xs sm:text-sm text-neutral-600 mt-1">
                 Italian vulcanized rubber soles and minimal court silhouettes designed to complement surgical steel timepieces.
               </p>
             </div>
             <Link
               href="/shoes"
-              className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] rounded-xs"
+              className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-xs"
             >
-              <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-[#111111] after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+              <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-veyro-black after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
                 Explore Footwear Catalog (9)
               </span>
               <ArrowRight
@@ -861,9 +861,9 @@ export function WatchesCatalog() {
               <Link
                 key={shoe.id}
                 href={`/product/${shoe.slug}`}
-                className="group flex flex-col bg-white p-4 rounded-[2px] border border-[#e8e8e5] card-hover-lift"
+                className="group flex flex-col bg-white p-4 rounded-sm border border-veyro-border card-hover-lift"
               >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f4f2ee] rounded-[2px] mb-3">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-veyro-surface-alt rounded-sm mb-3">
                   <Image
                     src={shoe.imageUrl}
                     alt={shoe.name}
@@ -872,20 +872,20 @@ export function WatchesCatalog() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   {shoe.badge && (
-                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-[2px] bg-[#111111] text-[#fcd017] text-[9px] font-extrabold uppercase">
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-sm bg-veyro-black text-veyro-yellow text-[9px] font-extrabold uppercase">
                       {shoe.badge}
                     </span>
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-semibold text-[#8e8e8e] uppercase">
+                  <span className="text-2xs font-semibold text-veyro-subtle uppercase">
                     {shoe.subcategoryTag} Sneaker
                   </span>
-                  <span className="text-xs font-bold text-[#111111]">
+                  <span className="text-xs font-bold text-veyro-black">
                     {formatPrice(shoe.price)}
                   </span>
                 </div>
-                <h4 className="text-sm font-bold text-[#111111] group-hover:text-[#555555] transition-colors mt-0.5">
+                <h4 className="text-sm font-bold text-veyro-black group-hover:text-neutral-600 transition-colors mt-0.5">
                   {shoe.name}
                 </h4>
               </Link>
@@ -906,7 +906,7 @@ export function WatchesCatalog() {
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-neutral-50/70">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-600 block font-mono">
+                <span className="text-2xs font-bold uppercase tracking-widest text-neutral-600 block font-mono">
                   Horology Fit &amp; Case Proportions
                 </span>
                 <h3 id="watch-guide-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-neutral-950 mt-0.5">
@@ -916,7 +916,7 @@ export function WatchesCatalog() {
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Close fit guide"
               >
                 <X size={18} />
@@ -932,7 +932,7 @@ export function WatchesCatalog() {
                 </h4>
                 <div className="overflow-x-auto border border-neutral-200/90 rounded-2xl shadow-xs bg-white">
                   <table className="w-full text-xs">
-                    <thead className="bg-neutral-100/90 text-neutral-900 uppercase font-extrabold text-[11px] tracking-wider border-b border-neutral-200">
+                    <thead className="bg-neutral-100/90 text-neutral-900 uppercase font-extrabold text-xs tracking-wider border-b border-neutral-200">
                       <tr>
                         <th className="py-3 px-4 text-left">Case Diameter</th>
                         <th className="py-3 px-4 text-center">Recommended Wrist Size</th>
@@ -945,19 +945,19 @@ export function WatchesCatalog() {
                         <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">38mm</td>
                         <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">5.8 – 6.8 inches (15–17 cm)</td>
                         <td className="py-3.5 px-4 text-center font-medium text-neutral-800">44mm</td>
-                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-[11px]">Classic Dress / Slim Vintage</td>
+                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-xs">Classic Dress / Slim Vintage</td>
                       </tr>
                       <tr className="hover:bg-neutral-50/80 transition-colors">
                         <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">40mm</td>
                         <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">6.3 – 7.6 inches (16–19 cm)</td>
                         <td className="py-3.5 px-4 text-center font-medium text-neutral-800">47mm</td>
-                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-[11px]">Universal Golden Ratio</td>
+                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-xs">Universal Golden Ratio</td>
                       </tr>
                       <tr className="hover:bg-neutral-50/80 transition-colors">
                         <td className="py-3.5 px-4 text-left font-extrabold text-neutral-950">42mm</td>
                         <td className="py-3.5 px-4 text-center font-semibold text-neutral-800">6.9 – 8.2 inches (17.5–21 cm)</td>
                         <td className="py-3.5 px-4 text-center font-medium text-neutral-800">49.5mm</td>
-                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-[11px]">Commanding Diver / Sports Chrono</td>
+                        <td className="py-3.5 px-4 text-left font-medium text-neutral-800 text-xs">Commanding Diver / Sports Chrono</td>
                       </tr>
                     </tbody>
                   </table>
@@ -972,19 +972,19 @@ export function WatchesCatalog() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
                     <div className="font-bold text-neutral-950 uppercase">50M (5 ATM)</div>
-                    <p className="text-neutral-800 mt-1 text-[11px] leading-relaxed font-normal">
+                    <p className="text-neutral-800 mt-1 text-xs leading-relaxed font-normal">
                       Rain, hand washing, light splashes. Not suitable for swimming or diving.
                     </p>
                   </div>
                   <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
                     <div className="font-bold text-neutral-950 uppercase">100M (10 ATM)</div>
-                    <p className="text-neutral-800 mt-1 text-[11px] leading-relaxed font-normal">
+                    <p className="text-neutral-800 mt-1 text-xs leading-relaxed font-normal">
                       Swimming, snorkeling, watersports. Screw-down crown equipped.
                     </p>
                   </div>
                   <div className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/80">
                     <div className="font-bold text-neutral-950 uppercase">200M (20 ATM)</div>
-                    <p className="text-neutral-800 mt-1 text-[11px] leading-relaxed font-normal">
+                    <p className="text-neutral-800 mt-1 text-xs leading-relaxed font-normal">
                       Saturation scuba diving, high-impact aquatic sports, pressure certified.
                     </p>
                   </div>
@@ -997,7 +997,7 @@ export function WatchesCatalog() {
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="w-full sm:w-auto px-7 py-3 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md"
+                className="w-full sm:w-auto px-7 py-3 bg-neutral-950 hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-md"
               >
                 Got It, Return to Horology Vault
               </button>

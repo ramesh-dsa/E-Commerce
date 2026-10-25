@@ -149,7 +149,7 @@ export default function OrderDetailPage() {
   // Wait for client-side storage hydration before determining order status
   if (!isHydrated) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4 bg-[#FAFAFA]">
+      <div className="min-h-[70vh] flex items-center justify-center px-4 bg-neutral-50">
         <div className="text-center space-y-3">
           <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs font-mono uppercase tracking-widest text-neutral-400">
@@ -162,12 +162,12 @@ export default function OrderDetailPage() {
 
   if (!order && !user) {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-[70vh] flex items-center justify-center px-4 bg-[#FAFAFA]">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-[70vh] flex items-center justify-center px-4 bg-neutral-50">
         <div className="text-center max-w-md mx-auto">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }} className="w-20 h-20 bg-white shadow-sm border border-black/[0.04] rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Package size={32} className="text-neutral-400" />
           </motion.div>
-          <motion.h1 variants={fadeUp} initial="hidden" animate="show" className="text-2xl font-black tracking-tight text-[#111111] uppercase mb-3">
+          <motion.h1 variants={fadeUp} initial="hidden" animate="show" className="text-2xl font-black tracking-tight text-veyro-black uppercase mb-3">
             Sign In To View Order
           </motion.h1>
           <motion.p variants={fadeUp} initial="hidden" animate="show" className="text-sm text-neutral-500 mb-6">
@@ -177,7 +177,7 @@ export default function OrderDetailPage() {
             variants={fadeUp} initial="hidden" animate="show"
             type="button"
             onClick={openAccountModal}
-            className="group inline-flex items-center gap-2 bg-[#111111] text-white px-8 py-3.5 text-xs font-black uppercase tracking-[0.18em] rounded-full hover:bg-black transition-all cursor-pointer shadow-lg shadow-black/10 hover:shadow-black/20 hover:-translate-y-0.5"
+            className="group inline-flex items-center gap-2 bg-veyro-black text-white px-8 py-3.5 text-xs font-black uppercase tracking-[0.18em] rounded-full hover:bg-black transition cursor-pointer shadow-lg shadow-black/10 hover:shadow-black/20 hover:-translate-y-0.5"
           >
             <span>SIGN IN</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform stroke-[2.5]" />
@@ -189,21 +189,21 @@ export default function OrderDetailPage() {
 
   if (!order) {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-[70vh] flex items-center justify-center px-4 bg-[#FAFAFA]">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-[70vh] flex items-center justify-center px-4 bg-neutral-50">
         <div className="text-center max-w-md mx-auto">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }} className="w-20 h-20 bg-red-50 shadow-sm border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Package size={32} className="text-red-400" />
           </motion.div>
-          <motion.h1 variants={fadeUp} initial="hidden" animate="show" className="text-2xl font-black tracking-tight text-[#111111] uppercase mb-3">
+          <motion.h1 variants={fadeUp} initial="hidden" animate="show" className="text-2xl font-black tracking-tight text-veyro-black uppercase mb-3">
             Order Not Found
           </motion.h1>
           <motion.p variants={fadeUp} initial="hidden" animate="show" className="text-sm text-neutral-500 mb-2 font-mono">
-            Reference: <span className="font-bold text-[#111111]">{orderId}</span>
+            Reference: <span className="font-bold text-veyro-black">{orderId}</span>
           </motion.p>
           <motion.div variants={fadeUp} initial="hidden" animate="show" className="mt-6">
             <Link
               href="/orders"
-              className="group inline-flex items-center gap-2 bg-[#111111] text-white px-6 py-3 text-xs font-black uppercase tracking-wider rounded-full hover:bg-black transition-all cursor-pointer shadow-lg shadow-black/10"
+              className="group inline-flex items-center gap-2 bg-veyro-black text-white px-6 py-3 text-xs font-black uppercase tracking-wider rounded-full hover:bg-black transition-colors cursor-pointer shadow-lg shadow-black/10"
             >
               <ArrowLeft size={14} />
               <span>VIEW ALL ORDERS</span>
@@ -230,18 +230,18 @@ export default function OrderDetailPage() {
   const paymentInfo = PAYMENT_LABELS[order.paymentMethod] || PAYMENT_LABELS.upi;
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] pb-24 font-sans selection:bg-[#fcd017] selection:text-black">
+    <div className="min-h-screen bg-neutral-50 pb-24 font-sans selection:bg-veyro-yellow selection:text-black">
       {/* ── STICKY/FADE HEADER ───────────────────────────────────────────────────────── */}
       <motion.header 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white border-b border-black/[0.04] sticky top-[74px] sm:top-[78px] lg:top-[82px] z-40 shadow-[0_1px_10px_rgba(0,0,0,0.01)]"
+        className="bg-white border-b border-black/[0.04] sticky top-[74px] sm:top-[78px] lg:top-[82px] z-30 shadow-[0_1px_10px_rgba(0,0,0,0.01)]"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-7">
           <Link
             href="/orders"
-            className="group inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-neutral-400 hover:text-[#111111] transition-colors mb-4 cursor-pointer"
+            className="group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-veyro-black transition-colors mb-4 cursor-pointer"
           >
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             <span>All Orders</span>
@@ -250,11 +250,11 @@ export default function OrderDetailPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#111111] uppercase flex items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-veyro-black uppercase flex items-center gap-3">
                   {order.id}
                 </h1>
                 {order.status === "Cancelled" && (
-                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-100">
+                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-2xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-100">
                     Cancelled
                   </motion.span>
                 )}
@@ -272,7 +272,7 @@ export default function OrderDetailPage() {
                   whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setIsCancelModalOpen(true)}
-                  className="group relative overflow-hidden inline-flex items-center gap-1.5 bg-white border border-red-200 text-red-600 hover:text-white px-5 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-xs"
+                  className="group relative overflow-hidden inline-flex items-center gap-1.5 bg-white border border-red-200 text-red-600 hover:text-white px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-xs"
                 >
                   <div className="absolute inset-0 bg-red-500 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
                   <span className="relative z-10 flex items-center gap-1.5">
@@ -306,7 +306,7 @@ export default function OrderDetailPage() {
                       <motion.button
                         whileHover={{ scale: 1.02, backgroundColor: "#111111", color: "#ffffff" }}
                         whileTap={{ scale: 0.98 }}
-                        className="group inline-flex items-center gap-1.5 bg-white border border-neutral-200 text-neutral-900 px-5 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-xs"
+                        className="group inline-flex items-center gap-1.5 bg-white border border-neutral-200 text-neutral-900 px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-xs"
                       >
                         <RotateCw size={13} className="group-hover:text-white transition-colors" />
                         <span>Return</span>
@@ -317,7 +317,7 @@ export default function OrderDetailPage() {
                       type="button"
                       title={reason}
                       disabled
-                      className="group inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-400 border border-transparent px-5 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-full cursor-not-allowed"
+                      className="group inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-400 border border-transparent px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-full cursor-not-allowed"
                     >
                       <RotateCw size={13} className="text-neutral-400" />
                       <span>Return</span>
@@ -332,7 +332,7 @@ export default function OrderDetailPage() {
                 type="button"
                 onClick={handleBuyAgain}
                 disabled={!order.items || order.items.length === 0}
-                className="group relative overflow-hidden inline-flex items-center gap-1.5 bg-[#111111] text-white px-6 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-full transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:shadow-xl hover:shadow-black/10"
+                className="group relative overflow-hidden inline-flex items-center gap-1.5 bg-veyro-black text-white px-6 py-2.5 text-xs font-black uppercase tracking-wider rounded-full transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:shadow-xl hover:shadow-black/10"
               >
                 <div className="absolute inset-0 bg-neutral-800 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
                 <span className="relative z-10 flex items-center gap-1.5">
@@ -389,11 +389,11 @@ export default function OrderDetailPage() {
               {isJustConfirmed && order.status !== "Cancelled" && (
                 <motion.div 
                   variants={luxuryHeroEntry} 
-                  className="bg-[#0a0a0c] text-white rounded-xl border border-neutral-800/80 p-5 sm:p-7 shadow-[0_20px_40px_rgba(0,0,0,0.35)] relative overflow-hidden"
+                  className="bg-neutral-900 text-white rounded-xl border border-neutral-800/80 p-5 sm:p-7 shadow-[0_20px_40px_rgba(0,0,0,0.35)] relative overflow-hidden"
                 >
                   {/* Top Meta Bar */}
                   <div className="flex items-center justify-between gap-3 flex-wrap">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold tracking-wider uppercase bg-white/10 text-neutral-200 border border-white/15">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-mono font-semibold tracking-wider uppercase bg-white/10 text-neutral-200 border border-white/15">
                       <span className="relative flex h-2 w-2 shrink-0">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -431,11 +431,11 @@ export default function OrderDetailPage() {
             {order.status === "Cancelled" ? (
               <motion.section 
                 variants={fadeUp} 
-                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-black/[0.04] transition-all"
+                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-black/[0.04] transition-colors"
               >
                 {/* Header matching standard Order Status */}
                 <div className="flex items-center justify-between mb-6 sm:mb-8">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                     <Package size={14} /> ORDER STATUS
                   </h2>
                   <span className="text-xs font-bold text-rose-600 flex items-center gap-1.5 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/80">
@@ -449,17 +449,17 @@ export default function OrderDetailPage() {
                   {/* Step 1: Order Placed */}
                   <div className="flex items-start gap-3.5 sm:gap-4 relative">
                     {/* Connecting Line to Step 2 */}
-                    <div className="absolute left-[13px] top-[26px] bottom-[-24px] w-[2px] bg-[#111111]" />
+                    <div className="absolute left-[13px] top-[26px] bottom-[-24px] w-[2px] bg-veyro-black" />
 
-                    <div className="relative z-10 w-7 h-7 rounded-full bg-[#111111] text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="relative z-10 w-7 h-7 rounded-full bg-veyro-black text-white flex items-center justify-center shrink-0 shadow-xs">
                       <Check size={14} className="stroke-[2.5]" />
                     </div>
                     <div className="flex-1 min-w-0 pt-0.5">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#111111]">
+                        <span className="text-xs font-bold uppercase tracking-wider text-veyro-black">
                           Order Placed
                         </span>
-                        <span className="text-[11px] text-neutral-400 font-mono">
+                        <span className="text-xs text-neutral-400 font-mono">
                           {order.date}
                         </span>
                       </div>
@@ -479,7 +479,7 @@ export default function OrderDetailPage() {
                         <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
                           Order Cancelled
                         </span>
-                        <span className="text-[11px] text-neutral-400 font-mono">
+                        <span className="text-xs text-neutral-400 font-mono">
                           {cancelledTimelineEntry?.timestamp || "Customer Request"}
                         </span>
                       </div>
@@ -509,19 +509,19 @@ export default function OrderDetailPage() {
                 variants={fadeUp} 
                 whileHover={{ y: -2, boxShadow: "0px 10px 30px rgba(0,0,0,0.04)" }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-black/[0.04] transition-all"
+                className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-black/[0.04] transition-colors"
               >
                 <div className="flex items-center justify-between mb-6 sm:mb-8">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                     <Package size={14} /> ORDER STATUS
                   </h2>
                   <span className="text-xs text-neutral-500 flex items-center gap-1.5 bg-neutral-50 px-3 py-1 rounded-full border border-black/[0.04]">
                     {order.status === "Delivered" ? (
                       <CheckCircle2 size={13} className="text-emerald-500" />
                     ) : (
-                      <Clock size={13} className="text-[#fcd017]" />
+                      <Clock size={13} className="text-veyro-yellow" />
                     )}
-                    <span className="font-bold text-[#111111]">{order.estimatedDelivery}</span>
+                    <span className="font-bold text-veyro-black">{order.estimatedDelivery}</span>
                   </span>
                 </div>
 
@@ -539,16 +539,16 @@ export default function OrderDetailPage() {
                         {!isLast && (
                           <div
                             className={`absolute left-[13px] top-[26px] bottom-[-18px] w-[2px] transition-colors duration-500 ${
-                              idx < currentStepIndex ? "bg-[#111111]" : "bg-neutral-200"
+                              idx < currentStepIndex ? "bg-veyro-black" : "bg-neutral-200"
                             }`}
                           />
                         )}
 
                         {/* Step Node Icon */}
                         <div
-                          className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                          className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300 ${
                             isCompleted
-                              ? "bg-[#111111] text-white shadow-xs"
+                              ? "bg-veyro-black text-white shadow-xs"
                               : "bg-neutral-100 text-neutral-400 border border-neutral-200"
                           }`}
                         >
@@ -564,19 +564,19 @@ export default function OrderDetailPage() {
                           <div className="flex items-center justify-between gap-2">
                             <span
                               className={`text-xs font-bold uppercase tracking-wider ${
-                                isCompleted ? "text-[#111111]" : "text-neutral-400"
+                                isCompleted ? "text-veyro-black" : "text-neutral-400"
                               }`}
                             >
                               {step}
                             </span>
                             {isCurrent && (
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              <span className="text-2xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                                 Current
                               </span>
                             )}
                           </div>
                           {timelineEntry?.timestamp && (
-                            <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                            <p className="text-xs text-neutral-400 font-mono mt-0.5">
                               {timelineEntry.timestamp}
                             </p>
                           )}
@@ -600,7 +600,7 @@ export default function OrderDetailPage() {
                       initial={{ width: 0 }}
                       animate={{ width: `${currentStepIndex >= 0 ? (currentStepIndex / (TIMELINE_STEPS.length - 1)) * 100 : 0}%` }}
                       transition={{ duration: 1.5, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
-                      className="absolute top-0 left-0 h-full bg-[#111111] rounded-full"
+                      className="absolute top-0 left-0 h-full bg-veyro-black rounded-full"
                     />
                   </div>
                   
@@ -623,7 +623,7 @@ export default function OrderDetailPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 + (idx * 0.15) }}
-                            className={`mb-3 transition-colors duration-500 ${isCompleted ? "text-[#111111]" : "text-neutral-300"}`}
+                            className={`mb-3 transition-colors duration-500 ${isCompleted ? "text-veyro-black" : "text-neutral-300"}`}
                           >
                              {isCurrent ? (
                                <motion.div
@@ -642,8 +642,8 @@ export default function OrderDetailPage() {
                             initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 + (idx * 0.15) }}
-                            className={`text-[10px] font-bold uppercase tracking-wider text-center transition-colors duration-500 ${
-                              isCompleted ? "text-[#111111]" : "text-neutral-400"
+                            className={`text-2xs font-bold uppercase tracking-wider text-center transition-colors duration-500 ${
+                              isCompleted ? "text-veyro-black" : "text-neutral-400"
                             }`}
                           >
                             {step}
@@ -655,7 +655,7 @@ export default function OrderDetailPage() {
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.5 + (idx * 0.15) }}
-                              className="text-[10px] text-neutral-400 mt-1 text-center font-medium"
+                              className="text-2xs text-neutral-400 mt-1 text-center font-medium"
                             >
                               {timelineEntry.timestamp}
                             </motion.span>
@@ -674,11 +674,11 @@ export default function OrderDetailPage() {
               className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04] flex flex-col"
             >
               <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-black/[0.04] flex items-center justify-between bg-white z-10 shrink-0">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                   <ShoppingBag size={14} /> ITEMS ({order.itemsCount})
                 </h2>
                 {order.items && order.items.length > 3 && (
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 bg-neutral-100 px-2.5 py-1 rounded-full font-semibold">
+                  <span className="text-2xs font-mono uppercase tracking-wider text-neutral-400 bg-neutral-100 px-2.5 py-1 rounded-full font-semibold">
                     Scroll to view all {order.items.length} items ↓
                   </span>
                 )}
@@ -693,7 +693,7 @@ export default function OrderDetailPage() {
                     >
                       <Link
                         href={`/product/${item.productSlug}`}
-                        className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-[#F5F5F5] shrink-0 border border-black/[0.03]"
+                        className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-neutral-50 shrink-0 border border-black/[0.03]"
                       >
                         <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }} className="w-full h-full">
                           <Image
@@ -708,15 +708,15 @@ export default function OrderDetailPage() {
                       <div className="flex-1 min-w-0">
                         <Link
                           href={`/product/${item.productSlug}`}
-                          className="text-sm sm:text-base font-black text-[#111111] hover:text-neutral-600 transition-colors block truncate"
+                          className="text-sm sm:text-base font-black text-veyro-black hover:text-neutral-600 transition-colors block truncate"
                         >
                           {item.productName}
                         </Link>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full">
+                          <span className="text-2xs font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full">
                             Size {item.selectedSize}
                           </span>
-                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full">
+                          <span className="text-2xs font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full">
                             {item.colorName}
                           </span>
                         </div>
@@ -725,7 +725,7 @@ export default function OrderDetailPage() {
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-base sm:text-lg font-black text-[#111111] tabular-nums tracking-tight">
+                        <span className="text-base sm:text-lg font-black text-veyro-black tabular-nums tracking-tight">
                           {formatPrice(item.totalPrice)}
                         </span>
                       </div>
@@ -744,10 +744,10 @@ export default function OrderDetailPage() {
                 className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04]"
               >
                 <div className="px-6 sm:px-8 py-5 border-b border-black/[0.04] flex items-center justify-between bg-neutral-50/50">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
-                    <Gift size={14} className="text-[#fcd017]" /> ATELIER KEEPSAKE & LUXURY PACKAGING
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                    <Gift size={14} className="text-veyro-yellow" /> ATELIER KEEPSAKE & LUXURY PACKAGING
                   </h2>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 font-semibold bg-neutral-100 px-2.5 py-1 rounded-full">
+                  <span className="text-2xs font-mono uppercase tracking-wider text-neutral-500 font-semibold bg-neutral-100 px-2.5 py-1 rounded-full">
                     {order.giftPackaging.theme === "atelier-bone"
                       ? "Atelier Bone • Italian Cotton"
                       : order.giftPackaging.theme === "brutalist-noir"
@@ -771,19 +771,19 @@ export default function OrderDetailPage() {
                         <p className="text-xs font-semibold tracking-wide">
                           Hand-packed in Tirupur Atelier
                         </p>
-                        <p className="text-[10px] text-neutral-300">
+                        <p className="text-2xs text-neutral-300">
                           Gold debossed seal • Archival tissue • Wax seal envelope
                         </p>
                       </div>
                     </div>
 
                     {/* Right: Keepsake Note Enclosure */}
-                    <div className="lg:col-span-7 relative rounded-xl p-6 border border-[#E8E2D5] bg-[#FAF7F2] text-[#2C2723] shadow-xs overflow-hidden flex flex-col justify-between">
+                    <div className="lg:col-span-7 relative rounded-xl p-6 border border-neutral-200 bg-neutral-50 text-neutral-800 shadow-xs overflow-hidden flex flex-col justify-between">
                       {/* Debossed Gold Wax Seal Stamp in Top Right */}
                       <div className="absolute top-4 right-4 sm:top-5 sm:right-5">
-                        <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-[#c99738] via-[#e2b755] to-[#8c651a] shadow-[0_4px_12px_rgba(140,101,26,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] flex items-center justify-center border border-[#e8c878]">
-                          <div className="w-7 h-7 rounded-full border border-[#8c651a]/40 flex items-center justify-center">
-                            <span className="font-serif font-black text-xs tracking-widest text-[#422e06] select-none">
+                        <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 via-amber-400 to-amber-700 shadow-[0_4px_12px_rgba(140,101,26,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)] flex items-center justify-center border border-amber-300">
+                          <div className="w-7 h-7 rounded-full border border-amber-700/40 flex items-center justify-center">
+                            <span className="font-serif font-black text-xs tracking-widest text-amber-950 select-none">
                               V
                             </span>
                           </div>
@@ -791,7 +791,7 @@ export default function OrderDetailPage() {
                       </div>
 
                       <div className="space-y-3">
-                        <div className="text-[10px] uppercase font-bold tracking-[0.2em] opacity-60">
+                        <div className="text-2xs uppercase font-bold tracking-[0.2em] opacity-60">
                           Keepsake Letterpress Note
                         </div>
 
@@ -821,7 +821,7 @@ export default function OrderDetailPage() {
                       </div>
 
                       {/* Privacy Badges Footer */}
-                      <div className="mt-5 pt-3.5 border-t border-black/10 flex flex-wrap items-center gap-2 text-[10px] font-mono tracking-wider opacity-75">
+                      <div className="mt-5 pt-3.5 border-t border-black/10 flex flex-wrap items-center gap-2 text-2xs font-mono tracking-wider opacity-75">
                         {order.giftPackaging.hidePriceTag && (
                           <span className="inline-flex items-center gap-1 bg-black/5 px-2 py-0.5 rounded">
                             ✓ MRP Redacted on Dispatch
@@ -850,10 +850,10 @@ export default function OrderDetailPage() {
             <motion.section 
               variants={fadeUp} 
               whileHover={{ y: -2, boxShadow: "0px 10px 30px rgba(0,0,0,0.04)" }}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04] transition-all"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04] transition-colors"
             >
               <div className="px-6 py-5 border-b border-black/[0.04] bg-neutral-50/50">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                   <ReceiptText size={14} /> SUMMARY
                 </h2>
               </div>
@@ -880,14 +880,14 @@ export default function OrderDetailPage() {
                 <motion.div variants={listItem} className="flex justify-between text-neutral-600 font-medium">
                   <span>Shipping</span>
                   <span className="font-bold">
-                    {order.shippingCost === 0 ? <span className="text-[#fcd017] uppercase tracking-wider text-xs">Free</span> : <span className="text-neutral-900 tabular-nums">{formatPrice(order.shippingCost)}</span>}
+                    {order.shippingCost === 0 ? <span className="text-veyro-yellow uppercase tracking-wider text-xs">Free</span> : <span className="text-neutral-900 tabular-nums">{formatPrice(order.shippingCost)}</span>}
                   </span>
                 </motion.div>
 
                 {order.giftPackaging?.enabled && (
                   <motion.div variants={listItem} className="flex justify-between text-neutral-800 font-medium">
                     <span className="flex items-center gap-1.5">
-                      <Gift size={13} className="text-slate-400 shrink-0" />
+                      <Gift size={13} className="text-neutral-400 shrink-0" />
                       <span>Signature Gift Packaging</span>
                     </span>
                     <span className="font-bold tabular-nums">+{formatPrice(order.giftPackaging.fee)}</span>
@@ -901,7 +901,7 @@ export default function OrderDetailPage() {
                 
                 <motion.div variants={listItem} className="flex justify-between items-center pt-2">
                   <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">Total Paid</span>
-                  <span className="text-2xl font-black text-[#111111] tabular-nums tracking-tight">{formatPrice(order.total)}</span>
+                  <span className="text-2xl font-black text-veyro-black tabular-nums tracking-tight">{formatPrice(order.total)}</span>
                 </motion.div>
               </motion.div>
             </motion.section>
@@ -912,7 +912,7 @@ export default function OrderDetailPage() {
               className="bg-white rounded-2xl overflow-hidden shadow-sm border border-black/[0.04]"
             >
               <div className="px-6 py-5 border-b border-black/[0.04] bg-neutral-50/50">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
+                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 flex items-center gap-2">
                   <MapPin size={14} /> DELIVERY & PAYMENT
                 </h2>
               </div>
@@ -921,16 +921,16 @@ export default function OrderDetailPage() {
                 {order.shippingAddress && (
                   <div className="pb-6">
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-black tracking-widest text-neutral-400 uppercase">
+                      <span className="text-2xs font-black tracking-widest text-neutral-400 uppercase">
                         {order.isGiftOrder ? "Friend's Delivery Destination" : "Shipping Destination"}
                       </span>
                       {order.isGiftOrder && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500/10 text-neutral-900 border border-amber-500/30">
-                          <Gift size={10} className="text-[#c99738]" /> Surprise Gift Parcel
+                          <Gift size={10} className="text-amber-600" /> Surprise Gift Parcel
                         </span>
                       )}
                     </div>
-                    <p className="text-sm font-black text-[#111111]">{order.shippingAddress.name}</p>
+                    <p className="text-sm font-black text-veyro-black">{order.shippingAddress.name}</p>
                     <p className="text-sm text-neutral-600 mt-1.5 leading-relaxed">{order.shippingAddress.address}</p>
                     <p className="text-sm text-neutral-600 mt-1">PIN: {order.shippingAddress.pincode}</p>
                     <div className="mt-3 flex items-center gap-2 flex-wrap">
@@ -939,7 +939,7 @@ export default function OrderDetailPage() {
                         {order.shippingAddress.phone}
                       </div>
                       {order.isGiftOrder && (
-                        <span className="text-[10px] text-neutral-400 font-medium">
+                        <span className="text-2xs text-neutral-400 font-medium">
                           (Courier doorstep OTP verification)
                         </span>
                       )}
@@ -951,14 +951,14 @@ export default function OrderDetailPage() {
                 {order.billingAddress && (
                   <div className="py-6">
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-black tracking-widest text-neutral-400 uppercase flex items-center gap-1.5">
+                      <span className="text-2xs font-black tracking-widest text-neutral-400 uppercase flex items-center gap-1.5">
                         <ReceiptText size={12} className="text-neutral-500" /> Official Billing Address
                       </span>
                       <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded">
                         Digital GST Invoice
                       </span>
                     </div>
-                    <p className="text-sm font-black text-[#111111]">{order.billingAddress.name}</p>
+                    <p className="text-sm font-black text-veyro-black">{order.billingAddress.name}</p>
                     <p className="text-sm text-neutral-600 mt-1.5 leading-relaxed">{order.billingAddress.address}</p>
                     <p className="text-sm text-neutral-600 mt-1">PIN: {order.billingAddress.pincode}</p>
                     <div className="mt-3 inline-flex items-center gap-2 bg-neutral-50 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 border border-black/[0.04]">
@@ -970,12 +970,12 @@ export default function OrderDetailPage() {
                 
                 {/* 3. PAYMENT METHOD */}
                 <div className="pt-6 flex items-center gap-4">
-                  <motion.div whileHover={{ rotate: 10, scale: 1.1 }} className="w-12 h-12 rounded-xl bg-neutral-50 border border-black/[0.04] flex items-center justify-center text-[#111111]">
+                  <motion.div whileHover={{ rotate: 10, scale: 1.1 }} className="w-12 h-12 rounded-xl bg-neutral-50 border border-black/[0.04] flex items-center justify-center text-veyro-black">
                     {paymentInfo.icon}
                   </motion.div>
                   <div>
-                    <p className="text-sm font-black text-[#111111]">{paymentInfo.label}</p>
-                    <p className="text-[11px] font-bold text-neutral-400 mt-1 uppercase tracking-wider">
+                    <p className="text-sm font-black text-veyro-black">{paymentInfo.label}</p>
+                    <p className="text-xs font-bold text-neutral-400 mt-1 uppercase tracking-wider">
                       {order.status === "Delivered" ? "Payment Completed" : "Payment Confirmed"}
                     </p>
                   </div>
@@ -987,9 +987,9 @@ export default function OrderDetailPage() {
         </div>
         
         {/* FOOTER */}
-        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4 mt-16 pb-8 text-[11px] text-neutral-400 font-bold uppercase tracking-widest">
+        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4 mt-16 pb-8 text-xs text-neutral-400 font-bold uppercase tracking-widest">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={14} className="text-[#fcd017]" />
+            <ShieldCheck size={14} className="text-veyro-yellow" />
             <span>256-Bit SSL Encrypted • 7-Day Returns</span>
           </div>
           <span>Veyro Secure Checkout</span>

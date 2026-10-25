@@ -182,12 +182,12 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
       aria-label="Customer Reviews & Ratings"
       className="w-full pt-16 pb-20 border-t border-veyro-border scroll-mt-24"
     >
-      <div className="max-w-[1440px] mx-auto">
+      <div className="max-w-screen-2xl mx-auto">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-4 border-b border-veyro-border/60">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[11px] font-mono tracking-widest text-veyro-muted uppercase">
+              <span className="text-xs font-mono tracking-widest text-veyro-muted uppercase">
                 [ 004 ] ARCHIVAL VERIFICATION
               </span>
             </div>
@@ -200,7 +200,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
           <button
             type="button"
             onClick={() => setIsWriteModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#111111] text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer shadow-sm hover:shadow active:scale-[0.98] w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-veyro-black text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-full transition duration-200 cursor-pointer shadow-sm hover:shadow active:scale-[0.98] w-full sm:w-auto"
           >
             <Plus size={15} />
             <span>Write a Review</span>
@@ -212,11 +212,11 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
           {/* Col 1: Overall Average & Recommendation */}
           <div className="lg:col-span-4 flex flex-col justify-between pr-0 lg:pr-6 lg:border-r lg:border-neutral-200/80">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono">
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono">
                 Overall Rating
               </span>
               <div className="flex items-baseline gap-3 mt-2">
-                <span className="text-5xl sm:text-6xl font-black tracking-tight text-[#111111]">
+                <span className="text-5xl sm:text-6xl font-black tracking-tight text-veyro-black">
                   {stats.averageRating.toFixed(1)}
                 </span>
                 <div className="flex flex-col">
@@ -241,11 +241,11 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             </div>
 
             <div className="mt-6 pt-6 border-t border-neutral-200/60">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#111111]">
+              <div className="flex items-center gap-2 text-xs font-bold text-veyro-black">
                 <CheckCircle2 size={16} className="text-neutral-900" />
                 <span>{stats.recommendationPercentage}% of buyers recommend this product</span>
               </div>
-              <p className="text-[11px] text-neutral-500 mt-1">
+              <p className="text-xs text-neutral-500 mt-1">
                 Authentic reviews from verified owners across India.
               </p>
             </div>
@@ -253,7 +253,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
           {/* Col 2: Interactive Rating Distribution Bar Chart */}
           <div className="lg:col-span-5 flex flex-col justify-center">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono mb-3 block">
+            <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono mb-3 block">
               Rating Distribution
             </span>
             <div className="space-y-2.5">
@@ -279,21 +279,21 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                     }`}
                     aria-label={`Filter by ${star} star reviews (${count} reviews, ${percent} percent)`}
                   >
-                    <span className="w-11 font-mono font-bold text-[#111111] flex items-center gap-1">
+                    <span className="w-11 font-mono font-bold text-veyro-black flex items-center gap-1">
                       {star} <Star size={11} className="fill-veyro-yellow text-veyro-yellow inline" />
                     </span>
 
                     {/* Progress Bar Container */}
                     <div className="flex-1 h-2.5 bg-neutral-200/80 rounded-full overflow-hidden relative">
                       <div
-                        className={`h-full transition-all duration-500 rounded-full ${
-                          isSelected ? "bg-[#111111]" : "bg-veyro-yellow"
+                        className={`h-full transition-colors duration-500 rounded-full ${
+                          isSelected ? "bg-veyro-black" : "bg-veyro-yellow"
                         }`}
                         style={{ width: `${percent}%` }}
                       />
                     </div>
 
-                    <span className="w-10 font-mono text-[11px] text-right font-medium text-neutral-500 group-hover:text-black transition-colors">
+                    <span className="w-10 font-mono text-xs text-right font-medium text-neutral-500 group-hover:text-black transition-colors">
                       {count}
                     </span>
                   </button>
@@ -305,18 +305,18 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
           {/* Col 3: Fit & Sizing Feedback */}
           <div className="lg:col-span-3 flex flex-col justify-between pl-0 lg:pl-6 lg:border-l lg:border-neutral-200/80">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono block mb-3">
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono block mb-3">
                 Customer Fit Gauge
               </span>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-[#111111]">True to Size</span>
+                    <span className="text-veyro-black">True to Size</span>
                     <span className="font-mono text-neutral-500">{stats.fitBreakdown.trueToSize}%</span>
                   </div>
                   <div className="h-2 bg-neutral-200/80 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#111111] rounded-full"
+                      className="h-full bg-veyro-black rounded-full"
                       style={{ width: `${stats.fitBreakdown.trueToSize}%` }}
                     />
                   </div>
@@ -350,7 +350,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               </div>
             </div>
 
-            <p className="text-[10px] text-neutral-400 mt-4 uppercase tracking-wider font-mono">
+            <p className="text-2xs text-neutral-400 mt-4 uppercase tracking-wider font-mono">
               {stats.fitBreakdown.trueToSize >= 75
                 ? "Most customers advise ordering your regular size."
                 : "Refer to sizing guide before ordering."}
@@ -366,16 +366,16 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             aria-label="Filter reviews by rating"
             className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none"
           >
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1.5 font-mono">
+            <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider mr-1 shrink-0 flex items-center gap-1.5 font-mono">
               <Filter size={12} /> Filter:
             </span>
 
             <button
               type="button"
               onClick={() => setSelectedRatingFilter("ALL")}
-              className={`px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-200 shrink-0 cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-colors duration-200 shrink-0 cursor-pointer ${
                 selectedRatingFilter === "ALL"
-                  ? "bg-[#111111] text-white shadow-xs"
+                  ? "bg-veyro-black text-white shadow-xs"
                   : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80"
               }`}
             >
@@ -391,9 +391,9 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   key={star}
                   type="button"
                   onClick={() => setSelectedRatingFilter(isSelected ? "ALL" : star)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-all duration-200 shrink-0 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold tracking-tight transition-colors duration-200 shrink-0 cursor-pointer ${
                     isSelected
-                      ? "bg-[#111111] text-white shadow-xs"
+                      ? "bg-veyro-black text-white shadow-xs"
                       : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80"
                   }`}
                 >
@@ -406,7 +406,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         : "fill-neutral-400 text-neutral-400"
                     }
                   />
-                  <span className="opacity-70 text-[10px]">({count})</span>
+                  <span className="opacity-70 text-2xs">({count})</span>
                 </button>
               );
             })}
@@ -415,7 +415,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               <button
                 type="button"
                 onClick={() => setSelectedRatingFilter("ALL")}
-                className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300/80 hover:border-neutral-900 rounded-full text-xs font-semibold tracking-tight transition-all duration-300 cursor-pointer shadow-2xs hover:shadow-sm active:scale-95 shrink-0 ml-1.5 animate-in fade-in slide-in-from-left-2 duration-300"
+                className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300/80 hover:border-neutral-900 rounded-full text-xs font-semibold tracking-tight transition duration-300 cursor-pointer shadow-2xs hover:shadow-sm active:scale-95 shrink-0 ml-1.5 animate-in fade-in slide-in-from-left-2 duration-300"
                 aria-label="Clear active rating filter"
               >
                 <span className="w-4 h-4 rounded-full bg-neutral-200 group-hover:bg-neutral-800 flex items-center justify-center transition-colors duration-300">
@@ -431,7 +431,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
           {/* Sort Dropdown */}
           <div ref={sortRef} className="relative shrink-0 flex items-center justify-between md:justify-end gap-2">
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider font-mono">
+            <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider font-mono">
               Sort by:
             </span>
 
@@ -440,7 +440,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               onClick={() => setSortDropdownOpen((prev) => !prev)}
               aria-haspopup="listbox"
               aria-expanded={sortDropdownOpen}
-              className="inline-flex items-center justify-between gap-3 bg-white border border-neutral-200/80 hover:border-black text-xs font-bold text-[#111111] px-4 py-2 rounded-full transition-colors cursor-pointer select-none min-w-[150px] shadow-2xs"
+              className="inline-flex items-center justify-between gap-3 bg-white border border-neutral-200/80 hover:border-black text-xs font-bold text-veyro-black px-4 py-2 rounded-full transition-colors cursor-pointer select-none min-w-[150px] shadow-2xs"
             >
               <span>
                 {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
@@ -456,7 +456,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             {sortDropdownOpen && (
               <div
                 role="listbox"
-                className="absolute right-0 top-full mt-2 w-48 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 z-40 animate-in fade-in zoom-in-95 duration-100"
+                className="absolute right-0 top-full mt-2 w-48 bg-white border border-neutral-200/80 rounded-2xl shadow-xl p-1.5 z-20 animate-in fade-in zoom-in-95 duration-100"
               >
                 {SORT_OPTIONS.map((opt) => {
                   const isSelected = opt.value === sortBy;
@@ -498,7 +498,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             <button
               type="button"
               onClick={() => setSelectedRatingFilter("ALL")}
-              className="px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-wider rounded-full cursor-pointer hover:bg-neutral-800 transition-colors shadow-xs"
+              className="px-6 py-2.5 bg-veyro-black text-white text-xs font-bold uppercase tracking-wider rounded-full cursor-pointer hover:bg-neutral-800 transition-colors shadow-xs"
             >
               Reset Filters
             </button>
@@ -514,13 +514,13 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               return (
                 <article
                   key={review.id}
-                  className="bg-white border border-neutral-200/80 p-6 sm:p-7 rounded-2xl transition-all duration-200 hover:border-neutral-300 hover:shadow-xs"
+                  className="bg-white border border-neutral-200/80 p-6 sm:p-7 rounded-2xl transition duration-200 hover:border-neutral-300 hover:shadow-xs"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 mb-3">
                     {/* Reviewer Meta */}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm text-[#111111]">
+                        <span className="font-bold text-sm text-veyro-black">
                           {review.author}
                         </span>
 
@@ -531,12 +531,12 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         )}
 
                         {review.sizePurchased && (
-                          <span className="text-[10px] font-mono text-neutral-400">
+                          <span className="text-2xs font-mono text-neutral-400">
                             • Size {review.sizePurchased}
                           </span>
                         )}
 
-                        <span className="text-[10px] font-medium text-neutral-500">
+                        <span className="text-2xs font-medium text-neutral-500">
                           • {review.fit}
                         </span>
                       </div>
@@ -563,7 +563,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
                       <time
                         dateTime={review.date}
-                        className="text-[11px] font-mono text-neutral-400"
+                        className="text-xs font-mono text-neutral-400"
                       >
                         {review.date}
                       </time>
@@ -571,18 +571,18 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   </div>
 
                   {/* Review Title */}
-                  <h3 className="text-sm sm:text-base font-bold text-[#111111] mb-2 leading-snug">
+                  <h3 className="text-sm sm:text-base font-bold text-veyro-black mb-2 leading-snug">
                     {review.title}
                   </h3>
 
                   {/* Review Content */}
-                  <p className="text-xs sm:text-[13px] text-neutral-700 leading-relaxed font-normal mb-4">
+                  <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed font-normal mb-4">
                     {review.content}
                   </p>
 
                   {/* Review Card Footer: Helpful Voting Buttons with Duplicate-Vote Prevention */}
                   <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
-                    <span className="text-[11px] text-neutral-400">
+                    <span className="text-xs text-neutral-400">
                       Was this review helpful?
                     </span>
 
@@ -593,9 +593,9 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         disabled={isLocked}
                         onClick={() => voteReview(review.id, "helpful")}
                         aria-label={`Mark as helpful. Currently ${review.helpfulCount} votes`}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors duration-200 ${
                           isHelpfulActive
-                            ? "bg-[#111111] text-white cursor-default"
+                            ? "bg-veyro-black text-white cursor-default"
                             : isLocked
                             ? "opacity-50 cursor-not-allowed text-neutral-400 bg-neutral-100"
                             : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700 cursor-pointer active:scale-95"
@@ -611,7 +611,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                         disabled={isLocked}
                         onClick={() => voteReview(review.id, "unhelpful")}
                         aria-label={`Mark as unhelpful. Currently ${review.unhelpfulCount} votes`}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors duration-200 ${
                           isUnhelpfulActive
                             ? "bg-neutral-800 text-white cursor-default"
                             : isLocked
@@ -636,7 +636,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             <button
               type="button"
               onClick={() => setVisibleCount((prev) => prev + 4)}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-neutral-300 hover:border-black text-[#111111] hover:bg-[#111111] hover:text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer shadow-xs hover:shadow"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-neutral-300 hover:border-black text-veyro-black hover:bg-veyro-black hover:text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors duration-200 cursor-pointer shadow-xs hover:shadow"
             >
               <span>
                 Load More Reviews (
@@ -661,14 +661,14 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-[#fafaf8]">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-veyro-surface-alt">
               <div>
-                <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase block font-semibold">
+                <span className="text-2xs font-mono tracking-widest text-neutral-400 uppercase block font-semibold">
                   [ AUTHENTIC FEEDBACK ARCHIVE ]
                 </span>
                 <h3
                   id="write-review-title"
-                  className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#111111] mt-0.5"
+                  className="text-lg sm:text-xl font-black uppercase tracking-tight text-veyro-black mt-0.5"
                 >
                   Review: {product.name}
                 </h3>
@@ -678,7 +678,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 type="button"
                 onClick={() => setIsWriteModalOpen(false)}
                 aria-label="Close review dialog"
-                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -688,9 +688,9 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
             {submitSuccess ? (
               <div className="p-10 text-center flex flex-col items-center justify-center animate-in zoom-in-95 duration-200">
                 <div className="w-14 h-14 bg-neutral-900 text-white rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                  <Check size={26} className="stroke-[2.5] text-[#fcd017]" />
+                  <Check size={26} className="stroke-[2.5] text-veyro-yellow" />
                 </div>
-                <h4 className="text-xl font-black uppercase tracking-tight text-[#111111] mb-1">
+                <h4 className="text-xl font-black uppercase tracking-tight text-veyro-black mb-1">
                   Review Published
                 </h4>
                 <p className="text-xs text-neutral-500 max-w-sm">
@@ -704,7 +704,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
               >
                 {/* 1. Interactive Star Rating Selector with Smooth Hover-Preview */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5 font-mono">
                     Your Rating <span className="text-red-500">*</span>
                   </label>
 
@@ -756,7 +756,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   </div>
 
                   {formErrors.rating && (
-                    <p className="text-[11px] text-red-500 mt-1 font-medium">
+                    <p className="text-xs text-red-500 mt-1 font-medium">
                       {formErrors.rating}
                     </p>
                   )}
@@ -764,7 +764,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
 
                 {/* 2. Fit Feedback */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5 font-mono">
                     How does it fit?
                   </label>
                   <div className="grid grid-cols-3 gap-2.5">
@@ -774,9 +774,9 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                           key={fitOption}
                           type="button"
                           onClick={() => setFormFit(fitOption)}
-                          className={`py-2.5 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer text-center ${
+                          className={`py-2.5 px-3 text-xs font-bold rounded-xl border transition-colors cursor-pointer text-center ${
                             formFit === fitOption
-                              ? "bg-[#111111] text-white border-[#111111] shadow-xs"
+                              ? "bg-veyro-black text-white border-veyro-black shadow-xs"
                               : "bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400"
                           }`}
                         >
@@ -791,7 +791,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 <div>
                   <label
                     htmlFor="review-title"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
+                    className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5 font-mono"
                   >
                     Review Headline <span className="text-red-500">*</span>
                   </label>
@@ -814,7 +814,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                     }`}
                   />
                   {formErrors.title && (
-                    <p className="text-[11px] text-red-500 mt-1 font-medium">
+                    <p className="text-xs text-red-500 mt-1 font-medium">
                       {formErrors.title}
                     </p>
                   )}
@@ -824,7 +824,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                 <div>
                   <label
                     htmlFor="review-content"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
+                    className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5 font-mono"
                   >
                     Your Experience <span className="text-red-500">*</span>
                   </label>
@@ -847,7 +847,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                     }`}
                   />
                   {formErrors.content && (
-                    <p className="text-[11px] text-red-500 mt-1 font-medium">
+                    <p className="text-xs text-red-500 mt-1 font-medium">
                       {formErrors.content}
                     </p>
                   )}
@@ -858,7 +858,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   <div>
                     <label
                       htmlFor="review-author"
-                      className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
+                      className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5 font-mono"
                     >
                       Your Name / Handle
                     </label>
@@ -875,7 +875,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   <div>
                     <label
                       htmlFor="review-size"
-                      className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 font-mono"
+                      className="block text-xs font-bold uppercase tracking-wider text-veyro-black mb-1.5 font-mono"
                     >
                       Purchased Size
                     </label>
@@ -907,7 +907,7 @@ export function ProductReviewsSection({ product }: ProductReviewsSectionProps) {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-7 py-3 bg-[#111111] text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50"
+                    className="px-7 py-3 bg-veyro-black text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-wider rounded-full transition duration-200 cursor-pointer shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Review"}
                   </button>

@@ -47,7 +47,7 @@ export function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container */}
-      <div className={`relative w-full overflow-hidden rounded-2xl transition-all duration-300 ${theme === 'dark' ? 'bg-[#121212] border border-white/[0.08]' : 'bg-[#f4f2ee]'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
+      <div className={`relative w-full overflow-hidden rounded-2xl transition-colors duration-300 ${theme === 'dark' ? 'bg-neutral-800 border border-white/[0.08]' : 'bg-veyro-surface-alt'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
         <Link
           href={`/product/${product.slug}`}
           className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
@@ -85,7 +85,7 @@ export function ProductCard({
         {/* Product Badge / Sold Out Pill */}
         {!product.inStock ? (
           <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-neutral-950/90 text-white backdrop-blur-md shadow-xs border border-white/15">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-2xs font-bold tracking-wider uppercase bg-neutral-950/90 text-white backdrop-blur-md shadow-xs border border-white/15">
               <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
               Sold Out
             </span>
@@ -116,9 +116,9 @@ export function ProductCard({
         {/* Rating Pill */}
         {reviewsCount > 0 && (
           <div className="absolute bottom-2.5 left-2.5 pointer-events-none z-10 flex items-center gap-1 bg-white/90 backdrop-blur-md px-2 py-1 rounded-full shadow-sm border border-black/5">
-            <span className="text-[10px] sm:text-xs font-bold text-veyro-black leading-none">{rating.toFixed(1)}</span>
+            <span className="text-2xs sm:text-xs font-bold text-veyro-black leading-none">{rating.toFixed(1)}</span>
             <Star size={10} className="fill-veyro-yellow text-veyro-yellow" />
-            <span className="text-[10px] sm:text-xs font-medium text-veyro-muted leading-none">({reviewsCount})</span>
+            <span className="text-2xs sm:text-xs font-medium text-veyro-muted leading-none">({reviewsCount})</span>
           </div>
         )}
 
@@ -127,7 +127,7 @@ export function ProductCard({
       {/* Product Details */}
       <div className="pt-2.5 pb-1 flex flex-col flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className={`text-[10px] sm:text-[11px] font-medium uppercase tracking-wider ${theme === 'dark' ? 'text-[#a3a3a3]' : 'text-veyro-muted'}`}>
+          <span className={`text-2xs sm:text-xs font-medium uppercase tracking-wider ${theme === 'dark' ? 'text-neutral-400' : 'text-veyro-muted'}`}>
             {product.subcategoryTag || product.category}
           </span>
           {product.colorHex && (
@@ -139,14 +139,14 @@ export function ProductCard({
           )}
         </div>
 
-        <h3 className={`mt-0.5 font-medium leading-snug line-clamp-1 transition-colors ${theme === 'dark' ? 'text-white group-hover:text-[#a3a3a3]' : 'text-veyro-black group-hover:text-veyro-muted'} ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
+        <h3 className={`mt-0.5 font-medium leading-snug line-clamp-1 transition-colors ${theme === 'dark' ? 'text-white group-hover:text-neutral-400' : 'text-veyro-black group-hover:text-veyro-muted'} ${isFeatured ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'}`}>
           <Link href={`/product/${product.slug}`}>{product.name}</Link>
         </h3>
 
         {/* Pricing Hierarchy */}
         <div className="mt-1 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
           {product.originalPrice && product.originalPrice > product.price && (
-            <span className={`text-[11px] sm:text-xs line-through ${theme === 'dark' ? 'text-[#888]' : 'text-veyro-muted'}`}>
+            <span className={`text-xs sm:text-xs line-through ${theme === 'dark' ? 'text-neutral-500' : 'text-veyro-muted'}`}>
               {formatPrice(product.originalPrice)}
             </span>
           )}
@@ -156,7 +156,7 @@ export function ProductCard({
           </span>
 
           {displayDiscount && (
-            <span className="text-[11px] sm:text-xs font-medium text-veyro-accent">
+            <span className="text-xs sm:text-xs font-medium text-veyro-accent">
               {displayDiscount}
             </span>
           )}

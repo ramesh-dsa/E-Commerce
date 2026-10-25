@@ -194,16 +194,16 @@ export function WishlistDrawer() {
         aria-modal="true"
         aria-label="Wishlist Drawer"
         data-lenis-prevent
-        className="relative w-full max-w-[480px] h-full bg-white text-[#111111] shadow-2xl flex flex-col z-10 overscroll-contain animate-drawer-in"
+        className="relative w-full max-w-lg h-full bg-white text-veyro-black shadow-2xl flex flex-col z-10 overscroll-contain animate-drawer-in"
       >
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200">
           <div className="flex items-center gap-2.5">
-            <Heart size={20} className="stroke-[2.2] text-[#111111]" />
-            <h2 className="text-base font-black tracking-wider uppercase text-[#111111]">
+            <Heart size={20} className="stroke-[2.2] text-veyro-black" />
+            <h2 className="text-base font-black tracking-wider uppercase text-veyro-black">
               WISHLIST
             </h2>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#fcd017] text-[#111111]">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-veyro-yellow text-veyro-black">
               {totalWishlistItems}
             </span>
           </div>
@@ -212,7 +212,7 @@ export function WishlistDrawer() {
             type="button"
             onClick={closeWishlist}
             aria-label="Close wishlist"
-            className="group p-1.5 rounded-full text-neutral-500 hover:text-black hover:bg-neutral-100 active:scale-90 transition-all duration-200 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black motion-reduce:transform-none"
+            className="group p-1.5 rounded-full text-neutral-500 hover:text-black hover:bg-neutral-100 active:scale-90 transition duration-200 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black motion-reduce:transform-none"
           >
             <X size={20} className="transition-transform duration-300 ease-out group-hover:rotate-90 group-hover:scale-110 motion-reduce:transform-none" />
           </button>
@@ -222,18 +222,18 @@ export function WishlistDrawer() {
         {/* SELECTION CONTROL BAR (When items exist)                  */}
         {/* ========================================================= */}
         {items.length > 0 && (
-          <div className="flex items-center justify-between px-6 py-2.5 bg-[#fafafa] border-b border-neutral-200 text-xs">
+          <div className="flex items-center justify-between px-6 py-2.5 bg-neutral-50 border-b border-neutral-200 text-xs">
             <button
               type="button"
               onClick={toggleSelectAll}
-              className="flex items-center gap-2.5 font-bold text-[#111111] hover:text-neutral-600 transition-colors cursor-pointer select-none"
+              className="flex items-center gap-2.5 font-bold text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer select-none"
             >
               <div
-                className={`w-4 h-4 rounded-[2px] border flex items-center justify-center transition-all ${
+                className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${
                   isAllSelected
-                    ? "bg-[#111111] border-[#111111] text-white"
+                    ? "bg-veyro-black border-veyro-black text-white"
                     : isPartiallySelected
-                    ? "bg-[#111111] border-[#111111] text-white"
+                    ? "bg-veyro-black border-veyro-black text-white"
                     : "bg-white border-neutral-300 text-transparent"
                 }`}
               >
@@ -250,8 +250,8 @@ export function WishlistDrawer() {
               </span>
             </button>
 
-            <span className="text-[11px] font-semibold text-neutral-500">
-              <strong className="text-[#111111]">{selectedCount}</strong> of {items.length} selected
+            <span className="text-xs font-semibold text-neutral-500">
+              <strong className="text-veyro-black">{selectedCount}</strong> of {items.length} selected
             </span>
           </div>
         )}
@@ -265,7 +265,7 @@ export function WishlistDrawer() {
             <div className="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mb-5 text-neutral-400">
               <Heart size={38} className="stroke-[1.5]" />
             </div>
-            <h3 className="text-lg font-black tracking-tight text-[#111111] mb-2 uppercase">
+            <h3 className="text-lg font-black tracking-tight text-veyro-black mb-2 uppercase">
               YOUR WISHLIST IS EMPTY
             </h3>
             <p className="text-xs text-neutral-500 max-w-xs mb-8 leading-relaxed">
@@ -274,7 +274,7 @@ export function WishlistDrawer() {
             <Link
               href="/clothing"
               onClick={closeWishlist}
-              className="w-full max-w-xs h-12 rounded-[2px] bg-black text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full max-w-xs h-12 rounded-sm bg-black text-white hover:bg-neutral-800 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <span>Explore Collection</span>
               <ArrowRight size={15} />
@@ -295,7 +295,7 @@ export function WishlistDrawer() {
               return (
                 <div
                   key={product.id}
-                  className={`py-4 flex gap-3.5 items-start group transition-all ${
+                  className={`py-4 flex gap-3.5 items-start group transition-colors ${
                     isSelected ? "opacity-100" : "opacity-75 hover:opacity-100"
                   }`}
                 >
@@ -307,9 +307,9 @@ export function WishlistDrawer() {
                       aria-checked={isSelected}
                       aria-label={`Select ${product.name} to move to bag`}
                       onClick={() => toggleSelectItem(product.id)}
-                      className={`w-5 h-5 rounded-[3px] border flex items-center justify-center transition-all cursor-pointer ${
+                      className={`w-5 h-5 rounded-sm border flex items-center justify-center transition-colors cursor-pointer ${
                         isSelected
-                          ? "bg-[#111111] border-[#111111] text-white shadow-xs"
+                          ? "bg-veyro-black border-veyro-black text-white shadow-xs"
                           : "bg-white border-neutral-300 hover:border-black text-transparent"
                       }`}
                     >
@@ -326,7 +326,7 @@ export function WishlistDrawer() {
                   <Link
                     href={`/product/${product.slug}`}
                     onClick={closeWishlist}
-                    className="relative w-20 h-24 sm:w-22 sm:h-26 bg-[#f4f2ee] rounded-lg overflow-hidden shrink-0 border border-neutral-100"
+                    className="relative w-20 h-24 sm:w-22 sm:h-26 bg-veyro-surface-alt rounded-lg overflow-hidden shrink-0 border border-neutral-100"
                   >
                     <Image
                       src={product.imageUrl}
@@ -342,7 +342,7 @@ export function WishlistDrawer() {
                     <div>
                       {/* Top Row: Tag & Remove Button */}
                       <div className="flex items-start justify-between gap-2">
-                        <span className="text-[10px] font-bold tracking-wider uppercase text-neutral-400">
+                        <span className="text-2xs font-bold tracking-wider uppercase text-neutral-400">
                           {product.subcategoryTag || product.category}
                         </span>
                         <button
@@ -359,22 +359,22 @@ export function WishlistDrawer() {
                       <Link
                         href={`/product/${product.slug}`}
                         onClick={closeWishlist}
-                        className="block text-xs sm:text-sm font-bold text-[#111111] hover:underline truncate mt-0.5"
+                        className="block text-xs sm:text-sm font-bold text-veyro-black hover:underline truncate mt-0.5"
                       >
                         {product.name}
                       </Link>
 
                       {/* Price Strip */}
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs font-black text-[#111111]">
+                        <span className="text-xs font-black text-veyro-black">
                           {formatPrice(product.price)}
                         </span>
                         {product.originalPrice && product.originalPrice > product.price && (
                           <>
-                            <span className="text-[11px] text-neutral-400 line-through">
+                            <span className="text-xs text-neutral-400 line-through">
                               {formatPrice(product.originalPrice)}
                             </span>
-                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded-[2px]">
+                            <span className="text-2xs font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded-sm">
                               {product.discount || "SAVE"}
                             </span>
                           </>
@@ -391,7 +391,7 @@ export function WishlistDrawer() {
                             value={currentSize}
                             onChange={(e) => handleSizeChange(product.id, e.target.value)}
                             aria-label={`Select size for ${product.name}`}
-                            className="h-8 px-2 py-1 bg-neutral-100 border border-neutral-200 rounded-[2px] text-[11px] font-bold text-[#111111] focus:outline-none focus:border-black cursor-pointer uppercase"
+                            className="h-8 px-2 py-1 bg-neutral-100 border border-neutral-200 rounded-sm text-xs font-bold text-veyro-black focus:outline-none focus:border-black cursor-pointer uppercase"
                           >
                             {product.sizes.map((s) => (
                               <option key={s} value={s}>
@@ -408,10 +408,10 @@ export function WishlistDrawer() {
                         onClick={() => handleMoveSingleToBag(product)}
                         disabled={isMoving}
                         aria-label={`Move ${product.name} to shopping bag`}
-                        className={`flex-1 h-8 px-3 rounded-[2px] text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                        className={`flex-1 h-8 px-3 rounded-sm text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
                           isMoving
                             ? "bg-emerald-600 text-white"
-                            : "bg-[#111111] text-white hover:bg-neutral-800 active:scale-[0.98]"
+                            : "bg-veyro-black text-white hover:bg-neutral-800 active:scale-[0.98]"
                         }`}
                       >
                         {isMoving ? (
@@ -438,14 +438,14 @@ export function WishlistDrawer() {
         {/* DRAWER FOOTER (Batch Action for Selected Items)           */}
         {/* ========================================================= */}
         {items.length > 0 && (
-          <div className="p-5 border-t border-neutral-200 bg-[#fafafa] space-y-2.5">
+          <div className="p-5 border-t border-neutral-200 bg-neutral-50 space-y-2.5">
             <button
               type="button"
               onClick={handleMoveSelectedToBag}
               disabled={selectedCount === 0 || isBatchMoving}
-              className={`w-full h-12 rounded-[2px] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs ${
+              className={`w-full h-12 rounded-sm text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs ${
                 selectedCount > 0 && !isBatchMoving
-                  ? "bg-[#fcd017] text-[#111111] hover:bg-[#eac010] active:scale-[0.99]"
+                  ? "bg-veyro-yellow text-veyro-black hover:bg-veyro-yellow active:scale-[0.99]"
                   : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
               }`}
             >
@@ -474,7 +474,7 @@ export function WishlistDrawer() {
                 <button
                   type="button"
                   onClick={handleRemoveSelected}
-                  className="text-neutral-500 hover:text-red-500 transition-colors cursor-pointer text-[11px] font-medium"
+                  className="text-neutral-500 hover:text-red-500 transition-colors cursor-pointer text-xs font-medium"
                 >
                   Remove Selected ({selectedCount})
                 </button>
@@ -482,7 +482,7 @@ export function WishlistDrawer() {
                 <button
                   type="button"
                   onClick={clearWishlist}
-                  className="text-neutral-500 hover:text-red-500 transition-colors cursor-pointer text-[11px] font-medium"
+                  className="text-neutral-500 hover:text-red-500 transition-colors cursor-pointer text-xs font-medium"
                 >
                   Clear Wishlist
                 </button>
@@ -491,7 +491,7 @@ export function WishlistDrawer() {
               <button
                 type="button"
                 onClick={closeWishlist}
-                className="text-neutral-600 hover:text-black transition-colors cursor-pointer text-[11px] font-bold underline underline-offset-2"
+                className="text-neutral-600 hover:text-black transition-colors cursor-pointer text-xs font-bold underline underline-offset-2"
               >
                 Continue Browsing
               </button>

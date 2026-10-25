@@ -19,13 +19,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     // Minimal border radius, confident font weight, clear focus & hover states
     const baseStyles =
-      "inline-flex items-center justify-center font-medium transition-colors duration-200 select-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black focus-visible:ring-offset-2 rounded-[2px]";
+      "inline-flex items-center justify-center font-medium transition-colors duration-200 select-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black focus-visible:ring-offset-2 rounded-sm";
 
     const variantStyles = {
       primary:
         "bg-veyro-black text-white hover:bg-veyro-charcoal active:bg-black",
       secondary:
-        "bg-veyro-surface-alt text-veyro-black hover:bg-veyro-border active:bg-[#e0e0dc]",
+        "bg-veyro-surface-alt text-veyro-black hover:bg-veyro-border active:bg-neutral-200",
       outline:
         "border border-veyro-black text-veyro-black bg-transparent hover:bg-veyro-black hover:text-white active:bg-veyro-charcoal",
       text: "bg-transparent text-veyro-black hover:text-veyro-muted underline-offset-4 hover:underline p-0 h-auto font-normal rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",

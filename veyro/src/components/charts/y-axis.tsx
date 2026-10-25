@@ -60,7 +60,7 @@ export const YAxis = memo(function YAxis({
         return (
           <div
             key={`${tick.value}-${i}`}
-            className="absolute -translate-y-1/2 text-right text-[11px] font-semibold text-zinc-300 tabular-nums"
+            className="absolute -translate-y-1/2 text-right text-xs font-semibold text-zinc-300 tabular-nums"
             style={{
               left: 4,
               width: Math.max(24, margin.left - 12),

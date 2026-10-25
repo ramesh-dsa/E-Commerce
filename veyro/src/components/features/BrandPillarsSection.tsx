@@ -147,19 +147,19 @@ export function BrandPillarsSection() {
   }, [lenis]);
 
   return (
-    <section className="w-full bg-[#0a0a0a] text-white">
+    <section className="w-full bg-neutral-950 text-white">
       
       {/* Intro Hook (Normal Scroll) */}
-      <div className="w-full py-24 sm:py-40 flex items-center justify-center border-b border-[#333]">
+      <div className="w-full py-24 sm:py-40 flex items-center justify-center border-b border-neutral-800">
         <Container>
           <div className="max-w-3xl mx-auto text-center">
-            <span className="text-xs font-mono tracking-widest text-[#999] mb-8 block uppercase">
+            <span className="text-xs font-mono tracking-widest text-neutral-400 mb-8 block uppercase">
               [ 001 ] The Standard
             </span>
             <h2 className="text-5xl sm:text-7xl lg:text-[6rem] font-bold tracking-tighter uppercase leading-[0.9]">
               Built For<br />The Archive.
             </h2>
-            <p className="mt-8 text-lg sm:text-xl text-[#999] mx-auto leading-relaxed max-w-lg">
+            <p className="mt-8 text-lg sm:text-xl text-neutral-400 mx-auto leading-relaxed max-w-lg">
               We reject seasonal trends. Every piece is engineered with obsessive attention to fabric weight, structural drape, and minimalist utility. 
             </p>
           </div>

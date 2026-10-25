@@ -237,7 +237,7 @@ export default function CartPage() {
                   key={i}
                   className="bg-white border border-neutral-200/90 rounded-xl p-4 sm:p-5 flex gap-4 sm:gap-5"
                 >
-                  <Skeleton className="w-20 h-24 sm:w-24 sm:h-28 rounded-lg shrink-0 bg-[#f4f2ee]" />
+                  <Skeleton className="w-20 h-24 sm:w-24 sm:h-28 rounded-lg shrink-0 bg-veyro-surface-alt" />
                   <div className="flex-1 flex flex-col justify-between py-0.5">
                     <div>
                       <div className="flex justify-between items-start gap-2">
@@ -372,7 +372,7 @@ export default function CartPage() {
 
                         <div className="flex flex-col justify-between flex-1 min-h-[96px] sm:min-h-[112px] min-w-0">
                           <div className="space-y-1">
-                            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">
+                            <span className="text-2xs font-bold text-neutral-400 uppercase tracking-wider block">
                               {liveProduct.subcategoryTag || liveProduct.category}
                             </span>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -385,7 +385,7 @@ export default function CartPage() {
                               {isItemOos && (
                                 <span
                                   aria-label="Sold Out"
-                                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-neutral-100 text-neutral-700 border border-neutral-200/80 shrink-0 select-none"
+                                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-2xs font-semibold uppercase tracking-wider bg-neutral-100 text-neutral-700 border border-neutral-200/80 shrink-0 select-none"
                                 >
                                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
                                   Sold Out
@@ -398,7 +398,7 @@ export default function CartPage() {
                             </div>
 
                             {isItemOos && (
-                              <p className="text-[11px] text-neutral-500 pt-0.5 leading-normal">
+                              <p className="text-xs text-neutral-500 pt-0.5 leading-normal">
                                 Item unavailable — excluded from order total
                               </p>
                             )}
@@ -456,7 +456,7 @@ export default function CartPage() {
                             <div className="text-sm font-semibold text-neutral-400 line-through tabular-nums">
                               {formatPrice(lineTotal)}
                             </div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block mt-0.5">
+                            <span className="text-2xs font-bold uppercase tracking-wider text-neutral-400 block mt-0.5">
                               Excluded
                             </span>
                           </div>
@@ -482,7 +482,7 @@ export default function CartPage() {
                               {formatPrice(lineTotal)}
                             </div>
                             {item.quantity > 1 && (
-                              <div className="text-[11px] text-neutral-400">
+                              <div className="text-xs text-neutral-400">
                                 {formatPrice(item.product.price)} each
                               </div>
                             )}
@@ -541,7 +541,7 @@ export default function CartPage() {
                     <span className="text-xs font-bold text-neutral-900 block tracking-wide uppercase">
                       Archive T-Shirt Bundle Pass
                     </span>
-                    <span className="text-[11px] text-neutral-500">
+                    <span className="text-xs text-neutral-500">
                       Buy any 3 Archive T-Shirts for ₹1,199. Tier savings automatically apply to your bag.
                     </span>
                   </div>
@@ -567,7 +567,7 @@ export default function CartPage() {
                   <h2 className="text-sm font-bold text-neutral-900 tracking-tight">
                     Order Summary
                   </h2>
-                  <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider font-mono">
+                  <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider font-mono">
                     {inStockCount} {inStockCount === 1 ? "Item" : "Items"}
                   </span>
                 </div>
@@ -585,11 +585,11 @@ export default function CartPage() {
                             <span className="font-mono text-xs font-bold text-neutral-900 tracking-wider">
                               {appliedCoupon}
                             </span>
-                            <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
+                            <span className="text-2xs font-bold text-emerald-700 uppercase tracking-wider bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
                               Applied
                             </span>
                           </div>
-                          <p className="text-[11px] text-neutral-500 truncate">
+                          <p className="text-xs text-neutral-500 truncate">
                             Saving {formatPrice(couponDiscount)} on this order
                           </p>
                         </div>
@@ -626,10 +626,10 @@ export default function CartPage() {
                       </form>
 
                       {couponError && (
-                        <p className="text-[11px] text-red-600 pl-1">{couponError}</p>
+                        <p className="text-xs text-red-600 pl-1">{couponError}</p>
                       )}
 
-                      <div className="flex items-center justify-between text-[11px] text-neutral-500 pt-0.5 px-0.5">
+                      <div className="flex items-center justify-between text-xs text-neutral-500 pt-0.5 px-0.5">
                         <span>Available code:</span>
                         <button
                           type="button"
@@ -640,7 +640,7 @@ export default function CartPage() {
                           className="group inline-flex items-center gap-1 font-mono font-bold text-neutral-900 hover:text-emerald-700 active:scale-[0.98] transition-[color,transform] duration-150 ease-out cursor-pointer"
                         >
                           <span>VEYRO10</span>
-                          <span className="text-[10px] text-emerald-700 font-sans font-medium">(10% off)</span>
+                          <span className="text-2xs text-emerald-700 font-sans font-medium">(10% off)</span>
                         </button>
                       </div>
                     </div>
@@ -680,7 +680,7 @@ export default function CartPage() {
                     <span>Estimated Delivery</span>
                     <span>
                       {deliveryFee === 0 ? (
-                        <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">Complimentary</span>
+                        <span className="text-emerald-700 font-bold uppercase tracking-wider text-xs">Complimentary</span>
                       ) : (
                         <span className="font-medium text-neutral-900 tabular-nums">{formatPrice(deliveryFee)}</span>
                       )}
@@ -690,7 +690,7 @@ export default function CartPage() {
                   {giftPackaging.enabled && (
                     <div className="flex justify-between text-neutral-600">
                       <span className="flex items-center gap-1.5 text-neutral-900 font-medium">
-                        <Gift size={13} className="text-slate-400 shrink-0" />
+                        <Gift size={13} className="text-neutral-400 shrink-0" />
                         <span>Signature Gift Packaging</span>
                       </span>
                       <span className="font-semibold text-neutral-900 tabular-nums">+{formatPrice(giftPackagingFee)}</span>
@@ -699,13 +699,13 @@ export default function CartPage() {
 
                   {totalSavings > 0 && (
                     <div className="flex items-center justify-between bg-emerald-50/80 border border-emerald-200/60 px-3 py-2 rounded-lg text-xs mt-1">
-                      <span className="text-[11px] font-semibold text-emerald-800">Total Savings</span>
+                      <span className="text-xs font-semibold text-emerald-800">Total Savings</span>
                       <span className="text-xs font-bold text-emerald-700 tabular-nums">-{formatPrice(totalSavings)}</span>
                     </div>
                   )}
 
                   {hasOosItems && inStockCount > 0 && (
-                    <div className="flex items-start gap-2 bg-neutral-50 border border-neutral-200/70 p-2.5 rounded-lg text-[11px] text-neutral-500 leading-relaxed mt-1">
+                    <div className="flex items-start gap-2 bg-neutral-50 border border-neutral-200/70 p-2.5 rounded-lg text-xs text-neutral-500 leading-relaxed mt-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 mt-1 shrink-0" />
                       <span>
                         <strong className="text-neutral-800 font-semibold">{oosCount} unavailable item{oosCount > 1 ? "s" : ""}</strong> excluded from total and safely saved in your bag.
@@ -716,7 +716,7 @@ export default function CartPage() {
                   <div className="pt-3 border-t border-neutral-100 flex justify-between items-baseline">
                     <div>
                       <span className="text-sm font-bold text-neutral-900 block tracking-tight">Total Payable</span>
-                      <span className="text-[10px] text-neutral-400">All duties and taxes included</span>
+                      <span className="text-2xs text-neutral-400">All duties and taxes included</span>
                     </div>
                     <span className="text-xl font-bold text-neutral-950 tabular-nums tracking-tight">
                       {formatPrice(grandTotal)}
@@ -738,7 +738,7 @@ export default function CartPage() {
                     </button>
                     <div
                       role="alert"
-                      className="mt-2 text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center font-medium"
+                      className="mt-2 text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center font-medium"
                     >
                       Save items to wishlist to get notified when restocked.
                     </div>
@@ -759,7 +759,7 @@ export default function CartPage() {
                 )}
 
                 {/* Trust Badges - Symmetrical Grid */}
-                <div className="pt-3 border-t border-neutral-100 grid grid-cols-2 gap-2 text-[11px] text-neutral-500">
+                <div className="pt-3 border-t border-neutral-100 grid grid-cols-2 gap-2 text-xs text-neutral-500">
                   <div className="flex items-center gap-1.5">
                     <ShieldCheck size={13} className="text-neutral-700 shrink-0" />
                     <span>256-Bit SSL Checkout</span>
@@ -774,8 +774,8 @@ export default function CartPage() {
           </div>
         ) : (
           /* Empty Bag State */
-          <div className="bg-white border border-neutral-200/60 rounded-[24px] p-8 sm:p-10 text-center max-w-lg mx-auto shadow-xl shadow-neutral-200/50">
-            <div className="mx-auto mb-2 max-w-[280px]">
+          <div className="bg-white border border-neutral-200/60 rounded-3xl p-8 sm:p-10 text-center max-w-lg mx-auto shadow-xl shadow-neutral-200/50">
+            <div className="mx-auto mb-2 max-w-xs">
               <Image
                 src="/empty-bag.png"
                 alt="Empty Shopping Bag"

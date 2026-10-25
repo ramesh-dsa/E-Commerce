@@ -339,10 +339,10 @@ function DualPriceSlider({
             >
               <div
                 style={{ height: `${bin.heightPx}px` }}
-                className={`w-[3px] rounded-full transition-all duration-200 ${
+                className={`w-[3px] rounded-full transition-colors duration-200 ${
                   inRange
-                    ? "bg-[#111111] opacity-90 group-hover:opacity-100 group-hover:scale-y-115"
-                    : "bg-[#E2E2E0] opacity-45 group-hover:opacity-80"
+                    ? "bg-veyro-black opacity-90 group-hover:opacity-100 group-hover:scale-y-115"
+                    : "bg-neutral-200 opacity-45 group-hover:opacity-80"
                 }`}
               />
             </div>
@@ -363,13 +363,13 @@ function DualPriceSlider({
       >
         {/* Background Track Rail */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 h-[5px] bg-[#EAEAE8] rounded-full"
+          className="absolute top-1/2 -translate-y-1/2 h-[5px] bg-neutral-200 rounded-full"
           style={{ left: `${INSET}px`, right: `${INSET}px` }}
         />
 
         {/* Active Range Bar */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 h-[5px] bg-[#111111] rounded-full shadow-xs"
+          className="absolute top-1/2 -translate-y-1/2 h-[5px] bg-veyro-black rounded-full shadow-xs"
           style={{
             left: getThumbLeft(leftPct),
             width: `calc((100% - ${INSET * 2}px) * ${(rightPct - leftPct) / 100})`,
@@ -394,7 +394,7 @@ function DualPriceSlider({
           {/* Animated Floating Tooltip */}
           <div
             style={getTooltipStyle(leftPct)}
-            className={`absolute -top-7 px-2 py-0.5 bg-[#111111] text-white text-[10px] font-bold rounded-[4px] shadow-[0_4px_12px_rgba(0,0,0,0.25)] pointer-events-none whitespace-nowrap transition-all duration-150 transform ${
+            className={`absolute -top-7 px-2 py-0.5 bg-veyro-black text-white text-2xs font-bold rounded shadow-[0_4px_12px_rgba(0,0,0,0.25)] pointer-events-none whitespace-nowrap transition-colors duration-150 transform ${
               hoveredThumb === "min" || isDragging === "min"
                 ? "opacity-100 scale-100 -translate-y-1"
                 : "opacity-0 scale-75 translate-y-2 pointer-events-none"
@@ -403,19 +403,19 @@ function DualPriceSlider({
             ₹{localMin.toLocaleString("en-IN")}
             <div
               style={getTooltipArrowStyle(leftPct)}
-              className="absolute -bottom-1 w-1.5 h-1.5 bg-[#111111] rotate-45"
+              className="absolute -bottom-1 w-1.5 h-1.5 bg-veyro-black rotate-45"
             />
           </div>
 
           {/* Thumb Pill */}
           <div
-            className={`w-[20px] h-[20px] rounded-full bg-white border-[2.5px] border-[#111111] shadow-[0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center transition-transform duration-150 ${
+            className={`w-[20px] h-[20px] rounded-full bg-white border-[2.5px] border-veyro-black shadow-[0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center transition-transform duration-150 ${
               isDragging === "min"
                 ? "scale-125 ring-4 ring-black/10 shadow-[0_4px_14px_rgba(0,0,0,0.3)]"
                 : "group-hover:scale-110 group-focus-visible:ring-4 group-focus-visible:ring-black/15"
             }`}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-[#111111]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-veyro-black" />
           </div>
         </div>
 
@@ -437,7 +437,7 @@ function DualPriceSlider({
           {/* Animated Floating Tooltip */}
           <div
             style={getTooltipStyle(rightPct)}
-            className={`absolute -top-7 px-2 py-0.5 bg-[#111111] text-white text-[10px] font-bold rounded-[4px] shadow-[0_4px_12px_rgba(0,0,0,0.25)] pointer-events-none whitespace-nowrap transition-all duration-150 transform ${
+            className={`absolute -top-7 px-2 py-0.5 bg-veyro-black text-white text-2xs font-bold rounded shadow-[0_4px_12px_rgba(0,0,0,0.25)] pointer-events-none whitespace-nowrap transition-colors duration-150 transform ${
               hoveredThumb === "max" || isDragging === "max"
                 ? "opacity-100 scale-100 -translate-y-1"
                 : "opacity-0 scale-75 translate-y-2 pointer-events-none"
@@ -448,26 +448,26 @@ function DualPriceSlider({
               : `₹${localMax.toLocaleString("en-IN")}`}
             <div
               style={getTooltipArrowStyle(rightPct)}
-              className="absolute -bottom-1 w-1.5 h-1.5 bg-[#111111] rotate-45"
+              className="absolute -bottom-1 w-1.5 h-1.5 bg-veyro-black rotate-45"
             />
           </div>
 
           {/* Thumb Pill */}
           <div
-            className={`w-[20px] h-[20px] rounded-full bg-white border-[2.5px] border-[#111111] shadow-[0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center transition-transform duration-150 ${
+            className={`w-[20px] h-[20px] rounded-full bg-white border-[2.5px] border-veyro-black shadow-[0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center transition-transform duration-150 ${
               isDragging === "max"
                 ? "scale-125 ring-4 ring-black/10 shadow-[0_4px_14px_rgba(0,0,0,0.3)]"
                 : "group-hover:scale-110 group-focus-visible:ring-4 group-focus-visible:ring-black/15"
             }`}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-[#111111]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-veyro-black" />
           </div>
         </div>
       </div>
 
       {/* ── 3. Range Min / Max Extremes ────────────────────────────────────── */}
       <div
-        className="flex items-center justify-between text-[11px] font-medium text-[#888888] -mt-1 select-none"
+        className="flex items-center justify-between text-xs font-medium text-neutral-500 -mt-1 select-none"
         style={{ paddingLeft: `${INSET}px`, paddingRight: `${INSET}px` }}
       >
         <span className="tabular-nums">₹{PRICE_MIN.toLocaleString("en-IN")}</span>
@@ -483,10 +483,10 @@ function DualPriceSlider({
               key={p.id}
               type="button"
               onClick={() => applyPreset(p.min, p.max)}
-              className={`py-1.5 px-0.5 text-center rounded-[5px] text-[10px] sm:text-[10.5px] font-semibold tracking-tight whitespace-nowrap transition-all duration-150 cursor-pointer ${
+              className={`py-1.5 px-0.5 text-center rounded-md text-2xs sm:text-[10.5px] font-semibold tracking-tight whitespace-nowrap transition-colors duration-150 cursor-pointer ${
                 isPresetActive
-                  ? "bg-[#111111] text-white shadow-xs"
-                  : "bg-[#F5F5F3] text-[#666666] hover:bg-[#EAEAE8] hover:text-[#111111]"
+                  ? "bg-veyro-black text-white shadow-xs"
+                  : "bg-neutral-50 text-neutral-600 hover:bg-neutral-200 hover:text-veyro-black"
               }`}
             >
               {p.label}
@@ -497,21 +497,21 @@ function DualPriceSlider({
 
       {/* ── 5. Value Display Boxes ─────────────────────────────────────────── */}
       <div className="flex items-center gap-2 pt-1">
-        <div className="flex-1 flex items-center justify-between py-1.5 px-2.5 border border-[#E5E5E3] rounded-[6px] bg-[#FAFAF9] text-[#111111]">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#999999]">Min</span>
+        <div className="flex-1 flex items-center justify-between py-1.5 px-2.5 border border-neutral-200 rounded-md bg-neutral-50 text-veyro-black">
+          <span className="text-2xs uppercase font-bold tracking-wider text-veyro-muted">Min</span>
           <div className="flex items-center gap-0.5">
-            <span className="text-[#888888] text-[11px] font-medium">₹</span>
-            <span className="text-[12px] font-semibold tabular-nums">
+            <span className="text-neutral-500 text-xs font-medium">₹</span>
+            <span className="text-xs font-semibold tabular-nums">
               {localMin.toLocaleString("en-IN")}
             </span>
           </div>
         </div>
-        <span className="text-[#CCCCCC] font-light text-[11px] shrink-0">—</span>
-        <div className="flex-1 flex items-center justify-between py-1.5 px-2.5 border border-[#E5E5E3] rounded-[6px] bg-[#FAFAF9] text-[#111111]">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#999999]">Max</span>
+        <span className="text-neutral-400 font-light text-xs shrink-0">—</span>
+        <div className="flex-1 flex items-center justify-between py-1.5 px-2.5 border border-neutral-200 rounded-md bg-neutral-50 text-veyro-black">
+          <span className="text-2xs uppercase font-bold tracking-wider text-veyro-muted">Max</span>
           <div className="flex items-center gap-0.5">
-            <span className="text-[#888888] text-[11px] font-medium">₹</span>
-            <span className="text-[12px] font-semibold tabular-nums">
+            <span className="text-neutral-500 text-xs font-medium">₹</span>
+            <span className="text-xs font-semibold tabular-nums">
               {localMax >= PRICE_MAX
                 ? `${PRICE_MAX.toLocaleString("en-IN")}+`
                 : localMax.toLocaleString("en-IN")}
@@ -554,24 +554,24 @@ function TactileOptionRow({
   return (
     <label
       htmlFor={id}
-      className={`group flex items-center justify-between w-full px-2 py-[7px] rounded-[6px] cursor-pointer select-none transition-all duration-200 active:scale-[0.98] ${
+      className={`group flex items-center justify-between w-full px-2 py-[7px] rounded-md cursor-pointer select-none transition-transform duration-200 active:scale-[0.98] ${
         checked
-          ? "bg-[#FFF8D6] text-[#111111]"
-          : "hover:bg-[#F7F7F5] text-[#222222]"
+          ? "bg-amber-50 text-veyro-black"
+          : "hover:bg-neutral-50 text-neutral-900"
       }`}
     >
       <div className="flex items-center gap-3 min-w-0">
         <div
           ref={checkboxRef}
-          className={`h-[15px] w-[15px] shrink-0 rounded-[3px] border flex items-center justify-center transition-colors duration-200 ${
+          className={`h-[15px] w-[15px] shrink-0 rounded-sm border flex items-center justify-center transition-colors duration-200 ${
             checked
-              ? "bg-[#FFD400] border-[#E8C200]"
-              : "bg-white border-[#CDCDCD] group-hover:border-[#999999]"
+              ? "bg-veyro-yellow border-amber-400"
+              : "bg-white border-neutral-300 group-hover:border-veyro-muted"
           }`}
           aria-hidden="true"
         >
           {checked && (
-            <svg width="9" height="7" viewBox="0 0 10 8" fill="none" className="text-[#111111]">
+            <svg width="9" height="7" viewBox="0 0 10 8" fill="none" className="text-veyro-black">
               <path d="M1.5 4L3.8 6.5L8.5 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           )}
@@ -586,13 +586,13 @@ function TactileOptionRow({
           aria-checked={checked}
         />
 
-        <div className="relative h-[42px] w-[42px] shrink-0 rounded-[6px] bg-[#F5F5F3] overflow-hidden flex items-center justify-center border border-[#EBEBEB]">
+        <div className="relative h-[42px] w-[42px] shrink-0 rounded-md bg-neutral-50 overflow-hidden flex items-center justify-center border border-neutral-200">
           <Image src={imageSrc} alt={label} fill sizes="42px" className="object-contain p-0.5" unoptimized />
         </div>
 
         <span
-          className={`text-[13px] leading-snug truncate transition-colors duration-150 ${
-            checked ? "font-medium text-[#111111]" : "font-normal text-[#333333] group-hover:text-[#111111]"
+          className={`text-sm leading-snug truncate transition-colors duration-150 ${
+            checked ? "font-medium text-veyro-black" : "font-normal text-neutral-800 group-hover:text-veyro-black"
           }`}
         >
           {label}
@@ -600,7 +600,7 @@ function TactileOptionRow({
       </div>
 
       {count !== undefined && (
-        <span className={`text-[12.5px] ml-2 shrink-0 tabular-nums ${checked ? "text-[#555555] font-medium" : "text-[#999999]"}`}>
+        <span className={`text-[12.5px] ml-2 shrink-0 tabular-nums ${checked ? "text-neutral-600 font-medium" : "text-veyro-muted"}`}>
           ({count})
         </span>
       )}
@@ -625,7 +625,7 @@ function FilterGroupSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="py-3 border-b border-[#F0F0EE] last:border-b-0">
+    <div className="py-3 border-b border-neutral-200 last:border-b-0">
       <div className="flex items-center justify-between w-full">
         <button
           type="button"
@@ -633,8 +633,8 @@ function FilterGroupSection({
           aria-expanded={isOpen}
           className="flex items-center gap-2 py-0.5 text-left cursor-pointer group flex-1"
         >
-          <span className="text-[#555555] shrink-0 transition-colors duration-150 group-hover:text-[#333333]">{icon}</span>
-          <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[#111111] group-hover:text-[#333333] transition-colors duration-150">
+          <span className="text-neutral-600 shrink-0 transition-colors duration-150 group-hover:text-neutral-800">{icon}</span>
+          <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-veyro-black group-hover:text-neutral-800 transition-colors duration-150">
             {title}
           </span>
         </button>
@@ -645,7 +645,7 @@ function FilterGroupSection({
             type="button"
             onClick={onToggle}
             aria-label={`Toggle ${title}`}
-            className="p-1 text-[#999999] hover:text-[#555555] transition-colors duration-150 cursor-pointer"
+            className="p-1 text-veyro-muted hover:text-neutral-600 transition-colors duration-150 cursor-pointer"
           >
             <ChevronDown
               size={14}
@@ -756,20 +756,20 @@ export function FootwearFilterSidebar({
   );
 
   const filterContent = (
-    <div className="flex flex-col text-[#111111] select-none">
+    <div className="flex flex-col text-veyro-black select-none">
       {/* ── HEADER ────────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between pb-3 mb-1 border-b border-[#E8E8E6]">
+      <div className="flex items-center justify-between pb-3 mb-1 border-b border-neutral-200">
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#111111]" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-veyro-black" aria-hidden="true">
             <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
             <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
             <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
             <line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" /><line x1="17" y1="16" x2="23" y2="16" />
           </svg>
-          <h2 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-[#111111]">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-veyro-black">
             Filters
             {activeFilterCount > 0 && (
-              <span className="ml-1.5 text-[11px] font-normal text-[#999999] tabular-nums">({activeFilterCount})</span>
+              <span className="ml-1.5 text-xs font-normal text-veyro-muted tabular-nums">({activeFilterCount})</span>
             )}
           </h2>
         </div>
@@ -778,7 +778,7 @@ export function FootwearFilterSidebar({
           onClick={activeFilterCount > 0 ? onClearAll : undefined}
           disabled={activeFilterCount === 0}
           className={`text-[11.5px] font-normal transition-colors duration-150 cursor-pointer ${
-            activeFilterCount > 0 ? "text-[#999999] hover:text-[#111111]" : "text-[#D5D5D5] cursor-default"
+            activeFilterCount > 0 ? "text-veyro-muted hover:text-veyro-black" : "text-neutral-400 cursor-default"
           }`}
           aria-label="Clear all applied filters"
         >
@@ -847,14 +847,14 @@ export function FootwearFilterSidebar({
                 type="button"
                 onClick={() => onToggleSize(item.size)}
                 title={`${item.size} (${count} available)`}
-                className={`filter-btn-press py-2 px-1 rounded-[4px] flex flex-col items-center justify-center cursor-pointer select-none ${
+                className={`filter-btn-press py-2 px-1 rounded flex flex-col items-center justify-center cursor-pointer select-none ${
                   isSelected
-                    ? "bg-[#FFD400] text-[#111111] font-semibold border border-[#E8C200] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
-                    : "bg-[#F5F5F3] text-[#333333] border border-[#EBEBEB] hover:border-[#CCCCCC] hover:bg-[#EFEFED]"
+                    ? "bg-veyro-yellow text-veyro-black font-semibold border border-amber-400 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+                    : "bg-neutral-50 text-neutral-800 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-100"
                 }`}
               >
                 <span className="text-[11.5px] font-semibold leading-none tracking-wide">{item.size}</span>
-                <span className={`text-[9px] tabular-nums leading-none mt-1 ${isSelected ? "text-[#333333]" : "text-[#999999]"}`}>
+                <span className={`text-[9px] tabular-nums leading-none mt-1 ${isSelected ? "text-neutral-800" : "text-veyro-muted"}`}>
                   {count}
                 </span>
               </button>
@@ -884,22 +884,22 @@ export function FootwearFilterSidebar({
                   aria-label={`Filter by ${col.name}`}
                   aria-pressed={isSelected}
                   className={`relative h-[26px] w-[26px] rounded-full cursor-pointer filter-btn-press mx-auto ${
-                    isSelected ? "ring-[1.5px] ring-[#111111] ring-offset-[3px] scale-[1.05]" : "hover:scale-110"
-                  } ${col.border ? "border border-[#DCDCDC]" : ""}`}
+                    isSelected ? "ring-[1.5px] ring-veyro-black ring-offset-[3px] scale-[1.05]" : "hover:scale-110"
+                  } ${col.border ? "border border-neutral-200" : ""}`}
                   style={{ backgroundColor: col.hex }}
                 />
               );
             })}
           </div>
           <div
-            className="overflow-hidden transition-all duration-300 ease-out"
+            className="overflow-hidden transition-colors duration-300 ease-out"
             style={{
               maxHeight: activeColorNames.length > 0 ? "28px" : "0px",
               opacity: activeColorNames.length > 0 ? 1 : 0,
               marginTop: activeColorNames.length > 0 ? "8px" : "0px",
             }}
           >
-            <p className="text-[11.5px] font-normal text-[#777777]">{activeColorNames.join(", ")}</p>
+            <p className="text-[11.5px] font-normal text-neutral-500">{activeColorNames.join(", ")}</p>
           </div>
         </div>
       </FilterGroupSection>
@@ -918,7 +918,7 @@ export function FootwearFilterSidebar({
                 e.stopPropagation();
                 onChangePriceRange(FOOTWEAR_PRICE_MIN, FOOTWEAR_PRICE_MAX, true);
               }}
-              className="text-[10px] uppercase font-bold tracking-wider text-[#888888] hover:text-[#111111] transition-colors cursor-pointer"
+              className="text-2xs uppercase font-bold tracking-wider text-neutral-500 hover:text-veyro-black transition-colors cursor-pointer"
             >
               Reset
             </button>
@@ -940,7 +940,7 @@ export function FootwearFilterSidebar({
       {/* ── DESKTOP STICKY SIDEBAR ─────────────────────────────────────────── */}
       <aside
         aria-label="Footwear Category Filters"
-        className="hidden lg:block w-[280px] xl:w-[300px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain luxury-sidebar-scrollbar bg-white rounded-[12px] border border-[#EAEAE8] p-5 shadow-[0_1px_12px_rgba(0,0,0,0.04)]"
+        className="hidden lg:block w-[280px] xl:w-[300px] shrink-0 self-start sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain luxury-sidebar-scrollbar bg-white rounded-xl border border-neutral-200 p-5 shadow-[0_1px_12px_rgba(0,0,0,0.04)]"
       >
         {filterContent}
       </aside>
@@ -957,27 +957,27 @@ export function FootwearFilterSidebar({
             role="dialog"
             aria-modal="true"
             aria-label="Filter Footwear"
-            className="relative flex w-full max-w-xs flex-col bg-white text-[#111111] shadow-2xl z-10 animate-drawer-in h-[100dvh] max-h-[100dvh] overflow-hidden ml-auto overscroll-contain"
+            className="relative flex w-full max-w-xs flex-col bg-white text-veyro-black shadow-2xl z-10 animate-drawer-in h-[100dvh] max-h-[100dvh] overflow-hidden ml-auto overscroll-contain"
           >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#EAEAE8] shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 shrink-0">
               <div className="flex items-center gap-2">
-                <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-[#111111]">Filters</span>
+                <span className="text-sm font-semibold uppercase tracking-[0.08em] text-veyro-black">Filters</span>
                 {activeFilterCount > 0 && (
-                  <span className="px-1.5 py-0.5 bg-[#FFD400] text-[#111111] text-[10px] font-bold rounded-[3px] tabular-nums">{activeFilterCount}</span>
+                  <span className="px-1.5 py-0.5 bg-veyro-yellow text-veyro-black text-2xs font-bold rounded-sm tabular-nums">{activeFilterCount}</span>
                 )}
               </div>
-              <button type="button" onClick={onCloseMobile} className="p-1 text-[#777777] hover:text-[#111111] transition-colors duration-150 cursor-pointer" aria-label="Close filters">
+              <button type="button" onClick={onCloseMobile} className="p-1 text-neutral-500 hover:text-veyro-black transition-colors duration-150 cursor-pointer" aria-label="Close filters">
                 <X size={20} strokeWidth={1.5} />
               </button>
             </div>
             <div className="overflow-y-auto px-5 py-4 flex-1 min-h-0 overscroll-contain luxury-sidebar-scrollbar">{filterContent}</div>
-            <div className="p-4 border-t border-[#EAEAE8] bg-[#FAFAF8] flex items-center gap-3 shrink-0">
+            <div className="p-4 border-t border-neutral-200 bg-veyro-surface-alt flex items-center gap-3 shrink-0">
               {activeFilterCount > 0 && (
-                <button type="button" onClick={onClearAll} className="filter-btn-press px-4 py-2.5 border border-[#111111] text-[11px] font-semibold uppercase tracking-wider text-[#111111] hover:bg-[#F5F5F3] rounded-[4px] cursor-pointer">
+                <button type="button" onClick={onClearAll} className="filter-btn-press px-4 py-2.5 border border-veyro-black text-xs font-semibold uppercase tracking-wider text-veyro-black hover:bg-neutral-50 rounded cursor-pointer">
                   Clear
                 </button>
               )}
-              <button type="button" onClick={onCloseMobile} className="filter-btn-press flex-1 py-2.5 bg-[#111111] hover:bg-[#222222] text-white text-[11px] font-semibold uppercase tracking-[0.08em] rounded-[4px] cursor-pointer text-center">
+              <button type="button" onClick={onCloseMobile} className="filter-btn-press flex-1 py-2.5 bg-veyro-black hover:bg-neutral-900 text-white text-xs font-semibold uppercase tracking-[0.08em] rounded cursor-pointer text-center">
                 Show {totalFilteredCount} Silhouettes
               </button>
             </div>

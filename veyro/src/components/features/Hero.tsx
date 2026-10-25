@@ -254,10 +254,10 @@ export function Hero() {
               className="p-2 cursor-pointer group focus-visible:outline-none"
             >
               <div
-                className={`transition-all duration-200 rounded-full mx-auto ${
+                className={`transition-colors duration-200 rounded-full mx-auto ${
                   startIndex === index
-                    ? "w-5 h-2 bg-[#111111]"
-                    : "w-2 h-2 bg-[#d1d1d1] group-hover:bg-[#999999]"
+                    ? "w-5 h-2 bg-veyro-black"
+                    : "w-2 h-2 bg-neutral-300 group-hover:bg-veyro-muted"
                 }`}
               />
             </button>

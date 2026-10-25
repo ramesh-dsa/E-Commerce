@@ -74,7 +74,7 @@ export function Toast({
               : "bottom-6 sm:bottom-8 inset-x-4 sm:inset-x-auto sm:right-6 sm:left-auto"
           } ${className}`}
         >
-          <div className="bg-[#0c0d0e]/95 backdrop-blur-md border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] text-neutral-100 rounded-xl sm:rounded-2xl px-4 py-3 sm:px-4.5 sm:py-3.5 flex items-center justify-between gap-3 text-xs sm:text-sm font-medium">
+          <div className="bg-neutral-950/95 backdrop-blur-md border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] text-neutral-100 rounded-xl sm:rounded-2xl px-4 py-3 sm:px-4.5 sm:py-3.5 flex items-center justify-between gap-3 text-xs sm:text-sm font-medium">
             {/* Left: Icon & Message */}
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {variant === "danger" && (

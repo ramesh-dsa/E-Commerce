@@ -147,7 +147,7 @@ export function NewArrivalsSection() {
         <div
           role="tablist"
           aria-label="New arrivals categories"
-          className="flex items-center gap-4 sm:gap-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 mb-8 sm:mb-10 border-b border-[#eae6df] scrollbar-none"
+          className="flex items-center gap-4 sm:gap-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 mb-8 sm:mb-10 border-b border-neutral-200 scrollbar-none"
         >
           {tabs.map((tab, index) => {
             const isActive = activeTab === tab;
@@ -165,7 +165,7 @@ export function NewArrivalsSection() {
                 tabIndex={isActive ? 0 : -1}
                 onClick={() => handleTabSelect(tab, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className={`relative pb-3 text-[11px] sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
+                className={`relative pb-3 text-xs sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase transition-colors duration-200 cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-veyro-black ${
                   isActive ? "text-veyro-black" : "text-neutral-400 hover:text-neutral-700"
                 }`}
               >

@@ -335,7 +335,7 @@ export default function FaqPage() {
       initial={shouldReduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.25 }}
-      className="min-h-screen bg-white text-[#101828] relative overflow-hidden"
+      className="min-h-screen bg-white text-neutral-900 relative overflow-hidden"
     >
       {/* ── CRISP ARCHITECTURAL GRID (Hero area only, smoothly fading into clean white canvas) ── */}
       <div
@@ -356,7 +356,7 @@ export default function FaqPage() {
         {/* ── 1. HEADER (Curved Astroid Star + Bold Title + Subtitle) ────── */}
         <div className="max-w-2xl mx-auto text-center flex flex-col items-center">
           {/* Elegant Couture 4-Point Star (Exact match to Image 1) */}
-          <div className="mb-5 flex items-center justify-center text-[#101828]" aria-hidden="true">
+          <div className="mb-5 flex items-center justify-center text-neutral-900" aria-hidden="true">
             <svg
               viewBox="0 0 32 32"
               fill="currentColor"
@@ -367,12 +367,12 @@ export default function FaqPage() {
           </div>
 
           {/* Bold Heading (Exact styling from Image 1) */}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#101828]">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-900">
             Frequently asked questions
           </h1>
 
           {/* Subtitle (Clean, balanced 2-line alignment) */}
-          <p className="mt-4 text-base sm:text-[17px] text-[#475467] leading-relaxed max-w-xl sm:max-w-2xl mx-auto text-center">
+          <p className="mt-4 text-base sm:text-[17px] text-neutral-800 leading-relaxed max-w-xl sm:max-w-2xl mx-auto text-center">
             <span className="block sm:inline">
               These are the most commonly asked questions about VEYRO orders and services.
             </span>
@@ -392,7 +392,7 @@ export default function FaqPage() {
                 initial="rest"
                 whileHover="hover"
                 animate="rest"
-                className="group/hero-link inline-block relative font-semibold text-[#101828] hover:text-veyro-accent transition-colors cursor-pointer"
+                className="group/hero-link inline-block relative font-semibold text-neutral-900 hover:text-veyro-accent transition-colors cursor-pointer"
               >
                 <span>Chat to our friendly team!</span>
                 {/* Elegant Hand-drawn Curved Wave Flourish */}
@@ -439,7 +439,7 @@ export default function FaqPage() {
             <Search
               size={18}
               strokeWidth={2}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#667085] pointer-events-none z-10"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none z-10"
               aria-hidden="true"
             />
             <input
@@ -448,14 +448,14 @@ export default function FaqPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search questions or keywords..."
               aria-label="Search questions"
-              className="w-full bg-white/90 backdrop-blur-xs border border-[#d0d5dd] text-[#101828] placeholder:text-[#667085] pl-11 pr-10 py-2.5 sm:py-3 text-sm rounded-lg shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#101828] focus:border-[#101828] transition-all"
+              className="w-full bg-white/90 backdrop-blur-xs border border-neutral-300 text-neutral-900 placeholder:text-neutral-500 pl-11 pr-10 py-2.5 sm:py-3 text-sm rounded-lg shadow-2xs focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-neutral-900 transition-colors"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
                 aria-label="Clear search"
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#101828] p-1 transition-colors cursor-pointer z-10"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-900 p-1 transition-colors cursor-pointer z-10"
               >
                 <X size={16} strokeWidth={2} />
               </button>
@@ -476,10 +476,10 @@ export default function FaqPage() {
                       setOpenId(null);
                     }
                   }}
-                  className={`relative px-4 py-1.5 rounded-full text-xs sm:text-[13px] font-medium transition-colors duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#101828] focus-visible:ring-offset-2 ${
+                  className={`relative px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 ${
                     isActive
                       ? "text-white font-semibold"
-                      : "text-[#475467] hover:text-[#101828]"
+                      : "text-neutral-800 hover:text-neutral-900"
                   }`}
                 >
                   {/* Inactive Tab Base Border/Background */}
@@ -487,7 +487,7 @@ export default function FaqPage() {
                     className={`absolute inset-0 rounded-full border transition-colors duration-200 pointer-events-none ${
                       isActive
                         ? "border-transparent bg-transparent"
-                        : "border-[#e4e7ec] bg-white/90 hover:border-[#d0d5dd]"
+                        : "border-neutral-200 bg-white/90 hover:border-neutral-300"
                     }`}
                     aria-hidden="true"
                   />
@@ -496,7 +496,7 @@ export default function FaqPage() {
                   {isActive && (
                     <motion.div
                       layoutId="activeFaqTab"
-                      className="absolute inset-0 bg-[#101828] rounded-full shadow-xs pointer-events-none"
+                      className="absolute inset-0 bg-neutral-900 rounded-full shadow-xs pointer-events-none"
                       style={{ zIndex: 1 }}
                       transition={
                         shouldReduceMotion
@@ -520,8 +520,8 @@ export default function FaqPage() {
           </div>
         </div>
 
-        {/* ── 2. ACCORDION STREAM (Compact max-w-[740px] matching Image 1) ── */}
-        <div className="max-w-[740px] mx-auto mt-12 sm:mt-14 min-h-[420px]">
+        {/* ── 2. ACCORDION STREAM (Compact max-w-3xl matching Image 1) ── */}
+        <div className="max-w-3xl mx-auto mt-12 sm:mt-14 min-h-[420px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -529,7 +529,7 @@ export default function FaqPage() {
               animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="divide-y divide-[#eaecf0]"
+              className="divide-y divide-neutral-200"
             >
               {filteredFaqs.map((item) => {
                 const isOpen = openId === item.id;
@@ -547,33 +547,33 @@ export default function FaqPage() {
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${item.id}`}
                       id={`faq-question-${item.id}`}
-                      className="w-full flex items-center justify-between gap-4 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#101828] rounded-lg"
+                      className="w-full flex items-center justify-between gap-4 text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 rounded-lg"
                     >
                       <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
                         {/* Rounded Icon Box (Exact match to Image 1) */}
                         <div
-                          className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center shrink-0 transition-all duration-200 ${
+                          className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center shrink-0 transition-colors duration-200 ${
                             isOpen
-                              ? "bg-[#101828] text-white border-[#101828] shadow-xs"
-                              : "bg-white text-[#344054] border-[#eaecf0] shadow-2xs group-hover:border-[#d0d5dd] group-hover:bg-[#fafafa]"
+                              ? "bg-neutral-900 text-white border-neutral-900 shadow-xs"
+                              : "bg-white text-neutral-800 border-neutral-200 shadow-2xs group-hover:border-neutral-300 group-hover:bg-neutral-50"
                           }`}
                         >
                           <IconComponent size={18} strokeWidth={1.8} />
                         </div>
 
                         {/* Question Text */}
-                        <span className="text-base sm:text-[17px] font-semibold text-[#101828] leading-snug">
+                        <span className="text-base sm:text-[17px] font-semibold text-neutral-900 leading-snug">
                           {item.question}
                         </span>
                       </div>
 
                       {/* Right Chevron Toggle */}
-                      <span className="p-1 text-[#667085] group-hover:text-[#101828] transition-colors shrink-0">
+                      <span className="p-1 text-neutral-500 group-hover:text-neutral-900 transition-colors shrink-0">
                         <ChevronDown
                           size={18}
                           strokeWidth={2}
                           className={`transition-transform duration-300 ease-out ${
-                            isOpen ? "rotate-180 text-[#101828]" : "rotate-0"
+                            isOpen ? "rotate-180 text-neutral-900" : "rotate-0"
                           }`}
                         />
                       </span>
@@ -594,17 +594,17 @@ export default function FaqPage() {
                           className="overflow-hidden"
                         >
                           <div className="pt-3 pl-0 sm:pl-[60px] pr-2 pb-1">
-                            <p className="text-sm sm:text-base text-[#475467] leading-relaxed">
+                            <p className="text-sm sm:text-base text-neutral-800 leading-relaxed">
                               {item.answer}
                             </p>
                             {item.actionHref && item.actionLabel && (
                               <Link
                                 href={item.actionHref}
-                                className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold text-[#101828] hover:text-veyro-accent transition-colors group/link cursor-pointer"
+                                className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold text-neutral-900 hover:text-veyro-accent transition-colors group/link cursor-pointer"
                               >
                                 <span className="relative">
                                   {item.actionLabel}
-                                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-all duration-200 ease-out group-hover/link:w-full" />
+                                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-[width] duration-200 ease-out group-hover/link:w-full" />
                                 </span>
                                 <ArrowRight
                                   size={14}
@@ -623,9 +623,9 @@ export default function FaqPage() {
               {/* Empty State */}
               {filteredFaqs.length === 0 && (
                 <div className="py-16 text-center">
-                  <HelpCircle size={32} className="mx-auto text-[#98a2b3] mb-3" />
-                  <h3 className="text-base font-semibold text-[#101828]">No questions found</h3>
-                  <p className="text-sm text-[#475467] mt-1">
+                  <HelpCircle size={32} className="mx-auto text-neutral-400 mb-3" />
+                  <h3 className="text-base font-semibold text-neutral-900">No questions found</h3>
+                  <p className="text-sm text-neutral-800 mt-1">
                     We couldn&apos;t find any answers matching &ldquo;{searchQuery}&rdquo;.
                   </p>
                   <button
@@ -634,11 +634,11 @@ export default function FaqPage() {
                       setSearchQuery("");
                       setActiveTab("all");
                     }}
-                    className="mt-4 group inline-flex items-center text-sm font-semibold text-[#101828] hover:text-veyro-accent cursor-pointer transition-colors"
+                    className="mt-4 group inline-flex items-center text-sm font-semibold text-neutral-900 hover:text-veyro-accent cursor-pointer transition-colors"
                   >
                     <span className="relative">
                       Clear search and reset
-                      <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-all duration-200 ease-out group-hover:w-full" />
+                      <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-[width] duration-200 ease-out group-hover:w-full" />
                     </span>
                   </button>
                 </div>
@@ -650,12 +650,12 @@ export default function FaqPage() {
         {/* ── 3. DIRECT CONCIERGE (Matches crisp architectural light aesthetic) ─────── */}
         <div
           id="contact-team"
-          className="mt-20 sm:mt-24 max-w-[740px] mx-auto pt-14 border-t border-[#eaecf0] text-center scroll-mt-20 sm:scroll-mt-24"
+          className="mt-20 sm:mt-24 max-w-3xl mx-auto pt-14 border-t border-neutral-200 text-center scroll-mt-20 sm:scroll-mt-24"
         >
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#101828]">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
             Still have questions?
           </h2>
-          <p className="mt-2 text-sm sm:text-base text-[#475467] max-w-lg mx-auto leading-relaxed">
+          <p className="mt-2 text-sm sm:text-base text-neutral-800 max-w-lg mx-auto leading-relaxed">
             Can&apos;t find what you&apos;re looking for? Reach out directly to our concierge team for custom sizing, order updates, or styling advice.
           </p>
 
@@ -666,27 +666,27 @@ export default function FaqPage() {
               href="https://wa.me/917305000000?text=Hi%20VEYRO%20Support,%20I%20have%20a%20question%20regarding%20my%20order."
               target="_blank"
               rel="noopener noreferrer"
-              className="group p-6 rounded-2xl border border-[#eaecf0] bg-white hover:border-[#101828] hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 ease-out flex flex-col justify-between"
+              className="group p-6 rounded-2xl border border-neutral-200 bg-white hover:border-neutral-900 hover:-translate-y-0.5 hover:shadow-md transition duration-300 ease-out flex flex-col justify-between"
             >
               <div>
-                <div className="w-11 h-11 rounded-xl border border-[#eaecf0] bg-[#fafafa] group-hover:bg-[#101828] group-hover:text-white group-hover:scale-105 transition-all duration-300 ease-out flex items-center justify-center text-[#101828] mb-4 shadow-2xs">
+                <div className="w-11 h-11 rounded-xl border border-neutral-200 bg-neutral-50 group-hover:bg-neutral-900 group-hover:text-white group-hover:scale-105 transition duration-300 ease-out flex items-center justify-center text-neutral-900 mb-4 shadow-2xs">
                   <MessageSquare size={18} strokeWidth={1.8} />
                 </div>
-                <div className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider mb-1">
+                <div className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">
                   Fastest Response &bull; ~5 mins
                 </div>
-                <h3 className="text-base sm:text-[17px] font-bold text-[#101828]">
+                <h3 className="text-base sm:text-[17px] font-bold text-neutral-900">
                   Chat on WhatsApp
                 </h3>
-                <p className="mt-1.5 text-xs sm:text-sm text-[#475467] leading-relaxed">
+                <p className="mt-1.5 text-xs sm:text-sm text-neutral-800 leading-relaxed">
                   Direct line to our stylists for sizing consultations, urgent address corrections, and dispatch expediting.
                 </p>
               </div>
 
-              <div className="mt-6 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#101828] group-hover:text-veyro-accent transition-colors">
+              <div className="mt-6 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-neutral-900 group-hover:text-veyro-accent transition-colors">
                 <span className="relative">
                   Open WhatsApp
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-all duration-200 ease-out group-hover:w-full" />
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-[width] duration-200 ease-out group-hover:w-full" />
                 </span>
                 <ArrowRight
                   size={14}
@@ -698,27 +698,27 @@ export default function FaqPage() {
             {/* Card 2: Email Desk */}
             <a
               href="mailto:support@veyro.in"
-              className="group p-6 rounded-2xl border border-[#eaecf0] bg-white hover:border-[#101828] hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 ease-out flex flex-col justify-between"
+              className="group p-6 rounded-2xl border border-neutral-200 bg-white hover:border-neutral-900 hover:-translate-y-0.5 hover:shadow-md transition duration-300 ease-out flex flex-col justify-between"
             >
               <div>
-                <div className="w-11 h-11 rounded-xl border border-[#eaecf0] bg-[#fafafa] group-hover:bg-[#101828] group-hover:text-white group-hover:scale-105 transition-all duration-300 ease-out flex items-center justify-center text-[#101828] mb-4 shadow-2xs">
+                <div className="w-11 h-11 rounded-xl border border-neutral-200 bg-neutral-50 group-hover:bg-neutral-900 group-hover:text-white group-hover:scale-105 transition duration-300 ease-out flex items-center justify-center text-neutral-900 mb-4 shadow-2xs">
                   <Mail size={18} strokeWidth={1.8} />
                 </div>
-                <div className="text-[11px] font-semibold text-[#667085] uppercase tracking-wider mb-1">
+                <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1">
                   Email Desk &bull; 2–4 hours
                 </div>
-                <h3 className="text-base sm:text-[17px] font-bold text-[#101828]">
+                <h3 className="text-base sm:text-[17px] font-bold text-neutral-900">
                   Send us an Email
                 </h3>
-                <p className="mt-1.5 text-xs sm:text-sm text-[#475467] leading-relaxed">
+                <p className="mt-1.5 text-xs sm:text-sm text-neutral-800 leading-relaxed">
                   Formal inquiries, invoice requests, returns authorization, and collaborative brand partnerships.
                 </p>
               </div>
 
-              <div className="mt-6 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#101828] group-hover:text-veyro-accent transition-colors">
+              <div className="mt-6 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-neutral-900 group-hover:text-veyro-accent transition-colors">
                 <span className="relative">
                   support@veyro.in
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-all duration-200 ease-out group-hover:w-full" />
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-[width] duration-200 ease-out group-hover:w-full" />
                 </span>
                 <ArrowRight
                   size={14}
@@ -729,20 +729,20 @@ export default function FaqPage() {
           </div>
 
           {/* Self-Service Order Link */}
-          <div className="mt-8 pt-6 border-t border-[#f2f4f7] flex items-center justify-center">
+          <div className="mt-8 pt-6 border-t border-neutral-200 flex items-center justify-center">
             <Link
               href="/orders"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#475467] hover:text-[#101828] font-medium transition-colors group cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm text-neutral-800 hover:text-neutral-900 font-medium transition-colors group cursor-pointer"
             >
               <Package
                 size={16}
-                className="text-[#667085] group-hover:text-[#101828] transition-transform duration-200 group-hover:scale-110"
+                className="text-neutral-500 group-hover:text-neutral-900 transition-transform duration-200 group-hover:scale-110"
               />
               <span>Looking for an existing package?</span>
-              <span className="inline-flex items-center gap-1.5 font-semibold text-[#101828] group-hover:text-veyro-accent transition-colors">
+              <span className="inline-flex items-center gap-1.5 font-semibold text-neutral-900 group-hover:text-veyro-accent transition-colors">
                 <span className="relative">
                   Track live order status
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-all duration-200 ease-out group-hover:w-full" />
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-veyro-accent transition-[width] duration-200 ease-out group-hover:w-full" />
                 </span>
                 <ArrowRight
                   size={14}

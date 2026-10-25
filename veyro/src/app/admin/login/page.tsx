@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 export default function AdminLoginPage() {
-  const { adminLogin, isAdmin } = useAdmin();
+  const { adminLogin, adminLogout } = useAdmin();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -57,10 +57,10 @@ export default function AdminLoginPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Redirect if already authenticated
+  // Reset any active admin session when visiting /admin/login so the login page is always displayed
   useEffect(() => {
-    if (isAdmin) router.replace("/admin");
-  }, [isAdmin, router]);
+    adminLogout();
+  }, [adminLogout]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

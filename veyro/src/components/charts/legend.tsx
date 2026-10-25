@@ -188,7 +188,7 @@ export interface LegendLabelProps {
   className?: string;
 }
 
-export function LegendLabel({ className = "text-[13px] font-semibold" }: LegendLabelProps) {
+export function LegendLabel({ className = "text-sm font-semibold" }: LegendLabelProps) {
   const { item, isSelected } = useLegendItem();
 
   return (
@@ -274,7 +274,7 @@ export interface LegendValueProps {
 }
 
 export function LegendValue({
-  className = "text-[13px] tabular-nums",
+  className = "text-sm tabular-nums",
   showPercentage = true,
   percentageClassName = "text-xs text-neutral-400 tabular-nums font-normal",
   formatValue = (v) => v.toLocaleString(),

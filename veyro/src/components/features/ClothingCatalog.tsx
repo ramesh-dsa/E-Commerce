@@ -357,10 +357,10 @@ export function ClothingCatalog() {
   }, [filters]);
 
   return (
-    <div className="w-full max-w-full overflow-x-clip bg-white text-[#111111] selection:bg-[#111111] selection:text-white">
+    <div className="w-full max-w-full overflow-x-clip bg-white text-veyro-black selection:bg-veyro-black selection:text-white">
       {/* ── 1. FULL-WIDTH GETHA ARCHIVE SALE HERO BANNER ──────────────── */}
       <section className="w-full max-w-full overflow-x-clip mb-2">
-        <div className="relative w-full overflow-hidden bg-[#111111] aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.4/1] lg:aspect-[2.5/1] min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]">
+        <div className="relative w-full overflow-hidden bg-veyro-black aspect-[16/9] sm:aspect-[2.2/1] md:aspect-[2.4/1] lg:aspect-[2.5/1] min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]">
           {/* 2K Super-Resolution Sharpened Streetwear Campaign Image */}
           <Image
             src="/images/clothing-archive-campaign.jpg"
@@ -373,12 +373,12 @@ export function ClothingCatalog() {
           />
 
           {/* Smooth directional scrim strictly on the left — Model on the right is 100% unmasked, bright & crystal clear */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/70 to-transparent sm:bg-gradient-to-r sm:from-[#111111] sm:via-[#111111]/70 sm:via-35% sm:to-transparent pointer-events-none z-1" />
+          <div className="absolute inset-0 bg-gradient-to-t from-veyro-black via-veyro-black/70 to-transparent sm:bg-gradient-to-r sm:from-veyro-black sm:via-veyro-black/70 sm:via-35% sm:to-transparent pointer-events-none z-0" />
 
           {/* High-Fashion Editorial Typography Stage (Neatly positioned in the sweet spot on left) */}
           <div className="absolute inset-y-0 left-0 z-10 flex flex-col justify-center px-6 sm:px-10 lg:px-16 max-w-xl sm:max-w-2xl">
             {/* Cursive Luxury Accent */}
-            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-[#fcd017] tracking-normal font-normal drop-shadow-md select-none -mb-1">
+            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-veyro-yellow tracking-normal font-normal drop-shadow-md select-none -mb-1">
               The Limited Drop
             </span>
 
@@ -389,7 +389,7 @@ export function ClothingCatalog() {
 
             {/* High-Impact 50% Offer Lockup */}
             <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2.5 sm:gap-3">
-              <span className="inline-block px-3.5 py-1 bg-[#fcd017] text-[#111111] text-lg sm:text-2xl lg:text-3xl font-black tracking-tight uppercase rounded-[2px] shadow-lg">
+              <span className="inline-block px-3.5 py-1 bg-veyro-yellow text-veyro-black text-lg sm:text-2xl lg:text-3xl font-black tracking-tight uppercase rounded-sm shadow-lg">
                 UP TO 50% OFF
               </span>
               <span className="text-xs sm:text-sm font-black uppercase tracking-[0.12em] text-white/95 drop-shadow-sm">
@@ -398,7 +398,7 @@ export function ClothingCatalog() {
             </div>
 
             {/* Crisp Editorial Subline */}
-            <p className="mt-3 text-xs sm:text-sm text-[#dddddd] font-normal tracking-wide drop-shadow-xs max-w-md">
+            <p className="mt-3 text-xs sm:text-sm text-neutral-400 font-normal tracking-wide drop-shadow-xs max-w-md">
               Combed cotton jersey · Zero-sag ribbed collars · Boxy drop-shoulder
             </p>
           </div>
@@ -406,35 +406,35 @@ export function ClothingCatalog() {
       </section>
 
       {/* ── 2. SUB-BAR: BREADCRUMBS & MOBILE FILTER ──────────────────────── */}
-      <section className="w-full max-w-full bg-white border-b border-[#f0f0ed] py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-md bg-white/95">
-        <div className="mx-auto max-w-[1536px] flex flex-wrap items-center justify-between gap-3">
+      <section className="w-full max-w-full bg-white border-b border-veyro-border-light py-3.5 px-5 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-md bg-white/95">
+        <div className="mx-auto max-w-screen-2xl flex flex-wrap items-center justify-between gap-3">
           {/* Left: Mobile Filter Button & Breadcrumbs */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-[2px] bg-[#111111] text-white text-xs font-bold uppercase tracking-wider shadow-xs hover:bg-[#333333] transition-colors cursor-pointer"
+              className="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-veyro-black text-white text-xs font-bold uppercase tracking-wider shadow-xs hover:bg-neutral-800 transition-colors cursor-pointer"
               aria-label="Open filter sidebar"
             >
-              <SlidersHorizontal size={13} className="text-[#fcd017]" />
+              <SlidersHorizontal size={13} className="text-veyro-yellow" />
               <span>FILTERS</span>
               {activeFilterCount > 0 && (
-                <span className="px-1.5 py-0.2 bg-[#fcd017] text-[#111111] text-[10px] font-black rounded-[2px]">
+                <span className="px-1.5 py-0.2 bg-veyro-yellow text-veyro-black text-2xs font-black rounded-sm">
                   {activeFilterCount}
                 </span>
               )}
             </button>
 
             {/* Breadcrumbs */}
-            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em]">
-              <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
+            <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-sm uppercase tracking-[0.04em]">
+              <Link href="/" className="text-neutral-600 font-medium hover:text-veyro-black transition-colors">
                 HOME
               </Link>
-              <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
-              <span className="text-[#111111] font-bold">CLOTHING</span>
+              <span className="text-neutral-500 font-semibold text-xs">&gt;</span>
+              <span className="text-veyro-black font-bold">CLOTHING</span>
             </nav>
 
-            <span className="hidden sm:inline-block text-[#555555] text-xs font-semibold pl-3 border-l border-[#dcdcd8]">
+            <span className="hidden sm:inline-block text-neutral-600 text-xs font-semibold pl-3 border-l border-neutral-300">
               {filteredProducts.length} {filteredProducts.length === 1 ? "Piece" : "Pieces"} Available
             </span>
           </div>
@@ -462,7 +462,7 @@ export function ClothingCatalog() {
               <button
                 type="button"
                 onClick={() => setGridColumns(4)}
-                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
                   gridColumns === 4 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
                 }`}
                 aria-label="4-column grid view"
@@ -472,7 +472,7 @@ export function ClothingCatalog() {
               <button
                 type="button"
                 onClick={() => setGridColumns(2)}
-                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
                   gridColumns === 2 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
                 }`}
                 aria-label="2-column editorial view"
@@ -495,7 +495,7 @@ export function ClothingCatalog() {
       </section>
 
       {/* ── 3. MAIN WORKSPACE: VERTICAL SIDEBAR + PRODUCT GRID ─────────── */}
-      <main className="mx-auto w-full max-w-[1536px] px-5 sm:px-8 lg:px-12 py-8 sm:py-10 overflow-x-clip">
+      <main className="mx-auto w-full max-w-screen-2xl px-5 sm:px-8 lg:px-12 py-8 sm:py-10 overflow-x-clip">
         <div className="flex items-start gap-8 xl:gap-10">
           {/* Vertical Sidebar Filter (Desktop sticky + Mobile slide-over) */}
           <ClothingFilterSidebar
@@ -532,18 +532,18 @@ export function ClothingCatalog() {
               </div>
             ) : filteredProducts.length === 0 ? (
               /* Empty State */
-              <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
+              <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-veyro-surface rounded-sm border border-dashed border-neutral-300">
                 <span className="text-4xl mb-3">🔍</span>
-                <h3 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
+                <h3 className="text-xl font-bold uppercase tracking-tight text-veyro-black">
                   No Archival Pieces Found
                 </h3>
-                <p className="mt-2 text-sm text-[#777777] max-w-md">
+                <p className="mt-2 text-sm text-neutral-500 max-w-md">
                   We couldn&apos;t find any t-shirts matching your exact combination of fit, GSM, size, and color filters.
                 </p>
                 <button
                   type="button"
                   onClick={handleClearAll}
-                  className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-[2px] hover:bg-[#333333] transition-colors cursor-pointer"
+                  className="mt-6 px-6 py-2.5 bg-veyro-black text-white text-xs font-bold uppercase tracking-[0.1em] rounded-sm hover:bg-neutral-800 transition-colors cursor-pointer"
                 >
                   Reset All Filters
                 </button>
@@ -567,7 +567,7 @@ export function ClothingCatalog() {
                 <React.Fragment key={product.id}>
                   {/* Embedded Luxury 3-Tees Bundle Pass Card at slot #4 (After full 4-col first row) */}
                   {index === 4 && (
-                    <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-[#0d0d10] text-white rounded-[2px] relative isolate overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
+                    <article className="col-span-2 flex flex-col justify-between p-6 sm:p-9 bg-neutral-900 text-white rounded-sm relative isolate overflow-hidden shadow-2xl border border-white/10 group min-h-[380px] sm:min-h-[420px]">
                       {/* High-Fashion Editorial Photography Background: 3 Models Trio */}
                       <Image
                         src="/images/bundle-pass-campaign.jpg"
@@ -579,12 +579,12 @@ export function ClothingCatalog() {
                       />
 
                       {/* Cinematic Scrim: deep moody wall on the left, clear view of models on the right */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#09090b]/95 via-[#09090b]/75 sm:via-[#09090b]/35 to-transparent z-1" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/90 via-transparent to-black/25 z-1" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/95 via-neutral-900/75 sm:via-neutral-900/35 to-transparent z-0" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-transparent to-black/25 z-0" />
 
                       {/* Top Left Editorial Copy (Positioned in Negative Space) */}
-                      <div className="relative z-10 max-w-[260px] sm:max-w-[300px]">
-                        <span className="font-script text-2xl sm:text-3xl text-[#fcd017] block -mb-1 font-bold drop-shadow-xs">
+                      <div className="relative z-10 max-w-xs sm:max-w-xs">
+                        <span className="font-script text-2xl sm:text-3xl text-veyro-yellow block -mb-1 font-bold drop-shadow-xs">
                           the trio curation
                         </span>
                         <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
@@ -598,30 +598,30 @@ export function ClothingCatalog() {
                       {/* Bottom Pricing Row with Clear Highlight */}
                       <div className="relative z-10 mt-6 pt-4 border-t border-white/15 flex items-end justify-between backdrop-blur-[2px] rounded-xs px-1">
                         <div>
-                          <span className="text-[10px] text-neutral-400 uppercase tracking-widest block font-mono">Regular MRP</span>
+                          <span className="text-2xs text-neutral-400 uppercase tracking-widest block font-mono">Regular MRP</span>
                           <div className="flex items-baseline gap-2 mt-0.5">
                             <span className="text-xs sm:text-sm font-semibold line-through text-neutral-400">₹2,397</span>
-                            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Save 50%</span>
+                            <span className="text-2xs text-emerald-400 font-bold uppercase tracking-wider">Save 50%</span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-[10px] text-[#fcd017] uppercase tracking-widest font-bold block font-mono">Pass Price</span>
-                          <span className="text-xl sm:text-3xl font-black text-[#fcd017] tracking-tight drop-shadow-sm">₹1,199 ONLY</span>
+                          <span className="text-2xs text-veyro-yellow uppercase tracking-widest font-bold block font-mono">Pass Price</span>
+                          <span className="text-xl sm:text-3xl font-black text-veyro-yellow tracking-tight drop-shadow-sm">₹1,199 ONLY</span>
                         </div>
                       </div>
 
                       {/* Subtle Ambient Glow */}
-                      <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#fcd017]/10 rounded-full blur-3xl pointer-events-none" />
+                      <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-veyro-yellow/10 rounded-full blur-3xl pointer-events-none" />
                     </article>
                   )}
 
                   {/* Standard Clothing Product Card */}
                   <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl">
                     {/* Image Stage Container */}
-                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-[#f4f2ee] transition-all duration-300">
+                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-veyro-surface-alt transition-colors duration-300">
                       <Link
                         href={`/product/${product.slug}`}
-                        className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
+                        className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
                         aria-label={product.name}
                       >
                         {/* Primary Image */}
@@ -675,7 +675,7 @@ export function ClothingCatalog() {
                       {/* Meta tag, 240 GSM Pill & Color Swatch */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#8e8e8e]">
+                          <span className="text-2xs sm:text-xs font-semibold uppercase tracking-wider text-veyro-subtle">
                             {product.subcategoryTag || product.category}
                           </span>
                           {product.material.toLowerCase().includes("240gsm") && (
@@ -694,14 +694,14 @@ export function ClothingCatalog() {
                       </div>
 
                       {/* Title */}
-                      <h4 className="mt-1 text-xs sm:text-sm font-semibold tracking-tight text-[#111111] group-hover:text-[#333333] line-clamp-1">
+                      <h4 className="mt-1 text-xs sm:text-sm font-semibold tracking-tight text-veyro-black group-hover:text-neutral-800 line-clamp-1">
                         <Link href={`/product/${product.slug}`} className="focus:outline-none">
                           {product.name}
                         </Link>
                       </h4>
 
                       {/* Material Spec */}
-                      <span className="text-[11px] text-[#8e8e8e] line-clamp-1 mt-0.5">
+                      <span className="text-xs text-veyro-subtle line-clamp-1 mt-0.5">
                         {product.material.split(",")[0]}
                       </span>
 
@@ -709,16 +709,16 @@ export function ClothingCatalog() {
                       <div className="mt-2 flex items-center gap-2">
                         {product.originalPrice && product.originalPrice > product.price && (
                           <>
-                            <span className="text-xs text-[#8e8e8e] line-through font-mono">
+                            <span className="text-xs text-veyro-subtle line-through font-mono">
                               {formatPrice(product.originalPrice)}
                             </span>
                           </>
                         )}
-                        <span className="text-sm sm:text-[15px] font-bold text-[#111111] font-mono">
+                        <span className="text-sm sm:text-sm font-bold text-veyro-black font-mono">
                           {formatPrice(product.price)}
                         </span>
                         {product.originalPrice && product.originalPrice > product.price && discountPercent && (
-                          <span className="text-[10px] font-bold text-[#c44d25] font-mono">
+                          <span className="text-2xs font-bold text-veyro-accent font-mono">
                             {discountPercent}% OFF
                           </span>
                         )}
@@ -735,23 +735,23 @@ export function ClothingCatalog() {
       </main>
 
       {/* ── 5. "ENGINEERED WITH FOOTWEAR" CURATED PAIRINGS ─────────────────── */}
-      <section className="w-full max-w-full overflow-x-clip bg-[#fafaf8] border-t border-b border-[#e8e8e5] py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
-        <div className="mx-auto max-w-[1536px]">
+      <section className="w-full max-w-full overflow-x-clip bg-veyro-surface-alt border-t border-b border-veyro-border py-10 sm:py-14 px-5 sm:px-8 lg:px-12 mt-8 sm:mt-12">
+        <div className="mx-auto max-w-screen-2xl">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#fcd017] bg-[#111111] px-2.5 py-1 rounded-xs inline-block mb-2">
+              <span className="text-2xs font-bold uppercase tracking-[0.15em] text-veyro-yellow bg-veyro-black px-2.5 py-1 rounded-xs inline-block mb-2">
                 COMPLETE THE LOOK
               </span>
-              <h3 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-[#111111]">
+              <h3 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-veyro-black">
                 Engineered With Footwear Pairings
               </h3>
-              <p className="mt-1 text-xs sm:text-sm text-[#777777]">
+              <p className="mt-1 text-xs sm:text-sm text-neutral-500">
                 Archival sneakers designed to anchor the drape of heavyweight oversized t-shirts.
               </p>
             </div>
             <Link
               href="/#footwear"
-              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-[#111111] hover:text-[#555555] transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-veyro-black hover:text-neutral-600 transition-colors"
             >
               <span>Explore All 9 Footwear Silhouettes</span>
               <ArrowRight size={14} />
@@ -763,9 +763,9 @@ export function ClothingCatalog() {
               <Link
                 key={shoe.id}
                 href={`/product/${shoe.slug}`}
-                className="group flex flex-col bg-white border border-[#e8e8e5] p-3 rounded-xs transition-all duration-300 hover:shadow-lg"
+                className="group flex flex-col bg-white border border-veyro-border p-3 rounded-xs transition duration-300 hover:shadow-lg"
               >
-                <div className="relative w-full aspect-[4/3] bg-[#f4f2ee] rounded-xs overflow-hidden mb-3">
+                <div className="relative w-full aspect-[4/3] bg-veyro-surface-alt rounded-xs overflow-hidden mb-3">
                   <Image
                     src={shoe.imageUrl}
                     alt={shoe.name}
@@ -774,20 +774,20 @@ export function ClothingCatalog() {
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   {shoe.badge && (
-                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-xs bg-[#111111] text-[#fcd017] text-[9px] font-extrabold uppercase">
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-xs bg-veyro-black text-veyro-yellow text-[9px] font-extrabold uppercase">
                       {shoe.badge}
                     </span>
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-semibold text-[#8e8e8e] uppercase">
+                  <span className="text-2xs font-semibold text-veyro-subtle uppercase">
                     {shoe.subcategoryTag} Sneaker
                   </span>
-                  <span className="text-xs font-bold text-[#111111]">
+                  <span className="text-xs font-bold text-veyro-black">
                     {formatPrice(shoe.price)}
                   </span>
                 </div>
-                <h4 className="text-sm font-bold text-[#111111] group-hover:text-[#555555] transition-colors mt-0.5">
+                <h4 className="text-sm font-bold text-veyro-black group-hover:text-neutral-600 transition-colors mt-0.5">
                   {shoe.name}
                 </h4>
               </Link>
@@ -807,19 +807,19 @@ export function ClothingCatalog() {
             className="w-full max-w-2xl bg-white rounded-3xl border border-neutral-200/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-[#fafaf8]">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-neutral-100 bg-veyro-surface-alt">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 block font-mono">
+                <span className="text-2xs font-bold uppercase tracking-[0.14em] text-neutral-400 block font-mono">
                   [ VEYRO BESPOKE SIZING ARCHIVE ]
                 </span>
-                <h3 id="fit-guide-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-[#111111] mt-0.5">
+                <h3 id="fit-guide-title" className="text-lg sm:text-xl font-black uppercase tracking-tight text-veyro-black mt-0.5">
                   Silhouette &amp; Fit Visualizer
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsFitGuideOpen(false)}
-                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-500 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Close fit guide"
               >
                 <X size={18} />
@@ -827,31 +827,31 @@ export function ClothingCatalog() {
             </div>
 
             {/* Modal Content */}
-            <div className="overflow-y-auto p-6 sm:p-8 space-y-6 text-[#111111]">
+            <div className="overflow-y-auto p-6 sm:p-8 space-y-6 text-veyro-black">
               {/* Fit Comparison Matrix */}
               <div className="space-y-4">
                 {/* Oversized Fit */}
-                <div className="p-5 rounded-2xl border-2 border-[#111111] bg-[#fafaf8] shadow-xs">
+                <div className="p-5 rounded-2xl border-2 border-veyro-black bg-veyro-surface-alt shadow-xs">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
+                    <h4 className="text-sm font-bold uppercase tracking-wide text-veyro-black">
                       1. The Oversized Silhouette (240 GSM)
                     </h4>
-                    <span className="px-3 py-1 rounded-full bg-[#111111] text-[#fcd017] text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-3 py-1 rounded-full bg-veyro-black text-veyro-yellow text-2xs font-bold uppercase tracking-wider">
                       Signature Cut
                     </span>
                   </div>
                   <p className="text-xs text-neutral-600 leading-relaxed mb-3">
                     Engineered with extended drop shoulders, extra width through the chest, and a structured vertical fall that does not cling.
                   </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-medium text-neutral-700">
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-medium text-neutral-700">
                     <li className="bg-white p-3 rounded-xl border border-neutral-200/80">
-                      <strong className="block text-[#111111]">Shoulder:</strong> +4.5cm Drop
+                      <strong className="block text-veyro-black">Shoulder:</strong> +4.5cm Drop
                     </li>
                     <li className="bg-white p-3 rounded-xl border border-neutral-200/80">
-                      <strong className="block text-[#111111]">Chest:</strong> Boxy / Relaxed
+                      <strong className="block text-veyro-black">Chest:</strong> Boxy / Relaxed
                     </li>
                     <li className="bg-white p-3 rounded-xl border border-neutral-200/80">
-                      <strong className="block text-[#111111]">Sleeve:</strong> Reaches Elbow
+                      <strong className="block text-veyro-black">Sleeve:</strong> Reaches Elbow
                     </li>
                   </ul>
                 </div>
@@ -859,25 +859,25 @@ export function ClothingCatalog() {
                 {/* Regular Fit */}
                 <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
+                    <h4 className="text-sm font-bold uppercase tracking-wide text-veyro-black">
                       2. The Daily Regular Cut (180 GSM)
                     </h4>
-                    <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-2xs font-bold uppercase tracking-wider">
                       Classic Fit
                     </span>
                   </div>
                   <p className="text-xs text-neutral-600 leading-relaxed mb-3">
                     Clean, traditional proportions that sit perfectly on your natural shoulder seam. Great for tucking into trousers or layering under overshirts.
                   </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-medium text-neutral-700">
-                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
-                      <strong className="block text-[#111111]">Shoulder:</strong> Natural Seam
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-medium text-neutral-700">
+                    <li className="bg-veyro-surface-alt p-3 rounded-xl border border-neutral-200/70">
+                      <strong className="block text-veyro-black">Shoulder:</strong> Natural Seam
                     </li>
-                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
-                      <strong className="block text-[#111111]">Chest:</strong> Tailored Straight
+                    <li className="bg-veyro-surface-alt p-3 rounded-xl border border-neutral-200/70">
+                      <strong className="block text-veyro-black">Chest:</strong> Tailored Straight
                     </li>
-                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
-                      <strong className="block text-[#111111]">Sleeve:</strong> Mid-Bicep
+                    <li className="bg-veyro-surface-alt p-3 rounded-xl border border-neutral-200/70">
+                      <strong className="block text-veyro-black">Sleeve:</strong> Mid-Bicep
                     </li>
                   </ul>
                 </div>
@@ -885,33 +885,33 @@ export function ClothingCatalog() {
                 {/* Relaxed Fit */}
                 <div className="p-5 rounded-2xl border border-neutral-200/80 bg-white shadow-xs">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-bold uppercase tracking-wide text-[#111111]">
+                    <h4 className="text-sm font-bold uppercase tracking-wide text-veyro-black">
                       3. The Relaxed Weekend Cut (220 GSM)
                     </h4>
-                    <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-2xs font-bold uppercase tracking-wider">
                       Comfort Fit
                     </span>
                   </div>
                   <p className="text-xs text-neutral-600 leading-relaxed mb-3">
                     The midpoint between Regular and Oversized. Gives extra breathing room around the torso without extreme drop-shoulders.
                   </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px] font-medium text-neutral-700">
-                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
-                      <strong className="block text-[#111111]">Shoulder:</strong> +1.5cm Soft Drop
+                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-medium text-neutral-700">
+                    <li className="bg-veyro-surface-alt p-3 rounded-xl border border-neutral-200/70">
+                      <strong className="block text-veyro-black">Shoulder:</strong> +1.5cm Soft Drop
                     </li>
-                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
-                      <strong className="block text-[#111111]">Chest:</strong> Eased 2cm
+                    <li className="bg-veyro-surface-alt p-3 rounded-xl border border-neutral-200/70">
+                      <strong className="block text-veyro-black">Chest:</strong> Eased 2cm
                     </li>
-                    <li className="bg-[#fafaf8] p-3 rounded-xl border border-neutral-200/70">
-                      <strong className="block text-[#111111]">Sleeve:</strong> Lower Bicep
+                    <li className="bg-veyro-surface-alt p-3 rounded-xl border border-neutral-200/70">
+                      <strong className="block text-veyro-black">Sleeve:</strong> Lower Bicep
                     </li>
                   </ul>
                 </div>
               </div>
 
               {/* Sizing Recommendation Banner */}
-              <div className="p-4 bg-[#111111] text-white rounded-2xl flex items-center gap-3 text-xs">
-                <ShieldCheck size={22} className="text-[#fcd017] shrink-0" />
+              <div className="p-4 bg-veyro-black text-white rounded-2xl flex items-center gap-3 text-xs">
+                <ShieldCheck size={22} className="text-veyro-yellow shrink-0" />
                 <p className="text-neutral-300">
                   <strong className="text-white">Pre-Shrunk Bio-Wash:</strong> All VEYRO garments are pre-shrunk via double bio-wash. Order your true size for the intended silhouette, or size down one if you prefer a standard tailored fit.
                 </p>
@@ -919,11 +919,11 @@ export function ClothingCatalog() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 sm:px-8 py-4 border-t border-neutral-100 bg-[#fafaf8] flex justify-end">
+            <div className="px-6 sm:px-8 py-4 border-t border-neutral-100 bg-veyro-surface-alt flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsFitGuideOpen(false)}
-                className="w-full sm:w-auto px-7 py-3 bg-[#111111] hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer shadow-md"
+                className="w-full sm:w-auto px-7 py-3 bg-veyro-black hover:bg-neutral-800 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors cursor-pointer shadow-md"
               >
                 Got It, Return to Atelier Archive
               </button>

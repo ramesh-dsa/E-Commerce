@@ -589,7 +589,7 @@ function ShowcaseDeckCard({
         onPointerDown={onPointerDown}
         onClick={(e) => onClick(item, e)}
         aria-label={`View ${item.displayTitle} details`}
-        className="group relative w-[148px] sm:w-[192px] md:w-[232px] lg:w-[262px] xl:w-[275px] aspect-[3/4] rounded-2xl overflow-hidden p-0 m-0 border-0 bg-[#18181b] shadow-[0_12px_36px_rgba(0,0,0,0.16)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.24)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 transition-shadow duration-300"
+        className="group relative w-[148px] sm:w-[192px] md:w-[232px] lg:w-[262px] xl:w-[275px] aspect-[3/4] rounded-2xl overflow-hidden p-0 m-0 border-0 bg-neutral-900 shadow-[0_12px_36px_rgba(0,0,0,0.16)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.24)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 transition-shadow duration-300"
         style={{
           transform: "translateZ(0)",
           WebkitBackfaceVisibility: "hidden",
@@ -621,12 +621,12 @@ function ShowcaseDeckCard({
         style={{ opacity: metadataOpacity }}
         className="w-[148px] sm:w-[192px] md:w-[232px] lg:w-[262px] xl:w-[275px] mt-1.5 sm:mt-2 flex flex-col text-left px-1 pointer-events-none"
       >
-        <div className="flex items-center justify-between text-xs sm:text-[13px] font-bold font-[family-name:var(--font-montserrat)] text-neutral-900">
+        <div className="flex items-center justify-between text-xs sm:text-sm font-bold font-[family-name:var(--font-montserrat)] text-neutral-900">
           <span className="truncate pr-2">{item.displayTitle}</span>
           <span>{item.priceFormatted}</span>
         </div>
-        <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-neutral-500">
-          <Star className="w-3.5 h-3.5 fill-[#fcd017] text-[#fcd017]" />
+        <div className="flex items-center gap-1.5 mt-0.5 text-xs text-neutral-500">
+          <Star className="w-3.5 h-3.5 fill-veyro-yellow text-veyro-yellow" />
           <span className="font-semibold text-neutral-800">({item.rating})</span>
         </div>
       </motion.div>
@@ -921,7 +921,7 @@ export function CollectionsShowcase() {
   return (
     <div
       ref={trackRef}
-      className="relative w-full bg-[#fafaf8] text-[#111111]"
+      className="relative w-full bg-veyro-surface-alt text-veyro-black"
       style={{ height: `${SHOWCASE_CONFIG.scrollTrack.heightVh}vh` }}
     >
       <LayoutGroup id="collections-showcase-group">
@@ -932,7 +932,7 @@ export function CollectionsShowcase() {
         >
           {/* Subtle Ambient Studio Light */}
           <div
-            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-gradient-to-b from-[#fcd017]/8 via-transparent to-transparent blur-3xl rounded-full"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-gradient-to-b from-veyro-yellow/8 via-transparent to-transparent blur-3xl rounded-full"
             aria-hidden="true"
           />
 
@@ -959,7 +959,7 @@ export function CollectionsShowcase() {
                   initial={{ y: "100%" }}
                   animate={introStep === "fan" || introStep === "settled" ? { y: "0%" } : { y: "100%" }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                  className="font-[family-name:var(--font-outfit)] text-sm sm:text-[17px] md:text-[20px] font-medium tracking-normal text-neutral-800"
+                  className="font-[family-name:var(--font-outfit)] text-sm sm:text-[17px] md:text-xl font-medium tracking-normal text-neutral-800"
                 >
                   The Ultimate
                 </motion.h2>
@@ -969,7 +969,7 @@ export function CollectionsShowcase() {
                   initial={{ y: "100%" }}
                   animate={introStep === "fan" || introStep === "settled" ? { y: "0%" } : { y: "100%" }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                  className="font-[family-name:var(--font-outfit)] text-3xl sm:text-4xl md:text-5xl lg:text-[53px] font-bold uppercase tracking-tight text-[#111111] leading-none mt-1"
+                  className="font-[family-name:var(--font-outfit)] text-3xl sm:text-4xl md:text-5xl lg:text-[53px] font-bold uppercase tracking-tight text-veyro-black leading-none mt-1"
                 >
                   COLLECTIONS
                 </motion.h1>
@@ -981,10 +981,10 @@ export function CollectionsShowcase() {
               style={{ y: headlineBY, opacity: headlineBOpacity }}
               className="absolute top-2 sm:top-3 md:top-4 flex flex-col items-center pointer-events-none"
             >
-              <h2 className="font-[family-name:var(--font-outfit)] text-sm sm:text-[17px] md:text-[18px] font-medium text-neutral-800">
+              <h2 className="font-[family-name:var(--font-outfit)] text-sm sm:text-[17px] md:text-lg font-medium text-neutral-800">
                 Best Selling Product Of The
               </h2>
-              <h1 className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold uppercase tracking-tight text-[#111111] leading-none mt-1">
+              <h1 className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl md:text-4xl lg:text-[46px] font-bold uppercase tracking-tight text-veyro-black leading-none mt-1">
                 COLLECTION
               </h1>
             </motion.div>
@@ -1018,11 +1018,11 @@ export function CollectionsShowcase() {
               }
               className="absolute left-3 sm:left-6 md:left-10 lg:left-14 top-0 pointer-events-auto"
             >
-              <div className="relative bg-[#06b6d4] text-white text-[11px] sm:text-[12px] font-bold px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5 font-[family-name:var(--font-outfit)]">
+              <div className="relative bg-cyan-500 text-white text-xs sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5 font-[family-name:var(--font-outfit)]">
                 <Sparkles className="w-3 h-3 text-white" />
                 <span>Get up to 50% Off</span>
                 {/* Speech tail pointing inward towards cards */}
-                <div className="absolute -bottom-1 left-3.5 w-2 h-2 bg-[#06b6d4] rotate-45" />
+                <div className="absolute -bottom-1 left-3.5 w-2 h-2 bg-cyan-500 rotate-45" />
               </div>
             </motion.div>
 
@@ -1049,10 +1049,10 @@ export function CollectionsShowcase() {
               }
               className="absolute right-3 sm:right-6 md:right-10 lg:right-14 top-0 pointer-events-auto"
             >
-              <div className="relative bg-[#ff5a00] text-white text-[11px] sm:text-[12px] font-bold px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1 font-[family-name:var(--font-outfit)]">
+              <div className="relative bg-orange-500 text-white text-xs sm:text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1 font-[family-name:var(--font-outfit)]">
                 <span>New Season</span>
                 {/* Speech tail pointing inward towards cards */}
-                <div className="absolute -bottom-1 right-3.5 w-2 h-2 bg-[#ff5a00] rotate-45" />
+                <div className="absolute -bottom-1 right-3.5 w-2 h-2 bg-orange-500 rotate-45" />
               </div>
             </motion.div>
           </motion.div>
@@ -1107,7 +1107,7 @@ export function CollectionsShowcase() {
                 <button
                   type="button"
                   onClick={scrollToRail}
-                  className="mt-2.5 sm:mt-3 px-8 py-3 bg-[#111111] hover:bg-neutral-800 text-white rounded-full text-xs sm:text-[14px] font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 group font-[family-name:var(--font-outfit)]"
+                  className="mt-2.5 sm:mt-3 px-8 py-3 bg-veyro-black hover:bg-neutral-800 text-white rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors cursor-pointer shadow-md flex items-center gap-2 group font-[family-name:var(--font-outfit)]"
                 >
                   <span>Explore More</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -1126,7 +1126,7 @@ export function CollectionsShowcase() {
                   onClick={() => handleRailScroll("left")}
                   disabled={carouselIndex === 0}
                   aria-label="Previous products"
-                  className={`w-9 h-9 rounded-full bg-white border border-neutral-300 text-neutral-700 flex items-center justify-center transition-all shadow-sm ${
+                  className={`w-9 h-9 rounded-full bg-white border border-neutral-300 text-neutral-700 flex items-center justify-center transition-colors shadow-sm ${
                     carouselIndex === 0
                       ? "opacity-35 cursor-not-allowed"
                       : "hover:text-black hover:border-black cursor-pointer active:scale-95"
@@ -1137,7 +1137,7 @@ export function CollectionsShowcase() {
                 <Link
                   href="/collections/all"
                   aria-label="View all products in complete Veyro archive"
-                  className="px-7 py-3 bg-[#111111] hover:bg-neutral-800 active:scale-98 text-white rounded-full text-xs sm:text-[14px] font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center gap-2 font-[family-name:var(--font-outfit)] group"
+                  className="px-7 py-3 bg-veyro-black hover:bg-neutral-800 active:scale-98 text-white rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition cursor-pointer shadow-md flex items-center gap-2 font-[family-name:var(--font-outfit)] group"
                 >
                   <span>See All Product</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -1147,7 +1147,7 @@ export function CollectionsShowcase() {
                   onClick={() => handleRailScroll("right")}
                   disabled={carouselIndex >= maxCarouselIndex}
                   aria-label="Next products"
-                  className={`w-9 h-9 rounded-full bg-white border border-neutral-300 text-neutral-700 flex items-center justify-center transition-all shadow-sm ${
+                  className={`w-9 h-9 rounded-full bg-white border border-neutral-300 text-neutral-700 flex items-center justify-center transition-colors shadow-sm ${
                     carouselIndex >= maxCarouselIndex
                       ? "opacity-35 cursor-not-allowed"
                       : "hover:text-black hover:border-black cursor-pointer active:scale-95"
@@ -1166,7 +1166,7 @@ export function CollectionsShowcase() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className="absolute inset-0 w-full h-full z-30 bg-[#fafaf8] flex flex-col p-2 sm:p-4 pointer-events-auto overflow-y-auto"
+          className="absolute inset-0 w-full h-full z-30 bg-veyro-surface-alt flex flex-col p-2 sm:p-4 pointer-events-auto overflow-y-auto"
         >
           <div className="w-full max-w-5xl mx-auto my-auto flex flex-col justify-center">
           {/* Top Navigation Bar: Back to Collection & Close */}
@@ -1174,7 +1174,7 @@ export function CollectionsShowcase() {
             <button
               type="button"
               onClick={closeDetail}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-600 hover:text-black px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-all cursor-pointer group font-[family-name:var(--font-montserrat)]"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-600 hover:text-black px-3.5 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors cursor-pointer group font-[family-name:var(--font-montserrat)]"
             >
               <ChevronLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
               <span>Back to Collection</span>
@@ -1195,7 +1195,7 @@ export function CollectionsShowcase() {
               <motion.div
                 layoutId={`showcase-card-${selectedProductItem.id}`}
                 transition={{ type: "spring", stiffness: 350, damping: 32 }}
-                className="relative w-full max-w-[340px] sm:max-w-[390px] lg:max-w-[430px] aspect-[3/4] max-h-[470px] lg:max-h-[515px] rounded-3xl overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.14)] bg-[#18181b]"
+                className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md aspect-[3/4] max-h-[470px] lg:max-h-[515px] rounded-3xl overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.14)] bg-neutral-900"
               >
                 <Image
                   src={selectedProductItem.fullBleedImage}
@@ -1219,7 +1219,7 @@ export function CollectionsShowcase() {
               className="flex flex-col justify-center max-w-md"
             >
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <span className="text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-neutral-400">
+                <span className="text-2xs font-mono font-bold tracking-[0.2em] uppercase text-neutral-400">
                   VEYRO ARCHIVE // COLLECTION DROP
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-neutral-100 text-[9.5px] font-bold uppercase tracking-wider text-neutral-700 font-[family-name:var(--font-montserrat)]">
@@ -1229,14 +1229,14 @@ export function CollectionsShowcase() {
 
               <h2
                 id="pdp-title"
-                className="font-[family-name:var(--font-montserrat)] text-2xl sm:text-3xl lg:text-[34px] font-black uppercase tracking-tight text-[#111111] leading-tight"
+                className="font-[family-name:var(--font-montserrat)] text-2xl sm:text-3xl lg:text-[34px] font-black uppercase tracking-tight text-veyro-black leading-tight"
               >
                 {selectedProductItem.displayTitle}
               </h2>
 
               {/* Price and Rating */}
               <div className="flex items-center gap-3 mt-1.5 mb-3">
-                <span className="text-2xl font-extrabold text-[#111111]">
+                <span className="text-2xl font-extrabold text-veyro-black">
                   {selectedProductItem.priceFormatted}
                 </span>
                 {selectedProductItem.originalPriceFormatted && (
@@ -1245,7 +1245,7 @@ export function CollectionsShowcase() {
                   </span>
                 )}
                 <div className="flex items-center gap-1 ml-auto text-xs font-bold text-neutral-700 bg-neutral-100 px-2.5 py-1 rounded-full">
-                  <Star className="w-3.5 h-3.5 fill-[#fcd017] text-[#fcd017]" />
+                  <Star className="w-3.5 h-3.5 fill-veyro-yellow text-veyro-yellow" />
                   <span>{selectedProductItem.rating}</span>
                   <span className="text-neutral-400">({selectedProductItem.reviewsCount})</span>
                 </div>
@@ -1271,11 +1271,11 @@ export function CollectionsShowcase() {
                       type="button"
                       disabled={!s.available}
                       onClick={() => setSelectedSize(s.label)}
-                      className={`min-w-[44px] h-9 px-3 text-xs font-bold rounded-lg border transition-all cursor-pointer font-[family-name:var(--font-montserrat)] ${
+                      className={`min-w-[44px] h-9 px-3 text-xs font-bold rounded-lg border transition-colors cursor-pointer font-[family-name:var(--font-montserrat)] ${
                         !s.available
                           ? "bg-neutral-100 text-neutral-300 border-neutral-200 cursor-not-allowed line-through"
                           : selectedSize === s.label
-                          ? "bg-[#111111] text-white border-[#111111] shadow-sm"
+                          ? "bg-veyro-black text-white border-veyro-black shadow-sm"
                           : "bg-white text-neutral-700 border-neutral-300 hover:border-black"
                       }`}
                     >
@@ -1297,7 +1297,7 @@ export function CollectionsShowcase() {
                       type="button"
                       onClick={() => setSelectedColor(c.name)}
                       aria-label={`Select ${c.name} color`}
-                      className={`w-6 h-6 rounded-full border-2 transition-all cursor-pointer ${
+                      className={`w-6 h-6 rounded-full border-2 transition-colors cursor-pointer ${
                         selectedColor === c.name
                           ? "border-black scale-110 shadow-md ring-2 ring-black/20"
                           : "border-neutral-300 hover:border-neutral-500"
@@ -1313,12 +1313,12 @@ export function CollectionsShowcase() {
                 type="button"
                 disabled={!selectedSize}
                 onClick={handleAddToCart}
-                className={`w-fit px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 shadow-md font-[family-name:var(--font-montserrat)] ${
+                className={`w-fit px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2.5 shadow-md font-[family-name:var(--font-montserrat)] ${
                   !selectedSize
                     ? "bg-neutral-200 text-neutral-400 cursor-not-allowed"
                     : addedSuccess
                     ? "bg-emerald-600 text-white shadow-emerald-200"
-                    : "bg-[#111111] hover:bg-neutral-800 text-white cursor-pointer active:scale-[0.98]"
+                    : "bg-veyro-black hover:bg-neutral-800 text-white cursor-pointer active:scale-[0.98]"
                 }`}
               >
                 {addedSuccess ? (
@@ -1328,7 +1328,7 @@ export function CollectionsShowcase() {
                   </>
                 ) : (
                   <>
-                    <ShoppingBag className="w-4 h-4 text-[#fcd017]" />
+                    <ShoppingBag className="w-4 h-4 text-veyro-yellow" />
                     <span>{selectedSize ? "Add to Cart" : "Select a Size to Add"}</span>
                   </>
                 )}

@@ -77,14 +77,14 @@ export function ArchiveFilterSidebar({
   const sidebarContent = (
     <div className="flex flex-col space-y-6">
       {/* ── Sidebar Header ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between pb-4 border-b border-[#e8e8e5]">
+      <div className="flex items-center justify-between pb-4 border-b border-veyro-border">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={14} className="text-[#111111]" />
-          <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">
+          <SlidersHorizontal size={14} className="text-veyro-black" />
+          <span className="text-xs font-bold uppercase tracking-[0.15em] text-veyro-black">
             FILTERS
           </span>
           {activeFilterCount > 0 && (
-            <span className="px-1.5 py-0.5 rounded-[2px] bg-[#111111] text-white text-[10px] font-mono font-bold">
+            <span className="px-1.5 py-0.5 rounded-sm bg-veyro-black text-white text-2xs font-mono font-bold">
               {activeFilterCount}
             </span>
           )}
@@ -94,7 +94,7 @@ export function ArchiveFilterSidebar({
           <button
             type="button"
             onClick={onClearAll}
-            className="text-[11px] font-bold text-[#777777] hover:text-[#111111] uppercase tracking-wider transition-colors cursor-pointer"
+            className="text-xs font-bold text-neutral-500 hover:text-veyro-black uppercase tracking-wider transition-colors cursor-pointer"
           >
             CLEAR ALL
           </button>
@@ -102,11 +102,11 @@ export function ArchiveFilterSidebar({
       </div>
 
       {/* ── Section 1: Categories ─────────────────────────────────────── */}
-      <div className="border-b border-[#e8e8e5] pb-5">
+      <div className="border-b border-veyro-border pb-5">
         <button
           type="button"
           onClick={() => toggleSection("categories")}
-          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-[#111111] mb-3.5 select-none"
+          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-veyro-black mb-3.5 select-none"
         >
           <span>Category</span>
           <ChevronDown
@@ -129,13 +129,13 @@ export function ArchiveFilterSidebar({
                   onClick={() => onSelectCategory(cat.id)}
                   className={`flex items-center justify-between py-1 px-1.5 rounded text-xs cursor-pointer select-none transition-colors ${
                     isSelected
-                      ? "bg-[#111111] text-white font-bold"
+                      ? "bg-veyro-black text-white font-bold"
                       : "text-neutral-700 hover:text-black hover:bg-neutral-100/70"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <span
-                      className={`w-3.5 h-3.5 rounded-[2px] border flex items-center justify-center transition-colors ${
+                      className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition-colors ${
                         isSelected
                           ? "bg-white border-white text-black"
                           : "border-neutral-300 bg-white"
@@ -143,12 +143,12 @@ export function ArchiveFilterSidebar({
                     >
                       {isSelected && <Check size={10} strokeWidth={3} />}
                     </span>
-                    <span className="tracking-wide uppercase text-[11px] font-semibold">
+                    <span className="tracking-wide uppercase text-xs font-semibold">
                       {cat.label}
                     </span>
                   </div>
                   <span
-                    className={`text-[10px] font-mono ${
+                    className={`text-2xs font-mono ${
                       isSelected ? "text-neutral-300" : "text-neutral-400"
                     }`}
                   >
@@ -162,11 +162,11 @@ export function ArchiveFilterSidebar({
       </div>
 
       {/* ── Section 2: Price Range ────────────────────────────────────── */}
-      <div className="border-b border-[#e8e8e5] pb-5">
+      <div className="border-b border-veyro-border pb-5">
         <button
           type="button"
           onClick={() => toggleSection("price")}
-          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-[#111111] mb-3.5 select-none"
+          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-veyro-black mb-3.5 select-none"
         >
           <span>Price Range</span>
           <ChevronDown
@@ -189,7 +189,7 @@ export function ArchiveFilterSidebar({
                   onClick={() => onSelectPriceRange(range.id)}
                   className={`flex items-center justify-between py-1 px-1.5 rounded text-xs cursor-pointer select-none transition-colors ${
                     isSelected
-                      ? "bg-[#111111] text-white font-bold"
+                      ? "bg-veyro-black text-white font-bold"
                       : "text-neutral-700 hover:text-black hover:bg-neutral-100/70"
                   }`}
                 >
@@ -202,15 +202,15 @@ export function ArchiveFilterSidebar({
                       }`}
                     >
                       {isSelected && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#111111]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-veyro-black" />
                       )}
                     </span>
-                    <span className="tracking-wide uppercase text-[11px] font-semibold">
+                    <span className="tracking-wide uppercase text-xs font-semibold">
                       {range.label}
                     </span>
                   </div>
                   <span
-                    className={`text-[10px] font-mono ${
+                    className={`text-2xs font-mono ${
                       isSelected ? "text-neutral-300" : "text-neutral-400"
                     }`}
                   >
@@ -224,11 +224,11 @@ export function ArchiveFilterSidebar({
       </div>
 
       {/* ── Section 3: Curations & Badges ─────────────────────────────── */}
-      <div className="border-b border-[#e8e8e5] pb-5">
+      <div className="border-b border-veyro-border pb-5">
         <button
           type="button"
           onClick={() => toggleSection("curations")}
-          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-[#111111] mb-3.5 select-none"
+          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-veyro-black mb-3.5 select-none"
         >
           <span>Curated Editions</span>
           <ChevronDown
@@ -251,13 +251,13 @@ export function ArchiveFilterSidebar({
                   onClick={() => onToggleCuration(c.id)}
                   className={`flex items-center justify-between py-1 px-1.5 rounded text-xs cursor-pointer select-none transition-colors ${
                     isSelected
-                      ? "bg-[#111111] text-white font-bold"
+                      ? "bg-veyro-black text-white font-bold"
                       : "text-neutral-700 hover:text-black hover:bg-neutral-100/70"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <span
-                      className={`w-3.5 h-3.5 rounded-[2px] border flex items-center justify-center transition-colors ${
+                      className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition-colors ${
                         isSelected
                           ? "bg-white border-white text-black"
                           : "border-neutral-300 bg-white"
@@ -265,12 +265,12 @@ export function ArchiveFilterSidebar({
                     >
                       {isSelected && <Check size={10} strokeWidth={3} />}
                     </span>
-                    <span className="tracking-wide uppercase text-[11px] font-semibold">
+                    <span className="tracking-wide uppercase text-xs font-semibold">
                       {c.label}
                     </span>
                   </div>
                   <span
-                    className={`text-[10px] font-mono ${
+                    className={`text-2xs font-mono ${
                       isSelected ? "text-neutral-300" : "text-neutral-400"
                     }`}
                   >
@@ -288,7 +288,7 @@ export function ArchiveFilterSidebar({
         <button
           type="button"
           onClick={() => toggleSection("availability")}
-          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-[#111111] mb-3.5 select-none"
+          className="w-full flex items-center justify-between text-left text-xs font-bold uppercase tracking-[0.12em] text-veyro-black mb-3.5 select-none"
         >
           <span>Availability</span>
           <ChevronDown
@@ -305,13 +305,13 @@ export function ArchiveFilterSidebar({
               onClick={onToggleInStock}
               className={`flex items-center justify-between py-1 px-1.5 rounded text-xs cursor-pointer select-none transition-colors ${
                 filters.inStockOnly
-                  ? "bg-[#111111] text-white font-bold"
+                  ? "bg-veyro-black text-white font-bold"
                   : "text-neutral-700 hover:text-black hover:bg-neutral-100/70"
               }`}
             >
               <div className="flex items-center gap-2.5">
                 <span
-                  className={`w-3.5 h-3.5 rounded-[2px] border flex items-center justify-center transition-colors ${
+                  className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition-colors ${
                     filters.inStockOnly
                       ? "bg-white border-white text-black"
                       : "border-neutral-300 bg-white"
@@ -319,12 +319,12 @@ export function ArchiveFilterSidebar({
                 >
                   {filters.inStockOnly && <Check size={10} strokeWidth={3} />}
                 </span>
-                <span className="tracking-wide uppercase text-[11px] font-semibold">
+                <span className="tracking-wide uppercase text-xs font-semibold">
                   In Stock Only
                 </span>
               </div>
               <span
-                className={`text-[10px] font-mono ${
+                className={`text-2xs font-mono ${
                   filters.inStockOnly ? "text-neutral-300" : "text-neutral-400"
                 }`}
               >
@@ -376,7 +376,7 @@ export function ArchiveFilterSidebar({
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="w-full py-3 bg-[#111111] text-white rounded-[2px] text-xs font-bold uppercase tracking-wider shadow-md hover:bg-black transition-colors"
+                className="w-full py-3 bg-veyro-black text-white rounded-sm text-xs font-bold uppercase tracking-wider shadow-md hover:bg-black transition-colors"
               >
                 Show {totalFilteredCount} Pieces
               </button>

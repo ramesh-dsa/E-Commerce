@@ -470,23 +470,23 @@ export function FootwearSection() {
           
           {/* Left Static Text (Takes up ~25% on desktop to give maximum space to the carousel) */}
           <div className="w-full lg:w-[25%] shrink-0 flex flex-col justify-center pr-0 lg:pr-4 xl:pr-8 z-20 mb-4 sm:mb-6 lg:mb-0">
-            <p className="text-[#a3a3a3] text-[10px] sm:text-xs font-semibold tracking-[0.2em] uppercase mb-1">
+            <p className="text-neutral-400 text-2xs sm:text-xs font-semibold tracking-[0.2em] uppercase mb-1">
               FOOTWEAR ARCHIVE
             </p>
-            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-[#fcd017] tracking-normal block mb-1 font-normal select-none">
+            <span className="font-script text-2xl sm:text-3xl lg:text-4xl text-veyro-yellow tracking-normal block mb-1 font-normal select-none">
               the sneaker vault
             </span>
             <h2 className="text-3xl sm:text-4xl xl:text-6xl font-bold tracking-tight mb-2 sm:mb-4 leading-[1.05]">
               VULCANIZED<br className="hidden lg:block"/> SILHOUETTES
             </h2>
-            <p className="text-[#a3a3a3] text-xs sm:text-sm leading-relaxed max-w-sm lg:max-w-xs mb-4 sm:mb-6">
+            <p className="text-neutral-400 text-xs sm:text-sm leading-relaxed max-w-sm lg:max-w-xs mb-4 sm:mb-6">
               Engineered for all-day comfort. Retro runners and modern vulcanized silhouettes built for Indian streetscapes.
             </p>
 
             {/* Direct CTA to full Footwear Catalog */}
             <Link
               href="/shoes"
-              className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-veyro-yellow border border-veyro-yellow hover:bg-white hover:border-white text-veyro-black hover:text-veyro-black font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.18em] rounded-full transition-all duration-300 group/btn mb-4 sm:mb-8 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-veyro-yellow border border-veyro-yellow hover:bg-white hover:border-white text-veyro-black hover:text-veyro-black font-bold text-2xs sm:text-xs uppercase tracking-[0.18em] rounded-full transition-colors duration-300 group/btn mb-4 sm:mb-8 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <span>Explore Sneaker Vault (9)</span>
               <ArrowRight size={13} className="group-hover/btn:translate-x-1 transition-transform" />
@@ -494,7 +494,7 @@ export function FootwearSection() {
 
             {/* Interactive Brutalist Filters & Mobile Carousel Controls */}
             <div className="flex items-center justify-between gap-3 w-full">
-              <div role="tablist" className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.18em] uppercase overflow-x-auto scrollbar-none">
+              <div role="tablist" className="flex items-center gap-1.5 sm:gap-2 text-2xs sm:text-xs font-bold tracking-[0.18em] uppercase overflow-x-auto scrollbar-none">
                 {["ALL", "MINIMAL", "RETRO", "CHUNKY"].map((filter) => {
                   const isActive = activeFilter === filter;
                   return (
@@ -504,10 +504,10 @@ export function FootwearSection() {
                       role="tab"
                       aria-selected={isActive}
                       onClick={() => setActiveFilter(filter)}
-                      className={`relative px-3 py-1.5 rounded-full transition-all duration-300 ease-out shrink-0 select-none cursor-pointer ${
+                      className={`relative px-3 py-1.5 rounded-full transition-colors duration-300 ease-out shrink-0 select-none cursor-pointer ${
                         isActive 
                           ? "text-white bg-white/[0.1] border border-white/[0.15] backdrop-blur-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]" 
-                          : "text-[#666] border border-transparent hover:text-[#b0b0b0] hover:bg-white/[0.04]"
+                          : "text-neutral-600 border border-transparent hover:text-neutral-400 hover:bg-white/[0.04]"
                       }`}
                     >
                       {filter}
@@ -522,7 +522,7 @@ export function FootwearSection() {
                   type="button"
                   onClick={() => scrollRail("left")}
                   aria-label="Previous sneakers"
-                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 active:scale-90 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-xs"
+                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 active:scale-90 text-white flex items-center justify-center transition cursor-pointer backdrop-blur-md shadow-xs"
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -530,7 +530,7 @@ export function FootwearSection() {
                   type="button"
                   onClick={() => scrollRail("right")}
                   aria-label="Next sneakers"
-                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 active:scale-90 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-xs"
+                  className="w-8 h-8 rounded-full border border-white/20 bg-white/5 hover:bg-white/20 active:scale-90 text-white flex items-center justify-center transition cursor-pointer backdrop-blur-md shadow-xs"
                 >
                   <ChevronRight size={16} />
                 </button>

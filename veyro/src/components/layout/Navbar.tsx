@@ -259,7 +259,7 @@ export function Navbar() {
             type="button"
             aria-label="Open navigation menu"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex lg:hidden p-1.5 mr-3 text-[#111111] hover:text-[#555555] transition-colors cursor-pointer"
+            className="flex lg:hidden p-1.5 mr-3 text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer"
           >
             <MenuIcon size={24} />
           </button>
@@ -309,12 +309,12 @@ export function Navbar() {
                     }
                   }}
                   aria-current={isActive ? "page" : undefined}
-                  className="relative group inline-flex flex-col items-center pt-1 pb-[8px] text-[13.5px] xl:text-[14px] font-semibold tracking-[0.05em] uppercase text-[#111111] whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-[#fcd017] focus-visible:ring-offset-4 rounded-xs"
+                  className="relative group inline-flex flex-col items-center pt-1 pb-[8px] text-[13.5px] xl:text-sm font-semibold tracking-[0.05em] uppercase text-veyro-black whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-veyro-yellow focus-visible:ring-offset-4 rounded-xs"
                 >
                   <span>{link.label}</span>
                   <span
                     aria-hidden="true"
-                    className={`absolute bottom-0 left-0 w-full h-[2.5px] bg-[#fcd017] origin-left transition-transform duration-500 ease-out motion-reduce:transition-none pointer-events-none ${
+                    className={`absolute bottom-0 left-0 w-full h-[3px] bg-veyro-yellow origin-left transition-transform duration-500 ease-out motion-reduce:transition-none pointer-events-none ${
                       isActive
                         ? "scale-x-100"
                         : "scale-x-0 group-hover:scale-x-100 group-focus-visible:scale-x-100"
@@ -338,7 +338,7 @@ export function Navbar() {
             type="button"
             aria-label="Search"
             onClick={() => setMobileSearchOpen(true)}
-            className="flex md:hidden p-1.5 text-[#111111] hover:text-[#555555] transition-colors cursor-pointer"
+            className="flex md:hidden p-1.5 text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer"
           >
             <SearchIcon size={21} />
           </button>
@@ -359,8 +359,8 @@ export function Navbar() {
                 aria-expanded={user ? isProfileDropdownOpen : undefined}
                 aria-haspopup={user ? "menu" : undefined}
                 aria-label={user ? `Account menu for ${user.name}` : "My Account / Sign In"}
-                className={`p-1.5 rounded-full transition-all duration-200 cursor-pointer hover:bg-neutral-100 ${
-                  user && isProfileDropdownOpen ? "bg-neutral-100 text-black" : "text-[#111111] hover:text-black"
+                className={`p-1.5 rounded-full transition-colors duration-200 cursor-pointer hover:bg-neutral-100 ${
+                  user && isProfileDropdownOpen ? "bg-neutral-100 text-black" : "text-veyro-black hover:text-black"
                 }`}
               >
                 <UserIcon size={21} />
@@ -380,7 +380,7 @@ export function Navbar() {
                         {user.name}
                       </span>
                     </div>
-                    <p className="text-[11px] text-neutral-500 truncate mt-0.5">
+                    <p className="text-xs text-neutral-500 truncate mt-0.5">
                       {user.email}
                     </p>
                   </div>
@@ -400,14 +400,14 @@ export function Navbar() {
                         <div className="text-xs font-semibold text-neutral-900">
                           My Orders
                         </div>
-                        <p className="text-[11px] text-neutral-500 truncate">
+                        <p className="text-xs text-neutral-500 truncate">
                           {activeOrdersCount > 0
                             ? `${activeOrdersCount} active order${activeOrdersCount > 1 ? "s" : ""}`
                             : "Track & view history"}
                         </p>
                       </div>
                     </div>
-                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition shrink-0 ml-2" />
                   </Link>
 
                   {/* Menu Item 2: My Profile */}
@@ -425,12 +425,12 @@ export function Navbar() {
                         <div className="text-xs font-semibold text-neutral-900">
                           My Profile
                         </div>
-                        <p className="text-[11px] text-neutral-500 truncate">
+                        <p className="text-xs text-neutral-500 truncate">
                           Personal info & address
                         </p>
                       </div>
                     </div>
-                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                    <ChevronRight size={14} className="text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition shrink-0 ml-2" />
                   </Link>
 
                   {/* Divider */}
@@ -454,11 +454,11 @@ export function Navbar() {
             <Link
               href="/wishlist"
               aria-label={`Wishlist (${totalWishlistItems} items)`}
-              className="group relative flex items-center text-[#111111] hover:text-black p-1 cursor-pointer transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black motion-reduce:transform-none"
+              className="group relative flex items-center text-veyro-black hover:text-black p-1 cursor-pointer transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black motion-reduce:transform-none"
             >
               <HeartIcon size={21} className="transition-transform duration-200 ease-out group-hover:scale-105 motion-reduce:transform-none" />
               {totalWishlistItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#fcd017] text-[#111111] text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs ring-1.5 ring-white">
+                <span className="absolute -top-1 -right-1 bg-veyro-yellow text-veyro-black text-2xs font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs ring-1.5 ring-white">
                   {totalWishlistItems}
                 </span>
               )}
@@ -468,11 +468,11 @@ export function Navbar() {
             <Link
               href="/cart"
               aria-label={`Shopping Cart (${totalItems} items)`}
-              className="group relative flex items-center text-[#111111] hover:text-black p-1 cursor-pointer transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black motion-reduce:transform-none"
+              className="group relative flex items-center text-veyro-black hover:text-black p-1 cursor-pointer transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-95 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black motion-reduce:transform-none"
             >
               <ShoppingCartIcon size={21} className="transition-transform duration-200 ease-out group-hover:scale-105 motion-reduce:transform-none" />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#fcd017] text-[#111111] text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs ring-1.5 ring-white">
+                <span className="absolute -top-1 -right-1 bg-veyro-yellow text-veyro-black text-2xs font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs ring-1.5 ring-white">
                   {totalItems}
                 </span>
               )}
@@ -516,7 +516,7 @@ export function Navbar() {
                 type="button"
                 aria-label="Close menu"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 text-[#111111] hover:text-neutral-500 cursor-pointer"
+                className="p-1.5 text-veyro-black hover:text-neutral-500 cursor-pointer"
               >
                 <CloseIcon size={22} />
               </button>
@@ -550,7 +550,7 @@ export function Navbar() {
                       }
                       setMobileMenuOpen(false);
                     }}
-                    className="py-2.5 sm:py-3 text-sm font-semibold tracking-wider uppercase text-[#111111] hover:text-neutral-500 transition-colors flex items-center justify-between"
+                    className="py-2.5 sm:py-3 text-sm font-semibold tracking-wider uppercase text-veyro-black hover:text-neutral-500 transition-colors flex items-center justify-between"
                     aria-current={isActive ? "page" : undefined}
                   >
                     <span className="relative">
@@ -558,7 +558,7 @@ export function Navbar() {
                       {isActive && (
                         <span
                           aria-hidden="true"
-                          className="absolute -bottom-1 left-0 w-full h-[3px] bg-[#fcd017]"
+                          className="absolute -bottom-1 left-0 w-full h-[3px] bg-veyro-yellow"
                         />
                       )}
                     </span>
@@ -580,7 +580,7 @@ export function Navbar() {
                       </div>
                       <div className="min-w-0">
                         <div className="text-xs font-bold text-veyro-black uppercase truncate">{user.name}</div>
-                        <div className="text-[10px] text-veyro-muted font-mono truncate">{user.email}</div>
+                        <div className="text-2xs text-veyro-muted font-mono truncate">{user.email}</div>
                       </div>
                     </div>
                   </div>
@@ -624,7 +624,7 @@ export function Navbar() {
                       <span>My Wishlist</span>
                     </div>
                     {totalWishlistItems > 0 && (
-                      <span className="bg-veyro-yellow text-veyro-black text-[10px] font-black px-2 py-0.5 rounded-full">
+                      <span className="bg-veyro-yellow text-veyro-black text-2xs font-black px-2 py-0.5 rounded-full">
                         {totalWishlistItems}
                       </span>
                     )}
@@ -655,7 +655,7 @@ export function Navbar() {
                       <span>My Wishlist</span>
                     </div>
                     {totalWishlistItems > 0 && (
-                      <span className="bg-veyro-yellow text-veyro-black text-[10px] font-black px-2 py-0.5 rounded-full">
+                      <span className="bg-veyro-yellow text-veyro-black text-2xs font-black px-2 py-0.5 rounded-full">
                         {totalWishlistItems}
                       </span>
                     )}

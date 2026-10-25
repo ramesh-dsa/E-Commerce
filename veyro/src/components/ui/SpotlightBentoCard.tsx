@@ -76,7 +76,7 @@ export function SpotlightBentoCard({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-[#0d0d10] text-white select-none ${className}`}
+      className={`group relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-neutral-900 text-white select-none ${className}`}
       style={{
         transformStyle: "preserve-3d",
         willChange: "transform",

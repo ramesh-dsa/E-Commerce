@@ -20,13 +20,13 @@ export function AnnouncementBar() {
   return (
     <aside
       aria-label="Promotional announcement"
-      className="relative z-40 w-full bg-[#fcd017] text-[#111111] select-none flex items-center overflow-hidden h-[36px]"
+      className="relative z-30 w-full bg-veyro-yellow text-veyro-black select-none flex items-center overflow-hidden h-[36px]"
     >
-      <div className="animate-marquee whitespace-nowrap flex items-center text-[11px] sm:text-[11.5px] font-semibold tracking-[0.09em] uppercase py-0.5">
+      <div className="animate-marquee whitespace-nowrap flex items-center text-xs sm:text-[11.5px] font-semibold tracking-[0.09em] uppercase py-0.5">
         {items.map((text, idx) => (
           <React.Fragment key={idx}>
             <span className="shrink-0 px-6">{text}</span>
-            <span className="text-[#111111]/35 font-normal shrink-0">|</span>
+            <span className="text-veyro-black/35 font-normal shrink-0">|</span>
           </React.Fragment>
         ))}
       </div>

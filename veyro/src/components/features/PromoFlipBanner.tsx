@@ -27,8 +27,8 @@ export function PromoFlipBanner() {
       onBlurCapture={() => setIsPaused(false)}
     >
       {/* Aligned Header Row with Context & Switch */}
-      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto mb-4 sm:mb-5 flex items-center justify-between px-1 relative z-30">
-        <span className="text-[10px] sm:text-[11px] font-mono tracking-widest text-[#888] uppercase">
+      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-7xl mx-auto mb-4 sm:mb-5 flex items-center justify-between px-1 relative z-30">
+        <span className="text-2xs sm:text-xs font-mono tracking-widest text-neutral-500 uppercase">
           EXCLUSIVE OFFERS
         </span>
         <button 
@@ -37,19 +37,19 @@ export function PromoFlipBanner() {
           className="flex items-center gap-2.5 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-sm px-1 py-0.5" 
           onClick={() => setIsFlipped(!isFlipped)}
         >
-          <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${!isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
+          <span className={`text-2xs font-bold tracking-widest uppercase transition-colors duration-300 ${!isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
             T-Shirts
           </span>
           <div className="relative w-9 h-[18px] bg-neutral-200 rounded-full overflow-hidden flex items-center p-0.5">
             <div className={`w-3 h-3 bg-veyro-black rounded-full shadow-xs transform transition-transform duration-300 ease-out ${isFlipped ? "translate-x-4" : "translate-x-0"}`} />
           </div>
-          <span className={`text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
+          <span className={`text-2xs font-bold tracking-widest uppercase transition-colors duration-300 ${isFlipped ? "text-veyro-black" : "text-neutral-400"}`}>
             Sneakers
           </span>
         </button>
       </div>
 
-      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto relative" style={{ perspective: "2000px" }}>
+      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-7xl mx-auto relative" style={{ perspective: "2000px" }}>
         {/* 3D Flip Container */}
         <div 
           className="relative w-full grid transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
@@ -74,7 +74,7 @@ export function PromoFlipBanner() {
               >
               {/* LEFT SECTION (BLACK) */}
               <div
-                className="relative flex-[1.2] bg-[#111111] text-white px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-[#222222]"
+                className="relative flex-[1.2] bg-veyro-black text-white px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-neutral-800"
                 style={{
                   WebkitMaskImage:
                     "radial-gradient(circle 24px at 0% 50%, transparent 24px, black 25px)",
@@ -97,7 +97,7 @@ export function PromoFlipBanner() {
                   </h3>
 
                   <div className="flex items-end gap-2 mt-0 mb-2">
-                    <span className="text-3xl sm:text-4xl lg:text-[44px] font-black tracking-tighter text-[#fcd017] uppercase leading-[0.9] drop-shadow-lg">
+                    <span className="text-3xl sm:text-4xl lg:text-[44px] font-black tracking-tighter text-veyro-yellow uppercase leading-[0.9] drop-shadow-lg">
                       BUY 3 AT
                     </span>
                     <span className="text-4xl sm:text-5xl lg:text-[56px] font-black tracking-tighter text-white uppercase leading-[0.85] drop-shadow-lg">
@@ -115,7 +115,7 @@ export function PromoFlipBanner() {
                       <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center">
                         <Diamond size={10} className="text-white/70" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-neutral-400 uppercase leading-tight">
+                      <span className="text-[9px] sm:text-2xs font-bold tracking-widest text-neutral-400 uppercase leading-tight">
                         PREMIUM <br /> COTTON
                       </span>
                     </div>
@@ -124,7 +124,7 @@ export function PromoFlipBanner() {
                       <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center">
                         <Zap size={10} className="text-white/70" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-neutral-400 uppercase leading-tight">
+                      <span className="text-[9px] sm:text-2xs font-bold tracking-widest text-neutral-400 uppercase leading-tight">
                         RELAXED <br /> FIT
                       </span>
                     </div>
@@ -133,7 +133,7 @@ export function PromoFlipBanner() {
                       <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center">
                         <ShieldCheck size={10} className="text-white/70" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-neutral-400 uppercase leading-tight">
+                      <span className="text-[9px] sm:text-2xs font-bold tracking-widest text-neutral-400 uppercase leading-tight">
                         EVERYDAY <br /> STYLE
                       </span>
                     </div>
@@ -143,7 +143,7 @@ export function PromoFlipBanner() {
 
               {/* RIGHT SECTION (YELLOW) */}
               <div
-                className="relative flex-[1.4] bg-[#fcd017] text-[#111111] px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center items-start md:items-start overflow-hidden"
+                className="relative flex-[1.4] bg-veyro-yellow text-veyro-black px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center items-start md:items-start overflow-hidden"
                 style={{
                   WebkitMaskImage:
                     "radial-gradient(circle 24px at 100% 50%, transparent 24px, black 25px)",
@@ -166,12 +166,12 @@ export function PromoFlipBanner() {
 
                   {/* White Pill */}
                   <div className="bg-white px-5 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] mb-3 inline-flex items-center justify-center transform transition-transform group-hover:scale-105 self-start border border-white/60">
-                    <span className="text-2xl sm:text-[28px] lg:text-[32px] font-black tracking-tighter text-[#111111] leading-none">
+                    <span className="text-2xl sm:text-[28px] lg:text-[32px] font-black tracking-tighter text-veyro-black leading-none">
                       TSHIRT1199
                     </span>
                   </div>
 
-                  <span className="text-[11px] sm:text-[13px] font-bold text-[#111111] tracking-wide">
+                  <span className="text-xs sm:text-sm font-bold text-veyro-black tracking-wide">
                     Offer auto-applies at checkout
                   </span>
                 </div>
@@ -180,7 +180,7 @@ export function PromoFlipBanner() {
             </div>
 
             {/* The Floating T-Shirt (OUTSIDE MASK & LINK) */}
-            <div className="absolute right-2 sm:right-[-4%] md:right-[2%] top-[75%] sm:top-1/2 -translate-y-1/2 sm:-translate-y-[54%] w-[40%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-3 z-20 drop-shadow-2xl">
+            <div className="absolute right-2 sm:right-[-4%] md:right-[2%] top-[75%] sm:top-1/2 -translate-y-1/2 sm:-translate-y-[54%] w-[40%] sm:w-[50%] md:w-[40%] max-w-xs aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-rotate-3 z-20 drop-shadow-2xl">
               <Image 
                 src="/products/tshirts/premium_floating_tshirt_cropped.webp" 
                 alt="Premium Classic Fit T-Shirt" 
@@ -210,7 +210,7 @@ export function PromoFlipBanner() {
               >
               {/* LEFT SECTION (BLACK) */}
               <div
-                className="relative flex-[1.2] bg-[#111111] text-white px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-[#222222]"
+                className="relative flex-[1.2] bg-veyro-black text-white px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-neutral-800"
                 style={{
                   WebkitMaskImage:
                     "radial-gradient(circle 24px at 0% 50%, transparent 24px, black 25px)",
@@ -233,7 +233,7 @@ export function PromoFlipBanner() {
                   </h3>
 
                   <div className="flex items-end gap-2 mt-0 mb-2">
-                    <span className="text-4xl sm:text-5xl lg:text-[56px] font-black tracking-tighter text-[#fcd017] uppercase leading-[0.85] drop-shadow-lg">
+                    <span className="text-4xl sm:text-5xl lg:text-[56px] font-black tracking-tighter text-veyro-yellow uppercase leading-[0.85] drop-shadow-lg">
                       ₹500
                     </span>
                     <span className="text-3xl sm:text-4xl lg:text-[44px] font-black tracking-tighter text-white uppercase leading-[0.9] drop-shadow-lg">
@@ -251,7 +251,7 @@ export function PromoFlipBanner() {
                       <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center">
                         <Zap size={10} className="text-white/70" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-neutral-400 uppercase leading-tight">
+                      <span className="text-[9px] sm:text-2xs font-bold tracking-widest text-neutral-400 uppercase leading-tight">
                         TRENDING <br /> FOOTWEAR
                       </span>
                     </div>
@@ -260,7 +260,7 @@ export function PromoFlipBanner() {
                       <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center">
                         <Diamond size={10} className="text-white/70" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-neutral-400 uppercase leading-tight">
+                      <span className="text-[9px] sm:text-2xs font-bold tracking-widest text-neutral-400 uppercase leading-tight">
                         PREMIUM <br /> QUALITY
                       </span>
                     </div>
@@ -269,7 +269,7 @@ export function PromoFlipBanner() {
                       <div className="w-5 h-5 rounded-full border border-white/20 flex items-center justify-center">
                         <ShieldCheck size={10} className="text-white/70" />
                       </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-neutral-400 uppercase leading-tight">
+                      <span className="text-[9px] sm:text-2xs font-bold tracking-widest text-neutral-400 uppercase leading-tight">
                         MADE FOR <br /> EVERYDAY
                       </span>
                     </div>
@@ -279,7 +279,7 @@ export function PromoFlipBanner() {
 
               {/* RIGHT SECTION (YELLOW) */}
               <div
-                className="relative flex-[1.4] bg-[#fcd017] text-[#111111] px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center items-start md:items-start overflow-hidden"
+                className="relative flex-[1.4] bg-veyro-yellow text-veyro-black px-6 sm:px-10 lg:px-14 py-5 flex flex-col justify-center items-start md:items-start overflow-hidden"
                 style={{
                   WebkitMaskImage:
                     "radial-gradient(circle 24px at 100% 50%, transparent 24px, black 25px)",
@@ -297,13 +297,13 @@ export function PromoFlipBanner() {
                   </span>
 
                   {/* Black Pill */}
-                  <div className="bg-[#111111] px-5 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] mb-3 inline-flex items-center justify-center transform transition-transform group-hover:scale-105 self-start">
+                  <div className="bg-veyro-black px-5 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] mb-3 inline-flex items-center justify-center transform transition-transform group-hover:scale-105 self-start">
                     <span className="text-2xl sm:text-[28px] lg:text-[32px] font-black tracking-tighter text-white leading-none">
                       STEP500
                     </span>
                   </div>
 
-                  <span className="text-[11px] sm:text-[13px] font-bold text-[#111111] tracking-wide">
+                  <span className="text-xs sm:text-sm font-bold text-veyro-black tracking-wide">
                     Everyday comfort. Modern attitude.
                   </span>
                 </div>
@@ -312,7 +312,7 @@ export function PromoFlipBanner() {
             </div>
 
             {/* The Floating Sneaker Composition (OUTSIDE MASK & LINK) */}
-            <div className="absolute right-2 sm:right-[-4%] md:right-[2%] top-[75%] sm:top-1/2 -translate-y-1/2 w-[40%] sm:w-[50%] md:w-[40%] max-w-[320px] aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
+            <div className="absolute right-2 sm:right-[-4%] md:right-[2%] top-[75%] sm:top-1/2 -translate-y-1/2 w-[40%] sm:w-[50%] md:w-[40%] max-w-xs aspect-square pointer-events-none transform transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-rotate-6 z-20">
 
               {/* Foreground Crisp Sneaker */}
               <div className="absolute inset-0 z-10 drop-shadow-2xl">

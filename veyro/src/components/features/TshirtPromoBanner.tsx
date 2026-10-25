@@ -8,14 +8,14 @@ export function TshirtPromoBanner() {
       aria-label="Promotional Offer"
       className="w-full pt-4 pb-8 sm:pb-10 overflow-hidden select-none"
     >
-      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-[1300px] mx-auto filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.1)]">
+      <div className="w-[94%] sm:w-[90%] lg:w-[84%] xl:w-[80%] max-w-7xl mx-auto filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.1)]">
         <Link
           href="#"
           className="group relative flex flex-col md:flex-row w-full overflow-hidden transition-transform duration-300 hover:scale-[1.005]"
         >
           {/* LEFT SECTION (BLACK) */}
           <div
-            className="relative flex-[1.4] bg-[#0c0c0c] text-white px-6 sm:px-10 lg:px-12 py-3 sm:py-4 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-[#1a1a1a]"
+            className="relative flex-[1.4] bg-neutral-950 text-white px-6 sm:px-10 lg:px-12 py-3 sm:py-4 flex flex-col justify-center overflow-hidden border-r-[2px] border-dashed border-neutral-800"
             style={{
               WebkitMaskImage:
                 "radial-gradient(circle at 0px 8px, transparent 4px, black 4.5px)",
@@ -43,7 +43,7 @@ export function TshirtPromoBanner() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="w-3 h-1 bg-[#fcd017] transform -skew-x-[40deg]"
+                    className="w-3 h-1 bg-veyro-yellow transform -skew-x-[40deg]"
                   />
                 ))}
               </div>
@@ -59,9 +59,9 @@ export function TshirtPromoBanner() {
                 </span>
               </div>
 
-              <div className="w-12 h-[3px] bg-[#fcd017] mt-2 mb-2 rounded-full shadow-[0_0_8px_rgba(252,208,23,0.3)]" />
+              <div className="w-12 h-[3px] bg-veyro-yellow mt-2 mb-2 rounded-full shadow-[0_0_8px_rgba(252,208,23,0.3)]" />
 
-              <p className="text-[9px] sm:text-[10px] font-semibold tracking-[0.25em] text-neutral-400 uppercase leading-none">
+              <p className="text-[9px] sm:text-2xs font-semibold tracking-[0.25em] text-neutral-400 uppercase leading-none">
                 PREMIUM QUALITY <span className="mx-2 text-neutral-600">|</span> EVERYDAY STYLE
               </p>
             </div>
@@ -69,7 +69,7 @@ export function TshirtPromoBanner() {
 
           {/* RIGHT SECTION (YELLOW) */}
           <div
-            className="relative flex-1 bg-[#fcd017] text-[#111111] px-6 sm:px-10 lg:px-12 py-3 sm:py-4 flex flex-col justify-center items-center md:items-start"
+            className="relative flex-1 bg-veyro-yellow text-veyro-black px-6 sm:px-10 lg:px-12 py-3 sm:py-4 flex flex-col justify-center items-center md:items-start"
             style={{
               WebkitMaskImage:
                 "radial-gradient(circle at 100% 8px, transparent 4px, black 4.5px)",
@@ -85,18 +85,18 @@ export function TshirtPromoBanner() {
           >
             <div className="relative z-10 w-full flex flex-col lg:flex-row justify-between items-center lg:items-center gap-4 lg:gap-0">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                <span className="text-sm sm:text-[15px] font-black tracking-wide uppercase mb-1.5 opacity-90 leading-none">
+                <span className="text-sm sm:text-sm font-black tracking-wide uppercase mb-1.5 opacity-90 leading-none">
                   USE CODE
                 </span>
 
                 {/* White Pill */}
                 <div className="bg-white px-5 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] mb-1.5 inline-flex items-center justify-center border border-white/60 transform transition-transform group-hover:scale-105">
-                  <span className="text-2xl sm:text-[28px] lg:text-[32px] font-black tracking-tighter text-[#111111] leading-none">
+                  <span className="text-2xl sm:text-[28px] lg:text-[32px] font-black tracking-tighter text-veyro-black leading-none">
                     TSHIRT1199
                   </span>
                 </div>
 
-                <span className="text-xs sm:text-[13px] font-bold text-[#111111]/80 tracking-tight leading-none">
+                <span className="text-xs sm:text-sm font-bold text-veyro-black/80 tracking-tight leading-none">
                   Offer auto-applies at checkout
                 </span>
               </div>
@@ -110,16 +110,16 @@ export function TshirtPromoBanner() {
                   <div className="w-1 h-2.5 bg-white rounded-full transform rotate-[35deg]" />
                 </div>
                 {/* Red Tag */}
-                <div className="relative flex h-[48px] w-[48px] items-center justify-center rounded-[5px] bg-[#ef233c] text-white shadow-lg rotate-12 transition-transform duration-500 ease-out group-hover:rotate-0 group-hover:scale-110">
+                <div className="relative flex h-[48px] w-[48px] items-center justify-center rounded-md bg-red-500 text-white shadow-lg rotate-12 transition-transform duration-500 ease-out group-hover:rotate-0 group-hover:scale-110">
                   <span className="text-[26px] font-black mt-0.5 ml-0.5">%</span>
                   {/* Tag hole */}
-                  <div className="absolute top-1.5 left-1.5 w-2 h-2 bg-[#fcd017] rounded-full border border-black/10 shadow-inner" />
+                  <div className="absolute top-1.5 left-1.5 w-2 h-2 bg-veyro-yellow rounded-full border border-black/10 shadow-inner" />
                 </div>
               </div>
             </div>
 
             {/* Little V logo bottom right */}
-            <div className="absolute bottom-2.5 right-4 w-4 h-4 bg-[#111111] rounded-[3px] flex items-center justify-center shadow-md">
+            <div className="absolute bottom-2.5 right-4 w-4 h-4 bg-veyro-black rounded-sm flex items-center justify-center shadow-md">
               <span className="text-white text-[9px] font-black tracking-tighter mt-px">V</span>
             </div>
           </div>

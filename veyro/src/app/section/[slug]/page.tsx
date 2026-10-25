@@ -41,7 +41,7 @@ function CustomProductCard({ product }: { product: CustomSectionProduct }) {
       onMouseLeave={() => setIsHovered(false)}
     >
         {/* Product Image Container */}
-        <div className="relative w-full overflow-hidden rounded-2xl transition-all duration-300 bg-[#f4f2ee] aspect-[3/4]">
+        <div className="relative w-full overflow-hidden rounded-2xl transition-colors duration-300 bg-veyro-surface-alt aspect-[3/4]">
           <Link
             href={`/product/${product.slug}`}
             className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
@@ -105,7 +105,7 @@ function CustomProductCard({ product }: { product: CustomSectionProduct }) {
         {/* Product Details */}
         <div className="pt-2.5 pb-1 flex flex-col flex-1">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+            <span className="text-2xs sm:text-xs font-medium uppercase tracking-wider text-neutral-500">
               {product.material || product.colorName}
             </span>
             {product.colorHex && (
@@ -126,7 +126,7 @@ function CustomProductCard({ product }: { product: CustomSectionProduct }) {
         {/* Pricing */}
         <div className="mt-1 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
           {product.originalPrice && product.originalPrice > product.price && (
-            <span className="text-[11px] sm:text-xs line-through text-neutral-400">
+            <span className="text-xs sm:text-xs line-through text-neutral-400">
               {formatPrice(product.originalPrice)}
             </span>
           )}
@@ -134,7 +134,7 @@ function CustomProductCard({ product }: { product: CustomSectionProduct }) {
             {formatPrice(product.price)}
           </span>
           {displayDiscount && (
-            <span className="text-[11px] sm:text-xs font-medium text-emerald-600">
+            <span className="text-xs sm:text-xs font-medium text-emerald-600">
               {displayDiscount}
             </span>
           )}
@@ -184,7 +184,7 @@ function CustomFilterSidebar({
           <SlidersHorizontal size={16} className="text-neutral-700" />
           <span className="text-sm font-bold text-neutral-900 uppercase tracking-wider">Filters</span>
           {totalActive > 0 && (
-            <span className="bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            <span className="bg-neutral-900 text-white text-2xs font-bold px-1.5 py-0.5 rounded-full">
               {totalActive}
             </span>
           )}
@@ -192,7 +192,7 @@ function CustomFilterSidebar({
         {totalActive > 0 && (
           <button
             onClick={onClearAll}
-            className="text-[11px] font-semibold text-neutral-500 hover:text-red-500 transition-colors cursor-pointer"
+            className="text-xs font-semibold text-neutral-500 hover:text-red-500 transition-colors cursor-pointer"
           >
             Clear All
           </button>
@@ -295,7 +295,7 @@ function FilterGroup({
                 className="flex items-center gap-2.5 py-1 cursor-pointer group"
               >
                 <div
-                  className={`w-4 h-4 rounded ${filter.type === "radio" ? "rounded-full" : "rounded"} border-2 flex items-center justify-center transition-all ${
+                  className={`w-4 h-4 rounded ${filter.type === "radio" ? "rounded-full" : "rounded"} border-2 flex items-center justify-center transition-colors ${
                     isActive
                       ? "bg-neutral-900 border-neutral-900"
                       : "bg-white border-neutral-300 group-hover:border-neutral-500"
@@ -542,7 +542,7 @@ export default function CustomSectionPage() {
                     role="tab"
                     aria-selected={i === currentSlide}
                     aria-label={`Go to slide ${i + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    className={`h-1.5 rounded-full transition-colors duration-300 cursor-pointer ${
                       i === currentSlide
                         ? "w-6 bg-white"
                         : "w-1.5 bg-white/60 hover:bg-white/90"
@@ -556,14 +556,14 @@ export default function CustomSectionPage() {
       )}
 
       {/* ── Catalog Area ─────────────────────────────────────────────── */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-8 lg:py-12">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-8 lg:py-12">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-[13px] uppercase tracking-[0.04em] mb-6">
-          <Link href="/" className="text-[#555555] font-medium hover:text-[#111111] transition-colors">
+        <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2.5 text-sm uppercase tracking-[0.04em] mb-6">
+          <Link href="/" className="text-neutral-600 font-medium hover:text-veyro-black transition-colors">
             HOME
           </Link>
-          <span className="text-[#777777] font-semibold text-[11px]">&gt;</span>
-          <span className="text-[#111111] font-bold uppercase">
+          <span className="text-neutral-500 font-semibold text-xs">&gt;</span>
+          <span className="text-veyro-black font-bold uppercase">
             {section.name}
           </span>
         </nav>
@@ -591,7 +591,7 @@ export default function CustomSectionPage() {
                 <SlidersHorizontal size={14} />
                 Filters
                 {totalActiveFilters > 0 && (
-                  <span className="bg-neutral-900 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                  <span className="bg-neutral-900 text-white text-2xs px-1.5 py-0.5 rounded-full font-bold">
                     {totalActiveFilters}
                   </span>
                 )}
@@ -649,7 +649,7 @@ export default function CustomSectionPage() {
                 <button
                   key={`${key}-${val}`}
                   onClick={() => handleToggleFilter(key, val)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-[11px] font-semibold rounded-full hover:bg-neutral-700 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-full hover:bg-neutral-700 transition-colors cursor-pointer"
                 >
                   {val}
                   <X size={11} />
@@ -658,7 +658,7 @@ export default function CustomSectionPage() {
             )}
             <button
               onClick={handleClearAllFilters}
-              className="text-[11px] font-semibold text-neutral-500 hover:text-red-500 transition-colors cursor-pointer"
+              className="text-xs font-semibold text-neutral-500 hover:text-red-500 transition-colors cursor-pointer"
             >
               Clear all
             </button>

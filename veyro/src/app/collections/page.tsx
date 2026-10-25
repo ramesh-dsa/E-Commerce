@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function CollectionsPage() {
   return (
-    <main className="w-full bg-[#fbfbf9]">
+    <main className="w-full bg-neutral-50">
       {/* ── 1. INTERACTIVE COLLECTION HERO SHOWCASE (Fan Deck -> Rail -> Detail) ── */}
       <CollectionsShowcase />
 

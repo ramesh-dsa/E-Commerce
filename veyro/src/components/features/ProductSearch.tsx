@@ -243,7 +243,7 @@ export function ProductSearch({
         className="fixed inset-0 z-[150] bg-white flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden overscroll-contain animate-in fade-in duration-200"
       >
         {/* Pinned Top Search Bar */}
-        <div className="shrink-0 px-4 pt-[max(14px,env(safe-area-inset-top))] pb-3.5 border-b border-[#f0f0ed] bg-white flex items-center gap-3">
+        <div className="shrink-0 px-4 pt-[max(14px,env(safe-area-inset-top))] pb-3.5 border-b border-veyro-border-light bg-white flex items-center gap-3">
           <div className="flex-1 relative flex items-center">
             <span className="absolute left-3.5 text-neutral-400 pointer-events-none">
               <SearchIcon size={18} />
@@ -261,14 +261,14 @@ export function ProductSearch({
               onKeyDown={handleKeyDown}
               placeholder="Search products..."
               aria-label="Search products"
-              className="h-11 w-full rounded-full bg-[#f4f4f2] pl-10 pr-9 text-sm font-medium text-[#111111] placeholder:text-neutral-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#fcd017] border border-transparent transition-all"
+              className="h-11 w-full rounded-full bg-neutral-100 pl-10 pr-9 text-sm font-medium text-veyro-black placeholder:text-neutral-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-veyro-yellow border border-transparent transition-colors"
             />
             {query.length > 0 && (
               <button
                 type="button"
                 onClick={handleClear}
                 aria-label="Clear search query"
-                className="absolute right-3 p-1 rounded-full text-neutral-400 hover:text-black hover:bg-neutral-200/60 transition-all cursor-pointer"
+                className="absolute right-3 p-1 rounded-full text-neutral-400 hover:text-black hover:bg-neutral-200/60 transition-colors cursor-pointer"
               >
                 <CloseIcon size={14} />
               </button>
@@ -278,7 +278,7 @@ export function ProductSearch({
             type="button"
             onClick={handleCloseMobile}
             aria-label="Cancel search"
-            className="text-[14px] font-semibold text-neutral-700 hover:text-black cursor-pointer shrink-0 py-1 pl-1"
+            className="text-sm font-semibold text-neutral-700 hover:text-black cursor-pointer shrink-0 py-1 pl-1"
           >
             Cancel
           </button>
@@ -289,7 +289,7 @@ export function ProductSearch({
           {/* Empty Query: Trending searches & Category quick links */}
           {!query.trim() && (
             <div className="py-2">
-              <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-400 mb-3">
+              <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-neutral-400 mb-3">
                 <TrendingUp size={13} className="text-neutral-700" />
                 <span>Trending Searches</span>
               </div>
@@ -299,25 +299,25 @@ export function ProductSearch({
                     key={kw}
                     type="button"
                     onClick={() => handleSelectKeyword(kw)}
-                    className="px-3.5 py-2 rounded-full bg-neutral-100 hover:bg-[#fcd017] hover:text-black text-neutral-800 text-[12.5px] font-medium transition-all cursor-pointer active:scale-95 shadow-2xs"
+                    className="px-3.5 py-2 rounded-full bg-neutral-100 hover:bg-veyro-yellow hover:text-black text-neutral-800 text-[12.5px] font-medium transition cursor-pointer active:scale-95 shadow-2xs"
                   >
                     {kw}
                   </button>
                 ))}
               </div>
 
-              <div className="text-[11px] font-bold tracking-wider uppercase text-neutral-400 mt-7 mb-3">
+              <div className="text-xs font-bold tracking-wider uppercase text-neutral-400 mt-7 mb-3">
                 Browse Collections
               </div>
               <div className="space-y-2">
                 <Link
                   href="/clothing"
                   onClick={handleCloseMobile}
-                  className="flex items-center justify-between p-3.5 rounded-xl bg-[#fafaf8] border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-veyro-surface-alt border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
                 >
                   <div>
-                    <div className="text-[13px] font-bold text-neutral-900">Clothing &amp; Tees</div>
-                    <div className="text-[11px] text-neutral-500 mt-0.5">15 Oversized &amp; Graphic drops</div>
+                    <div className="text-sm font-bold text-neutral-900">Clothing &amp; Tees</div>
+                    <div className="text-xs text-neutral-500 mt-0.5">15 Oversized &amp; Graphic drops</div>
                   </div>
                   <ArrowUpRight size={16} className="text-neutral-400" />
                 </Link>
@@ -325,11 +325,11 @@ export function ProductSearch({
                 <Link
                   href="/shoes"
                   onClick={handleCloseMobile}
-                  className="flex items-center justify-between p-3.5 rounded-xl bg-[#fafaf8] border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-veyro-surface-alt border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
                 >
                   <div>
-                    <div className="text-[13px] font-bold text-neutral-900">Footwear &amp; Sneakers</div>
-                    <div className="text-[11px] text-neutral-500 mt-0.5">9 Retro &amp; Minimal silhouettes</div>
+                    <div className="text-sm font-bold text-neutral-900">Footwear &amp; Sneakers</div>
+                    <div className="text-xs text-neutral-500 mt-0.5">9 Retro &amp; Minimal silhouettes</div>
                   </div>
                   <ArrowUpRight size={16} className="text-neutral-400" />
                 </Link>
@@ -337,11 +337,11 @@ export function ProductSearch({
                 <Link
                   href="/watches"
                   onClick={handleCloseMobile}
-                  className="flex items-center justify-between p-3.5 rounded-xl bg-[#fafaf8] border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-veyro-surface-alt border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer"
                 >
                   <div>
-                    <div className="text-[13px] font-bold text-neutral-900">Timepieces &amp; Horology</div>
-                    <div className="text-[11px] text-neutral-500 mt-0.5">12 Precision automatics</div>
+                    <div className="text-sm font-bold text-neutral-900">Timepieces &amp; Horology</div>
+                    <div className="text-xs text-neutral-500 mt-0.5">12 Precision automatics</div>
                   </div>
                   <ArrowUpRight size={16} className="text-neutral-400" />
                 </Link>
@@ -355,7 +355,7 @@ export function ProductSearch({
               {/* Matching Custom Sections & Collections */}
               {matchingSections.length > 0 && (
                 <div className="mb-4">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500 pb-2 mb-2 border-b border-neutral-100">
+                  <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-neutral-500 pb-2 mb-2 border-b border-neutral-100">
                     <Layers size={12} className="text-amber-600" />
                     <span>Custom Collections &amp; Sections</span>
                   </div>
@@ -372,10 +372,10 @@ export function ProductSearch({
                             #
                           </span>
                           <div className="min-w-0">
-                            <div className="text-[13px] font-bold text-neutral-900 truncate">
+                            <div className="text-sm font-bold text-neutral-900 truncate">
                               {sec.name}
                             </div>
-                            <div className="text-[11px] text-neutral-500 truncate">
+                            <div className="text-xs text-neutral-500 truncate">
                               {sec.products?.length || 0} product{sec.products?.length === 1 ? "" : "s"} · Custom Storefront Section
                             </div>
                           </div>
@@ -393,11 +393,11 @@ export function ProductSearch({
               {filteredProducts.length > 0 && (
                 <>
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-neutral-100">
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500">
-                      <Sparkles size={12} className="text-[#e2b70d]" />
+                    <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-neutral-500">
+                      <Sparkles size={12} className="text-veyro-yellow" />
                       <span>Matching Catalog Products</span>
                     </div>
-                    <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide">
+                    <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
                       {filteredProducts.length} Found
                     </span>
                   </div>
@@ -408,7 +408,7 @@ export function ProductSearch({
                         key={product.id}
                         href={`/product/${product.slug}`}
                         onClick={handleCloseMobile}
-                        className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/60 transition-all cursor-pointer"
+                        className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/60 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="relative w-14 h-16 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-neutral-200">
@@ -426,7 +426,7 @@ export function ProductSearch({
                                 {product.subcategoryTag || product.subcategory}
                               </span>
                               {product.badge && (
-                                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#fcd017] text-black">
+                                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-veyro-yellow text-black">
                                   {product.badge}
                                 </span>
                               )}
@@ -434,17 +434,17 @@ export function ProductSearch({
                             <div className="text-[13.5px] font-bold text-neutral-900 truncate mt-1">
                               {product.name}
                             </div>
-                            <div className="flex items-center gap-2 text-[12px] mt-0.5">
+                            <div className="flex items-center gap-2 text-xs mt-0.5">
                               {product.originalPrice && product.originalPrice > product.price && (
-                                <span className="line-through text-neutral-400 font-mono text-[11px]">
+                                <span className="line-through text-neutral-400 font-mono text-xs">
                                   {formatPrice(product.originalPrice)}
                                 </span>
                               )}
                               <span className="font-mono font-bold text-neutral-900">
                                 {formatPrice(product.price)}
                               </span>
-                              <span className="text-neutral-300 text-[10px]">·</span>
-                              <span className="text-neutral-500 text-[11px] truncate">
+                              <span className="text-neutral-300 text-2xs">·</span>
+                              <span className="text-neutral-500 text-xs truncate">
                                 {product.colorName}
                               </span>
                             </div>
@@ -462,7 +462,7 @@ export function ProductSearch({
                     <Link
                       href={categoryHref}
                       onClick={handleCloseMobile}
-                      className="flex items-center justify-between p-3 rounded-xl bg-[#f8f8f6] hover:bg-[#f0f0ee] transition-colors text-neutral-900 font-bold text-xs uppercase tracking-wider cursor-pointer"
+                      className="flex items-center justify-between p-3 rounded-xl bg-veyro-surface hover:bg-neutral-100 transition-colors text-neutral-900 font-bold text-xs uppercase tracking-wider cursor-pointer"
                     >
                       <span>{categoryLabel}</span>
                       <ArrowUpRight size={15} />
@@ -479,14 +479,14 @@ export function ProductSearch({
               <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-3 text-neutral-400">
                 <SearchIcon size={22} />
               </div>
-              <div className="text-[15px] font-bold text-neutral-900">
+              <div className="text-sm font-bold text-neutral-900">
                 No products found for &ldquo;{query}&rdquo;
               </div>
-              <p className="text-[13px] text-neutral-500 mt-1.5 max-w-xs mx-auto">
+              <p className="text-sm text-neutral-500 mt-1.5 max-w-xs mx-auto">
                 Try searching with general keywords like oversized, retro, graphic, or sneakers.
               </p>
               <div className="mt-6 pt-4 border-t border-neutral-100">
-                <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block mb-3">
+                <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider block mb-3">
                   Popular Suggestions
                 </span>
                 <div className="flex flex-wrap justify-center gap-2">
@@ -495,7 +495,7 @@ export function ProductSearch({
                       key={tag}
                       type="button"
                       onClick={() => handleSelectKeyword(tag)}
-                      className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#fcd017] hover:text-black text-neutral-700 text-xs font-medium transition-colors cursor-pointer"
+                      className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-veyro-yellow hover:text-black text-neutral-700 text-xs font-medium transition-colors cursor-pointer"
                     >
                       {tag}
                     </button>
@@ -514,7 +514,7 @@ export function ProductSearch({
     <div ref={containerRef} className={`relative ${className}`}>
       {/* Search Input Bar */}
       <div className="relative flex items-center w-full group">
-        <span className="absolute left-4 text-[#888888] group-focus-within:text-[#111111] transition-colors pointer-events-none">
+        <span className="absolute left-4 text-neutral-500 group-focus-within:text-veyro-black transition-colors pointer-events-none">
           <SearchIcon size={18} />
         </span>
 
@@ -536,7 +536,7 @@ export function ProductSearch({
           aria-expanded={isOpen}
           aria-controls={isOpen ? "search-results-dropdown" : undefined}
           aria-autocomplete="list"
-          className={`h-[44px] xl:h-[46px] w-full rounded-full bg-[#f0f0ee] pl-11 pr-10 text-[13px] font-medium text-[#111111] placeholder:text-[#999999] focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-[#fcd017]/60 border border-transparent shadow-xs transition-all duration-200 ${inputClassName}`}
+          className={`h-[44px] xl:h-[46px] w-full rounded-full bg-neutral-100 pl-11 pr-10 text-sm font-medium text-veyro-black placeholder:text-veyro-muted focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-veyro-yellow/60 border border-transparent shadow-xs transition-colors duration-200 ${inputClassName}`}
         />
 
         {/* Clear Button */}
@@ -545,7 +545,7 @@ export function ProductSearch({
             type="button"
             onClick={handleClear}
             aria-label="Clear search query"
-            className="absolute right-3.5 p-1 rounded-full text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/70 transition-all cursor-pointer"
+            className="absolute right-3.5 p-1 rounded-full text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/70 transition-colors cursor-pointer"
           >
             <CloseIcon size={14} />
           </button>
@@ -560,10 +560,10 @@ export function ProductSearch({
         >
           {/* Header Bar */}
           <div className="px-4 py-2.5 bg-neutral-50/80 border-b border-neutral-100 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-neutral-500">
+            <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-neutral-500">
               {query.trim() ? (
                 <>
-                  <Sparkles size={12} className="text-[#e2b70d]" />
+                  <Sparkles size={12} className="text-veyro-yellow" />
                   <span>Matching Catalog Products</span>
                 </>
               ) : (
@@ -585,7 +585,7 @@ export function ProductSearch({
             {/* When Query is Empty: Show Trending Keywords & Fast Links */}
             {!query.trim() && (
               <div className="py-2 px-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2.5">
                   Trending Searches
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -594,7 +594,7 @@ export function ProductSearch({
                       key={kw}
                       type="button"
                       onClick={() => handleSelectKeyword(kw)}
-                      className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-[#fcd017] hover:text-black text-neutral-700 text-[12px] font-medium transition-all duration-150 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
+                      className="px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-veyro-yellow hover:text-black text-neutral-700 text-xs font-medium transition duration-150 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
                     >
                       {kw}
                     </button>
@@ -611,7 +611,7 @@ export function ProductSearch({
                     className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition-colors group cursor-pointer"
                   >
                     <div>
-                      <div className="text-[12px] font-bold text-neutral-900">
+                      <div className="text-xs font-bold text-neutral-900">
                         Clothing Catalog
                       </div>
                       <div className="text-[10.5px] text-neutral-500">
@@ -633,7 +633,7 @@ export function ProductSearch({
                     className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition-colors group cursor-pointer"
                   >
                     <div>
-                      <div className="text-[12px] font-bold text-neutral-900">
+                      <div className="text-xs font-bold text-neutral-900">
                         Footwear Drop
                       </div>
                       <div className="text-[10.5px] text-neutral-500">
@@ -652,7 +652,7 @@ export function ProductSearch({
             {/* Matching Custom Sections & Collections */}
             {query.trim() && matchingSections.length > 0 && (
               <div className="mb-2 pb-2 border-b border-neutral-100">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 py-1 flex items-center gap-1.5">
+                <div className="text-2xs font-bold uppercase tracking-wider text-neutral-400 px-2 py-1 flex items-center gap-1.5">
                   <Layers size={11} className="text-amber-600" />
                   <span>Custom Collections &amp; Sections</span>
                 </div>
@@ -665,7 +665,7 @@ export function ProductSearch({
                         setIsOpen(false);
                         onClose?.();
                       }}
-                      className="flex items-center justify-between p-2 rounded-xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/15 transition-all group cursor-pointer"
+                      className="flex items-center justify-between p-2 rounded-xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/15 transition-colors group cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <span className="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-700 font-bold text-xs flex items-center justify-center shrink-0">
@@ -680,7 +680,7 @@ export function ProductSearch({
                           </div>
                         </div>
                       </div>
-                      <div className="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-amber-700">
+                      <div className="shrink-0 flex items-center gap-1 text-xs font-semibold text-amber-700">
                         <span>Explore</span>
                         <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </div>
@@ -704,7 +704,7 @@ export function ProductSearch({
                         onClose?.();
                       }}
                       onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`flex items-center justify-between gap-3 p-2 rounded-xl transition-all duration-150 group cursor-pointer ${
+                      className={`flex items-center justify-between gap-3 p-2 rounded-xl transition-colors duration-150 group cursor-pointer ${
                         isSelected
                           ? "bg-neutral-100 ring-1 ring-black/10"
                           : "hover:bg-neutral-50"
@@ -729,13 +729,13 @@ export function ProductSearch({
                               {product.subcategoryTag || product.subcategory}
                             </span>
                             {product.badge && (
-                              <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#fcd017] text-black">
+                              <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-veyro-yellow text-black">
                                 {product.badge}
                               </span>
                             )}
                           </div>
 
-                          <div className="text-[13px] font-bold text-neutral-900 truncate mt-0.5 group-hover:text-black">
+                          <div className="text-sm font-bold text-neutral-900 truncate mt-0.5 group-hover:text-black">
                             {product.name}
                           </div>
 
@@ -758,7 +758,7 @@ export function ProductSearch({
 
                       {/* Right Action Arrow */}
                       <div className="shrink-0 pr-2">
-                        <div className="w-7 h-7 rounded-full bg-neutral-100 group-hover:bg-[#111111] group-hover:text-[#fcd017] flex items-center justify-center text-neutral-500 transition-colors">
+                        <div className="w-7 h-7 rounded-full bg-neutral-100 group-hover:bg-veyro-black group-hover:text-veyro-yellow flex items-center justify-center text-neutral-500 transition-colors">
                           <ArrowUpRight size={14} />
                         </div>
                       </div>
@@ -777,12 +777,12 @@ export function ProductSearch({
                 <div className="text-[13.5px] font-bold text-neutral-900">
                   No products found for &ldquo;{query}&rdquo;
                 </div>
-                <p className="text-[12px] text-neutral-500 mt-1 max-w-xs mx-auto">
+                <p className="text-xs text-neutral-500 mt-1 max-w-xs mx-auto">
                   Try searching with broader terms like oversized, retro, graphic, or cotton.
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-neutral-100">
-                  <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block mb-2">
+                  <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider block mb-2">
                     Popular suggestions
                   </span>
                   <div className="flex flex-wrap justify-center gap-1.5">
@@ -791,7 +791,7 @@ export function ProductSearch({
                         key={tag}
                         type="button"
                         onClick={() => handleSelectKeyword(tag)}
-                        className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-[#fcd017] hover:text-black text-neutral-700 text-[11px] font-medium transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-full bg-neutral-100 hover:bg-veyro-yellow hover:text-black text-neutral-700 text-xs font-medium transition-colors cursor-pointer"
                       >
                         {tag}
                       </button>

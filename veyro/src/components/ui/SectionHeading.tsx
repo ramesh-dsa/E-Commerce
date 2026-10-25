@@ -22,7 +22,7 @@ export function SectionHeading({
     >
       <div className={isCenter ? "mx-auto max-w-2xl" : "max-w-2xl"}>
         {eyebrow && (
-          <span className="block text-[11px] sm:text-xs font-semibold tracking-wider text-veyro-muted uppercase mb-1">
+          <span className="block text-xs sm:text-xs font-semibold tracking-wider text-veyro-muted uppercase mb-1">
             {eyebrow}
           </span>
         )}

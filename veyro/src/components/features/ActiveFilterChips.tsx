@@ -35,7 +35,7 @@ export function ActiveFilterChips({
           type="button"
           onClick={chip.onRemove}
           aria-label={`Remove filter: ${chip.label}`}
-          className="group inline-flex items-center gap-1.5 h-7.5 px-3 rounded-full text-xs font-semibold bg-neutral-100 hover:bg-neutral-200/90 text-neutral-800 border border-neutral-200/80 hover:border-neutral-300 transition-all cursor-pointer shadow-2xs select-none shrink-0 focus:outline-none focus:ring-2 focus:ring-neutral-900/15"
+          className="group inline-flex items-center gap-1.5 h-7.5 px-3 rounded-full text-xs font-semibold bg-neutral-100 hover:bg-neutral-200/90 text-neutral-800 border border-neutral-200/80 hover:border-neutral-300 transition-colors cursor-pointer shadow-2xs select-none shrink-0 focus:outline-none focus:ring-2 focus:ring-neutral-900/15"
         >
           <span>{chip.label}</span>
           <X
@@ -50,7 +50,7 @@ export function ActiveFilterChips({
         type="button"
         onClick={onClearAll}
         aria-label="Clear all active filters"
-        className="group inline-flex items-center gap-1.5 h-7.5 px-3 rounded-full text-[11px] font-bold uppercase tracking-wider text-neutral-600 hover:text-red-600 bg-neutral-100/90 hover:bg-red-50 border border-neutral-200/80 hover:border-red-200 transition-all cursor-pointer select-none shrink-0 focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs"
+        className="group inline-flex items-center gap-1.5 h-7.5 px-3 rounded-full text-xs font-bold uppercase tracking-wider text-neutral-600 hover:text-red-600 bg-neutral-100/90 hover:bg-red-50 border border-neutral-200/80 hover:border-red-200 transition-colors cursor-pointer select-none shrink-0 focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs"
       >
         <RotateCcw size={10} className="transition-transform duration-300 group-hover:-rotate-90" />
         <span>Clear All ({chips.length})</span>

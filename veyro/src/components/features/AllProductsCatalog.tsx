@@ -189,10 +189,10 @@ export function AllProductsCatalog() {
   };
 
   return (
-    <div className="w-full bg-[#fbfbf9] text-[#111111] min-h-screen">
+    <div className="w-full bg-neutral-50 text-veyro-black min-h-screen">
       {/* ── STICKY RUNWAY DOCK: BREADCRUMBS, JUMP ANCHORS & CONTROLS ── */}
-      <section className="w-full bg-white/95 border-b border-[#e8e8e5] py-2.5 sm:py-3 px-5 sm:px-8 lg:px-12 sticky top-[74px] sm:top-[78px] lg:top-[82px] z-30 backdrop-blur-md shadow-xs transition-all">
-        <div className="mx-auto max-w-[1536px] flex items-center justify-between gap-4 flex-wrap">
+      <section className="w-full bg-white/95 border-b border-veyro-border py-2.5 sm:py-3 px-5 sm:px-8 lg:px-12 sticky top-[74px] sm:top-[78px] lg:top-[82px] z-30 backdrop-blur-md shadow-xs transition-colors">
+        <div className="mx-auto max-w-screen-2xl flex items-center justify-between gap-4 flex-wrap">
           {/* Left: Breadcrumbs & Chapter Jump Links */}
           <div className="flex items-center gap-4 lg:gap-6 flex-wrap">
             <nav aria-label="Breadcrumbs" className="font-sans flex items-center gap-2 text-xs uppercase tracking-[0.06em]">
@@ -210,15 +210,15 @@ export function AllProductsCatalog() {
             {/* Quick Runway Jump Anchors (Visible in Chapters Mode) */}
             {viewLayout === "chapters" && (
               <div className="hidden lg:flex items-center gap-1.5 pl-5 border-l border-neutral-200/80">
-                <span className="text-[10px] font-mono font-bold tracking-widest text-neutral-400 uppercase mr-1.5 select-none">
+                <span className="text-2xs font-mono font-bold tracking-widest text-neutral-400 uppercase mr-1.5 select-none">
                   JUMP:
                 </span>
                 <button
                   type="button"
                   onClick={() => scrollToChapter("chapter-apparel")}
-                  className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-all cursor-pointer ${
+                  className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-colors cursor-pointer ${
                     activeChapter === "chapter-apparel"
-                      ? "bg-[#111111] text-white shadow-xs"
+                      ? "bg-veyro-black text-white shadow-xs"
                       : "text-neutral-600 hover:text-black hover:bg-neutral-100/90"
                   }`}
                 >
@@ -227,9 +227,9 @@ export function AllProductsCatalog() {
                 <button
                   type="button"
                   onClick={() => scrollToChapter("chapter-footwear")}
-                  className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-all cursor-pointer ${
+                  className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-colors cursor-pointer ${
                     activeChapter === "chapter-footwear"
-                      ? "bg-[#111111] text-white shadow-xs"
+                      ? "bg-veyro-black text-white shadow-xs"
                       : "text-neutral-600 hover:text-black hover:bg-neutral-100/90"
                   }`}
                 >
@@ -238,9 +238,9 @@ export function AllProductsCatalog() {
                 <button
                   type="button"
                   onClick={() => scrollToChapter("chapter-watches")}
-                  className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-all cursor-pointer ${
+                  className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-colors cursor-pointer ${
                     activeChapter === "chapter-watches"
-                      ? "bg-[#111111] text-white shadow-xs"
+                      ? "bg-veyro-black text-white shadow-xs"
                       : "text-neutral-600 hover:text-black hover:bg-neutral-100/90"
                   }`}
                 >
@@ -250,9 +250,9 @@ export function AllProductsCatalog() {
                   <button
                     type="button"
                     onClick={() => scrollToChapter("chapter-other")}
-                    className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-all cursor-pointer ${
+                    className={`h-8 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-colors cursor-pointer ${
                       activeChapter === "chapter-other"
-                        ? "bg-[#111111] text-white shadow-xs"
+                        ? "bg-veyro-black text-white shadow-xs"
                         : "text-neutral-600 hover:text-black hover:bg-neutral-100/90"
                     }`}
                   >
@@ -270,7 +270,7 @@ export function AllProductsCatalog() {
               <button
                 type="button"
                 onClick={() => handleViewLayoutChange("chapters")}
-                className={`h-7 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-all cursor-pointer ${
+                className={`h-7 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-colors cursor-pointer ${
                   viewLayout === "chapters"
                     ? "bg-white text-black shadow-xs font-bold"
                     : "text-neutral-500 hover:text-black"
@@ -281,7 +281,7 @@ export function AllProductsCatalog() {
               <button
                 type="button"
                 onClick={() => handleViewLayoutChange("stream")}
-                className={`h-7 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-all cursor-pointer ${
+                className={`h-7 px-3.5 inline-flex items-center justify-center text-xs font-semibold tracking-wide rounded-full transition-colors cursor-pointer ${
                   viewLayout === "stream"
                     ? "bg-white text-black shadow-xs font-bold"
                     : "text-neutral-500 hover:text-black"
@@ -298,7 +298,7 @@ export function AllProductsCatalog() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search archive..."
-                className="w-full h-full text-xs bg-neutral-100/70 hover:bg-neutral-100/90 focus:bg-white rounded-full pl-8 pr-7 border border-transparent focus:border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 transition-all"
+                className="w-full h-full text-xs bg-neutral-100/70 hover:bg-neutral-100/90 focus:bg-white rounded-full pl-8 pr-7 border border-transparent focus:border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 transition-colors"
               />
               <Search
                 size={13}
@@ -329,7 +329,7 @@ export function AllProductsCatalog() {
               <button
                 type="button"
                 onClick={() => setGridColumns(4)}
-                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
                   gridColumns === 4 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
                 }`}
                 aria-label="4-column grid view"
@@ -339,7 +339,7 @@ export function AllProductsCatalog() {
               <button
                 type="button"
                 onClick={() => setGridColumns(2)}
-                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-all cursor-pointer ${
+                className={`h-7 w-7 inline-flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
                   gridColumns === 2 ? "bg-white text-black shadow-xs" : "text-neutral-400 hover:text-black"
                 }`}
                 aria-label="2-column editorial view"
@@ -352,7 +352,7 @@ export function AllProductsCatalog() {
       </section>
 
       {/* ── 3. RUNWAY WORKSPACE ────────────────────────────────────────── */}
-      <main id="catalog-workspace" className="mx-auto w-full max-w-[1536px] px-5 sm:px-8 lg:px-12 py-10 sm:py-14">
+      <main id="catalog-workspace" className="mx-auto w-full max-w-screen-2xl px-5 sm:px-8 lg:px-12 py-10 sm:py-14">
         {/* Loading Skeletons */}
         {!isMounted || !isHydrated ? (
           <div className="space-y-12">
@@ -364,9 +364,9 @@ export function AllProductsCatalog() {
           </div>
         ) : totalVisibleCount === 0 ? (
           /* Empty Search State */
-          <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-[#f8f8f6] rounded-[2px] border border-dashed border-[#dcdcd8]">
+          <div className="w-full py-24 flex flex-col items-center justify-center text-center bg-veyro-surface rounded-sm border border-dashed border-neutral-300">
             <span className="text-4xl mb-3">🔍</span>
-            <h2 className="text-xl font-bold uppercase tracking-tight text-[#111111]">
+            <h2 className="text-xl font-bold uppercase tracking-tight text-veyro-black">
               No Archival Pieces Found
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-neutral-500 max-w-md">
@@ -375,7 +375,7 @@ export function AllProductsCatalog() {
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="mt-6 px-6 py-2.5 bg-[#111111] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-[2px] hover:bg-[#333333] transition-colors cursor-pointer inline-flex items-center gap-2"
+              className="mt-6 px-6 py-2.5 bg-veyro-black text-white text-xs font-bold uppercase tracking-[0.1em] rounded-sm hover:bg-neutral-800 transition-colors cursor-pointer inline-flex items-center gap-2"
             >
               <span>Clear Search</span>
             </button>
@@ -383,17 +383,17 @@ export function AllProductsCatalog() {
         ) : viewLayout === "stream" ? (
           /* ── UNIFIED STREAM VIEW: ALL 35 PRODUCTS IN CONTINUOUS GRID ── */
           <section className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-[#111111] gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-veyro-black gap-4">
               <div>
-                <div className="flex items-center gap-2 text-[11px] font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
                   <span>UNIFIED REPERTOIRE</span>
                   <span className="text-neutral-300">•</span>
-                  <span className="text-[#111111]">{allFilteredProducts.length} TOTAL PIECES</span>
+                  <span className="text-veyro-black">{allFilteredProducts.length} TOTAL PIECES</span>
                 </div>
                 <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-1">
                   from yarn to movement
                 </span>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-veyro-black">
                   COMPLETE ARCHIVAL STREAM
                 </h2>
               </div>
@@ -426,24 +426,24 @@ export function AllProductsCatalog() {
             {/* ── CHAPTER 01: APPAREL & T-SHIRTS ─────────────────────── */}
             {apparelProducts.length > 0 && (
               <section id="chapter-apparel" className="scroll-mt-[200px]">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-[#111111] mb-8 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-veyro-black mb-8 gap-4">
                   <div>
-                    <div className="flex items-center gap-2 text-[11px] font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
                       <span>CHAPTER 01</span>
                       <span className="text-neutral-300">•</span>
-                      <span className="text-[#111111]">{apparelProducts.length} SILHOUETTES</span>
+                      <span className="text-veyro-black">{apparelProducts.length} SILHOUETTES</span>
                     </div>
                     <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-1">
                       the boxy drape
                     </span>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-veyro-black">
                       HEAVYWEIGHT APPAREL ARCHIVE
                     </h2>
                   </div>
 
                   <Link
                     href="/clothing"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-neutral-600 transition-colors group"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-neutral-600 transition-colors group"
                   >
                     <span>Filter by GSM &amp; Fit</span>
                     <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
@@ -472,24 +472,24 @@ export function AllProductsCatalog() {
             {/* ── CHAPTER 02: FOOTWEAR & SNEAKERS ────────────────────── */}
             {footwearProducts.length > 0 && (
               <section id="chapter-footwear" className="scroll-mt-[200px]">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-[#111111] mb-8 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-veyro-black mb-8 gap-4">
                   <div>
-                    <div className="flex items-center gap-2 text-[11px] font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
                       <span>CHAPTER 02</span>
                       <span className="text-neutral-300">•</span>
-                      <span className="text-[#111111]">{footwearProducts.length} EDITIONS</span>
+                      <span className="text-veyro-black">{footwearProducts.length} EDITIONS</span>
                     </div>
                     <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-1">
                       double sole rotation
                     </span>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-veyro-black">
                       HANDCRAFTED VULCANIZED FOOTWEAR
                     </h2>
                   </div>
 
                   <Link
                     href="/shoes"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-neutral-600 transition-colors group"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-neutral-600 transition-colors group"
                   >
                     <span>Filter Footwear Vault</span>
                     <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
@@ -518,24 +518,24 @@ export function AllProductsCatalog() {
             {/* ── CHAPTER 03: TIMEPIECES & WATCHES ───────────────────── */}
             {watchProducts.length > 0 && (
               <section id="chapter-watches" className="scroll-mt-[200px]">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-[#111111] mb-8 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-veyro-black mb-8 gap-4">
                   <div>
-                    <div className="flex items-center gap-2 text-[11px] font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
                       <span>CHAPTER 03</span>
                       <span className="text-neutral-300">•</span>
-                      <span className="text-[#111111]">{watchProducts.length} CALIBRES</span>
+                      <span className="text-veyro-black">{watchProducts.length} CALIBRES</span>
                     </div>
                     <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-1">
                       the ticking art
                     </span>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-veyro-black">
                       ARCHIVAL TIMEPIECES &amp; HOROLOGY
                     </h2>
                   </div>
 
                   <Link
                     href="/watches"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#111111] hover:text-neutral-600 transition-colors group"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-neutral-600 transition-colors group"
                   >
                     <span>Explore Horology Vault</span>
                     <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
@@ -564,17 +564,17 @@ export function AllProductsCatalog() {
             {/* ── CHAPTER 04: ATELIER & CUSTOM SILHOUETTES (IF ANY) ─── */}
             {otherProducts.length > 0 && (
               <section id="chapter-other" className="scroll-mt-[200px]">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-[#111111] mb-8 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-veyro-black mb-8 gap-4">
                   <div>
-                    <div className="flex items-center gap-2 text-[11px] font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-[0.25em] uppercase text-neutral-400 mb-1">
                       <span>CHAPTER 04</span>
                       <span className="text-neutral-300">•</span>
-                      <span className="text-[#111111]">{otherProducts.length} ATELIER PIECES</span>
+                      <span className="text-veyro-black">{otherProducts.length} ATELIER PIECES</span>
                     </div>
                     <span className="font-script text-2xl sm:text-3xl text-neutral-500 tracking-normal block -mb-1">
                       capsule studio
                     </span>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-veyro-black">
                       ATELIER &amp; SPECIAL DROPS
                     </h2>
                   </div>
@@ -603,14 +603,14 @@ export function AllProductsCatalog() {
       </main>
 
       {/* ── 4. ARCHITECTURAL BRAND ASSURANCE FOOTER STRIP ─────────────── */}
-      <section className="w-full border-t border-[#e8e8e5] bg-white py-12 px-5 sm:px-8 lg:px-14 mt-16">
-        <div className="max-w-[1536px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <section className="w-full border-t border-veyro-border bg-white py-12 px-5 sm:px-8 lg:px-14 mt-16">
+        <div className="max-w-screen-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f7f7f5] border border-neutral-200 flex items-center justify-center text-[#111111] shadow-xs shrink-0">
-              <Zap size={20} className="fill-[#111111]" />
+            <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-veyro-black shadow-xs shrink-0">
+              <Zap size={20} className="fill-veyro-black" />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-veyro-black">
                 Free Express Delivery
               </h3>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -620,11 +620,11 @@ export function AllProductsCatalog() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f7f7f5] border border-neutral-200 flex items-center justify-center text-[#111111] shadow-xs shrink-0">
+            <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-veyro-black shadow-xs shrink-0">
               <ShieldCheck size={20} />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-veyro-black">
                 Easy 7-Day Returns
               </h3>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -634,11 +634,11 @@ export function AllProductsCatalog() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#f7f7f5] border border-neutral-200 flex items-center justify-center text-[#111111] shadow-xs shrink-0">
+            <div className="w-12 h-12 rounded-full bg-neutral-50 border border-neutral-200 flex items-center justify-center text-veyro-black shadow-xs shrink-0">
               <Layers size={20} />
             </div>
             <div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">
+              <h3 className="text-xs font-black uppercase tracking-wider text-veyro-black">
                 Complete Authenticity
               </h3>
               <p className="text-xs text-neutral-500 mt-0.5">

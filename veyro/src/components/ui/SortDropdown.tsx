@@ -55,7 +55,7 @@ export function SortDropdown<T extends string = string>({
   return (
     <div ref={dropdownRef} className={`relative flex items-center gap-2 ${isOpen ? "z-30" : ""} ${className}`}>
       {label && (
-        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400 select-none">
+        <span className="text-2xs font-mono font-bold uppercase tracking-wider text-neutral-400 select-none">
           {label}
         </span>
       )}
@@ -67,7 +67,7 @@ export function SortDropdown<T extends string = string>({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-label={`${label} ${selectedOption?.label}`}
-          className="group inline-flex items-center justify-between gap-2.5 h-9 bg-white border border-neutral-200/90 hover:border-neutral-400 text-xs font-semibold text-neutral-900 rounded-xl px-3.5 transition-all cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-neutral-900/10 shadow-2xs hover:bg-neutral-50/50"
+          className="group inline-flex items-center justify-between gap-2.5 h-9 bg-white border border-neutral-200/90 hover:border-neutral-400 text-xs font-semibold text-neutral-900 rounded-xl px-3.5 transition-colors cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-neutral-900/10 shadow-2xs hover:bg-neutral-50/50"
         >
           <span>{selectedOption?.label}</span>
           <ChevronDown

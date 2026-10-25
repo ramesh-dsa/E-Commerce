@@ -46,7 +46,7 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
     <section className="w-full max-w-full overflow-x-clip mt-20 pt-14 border-t border-neutral-200">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111111]">
+          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-veyro-black">
             {title}
           </h2>
         </div>
@@ -57,9 +57,9 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
               <button
                 onClick={() => scroll("left")}
                 disabled={!showLeftArrow}
-                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all ${
+                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-colors ${
                   showLeftArrow 
-                    ? "border-neutral-200 bg-white text-[#111111] hover:bg-neutral-50 hover:border-neutral-300 cursor-pointer" 
+                    ? "border-neutral-200 bg-white text-veyro-black hover:bg-neutral-50 hover:border-neutral-300 cursor-pointer" 
                     : "border-neutral-200 bg-neutral-50 text-neutral-300 cursor-not-allowed"
                 }`}
                 aria-label="Scroll left"
@@ -69,9 +69,9 @@ export function ProductCarousel({ products, title, subtitle, categoryNumber }: P
               <button
                 onClick={() => scroll("right")}
                 disabled={!showRightArrow}
-                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all ${
+                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-colors ${
                   showRightArrow 
-                    ? "border-neutral-200 bg-white text-[#111111] hover:bg-neutral-50 hover:border-neutral-300 cursor-pointer" 
+                    ? "border-neutral-200 bg-white text-veyro-black hover:bg-neutral-50 hover:border-neutral-300 cursor-pointer" 
                     : "border-neutral-200 bg-neutral-50 text-neutral-300 cursor-not-allowed"
                 }`}
                 aria-label="Scroll right"

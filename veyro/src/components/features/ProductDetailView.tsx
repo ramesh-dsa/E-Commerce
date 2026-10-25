@@ -244,21 +244,21 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
   const similarProducts = customSimilar.length > 0
     ? customSimilar.slice(0, 8)
     : products
-        .filter(
-          (p) =>
-            p.category === product.category &&
-            p.subcategoryTag === product.subcategoryTag &&
-            p.id !== product.id
-        )
-        .slice(0, 8);
+      .filter(
+        (p) =>
+          p.category === product.category &&
+          p.subcategoryTag === product.subcategoryTag &&
+          p.id !== product.id
+      )
+      .slice(0, 8);
 
   // If not enough similar products from same subcategoryTag, fill from same category
   const filledSimilar =
     similarProducts.length >= 8
       ? similarProducts
       : customSimilar.length > 0
-      ? customSimilar
-      : [
+        ? customSimilar
+        : [
           ...similarProducts,
           ...products
             .filter(
@@ -274,52 +274,52 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
   // "Pair With Shoes" — shown whenever not already viewing footwear (clothing, watches, and all custom sections)
   const shoeRecommendations = !isFootwear
     ? (() => {
-        const relatedShoes = (product.relatedProducts || [])
-          .map((id) => products.find((p) => p.id === id))
-          .filter(
-            (p): p is Product => p !== undefined && p.category === "Footwear"
-          );
-        const remainingShoes = products.filter(
-          (p) =>
-            p.category === "Footwear" &&
-            !relatedShoes.some((rs) => rs.id === p.id)
+      const relatedShoes = (product.relatedProducts || [])
+        .map((id) => products.find((p) => p.id === id))
+        .filter(
+          (p): p is Product => p !== undefined && p.category === "Footwear"
         );
-        return [...relatedShoes, ...remainingShoes].slice(0, 8);
-      })()
+      const remainingShoes = products.filter(
+        (p) =>
+          p.category === "Footwear" &&
+          !relatedShoes.some((rs) => rs.id === p.id)
+      );
+      return [...relatedShoes, ...remainingShoes].slice(0, 8);
+    })()
     : [];
 
   // "Pair With Clothing" — shown whenever not already viewing clothing (footwear, watches, and all custom sections)
   const clothingPairings = !isClothing
     ? (() => {
-        const relatedTees = (product.relatedProducts || [])
-          .map((id) => products.find((p) => p.id === id))
-          .filter(
-            (p): p is Product => p !== undefined && p.category === "Clothing"
-          );
-        const remainingTees = products.filter(
-          (p) =>
-            p.category === "Clothing" &&
-            !relatedTees.some((rt) => rt.id === p.id)
+      const relatedTees = (product.relatedProducts || [])
+        .map((id) => products.find((p) => p.id === id))
+        .filter(
+          (p): p is Product => p !== undefined && p.category === "Clothing"
         );
-        return [...relatedTees, ...remainingTees].slice(0, 8);
-      })()
+      const remainingTees = products.filter(
+        (p) =>
+          p.category === "Clothing" &&
+          !relatedTees.some((rt) => rt.id === p.id)
+      );
+      return [...relatedTees, ...remainingTees].slice(0, 8);
+    })()
     : [];
 
   // "Pair With Watches" — shown universally as an accessory (unless already viewing a watch)
   const watchRecommendations = !isWatch
     ? (() => {
-        const relatedWatches = (product.relatedProducts || [])
-          .map((id) => products.find((p) => p.id === id))
-          .filter(
-            (p): p is Product => p !== undefined && p.category === "Watches"
-          );
-        const remainingWatches = products.filter(
-          (p) =>
-            p.category === "Watches" &&
-            !relatedWatches.some((rw) => rw.id === p.id)
+      const relatedWatches = (product.relatedProducts || [])
+        .map((id) => products.find((p) => p.id === id))
+        .filter(
+          (p): p is Product => p !== undefined && p.category === "Watches"
         );
-        return [...relatedWatches, ...remainingWatches].slice(0, 8);
-      })()
+      const remainingWatches = products.filter(
+        (p) =>
+          p.category === "Watches" &&
+          !relatedWatches.some((rw) => rw.id === p.id)
+      );
+      return [...relatedWatches, ...remainingWatches].slice(0, 8);
+    })()
     : [];
 
   // Build the carousel sections dynamically
@@ -370,7 +370,7 @@ export function ProductDetailView({ slug, initialProduct }: ProductDetailViewPro
         {/* Back Navigation */}
         <nav
           aria-label="Back Navigation"
-          className="flex items-center text-[11px] font-mono tracking-widest text-veyro-muted uppercase mb-6 py-2"
+          className="flex items-center text-xs font-mono tracking-widest text-veyro-muted uppercase mb-6 py-2"
         >
           <ProductBackButton backHref={backHref} backLabel={backLabel} />
         </nav>

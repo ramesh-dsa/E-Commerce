@@ -135,10 +135,10 @@ function FilterCheckbox({
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <div
-          className={`h-[13px] w-[13px] shrink-0 rounded-[1.5px] border transition-all duration-150 flex items-center justify-center ${
+          className={`h-[13px] w-[13px] shrink-0 rounded-xs border transition-colors duration-150 flex items-center justify-center ${
             checked
-              ? "bg-[#111111] border-[#111111]"
-              : "border-[#cfcfcf] bg-white group-hover:border-[#111111]"
+              ? "bg-veyro-black border-veyro-black"
+              : "border-neutral-200 bg-white group-hover:border-veyro-black"
           }`}
           aria-hidden="true"
         >
@@ -149,7 +149,7 @@ function FilterCheckbox({
               viewBox="0 0 8 6"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="text-[#fcd017]"
+              className="text-veyro-yellow"
             >
               <path
                 d="M1 3L2.8 5L7 1"
@@ -170,17 +170,17 @@ function FilterCheckbox({
           aria-checked={checked}
         />
         <span
-          className={`font-luxury text-[11px] sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors truncate ${
+          className={`font-luxury text-xs sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors truncate ${
             checked
-              ? "font-medium text-[#111111]"
-              : "font-normal text-[#444444] group-hover:text-black"
+              ? "font-medium text-veyro-black"
+              : "font-normal text-neutral-800 group-hover:text-black"
           }`}
         >
           {label}
         </span>
       </div>
       {count !== undefined && (
-        <span className="text-[10.5px] font-mono text-[#8e8e8e] shrink-0">
+        <span className="text-[10.5px] font-mono text-veyro-subtle shrink-0">
           ({count})
         </span>
       )}
@@ -217,16 +217,16 @@ function AccordionSection({
           <ChevronDown
             size={13}
             strokeWidth={1.8}
-            className={`text-[#111111] transition-transform duration-200 motion-reduce:transition-none shrink-0 ${
+            className={`text-veyro-black transition-transform duration-200 motion-reduce:transition-none shrink-0 ${
               isOpen ? "rotate-180" : ""
             }`}
             aria-hidden="true"
           />
-          <span className="font-luxury text-[12px] font-medium uppercase tracking-[0.08em] text-[#111111] group-hover:text-[#555555] transition-colors">
+          <span className="font-luxury text-xs font-medium uppercase tracking-[0.08em] text-veyro-black group-hover:text-neutral-600 transition-colors">
             {title}
           </span>
           {activeCount > 0 && (
-            <span className="ml-2 text-[10px] font-mono font-medium text-[#111111] bg-[#f0f0ed] px-1.5 py-0.5 rounded-[2px]">
+            <span className="ml-2 text-2xs font-mono font-medium text-veyro-black bg-veyro-border-light px-1.5 py-0.5 rounded-sm">
               {activeCount}
             </span>
           )}
@@ -328,13 +328,13 @@ export function WatchFilterSidebar({
   };
 
   const filterContent = (
-    <div className="flex flex-col text-[#111111] select-none">
+    <div className="flex flex-col text-veyro-black select-none">
       {/* ── HEADER ROW: FILTERS (Left) & CLEAR ALL (Right) — Zero Underline ──── */}
       <div className="flex items-center justify-between pb-3 mb-1">
-        <h2 className="font-luxury text-[13.5px] font-medium uppercase tracking-[0.08em] text-[#111111]">
+        <h2 className="font-luxury text-[13.5px] font-medium uppercase tracking-[0.08em] text-veyro-black">
           FILTERS
           {activeFilterCount > 0 && (
-            <span className="ml-1.5 text-[11px] font-mono font-normal text-[#8e8e8e]">
+            <span className="ml-1.5 text-xs font-mono font-normal text-veyro-subtle">
               ({activeFilterCount})
             </span>
           )}
@@ -344,16 +344,16 @@ export function WatchFilterSidebar({
           type="button"
           onClick={activeFilterCount > 0 ? onClearAll : undefined}
           disabled={activeFilterCount === 0}
-          className={`group relative font-luxury text-[11px] font-medium uppercase tracking-[0.06em] transition-colors ${
+          className={`group relative font-luxury text-xs font-medium uppercase tracking-[0.06em] transition-colors ${
             activeFilterCount > 0
-              ? "text-[#111111] cursor-pointer"
-              : "text-[#c2c2c2] cursor-default"
+              ? "text-veyro-black cursor-pointer"
+              : "text-neutral-400 cursor-default"
           }`}
           aria-label="Clear all applied filters"
         >
           CLEAR ALL
           {activeFilterCount > 0 && (
-            <span className="absolute -bottom-0.5 left-0 w-full h-[1px] bg-[#111111] origin-right scale-x-0 transition-transform duration-300 ease-out group-hover:origin-left group-hover:scale-x-100" />
+            <span className="absolute -bottom-0.5 left-0 w-full h-[1px] bg-veyro-black origin-right scale-x-0 transition-transform duration-300 ease-out group-hover:origin-left group-hover:scale-x-100" />
           )}
         </button>
       </div>
@@ -452,14 +452,14 @@ export function WatchFilterSidebar({
               >
                 <div className="flex items-center gap-2.5">
                   <div
-                    className={`h-[13px] w-[13px] rounded-full border flex items-center justify-center transition-all ${
+                    className={`h-[13px] w-[13px] rounded-full border flex items-center justify-center transition-colors ${
                       isSelected
-                        ? "border-[#111111] bg-white"
-                        : "border-[#cfcfcf] bg-white group-hover:border-[#111111]"
+                        ? "border-veyro-black bg-white"
+                        : "border-neutral-200 bg-white group-hover:border-veyro-black"
                     }`}
                   >
                     {isSelected && (
-                      <span className="h-[7px] w-[7px] rounded-full bg-[#111111]" />
+                      <span className="h-[7px] w-[7px] rounded-full bg-veyro-black" />
                     )}
                   </div>
                   <input
@@ -471,17 +471,17 @@ export function WatchFilterSidebar({
                     className="sr-only"
                   />
                   <span
-                    className={`font-luxury text-[11px] sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
+                    className={`font-luxury text-xs sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
                       isSelected
-                        ? "font-medium text-[#111111]"
-                        : "font-normal text-[#444444] group-hover:text-black"
+                        ? "font-medium text-veyro-black"
+                        : "font-normal text-neutral-800 group-hover:text-black"
                     }`}
                   >
                     {pr.label}
                   </span>
                 </div>
                 {itemCounts?.priceRanges?.[pr.id] !== undefined && (
-                  <span className="text-[10.5px] font-mono text-[#8e8e8e]">
+                  <span className="text-[10.5px] font-mono text-veyro-subtle">
                     ({itemCounts.priceRanges[pr.id]})
                   </span>
                 )}
@@ -547,10 +547,10 @@ export function WatchFilterSidebar({
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={`h-[13px] w-[13px] rounded-full border transition-all ${
+                    className={`h-[13px] w-[13px] rounded-full border transition-colors ${
                       isChecked
-                        ? "border-[#111111] ring-2 ring-[#fcd017] scale-110"
-                        : "border-[#d0d0cc] group-hover:border-[#111111]"
+                        ? "border-veyro-black ring-2 ring-veyro-yellow scale-110"
+                        : "border-neutral-300 group-hover:border-veyro-black"
                     }`}
                     style={{ backgroundColor: col.hex }}
                     aria-label={`Dial color ${col.label}`}
@@ -564,17 +564,17 @@ export function WatchFilterSidebar({
                     aria-checked={isChecked}
                   />
                   <span
-                    className={`font-luxury text-[11px] sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
+                    className={`font-luxury text-xs sm:text-[11.5px] uppercase tracking-[0.06em] leading-none transition-colors ${
                       isChecked
-                        ? "font-medium text-[#111111]"
-                        : "font-normal text-[#444444] group-hover:text-black"
+                        ? "font-medium text-veyro-black"
+                        : "font-normal text-neutral-800 group-hover:text-black"
                     }`}
                   >
                     {col.label}
                   </span>
                 </div>
                 {itemCounts?.colors?.[col.id] !== undefined && (
-                  <span className="text-[10.5px] font-mono text-[#8e8e8e]">
+                  <span className="text-[10.5px] font-mono text-veyro-subtle">
                     ({itemCounts.colors[col.id]})
                   </span>
                 )}
@@ -649,16 +649,16 @@ export function WatchFilterSidebar({
             role="dialog"
             aria-modal="true"
             aria-label="Filter Timepieces"
-            className="relative flex w-full max-w-xs flex-col bg-white text-[#111111] shadow-2xl z-10 animate-drawer-in h-[100dvh] max-h-[100dvh] overflow-hidden ml-auto overscroll-contain"
+            className="relative flex w-full max-w-xs flex-col bg-white text-veyro-black shadow-2xl z-10 animate-drawer-in h-[100dvh] max-h-[100dvh] overflow-hidden ml-auto overscroll-contain"
           >
             {/* Drawer Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0f0ed] shrink-0">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-veyro-border-light shrink-0">
               <div className="flex items-center gap-2">
-                <span className="font-luxury text-sm font-medium uppercase tracking-[0.1em] text-[#111111]">
+                <span className="font-luxury text-sm font-medium uppercase tracking-[0.1em] text-veyro-black">
                   FILTERS
                 </span>
                 {activeFilterCount > 0 && (
-                  <span className="px-1.5 py-0.2 bg-[#fcd017] text-[#111111] text-[10px] font-black rounded-[2px]">
+                  <span className="px-1.5 py-0.2 bg-veyro-yellow text-veyro-black text-2xs font-black rounded-sm">
                     {activeFilterCount}
                   </span>
                 )}
@@ -666,7 +666,7 @@ export function WatchFilterSidebar({
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="p-1 text-[#555555] hover:text-[#111111] transition-colors cursor-pointer"
+                className="p-1 text-neutral-600 hover:text-veyro-black transition-colors cursor-pointer"
                 aria-label="Close filters"
               >
                 <X size={20} />
@@ -679,12 +679,12 @@ export function WatchFilterSidebar({
             </div>
 
             {/* Fixed Bottom Action Bar */}
-            <div className="p-4 border-t border-[#f0f0ed] bg-[#fafaf8] flex items-center gap-3 shrink-0">
+            <div className="p-4 border-t border-veyro-border-light bg-veyro-surface-alt flex items-center gap-3 shrink-0">
               {activeFilterCount > 0 && (
                 <button
                   type="button"
                   onClick={onClearAll}
-                  className="px-4 py-2.5 border border-[#111111] text-xs font-bold uppercase tracking-wider text-[#111111] hover:bg-white rounded-[2px] transition-colors cursor-pointer"
+                  className="px-4 py-2.5 border border-veyro-black text-xs font-bold uppercase tracking-wider text-veyro-black hover:bg-white rounded-sm transition-colors cursor-pointer"
                 >
                   Clear
                 </button>
@@ -692,7 +692,7 @@ export function WatchFilterSidebar({
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="flex-1 py-2.5 bg-[#111111] hover:bg-[#222222] text-white text-xs font-bold uppercase tracking-[0.1em] rounded-[2px] transition-colors cursor-pointer text-center"
+                className="flex-1 py-2.5 bg-veyro-black hover:bg-neutral-900 text-white text-xs font-bold uppercase tracking-[0.1em] rounded-sm transition-colors cursor-pointer text-center"
               >
                 Show {totalFilteredCount} Results
               </button>

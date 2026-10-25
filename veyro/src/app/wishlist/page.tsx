@@ -183,7 +183,7 @@ export default function WishlistPage() {
                 </button>
               ) : (
                 <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-lg">
-                  <span className="text-[11px] text-neutral-600 px-1 font-medium">
+                  <span className="text-xs text-neutral-600 px-1 font-medium">
                     Clear all?
                   </span>
                   <button
@@ -231,7 +231,7 @@ export default function WishlistPage() {
               return (
                 <div
                   key={product.id}
-                  className="group bg-white border border-neutral-200/90 rounded-xl overflow-hidden flex flex-col shadow-2xs hover:shadow-md transition-all duration-200"
+                  className="group bg-white border border-neutral-200/90 rounded-xl overflow-hidden flex flex-col shadow-2xs hover:shadow-md transition duration-200"
                 >
                   {/* Image Container */}
                   <div className="relative aspect-[3/4] bg-neutral-100 overflow-hidden">
@@ -270,7 +270,7 @@ export default function WishlistPage() {
                       type="button"
                       onClick={() => handleRemove(product.id, product.name)}
                       aria-label={`Remove ${product.name} from wishlist`}
-                      className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/95 backdrop-blur-xs text-neutral-600 hover:text-red-600 hover:bg-white shadow-xs flex items-center justify-center transition-all cursor-pointer"
+                      className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/95 backdrop-blur-xs text-neutral-600 hover:text-red-600 hover:bg-white shadow-xs flex items-center justify-center transition-colors cursor-pointer"
                     >
                       <X size={15} />
                     </button>
@@ -279,7 +279,7 @@ export default function WishlistPage() {
                   {/* Product Details */}
                   <div className="p-4 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider mb-1">
+                      <div className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-1">
                         {product.subcategoryTag || product.category}
                         {product.colorName ? ` • ${product.colorName}` : ""}
                       </div>
@@ -302,7 +302,7 @@ export default function WishlistPage() {
                               {formatPrice(product.originalPrice)}
                             </span>
                             {discountPercent && (
-                              <span className="text-[10px] font-semibold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+                              <span className="text-2xs font-semibold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
                                 {discountPercent}% OFF
                               </span>
                             )}
@@ -313,7 +313,7 @@ export default function WishlistPage() {
                       {/* Size Selector */}
                       {product.sizes && product.sizes.length > 0 && (
                         <div className="mb-4">
-                          <span className="block text-[11px] font-medium text-neutral-500 mb-1.5">
+                          <span className="block text-xs font-medium text-neutral-500 mb-1.5">
                             Select Size: <strong className="text-neutral-900">{currentSize}</strong>
                           </span>
                           <div className="flex flex-wrap gap-1.5">
@@ -322,7 +322,7 @@ export default function WishlistPage() {
                                 key={size}
                                 type="button"
                                 onClick={() => handleSelectSize(product.id, size)}
-                                className={`text-[11px] font-semibold px-2 py-1 rounded transition-colors cursor-pointer ${
+                                className={`text-xs font-semibold px-2 py-1 rounded transition-colors cursor-pointer ${
                                   currentSize === size
                                     ? "bg-neutral-900 text-white"
                                     : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
@@ -353,8 +353,8 @@ export default function WishlistPage() {
           </div>
         ) : (
           /* Empty State */
-          <div className="bg-white border border-neutral-200/60 rounded-[24px] p-8 sm:p-10 text-center max-w-lg mx-auto shadow-xl shadow-neutral-200/50">
-            <div className="mx-auto mb-4 max-w-[380px]">
+          <div className="bg-white border border-neutral-200/60 rounded-3xl p-8 sm:p-10 text-center max-w-lg mx-auto shadow-xl shadow-neutral-200/50">
+            <div className="mx-auto mb-4 max-w-sm">
               <Image
                 src="/empty-wishlist-v2.png"
                 alt="Empty Wishlist"
@@ -373,14 +373,14 @@ export default function WishlistPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/clothing"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#111111] text-white px-8 py-3.5 rounded-xl text-sm font-semibold hover:bg-black transition-all shadow-md shadow-neutral-200"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-veyro-black text-white px-8 py-3.5 rounded-xl text-sm font-semibold hover:bg-black transition-colors shadow-md shadow-neutral-200"
               >
                 <span>Shop Clothing</span>
                 <ArrowRight size={15} />
               </Link>
               <Link
                 href="/shoes"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-transparent border border-neutral-300 text-neutral-800 px-8 py-3.5 rounded-xl text-sm font-semibold hover:border-neutral-400 hover:bg-neutral-50 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-transparent border border-neutral-300 text-neutral-800 px-8 py-3.5 rounded-xl text-sm font-semibold hover:border-neutral-400 hover:bg-neutral-50 transition-colors"
               >
                 <span>Explore Footwear</span>
               </Link>

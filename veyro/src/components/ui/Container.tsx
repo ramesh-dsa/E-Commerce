@@ -14,9 +14,9 @@ export function Container({
   ...props
 }: ContainerProps) {
   const maxWidthMap = {
-    default: "max-w-[1540px]",
+    default: "max-w-screen-2xl",
     wide: "max-w-[1600px]",
-    narrow: "max-w-[1200px]",
+    narrow: "max-w-7xl",
     full: "max-w-full",
   };
 

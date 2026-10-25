@@ -32,7 +32,7 @@ export const HeroPanel = React.memo(function HeroPanel({
   fetchPriority,
 }: HeroPanelProps) {
   return (
-    <div className="group relative h-full w-full overflow-hidden bg-[#111111] select-none">
+    <div className="group relative h-full w-full overflow-hidden bg-veyro-black select-none">
       {/* Background Campaign Image - Object cover spanning full panel */}
       <Image
         src={panel.image}
@@ -58,28 +58,28 @@ export const HeroPanel = React.memo(function HeroPanel({
                 panel.titleLines.map((line, i) => (
                   <h2
                     key={i}
-                    className="text-[20px] sm:text-[24px] lg:text-[28px] xl:text-[34px] 2xl:text-[38px] font-black uppercase text-white leading-[0.95] tracking-tight drop-shadow-md"
+                    className="text-xl sm:text-2xl lg:text-[28px] xl:text-[34px] 2xl:text-[38px] font-black uppercase text-white leading-[0.95] tracking-tight drop-shadow-md"
                   >
                     {line}
                   </h2>
                 ))
               ) : (
-                <h2 className="text-[20px] sm:text-[24px] lg:text-[28px] xl:text-[34px] 2xl:text-[38px] font-black uppercase text-white leading-[0.95] tracking-tight drop-shadow-md">
+                <h2 className="text-xl sm:text-2xl lg:text-[28px] xl:text-[34px] 2xl:text-[38px] font-black uppercase text-white leading-[0.95] tracking-tight drop-shadow-md">
                   {panel.title}
                 </h2>
               )}
             </div>
 
             {panel.ctaPrice && (
-              <div className="inline-flex items-center gap-2 sm:gap-2.5 bg-[#fcd017] text-[#111111] px-3 py-1.5 sm:px-4 sm:py-2 rounded-[3px] transition-transform duration-200 group-hover:translate-x-0.5 hover:bg-[#e5bc05] shadow-md shrink-0">
-                <span className="p-0.5 bg-black/10 rounded-[2px]">
+              <div className="inline-flex items-center gap-2 sm:gap-2.5 bg-veyro-yellow text-veyro-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-sm transition-transform duration-200 group-hover:translate-x-0.5 hover:bg-veyro-yellow-dark shadow-md shrink-0">
+                <span className="p-0.5 bg-black/10 rounded-sm">
                   <ArrowUpRightIcon size={15} className="stroke-[3]" />
                 </span>
                 <div className="flex flex-col leading-none">
-                  <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider">
+                  <span className="text-2xs sm:text-xs font-black uppercase tracking-wider">
                     {panel.ctaText || "BUY 2 AT"}
                   </span>
-                  <span className="text-[13px] sm:text-[15px] font-black tracking-tight mt-0.5">
+                  <span className="text-sm sm:text-sm font-black tracking-tight mt-0.5">
                     {panel.ctaPrice}
                   </span>
                 </div>
@@ -92,15 +92,15 @@ export const HeroPanel = React.memo(function HeroPanel({
         {panel.layoutStyle === "panel-outerwear" && (
           <div className="flex flex-col">
             <div className="flex items-center gap-2 sm:gap-3 mb-1">
-              <span className="flex h-6 w-6 sm:h-8 sm:w-8 lg:h-9 lg:w-9 items-center justify-center bg-[#fcd017] text-[#111111] rounded-[3px] shrink-0 shadow-md">
+              <span className="flex h-6 w-6 sm:h-8 sm:w-8 lg:h-9 lg:w-9 items-center justify-center bg-veyro-yellow text-veyro-black rounded-sm shrink-0 shadow-md">
                 <ArrowUpRightIcon size={16} className="stroke-[3]" />
               </span>
-              <h2 className="text-[22px] sm:text-[26px] lg:text-[30px] xl:text-[36px] 2xl:text-[40px] font-black uppercase text-white tracking-tight leading-none drop-shadow-md">
+              <h2 className="text-[22px] sm:text-[26px] lg:text-3xl xl:text-4xl 2xl:text-[40px] font-black uppercase text-white tracking-tight leading-none drop-shadow-md">
                 {panel.title}
               </h2>
             </div>
             {panel.subtitle && (
-              <p className="text-[12px] sm:text-[13.5px] lg:text-[15px] text-neutral-100 font-medium pl-8 sm:pl-11 lg:pl-12 drop-shadow-sm line-clamp-1">
+              <p className="text-xs sm:text-[13.5px] lg:text-sm text-neutral-100 font-medium pl-8 sm:pl-11 lg:pl-12 drop-shadow-sm line-clamp-1">
                 {panel.subtitle}
               </p>
             )}
@@ -111,7 +111,7 @@ export const HeroPanel = React.memo(function HeroPanel({
         {panel.layoutStyle === "panel-footwear" && (
           <div className="flex flex-col items-center text-center w-full">
             {panel.tag && (
-              <span className="bg-black/65 backdrop-blur-xs text-[#fcd017] text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-[2px] mb-1.5 shadow-sm">
+              <span className="bg-black/65 backdrop-blur-xs text-veyro-yellow text-2xs sm:text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 sm:px-4 sm:py-1.5 rounded-sm mb-1.5 shadow-sm">
                 {panel.tag}
               </span>
             )}
@@ -121,12 +121,12 @@ export const HeroPanel = React.memo(function HeroPanel({
               </span>
             )}
             {panel.title && (
-              <span className="text-white text-[11px] sm:text-[12.5px] lg:text-[14px] font-black tracking-[0.34em] uppercase mt-1 drop-shadow-sm">
+              <span className="text-white text-xs sm:text-[12.5px] lg:text-sm font-black tracking-[0.34em] uppercase mt-1 drop-shadow-sm">
                 {panel.title}
               </span>
             )}
             {panel.subtitle && (
-              <p className="text-[11.5px] sm:text-[13px] lg:text-[14.5px] text-neutral-200 font-medium tracking-wide drop-shadow-sm mt-1 line-clamp-1">
+              <p className="text-[11.5px] sm:text-sm lg:text-[14.5px] text-neutral-200 font-medium tracking-wide drop-shadow-sm mt-1 line-clamp-1">
                 {panel.subtitle}
               </p>
             )}
@@ -138,7 +138,7 @@ export const HeroPanel = React.memo(function HeroPanel({
       <Link
         href={panel.href}
         tabIndex={tabIndex}
-        className="absolute inset-0 z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fcd017]"
+        className="absolute inset-0 z-20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-yellow"
         aria-label={`Explore ${panel.title || "collection"}`}
       />
     </div>
