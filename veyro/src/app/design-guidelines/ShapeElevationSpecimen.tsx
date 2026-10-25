@@ -5,11 +5,8 @@ import {
   Copy,
   Check,
   Layers,
-  Sparkles,
-  Sliders,
   Code2,
   Box,
-  ShoppingBag,
 } from "lucide-react";
 
 interface RadiusSpec {
@@ -102,8 +99,6 @@ const SHADOW_SPECS: ShadowSpec[] = [
 
 export default function ShapeElevationSpecimen() {
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [activeRadius, setActiveRadius] = useState<string>("rounded-2xl");
-  const [activeShadow, setActiveShadow] = useState<string>("shadow-md");
 
   const handleCopy = (token: string) => {
     if (navigator?.clipboard) {
@@ -114,7 +109,7 @@ export default function ShapeElevationSpecimen() {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       {/* ============================================================== */}
       {/* 1. CORNER RADII ARCHITECTURE CARDS                             */}
       {/* ============================================================== */}
@@ -296,171 +291,6 @@ export default function ShapeElevationSpecimen() {
               </div>
             );
           })}
-        </div>
-      </div>
-
-      {/* ============================================================== */}
-      {/* 3. INTERACTIVE SHAPE & ELEVATION LAB                           */}
-      {/* ============================================================== */}
-      <div className="border border-[#E8E8E5] rounded-2xl bg-white shadow-2xs overflow-hidden">
-        {/* Lab Header */}
-        <div className="p-4 sm:p-5 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FAFAF8]">
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-[#111111]" />
-              Interactive Shape &amp; Elevation Playground
-            </h4>
-            <p className="text-xs text-neutral-500">
-              Test how live corner radii and shadow levels combine on a Veyro product card
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-mono text-neutral-600">
-            <span className="bg-neutral-100 px-2 py-1 rounded border border-neutral-200">
-              {activeRadius}
-            </span>
-            <span>+</span>
-            <span className="bg-neutral-100 px-2 py-1 rounded border border-neutral-200">
-              {activeShadow}
-            </span>
-          </div>
-        </div>
-
-        {/* Playground Grid: Controls on left, Live Card on right */}
-        <div className="p-5 sm:p-8 bg-[#F4F4F1] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Controls Panel */}
-          <div className="lg:col-span-6 space-y-6 bg-white p-5 sm:p-6 rounded-2xl border border-neutral-200 shadow-2xs">
-            {/* Radius Selector */}
-            <div className="space-y-2.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-neutral-700 flex items-center justify-between">
-                <span>Select Corner Radius</span>
-                <span className="text-[11px] font-mono text-neutral-500">{activeRadius}</span>
-              </label>
-
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                {[
-                  { token: "rounded-md", label: "md (6px)" },
-                  { token: "rounded-lg", label: "lg (8px)" },
-                  { token: "rounded-xl", label: "xl (12px)" },
-                  { token: "rounded-2xl", label: "2xl (16px)" },
-                  { token: "rounded-full", label: "full" },
-                ].map((item) => (
-                  <button
-                    key={item.token}
-                    type="button"
-                    onClick={() => setActiveRadius(item.token)}
-                    className={`px-2 py-2 rounded-xl text-xs font-mono font-bold transition-all border ${
-                      activeRadius === item.token
-                        ? "bg-[#111111] text-[#FCD017] border-[#111111] shadow-xs"
-                        : "bg-neutral-50 text-neutral-700 border-neutral-200 hover:bg-neutral-100"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Shadow Selector */}
-            <div className="space-y-2.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-neutral-700 flex items-center justify-between">
-                <span>Select Elevation Shadow</span>
-                <span className="text-[11px] font-mono text-neutral-500">{activeShadow}</span>
-              </label>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[
-                  { token: "shadow-none", label: "Flat (none)" },
-                  { token: "shadow-xs", label: "Resting (xs)" },
-                  { token: "shadow-md", label: "Floating (md)" },
-                  { token: "shadow-2xl", label: "Elevated (2xl)" },
-                ].map((item) => (
-                  <button
-                    key={item.token}
-                    type="button"
-                    onClick={() => setActiveShadow(item.token)}
-                    className={`px-2 py-2 rounded-xl text-xs font-mono font-bold transition-all border ${
-                      activeShadow === item.token
-                        ? "bg-[#111111] text-[#FCD017] border-[#111111] shadow-xs"
-                        : "bg-neutral-50 text-neutral-700 border-neutral-200 hover:bg-neutral-100"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-500">
-              <span>Standard Default: <strong className="text-neutral-800">rounded-2xl + shadow-xs</strong></span>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveRadius("rounded-2xl");
-                  setActiveShadow("shadow-xs");
-                }}
-                className="text-neutral-700 hover:text-black font-bold underline underline-offset-2"
-              >
-                Reset Default
-              </button>
-            </div>
-          </div>
-
-          {/* Live Card Viewport */}
-          <div className="lg:col-span-6 flex items-center justify-center p-4">
-            <div
-              className={`w-full max-w-sm bg-white p-4 sm:p-5 border border-neutral-200/90 transition-all duration-300 ease-out space-y-3 ${activeRadius} ${activeShadow}`}
-            >
-              {/* Product Visual */}
-              <div
-                className={`w-full h-44 bg-[#EFEFED] relative overflow-hidden flex items-center justify-center p-3 transition-all duration-300 ${activeRadius}`}
-              >
-                <div className="absolute top-2 left-2 bg-[#FCD017] text-[#111111] text-[9px] font-mono font-bold px-2 py-0.5 rounded-full shadow-2xs z-10 flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5" />
-                  <span>BESTSELLER</span>
-                </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/products/shoes/veyro-shoe-01-primary.webp"
-                  alt="Blanc Court Sneaker"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
-              </div>
-
-              {/* Product Info */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <h6 className="text-sm font-bold text-neutral-900">
-                    Blanc Court Sneaker
-                  </h6>
-                  <span className="font-mono text-xs font-bold text-neutral-900">
-                    ₹2,699
-                  </span>
-                </div>
-                <p className="text-xs text-neutral-500 font-normal">
-                  Triple White • Premium Synthetic Leather
-                </p>
-              </div>
-
-              {/* Action Button */}
-              <button
-                type="button"
-                className={`w-full bg-[#111111] hover:bg-black text-white text-xs font-bold py-2.5 flex items-center justify-center gap-1.5 transition-all shadow-xs ${activeRadius}`}
-              >
-                <ShoppingBag className="w-3.5 h-3.5 text-[#FCD017]" />
-                <span>Add to Bag</span>
-              </button>
-
-              {/* Live Token pill */}
-              <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-400">
-                <span>Active CSS:</span>
-                <span className="text-neutral-700 font-bold bg-neutral-100 px-2 py-0.5 rounded">
-                  {activeRadius} {activeShadow}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
