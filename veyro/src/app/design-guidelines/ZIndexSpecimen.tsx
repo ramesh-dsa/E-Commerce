@@ -341,93 +341,180 @@ export default function ZIndexSpecimen() {
           </div>
 
           {/* Visual Layered UI Simulation */}
-          <div className="relative h-64 bg-white rounded-xl border border-neutral-200 p-4 overflow-hidden flex flex-col justify-between">
-            {/* Layer 0: Canvas */}
+          <div className="relative h-72 bg-white rounded-xl border border-neutral-200 p-3 overflow-hidden flex flex-col justify-between">
+            {/* Layer 0: Canvas & Timeline Rails */}
             <div
               className={`absolute inset-0 bg-[#F4F4F1] p-3 transition-opacity duration-300 ${
-                activeToken === "z-0" ? "opacity-100 ring-2 ring-neutral-900" : "opacity-30"
+                activeToken === "z-0" ? "opacity-100 ring-2 ring-neutral-900 bg-[#EFEFEA]" : "opacity-35"
               }`}
             >
-              <span className="text-[9px] font-mono text-neutral-500 font-bold">
-                z-0: Ambient Canvas &amp; Rails
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-mono text-neutral-600 font-bold">
+                  z-0: Ambient Canvas &amp; Return Progress Track
+                </span>
+                <span className="text-[8px] font-mono text-neutral-400">orders/[id]/return/page.tsx:259</span>
+              </div>
+              <div className="mt-2 h-1 bg-neutral-300 rounded-full w-3/4" />
             </div>
 
             {/* Layer 1: Scrim */}
             <div
-              className={`absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 to-transparent p-2 z-1 transition-opacity duration-300 ${
-                activeToken === "z-1" ? "opacity-100 ring-2 ring-[#FCD017]" : "opacity-30"
+              className={`absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#111111]/90 via-[#111111]/60 to-transparent p-2.5 z-1 transition-all duration-300 ${
+                activeToken === "z-1" ? "opacity-100 ring-2 ring-[#FCD017]" : "opacity-35"
               }`}
             >
-              <span className="text-[9px] font-mono text-white/90 font-bold">
-                z-1: Dark Scrim Readability Layer
+              <span className="text-[9px] font-mono text-white font-bold bg-[#111111]/80 px-2 py-0.5 rounded">
+                z-1: Footwear Image Dark Readability Scrim (FootwearCatalog.tsx:393)
               </span>
             </div>
 
-            {/* Layer 10: Content Grid */}
+            {/* Layer 40: Announcement Bar */}
             <div
-              className={`relative z-10 grid grid-cols-2 gap-2 mt-auto p-2 bg-white rounded-lg border border-neutral-200 shadow-2xs transition-all duration-300 ${
-                activeToken === "z-10"
-                  ? "ring-2 ring-neutral-900 bg-white"
-                  : "opacity-70"
+              className={`relative z-40 flex items-center justify-between p-1.5 bg-[#FCD017] text-[#111111] rounded text-[8.5px] font-mono transition-all duration-300 ${
+                activeToken === "z-40"
+                  ? "ring-2 ring-neutral-950 shadow-md font-bold"
+                  : "opacity-75"
               }`}
             >
-              <div className="h-8 bg-neutral-100 rounded text-[9px] font-mono flex items-center justify-center text-neutral-600">
-                ProductCard (z-10)
-              </div>
-              <div className="h-8 bg-neutral-100 rounded text-[9px] font-mono flex items-center justify-center text-neutral-600">
-                FootwearCard (z-10)
+              <span className="font-bold flex items-center gap-1">
+                <span>⚡</span> z-40: AnnouncementBar.tsx:23 (15% OFF DROPS)
+              </span>
+              <span className="text-[8px] opacity-75">checkout/page.tsx:968</span>
+            </div>
+
+            {/* Layer 50: Sticky Navbar Header */}
+            <div
+              className={`relative z-50 flex items-center justify-between p-2 bg-[#111111] text-white rounded text-[9px] font-mono transition-all duration-300 ${
+                activeToken === "z-50"
+                  ? "ring-2 ring-[#FCD017] shadow-lg"
+                  : "opacity-75"
+              }`}
+            >
+              <span className="font-bold text-[#FCD017]">z-50: Navbar.tsx:252</span>
+              <div className="flex items-center gap-2 text-[8px]">
+                <span className="bg-neutral-800 px-1.5 py-0.5 rounded">Bag (2)</span>
+                <span>Account</span>
               </div>
             </div>
 
-            {/* Layer 30 & 40: Subnav & Navbar */}
-            <div className="space-y-1.5 relative z-40">
+            {/* Layer 30: Sticky Filter Subnav Bar */}
+            <div
+              className={`relative z-30 flex items-center justify-between p-1.5 bg-neutral-100 rounded text-[8.5px] font-mono border border-neutral-200 transition-all duration-300 ${
+                activeToken === "z-30"
+                  ? "ring-2 ring-neutral-900 bg-neutral-200 font-bold text-neutral-950"
+                  : "opacity-60 text-neutral-600"
+              }`}
+            >
+              <span>z-30: Sticky Filter Subnav (FootwearCatalog.tsx:428)</span>
+              <span>All / Retro / Low</span>
+            </div>
+
+            {/* Layer 10 & 20: Content Grid & Interactive Badges */}
+            <div className="relative z-10 grid grid-cols-2 gap-2 mt-auto p-2 bg-white/95 rounded-lg border border-neutral-200 shadow-2xs">
+              {/* Product Card 1 with z-20 Floating Action Pill */}
               <div
-                className={`flex items-center justify-between p-2 bg-[#111111] text-white rounded text-[9px] font-mono transition-all duration-300 ${
-                  activeToken === "z-50"
-                    ? "ring-2 ring-[#FCD017] shadow-md"
-                    : activeToken === "z-40"
-                    ? "ring-2 ring-neutral-400"
-                    : "opacity-85"
+                className={`relative h-16 bg-neutral-50 rounded p-1.5 border border-neutral-200 flex flex-col justify-between transition-all duration-300 ${
+                  activeToken === "z-10" ? "ring-2 ring-neutral-900 bg-white" : ""
                 }`}
               >
-                <span className="font-bold text-[#FCD017]">Navbar Header (z-50)</span>
-                <span>Cart (2)</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] font-mono text-neutral-500">ProductCard:87 (z-10)</span>
+                  {/* Floating Action Pill z-20 */}
+                  <span
+                    className={`text-[8px] font-mono px-1.5 py-0.5 rounded transition-all duration-300 ${
+                      activeToken === "z-20"
+                        ? "bg-[#111111] text-[#FCD017] font-bold ring-2 ring-[#FCD017] shadow-sm"
+                        : "bg-white text-neutral-700 border border-neutral-300"
+                    }`}
+                  >
+                    z-20: Pill
+                  </span>
+                </div>
+                <span className="text-[8px] font-mono text-neutral-400">Sneaker SKU</span>
               </div>
+
+              {/* Product Card 2 with z-20 Zoom Button */}
               <div
-                className={`flex items-center justify-between p-1.5 bg-neutral-100 rounded text-[8px] font-mono transition-all duration-300 ${
-                  activeToken === "z-30" ? "ring-2 ring-neutral-900 bg-neutral-200 font-bold" : "opacity-70"
+                className={`relative h-16 bg-neutral-50 rounded p-1.5 border border-neutral-200 flex flex-col justify-between transition-all duration-300 ${
+                  activeToken === "z-10" ? "ring-2 ring-neutral-900 bg-white" : ""
                 }`}
               >
-                <span>Filter Subnav Bar (z-30)</span>
-                <span>Footwear / All</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] font-mono text-neutral-500">FootwearCard (z-10)</span>
+                  {/* Floating Action Pill z-20 */}
+                  <span
+                    className={`text-[8px] font-mono px-1.5 py-0.5 rounded transition-all duration-300 ${
+                      activeToken === "z-20"
+                        ? "bg-[#111111] text-[#FCD017] font-bold ring-2 ring-[#FCD017] shadow-sm"
+                        : "bg-white text-neutral-700 border border-neutral-300"
+                    }`}
+                  >
+                    z-20: Zoom
+                  </span>
+                </div>
+                <span className="text-[8px] font-mono text-neutral-400">ProductGallery:164</span>
               </div>
             </div>
 
-            {/* Layer 50 / 100: Drawers */}
+            {/* Layer 50: CartDrawer Slide-over */}
             <div
               className={`absolute top-0 right-0 w-36 h-full bg-white border-l-2 border-neutral-300 shadow-xl p-3 z-50 flex flex-col justify-between transition-all duration-300 ${
-                activeToken === "z-50" || activeToken === "z-[100]"
-                  ? "translate-x-0 ring-2 ring-neutral-900"
-                  : "translate-x-full opacity-0"
+                activeToken === "z-50"
+                  ? "translate-x-0 ring-2 ring-neutral-900 opacity-100"
+                  : "translate-x-full opacity-0 pointer-events-none"
               }`}
             >
               <div className="space-y-1">
                 <span className="text-[9px] font-mono font-bold text-neutral-900 block">
-                  {activeToken === "z-[100]" ? "Mobile Drawer (z-[100])" : "CartDrawer (z-50)"}
+                  CartDrawer.tsx:527 (z-50)
                 </span>
                 <div className="h-2 bg-neutral-200 rounded w-full" />
                 <div className="h-2 bg-neutral-100 rounded w-3/4" />
               </div>
               <div className="h-6 bg-[#111111] text-[#FCD017] rounded text-[8px] font-mono flex items-center justify-center font-bold">
-                Checkout
+                Checkout (z-50)
               </div>
             </div>
 
-            {/* Layer 150: Fullscreen Search */}
+            {/* Layer 70: Account Modal Toast Wrapper */}
+            <div
+              className={`absolute top-20 left-1/2 -translate-x-1/2 z-[70] bg-[#111111] text-white px-3 py-1.5 rounded-full shadow-2xl border border-neutral-700 flex items-center gap-1.5 text-[9px] font-mono transition-all duration-300 ${
+                activeToken === "z-[70]"
+                  ? "scale-100 opacity-100 ring-2 ring-[#FCD017]"
+                  : "scale-90 opacity-0 pointer-events-none"
+              }`}
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-[#FCD017]" />
+              <span>z-[70]: AccountModal.tsx:390 Toast Wrapper</span>
+            </div>
+
+            {/* Layer 100: Mobile Navigation Drawer */}
+            <div
+              className={`absolute top-0 left-0 w-40 h-full bg-white border-r-2 border-neutral-300 shadow-2xl p-3 z-[100] flex flex-col justify-between transition-all duration-300 ${
+                activeToken === "z-[100]"
+                  ? "translate-x-0 ring-2 ring-neutral-900 opacity-100"
+                  : "-translate-x-full opacity-0 pointer-events-none"
+              }`}
+            >
+              <div className="space-y-2">
+                <span className="text-[9px] font-mono font-bold text-neutral-900 block border-b pb-1">
+                  Navbar.tsx:497 (z-[100])
+                </span>
+                <div className="space-y-1 text-[8px] font-mono text-neutral-600">
+                  <div className="p-1 bg-neutral-100 rounded">Footwear</div>
+                  <div className="p-1 bg-neutral-100 rounded">Apparel</div>
+                  <div className="p-1 bg-neutral-100 rounded">Timepieces</div>
+                </div>
+              </div>
+              <span className="text-[8px] font-mono text-neutral-400">Mobile Menu Drawer</span>
+            </div>
+
+            {/* Layer 150: Fullscreen Search Takeover */}
             <div
               className={`absolute inset-0 bg-white z-[150] p-4 flex flex-col justify-between border-2 border-neutral-950 transition-all duration-300 ${
-                activeToken === "z-[150]" ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
+                activeToken === "z-[150]"
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 pointer-events-none scale-95"
               }`}
             >
               <div className="flex items-center gap-2 border-b pb-2">
