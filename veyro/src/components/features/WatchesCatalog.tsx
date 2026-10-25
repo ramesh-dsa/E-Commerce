@@ -837,7 +837,7 @@ export function WatchesCatalog() {
               href="/shoes"
               className="group mt-4 sm:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-veyro-black hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black rounded-xs"
             >
-              <span className="relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-veyro-black after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+              <span className="relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-veyro-black after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
                 Explore Footwear Catalog (9)
               </span>
               <ArrowRight
