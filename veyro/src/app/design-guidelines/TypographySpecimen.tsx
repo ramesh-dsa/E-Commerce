@@ -1,19 +1,35 @@
 "use client";
 
 import React, { useState } from "react";
-import { Archivo, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Montserrat, Outfit, Dancing_Script } from "next/font/google";
 import { Type, Sparkles, Copy, Check } from "lucide-react";
 
-const archivo = Archivo({
+const geistSans = Geist({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-archivo",
 });
 
-const inter = Inter({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
 });
 
 const TYPE_SCALE_ITEMS = [
@@ -21,9 +37,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "Display / Hero",
     token: "text-4xl sm:text-5xl",
     size: "40px / 48px",
-    font: "Archivo Bold (700)",
+    font: "Geist Sans Bold (700)",
     tracking: "tracking-tight uppercase",
-    style: { fontFamily: archivo.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "OVERSIZED ARCHITECTURAL SILHOUETTE",
     usage: "Collection banners, hero statements, and lookbook headlines",
   },
@@ -31,9 +47,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "H1 Page Title",
     token: "text-3xl",
     size: "30px / 36px",
-    font: "Archivo Bold (700)",
+    font: "Geist Sans Bold (700)",
     tracking: "tracking-tight uppercase",
-    style: { fontFamily: archivo.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "BRAND & DESIGN GUIDELINES",
     usage: "Primary page title (strictly exactly one <h1> per page)",
   },
@@ -41,9 +57,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "H2 Section Title",
     token: "text-2xl",
     size: "24px / 32px",
-    font: "Archivo Bold (700)",
+    font: "Geist Sans Bold (700)",
     tracking: "tracking-tight uppercase",
-    style: { fontFamily: archivo.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "FOUNDATIONS & CORE SYSTEM",
     usage: "Section breaks, major chapter titles, and group boundaries",
   },
@@ -51,9 +67,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "H3 Card Title",
     token: "text-lg sm:text-xl",
     size: "20px / 28px",
-    font: "Archivo SemiBold (600)",
+    font: "Geist Sans SemiBold (600)",
     tracking: "tracking-tight uppercase",
-    style: { fontFamily: archivo.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "HEAVYWEIGHT 280 GSM COTTON TEE",
     usage: "Product catalog titles, bento grid headings, modal headers",
   },
@@ -61,9 +77,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "Lead Subtitle",
     token: "text-base",
     size: "16px / 24px",
-    font: "Inter Regular (400)",
+    font: "Geist Sans Regular (400)",
     tracking: "tracking-normal",
-    style: { fontFamily: inter.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "Engineered with high-density Indian combed cotton for a sharp, structural fall.",
     usage: "Lead introductory paragraphs, section subtitles, editorial quotes",
   },
@@ -71,9 +87,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "Standard Body",
     token: "text-sm",
     size: "14px / 20px",
-    font: "Inter Regular (400)",
+    font: "Geist Sans Regular (400)",
     tracking: "tracking-normal",
-    style: { fontFamily: inter.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "Universal readable body copy across all product cards, specifications, and UI descriptions.",
     usage: "Default storefront text, table cells, review descriptions (replaces 12px)",
   },
@@ -81,9 +97,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "Caption & Meta",
     token: "text-xs",
     size: "12px / 16px",
-    font: "Inter Medium (500)",
+    font: "Geist Mono Medium (500)",
     tracking: "tracking-wider uppercase",
-    style: { fontFamily: inter.style.fontFamily },
+    style: { fontFamily: geistMono.style.fontFamily },
     sampleText: "SKU: VEYRO-CORE-001 • PRE-SHRUNK • MADE IN TIRUPPUR",
     usage: "Product metadata, timestamps, price comparison tags, pills",
   },
@@ -91,9 +107,9 @@ const TYPE_SCALE_ITEMS = [
     tier: "Micro Eyebrow",
     token: "text-[11px]",
     size: "11px / 14px",
-    font: "Inter Bold (700)",
+    font: "Geist Sans Bold (700)",
     tracking: "tracking-widest uppercase",
-    style: { fontFamily: inter.style.fontFamily },
+    style: { fontFamily: geistSans.style.fontFamily },
     sampleText: "FREE EXPRESS DELIVERY ON ORDERS OVER ₹999",
     usage: "Top ticker announcements, active step tags, category badges",
   },
@@ -101,7 +117,7 @@ const TYPE_SCALE_ITEMS = [
 
 const WEIGHTS_SCALE = [
   {
-    weight: "Bold 700",
+    weight: "Bold 700 / Black 900",
     role: "Section headers, page titles, and prominent button CTAs",
     sample: "ARCHITECTURAL DRAPE 700",
     fontClass: "font-bold",
@@ -130,13 +146,13 @@ const TRACKING_RULES = [
   {
     token: "tracking-tight",
     value: "-0.025em",
-    usage: "All Archivo uppercase display headlines (h1, h2, h3)",
+    usage: "Display headlines and uppercase hero titles (h1, h2, h3)",
     sample: "HIGH-DENSITY KNIT",
   },
   {
     token: "tracking-normal",
     value: "0em",
-    usage: "Standard Inter body paragraphs & product descriptions",
+    usage: "Standard body paragraphs and product descriptions",
     sample: "Natural drop shoulder silhouette.",
   },
   {
@@ -148,7 +164,7 @@ const TRACKING_RULES = [
   {
     token: "tracking-widest",
     value: "+0.1em",
-    usage: "Section counters (GROUP I), table column labels, and top announcements",
+    usage: "Section counters (GROUP I), table column labels, and top tickers",
     sample: "CONTENTS / SECTION 04",
   },
 ];
@@ -167,87 +183,25 @@ export default function TypographySpecimen() {
 
   return (
     <div className="space-y-10">
-      {/* 1. Core Font Family Hero Cards */}
+      {/* 1. Actual Storefront Font Families */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-600">
-            Canonical Two-Font Standard
+            Active Storefront Font Stack (Loaded in layout.tsx)
           </h4>
           <span className="text-xs text-neutral-500 font-medium">Click token to copy</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Card 1: Archivo */}
-          <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between space-y-5">
+          {/* Card 1: Geist Sans */}
+          <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-1 rounded-full bg-[#111111] text-[#FCD017] font-mono text-xs font-bold">
-                    HEADINGS
+                    PRIMARY BASE
                   </span>
-                  <h5 className="text-base font-bold text-neutral-950">Archivo</h5>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopy("font-heading")}
-                  className="font-mono text-xs text-neutral-600 hover:text-neutral-950 bg-neutral-100 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-colors"
-                  title="Copy font class"
-                >
-                  {copiedToken === "font-heading" ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-600" /> Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3" /> font-heading
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Live Headline Specimen */}
-              <div className="p-5 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-2">
-                <p
-                  className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-[#111111]"
-                  style={{ fontFamily: archivo.style.fontFamily }}
-                >
-                  BUILT FOR THE ARCHIVE
-                </p>
-                <p
-                  className="text-xs font-mono text-neutral-500 tracking-wider"
-                  style={{ fontFamily: archivo.style.fontFamily }}
-                >
-                  ABCDEFGHIJKLMNOPQRSTUVWXYZ • 0123456789
-                </p>
-              </div>
-
-              <div className="space-y-1.5 text-xs text-neutral-700 leading-relaxed">
-                <p>
-                  <strong className="text-neutral-950 font-bold">Role: </strong>
-                  Architectural headlines, hero statements, product titles, and uppercase section dividers.
-                </p>
-                <p>
-                  <strong className="text-neutral-950 font-bold">Weights: </strong>
-                  SemiBold (600) and Bold (700) • Strictly paired with <code className="font-mono text-neutral-900 bg-neutral-100 px-1 py-0.5 rounded">tracking-tight</code>.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
-              <span>Google Font: Archivo</span>
-              <span className="font-mono font-semibold text-neutral-700">Display / Hero</span>
-            </div>
-          </div>
-
-          {/* Card 2: Inter */}
-          <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between space-y-5">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full bg-[#111111] text-white font-mono text-xs font-bold">
-                    BODY &amp; UI
-                  </span>
-                  <h5 className="text-base font-bold text-neutral-950">Inter</h5>
+                  <h5 className="text-base font-bold text-neutral-950">Geist Sans</h5>
                 </div>
                 <button
                   type="button"
@@ -267,37 +221,226 @@ export default function TypographySpecimen() {
                 </button>
               </div>
 
-              {/* Live Body Specimen */}
-              <div className="p-5 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-2">
+              {/* Live Specimen */}
+              <div className="p-4 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-2">
                 <p
-                  className="text-sm sm:text-base font-normal leading-relaxed text-neutral-900"
-                  style={{ fontFamily: inter.style.fontFamily }}
+                  className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-[#111111]"
+                  style={{ fontFamily: geistSans.style.fontFamily }}
+                >
+                  OVERSIZED ARCHITECTURAL SILHOUETTE
+                </p>
+                <p
+                  className="text-xs text-neutral-700 leading-relaxed font-normal"
+                  style={{ fontFamily: geistSans.style.fontFamily }}
                 >
                   100% long-staple Indian combed cotton. Architectural drape that retains shape wash after wash.
                 </p>
                 <p
-                  className="text-xs font-mono text-neutral-500 tracking-normal"
-                  style={{ fontFamily: inter.style.fontFamily }}
+                  className="text-[11px] font-mono text-neutral-500 tracking-wider pt-1"
+                  style={{ fontFamily: geistSans.style.fontFamily }}
                 >
-                  Aa Bb Cc Dd Ee Ff Gg Hh 0123456789 • ₹ &amp; %
+                  Aa Bb Cc Dd Ee Ff Gg 0123456789 • ₹ &amp; %
                 </p>
               </div>
 
-              <div className="space-y-1.5 text-xs text-neutral-700 leading-relaxed">
+              <div className="space-y-1 text-xs text-neutral-700 leading-relaxed">
                 <p>
                   <strong className="text-neutral-950 font-bold">Role: </strong>
-                  Universal storefront copy, navigation links, buttons, table data, and descriptions.
+                  Default base font across all 178 storefront files: headings, body copy, navigation, buttons, and product descriptions.
                 </p>
                 <p>
                   <strong className="text-neutral-950 font-bold">Weights: </strong>
-                  Regular (400), Medium (500), SemiBold (600) • High legibility at small sizes.
+                  Regular (400), Medium (500), SemiBold (600), Bold (700), Black (900).
                 </p>
               </div>
             </div>
 
             <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
-              <span>Google Font: Inter</span>
-              <span className="font-mono font-semibold text-neutral-700">Body &amp; Micro</span>
+              <span className="font-mono">--font-geist-sans</span>
+              <span className="font-semibold text-neutral-700">Universal Storefront Default</span>
+            </div>
+          </div>
+
+          {/* Card 2: Geist Mono */}
+          <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full bg-[#111111] text-white font-mono text-xs font-bold">
+                    DATA &amp; METRICS
+                  </span>
+                  <h5 className="text-base font-bold text-neutral-950">Geist Mono</h5>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCopy("font-mono")}
+                  className="font-mono text-xs text-neutral-600 hover:text-neutral-950 bg-neutral-100 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-colors"
+                  title="Copy font class"
+                >
+                  {copiedToken === "font-mono" ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-600" /> Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" /> font-mono
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Live Specimen */}
+              <div className="p-4 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-2">
+                <p
+                  className="text-lg sm:text-xl font-bold tracking-wider text-[#111111]"
+                  style={{ fontFamily: geistMono.style.fontFamily }}
+                >
+                  VYR-CORE-001 • ₹1,899 • 280 GSM
+                </p>
+                <p
+                  className="text-xs text-neutral-700 leading-relaxed font-medium"
+                  style={{ fontFamily: geistMono.style.fontFamily }}
+                >
+                  100% PRE-SHRUNK COMBED COTTON | SIZE: L (CHEST 44&quot;)
+                </p>
+                <p
+                  className="text-[11px] text-neutral-500 tracking-normal pt-1"
+                  style={{ fontFamily: geistMono.style.fontFamily }}
+                >
+                  0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                </p>
+              </div>
+
+              <div className="space-y-1 text-xs text-neutral-700 leading-relaxed">
+                <p>
+                  <strong className="text-neutral-950 font-bold">Role: </strong>
+                  Product SKUs, currency amounts, vouchers, measurement specs, and technical details.
+                </p>
+                <p>
+                  <strong className="text-neutral-950 font-bold">Weights: </strong>
+                  Regular (400), Medium (500), Bold (700) • Fixed-pitch numerical alignment.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
+              <span className="font-mono">--font-geist-mono</span>
+              <span className="font-semibold text-neutral-700">157 uses in code</span>
+            </div>
+          </div>
+
+          {/* Card 3: Montserrat */}
+          <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-900 font-mono text-xs font-bold border border-neutral-200">
+                    LUXURY ACCENT
+                  </span>
+                  <h5 className="text-base font-bold text-neutral-950">Montserrat</h5>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCopy("font-luxury")}
+                  className="font-mono text-xs text-neutral-600 hover:text-neutral-950 bg-neutral-100 px-2.5 py-1 rounded-full flex items-center gap-1.5 transition-colors"
+                  title="Copy font class"
+                >
+                  {copiedToken === "font-luxury" ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-600" /> Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" /> font-luxury
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Live Specimen */}
+              <div className="p-4 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-2">
+                <p
+                  className="text-lg sm:text-xl font-bold uppercase tracking-wider text-[#111111]"
+                  style={{ fontFamily: montserrat.style.fontFamily }}
+                >
+                  THE AUTUMN WINTER ARCHIVE
+                </p>
+                <p
+                  className="text-xs text-neutral-700 leading-relaxed font-normal"
+                  style={{ fontFamily: montserrat.style.fontFamily }}
+                >
+                  Limited release heavyweight streetwear crafted in small deliberate batches.
+                </p>
+              </div>
+
+              <div className="space-y-1 text-xs text-neutral-700 leading-relaxed">
+                <p>
+                  <strong className="text-neutral-950 font-bold">Role: </strong>
+                  Luxury banner titles, editorial campaign statement banners, and high-fashion showcase accents.
+                </p>
+                <p>
+                  <strong className="text-neutral-950 font-bold">Class: </strong>
+                  <code className="font-mono text-neutral-900 bg-neutral-100 px-1 py-0.5 rounded">.font-luxury</code> in globals.css.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
+              <span className="font-mono">--font-montserrat</span>
+              <span className="font-semibold text-neutral-700">Editorial Banners</span>
+            </div>
+          </div>
+
+          {/* Card 4: Outfit & Dancing Script */}
+          <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-900 font-mono text-xs font-bold border border-neutral-200">
+                    SPECIALTY ACCENTS
+                  </span>
+                  <h5 className="text-base font-bold text-neutral-950">Outfit &amp; Script</h5>
+                </div>
+                <span className="text-xs font-mono text-neutral-400">Accents</span>
+              </div>
+
+              {/* Live Specimen Outfit */}
+              <div className="p-3 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-1">
+                <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-wider block">
+                  Outfit (--font-outfit)
+                </span>
+                <p
+                  className="text-base font-bold text-neutral-900"
+                  style={{ fontFamily: outfit.style.fontFamily }}
+                >
+                  MODERN CONTEMPORARY ESSENTIALS
+                </p>
+              </div>
+
+              {/* Live Specimen Dancing Script */}
+              <div className="p-3 bg-[#F8F8F6] rounded-xl border border-[#E8E8E5] space-y-1">
+                <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-wider block">
+                  Dancing Script (.font-script)
+                </span>
+                <p
+                  className="text-xl font-bold text-[#111111]"
+                  style={{ fontFamily: dancingScript.style.fontFamily }}
+                >
+                  Crafted with Precision &amp; Passion
+                </p>
+              </div>
+
+              <div className="text-xs text-neutral-700 leading-relaxed">
+                <p>
+                  <strong className="text-neutral-950 font-bold">Usage: </strong>
+                  Used selectively for special promotional hero highlights and boutique subheadings.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
+              <span className="font-mono">Outfit + Dancing Script</span>
+              <span className="font-semibold text-neutral-700">Campaign Details</span>
             </div>
           </div>
         </div>
@@ -319,18 +462,18 @@ export default function TypographySpecimen() {
           type="text"
           value={customText}
           onChange={(e) => setCustomText(e.target.value)}
-          placeholder="Type custom preview text (e.g. CORE HEAVYWEIGHT OVERSIZED TEE)..."
+          placeholder="Type custom preview text (e.g. OVERSIZED DROP SHOULDER TEE)..."
           className="w-full px-4 py-2.5 bg-white border border-[#E8E8E5] rounded-xl text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-hidden focus:border-neutral-900 transition-colors shadow-2xs"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
           <div className="p-4 bg-white rounded-xl border border-[#E8E8E5] space-y-1">
             <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
-              Archivo Display (Heading)
+              Geist Sans (Display)
             </span>
             <p
-              className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-[#111111] truncate"
-              style={{ fontFamily: archivo.style.fontFamily }}
+              className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#111111] truncate"
+              style={{ fontFamily: geistSans.style.fontFamily }}
             >
               {customText.trim() || "CORE HEAVYWEIGHT TEE"}
             </p>
@@ -338,13 +481,25 @@ export default function TypographySpecimen() {
 
           <div className="p-4 bg-white rounded-xl border border-[#E8E8E5] space-y-1">
             <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
-              Inter Body (Reading Copy)
+              Geist Sans (Body)
             </span>
             <p
-              className="text-sm sm:text-base text-neutral-800 leading-relaxed font-normal truncate"
-              style={{ fontFamily: inter.style.fontFamily }}
+              className="text-sm text-neutral-800 leading-relaxed font-normal truncate"
+              style={{ fontFamily: geistSans.style.fontFamily }}
             >
               {customText.trim() || "Engineered with 280 GSM cotton for a sharp architectural drape."}
+            </p>
+          </div>
+
+          <div className="p-4 bg-white rounded-xl border border-[#E8E8E5] space-y-1">
+            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+              Geist Mono (SKU / Price)
+            </span>
+            <p
+              className="text-sm font-mono font-bold text-neutral-950 truncate"
+              style={{ fontFamily: geistMono.style.fontFamily }}
+            >
+              {customText.trim() || "VYR-001 • ₹1,899 • IN STOCK"}
             </p>
           </div>
         </div>
@@ -354,7 +509,7 @@ export default function TypographySpecimen() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-600">
-            Storefront Type Scale Ladder
+            Storefront Type Scale Ladder (Geist Sans)
           </h4>
           <span className="text-xs text-neutral-500 font-medium">
             Standard scale: text-4xl down to text-[11px]
@@ -468,7 +623,10 @@ export default function TypographySpecimen() {
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-bold text-neutral-950">Typography Rules:</span>
           <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
-            2-Font Standard: Archivo + Inter Only
+            Primary Base: Geist Sans (font-sans)
+          </span>
+          <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
+            Data &amp; SKUs: Geist Mono (font-mono)
           </span>
           <span className="bg-white border border-neutral-200 px-2.5 py-1 rounded-full font-medium shadow-2xs">
             Minimum Body Size: 14px (text-sm)

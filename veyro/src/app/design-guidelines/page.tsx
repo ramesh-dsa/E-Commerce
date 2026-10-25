@@ -732,7 +732,7 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    The two-font architectural standard: Archivo for bold headlines and Inter for clean UI &amp; reading copy.
+                    The active storefront font system: Geist Sans for UI &amp; display, Geist Mono for data, and editorial accents.
                   </p>
                 </div>
 
