@@ -109,7 +109,7 @@ function useScrollSpy(
         }
       },
       {
-        rootMargin: "-20% 0px -70% 0px",
+        rootMargin: "-35% 0px -45% 0px",
         threshold: [0, 0.25, 0.5, 0.75, 1],
       }
     );
@@ -329,8 +329,13 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
       )}
 
       {/* ── Desktop Floating Sticky Rail (>= lg) ── */}
-      <aside className={`hidden lg:block lg:sticky lg:top-28 max-h-[calc(100vh-8rem)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}>
-        <nav aria-label="Guidelines sections">
+      <aside
+        className={`hidden lg:flex lg:sticky lg:top-20 h-[calc(100vh-5rem)] flex-col justify-center ${className}`}
+      >
+        <nav
+          aria-label="Guidelines sections"
+          className="max-h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-4"
+        >
           <div ref={listContainerRef} className="relative pl-3 space-y-4">
             {/* Continuous 1px vertical line */}
             <div
