@@ -353,7 +353,7 @@ export default function DesignGuidelinesPage() {
     >
       {/* Top Banner Header */}
       <header className="border-b border-[#E8E8E5] bg-[#F8F8F6] pt-12 pb-10">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1680px] mx-auto px-5 sm:px-8 lg:px-12 xl:px-14">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2">
@@ -412,8 +412,8 @@ export default function DesignGuidelinesPage() {
       </header>
 
       {/* Main Two-Column Layout */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-[16rem_minmax(0,1fr)] gap-12">
+      <div className="w-full max-w-[1680px] mx-auto px-5 sm:px-8 lg:px-12 xl:px-14 py-12">
+        <div className="grid lg:grid-cols-[16rem_minmax(0,1fr)] gap-12 xl:gap-16">
           {/* Navigation Rail */}
           <GuidelinesTreeSidebar />
 
