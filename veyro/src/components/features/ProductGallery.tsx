@@ -121,13 +121,19 @@ export function ProductGallery({ product }: ProductGalleryProps) {
       {/* Main Studio Frame Stage */}
       <div className="flex-1 flex flex-col gap-3">
         <div
-          className={`relative w-full aspect-[3/4] bg-veyro-surface-alt rounded-lg overflow-hidden border border-veyro-border transition-colors ${
+          className={`relative w-full aspect-[3/4] bg-neutral-200/90 rounded-2xl overflow-hidden border border-neutral-300/60 transition-colors ${
             isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"
           }`}
           onClick={() => setIsZoomed((prev) => !prev)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setIsZoomed(false)}
         >
+          {/* Subtle background shimmer wave while image loads/switches */}
+          <div
+            className="absolute inset-0 -translate-x-full animate-skeleton-shimmer skeleton-shimmer-sweep motion-reduce:animate-none pointer-events-none z-0"
+            aria-hidden="true"
+          />
+
           <Image
             src={activeImage}
             alt={`${product.name} — Editorial View ${activeIndex + 1}`}

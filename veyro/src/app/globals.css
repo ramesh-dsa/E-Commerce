@@ -179,23 +179,49 @@ body {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   Skeleton Shimmer Sweep Animation
+   Skeleton Shimmer Sweep Animation (YouTube / Luxury High-Contrast Grade)
    Hardware-accelerated transform: translateX only.
    Zero layout reflow. Fully accessible with prefers-reduced-motion.
 ──────────────────────────────────────────────────────────────────────────── */
 @keyframes skeleton-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .animate-skeleton-shimmer {
-  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  animation: skeleton-shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: transform;
+}
+
+.skeleton-shimmer-sweep {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.75) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.skeleton-shimmer-sweep-dark {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-skeleton-shimmer {
     animation: none;
+  }
+  .skeleton-shimmer-sweep,
+  .skeleton-shimmer-sweep-dark {
+    display: none;
   }
 }
 

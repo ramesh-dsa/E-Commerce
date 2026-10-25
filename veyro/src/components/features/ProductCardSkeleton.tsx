@@ -19,14 +19,14 @@ export function ProductCardSkeleton({
   return (
     <article
       aria-hidden="true"
-      className={`flex flex-col rounded-lg ${isFeatured ? "col-span-2 md:row-span-2" : ""} ${className}`}
+      className={`flex flex-col rounded-2xl ${isFeatured ? "col-span-2 md:row-span-2" : ""} ${className}`}
     >
       {/* Product Image Container */}
       <div
-        className={`relative w-full overflow-hidden rounded-lg ${
+        className={`relative w-full overflow-hidden rounded-2xl ${
           isDark
             ? "bg-neutral-800 border border-white/[0.08]"
-            : "bg-veyro-surface-alt"
+            : "bg-neutral-200/90 border border-neutral-300/40"
         } ${
           isFeatured
             ? "aspect-[3/4] lg:h-full lg:aspect-auto"
@@ -35,15 +35,13 @@ export function ProductCardSkeleton({
       >
         <div
           className={`w-full h-full relative overflow-hidden ${
-            isDark ? "bg-neutral-900" : "bg-veyro-surface"
+            isDark ? "bg-neutral-900" : "bg-neutral-200/90"
           }`}
         >
           <div
             className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
-              isDark
-                ? "bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                : "bg-gradient-to-r from-transparent via-white/60 to-transparent"
-            } motion-reduce:animate-none`}
+              isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
+            } motion-reduce:animate-none pointer-events-none`}
           />
         </div>
       </div>
@@ -54,20 +52,18 @@ export function ProductCardSkeleton({
         <div className="flex items-center justify-between">
           <div
             className={`w-16 h-2.5 rounded-full ${
-              isDark ? "bg-white/10" : "bg-veyro-border"
+              isDark ? "bg-white/10" : "bg-neutral-300/80"
             } relative overflow-hidden`}
           >
             <div
               className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
-                isDark
-                  ? "bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                  : "bg-gradient-to-r from-transparent via-white/60 to-transparent"
-              } motion-reduce:animate-none`}
+                isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
+              } motion-reduce:animate-none pointer-events-none`}
             />
           </div>
           <div
             className={`w-2.5 h-2.5 rounded-full ${
-              isDark ? "bg-white/10" : "bg-veyro-border"
+              isDark ? "bg-white/10" : "bg-neutral-300/80"
             }`}
           />
         </div>
@@ -75,30 +71,26 @@ export function ProductCardSkeleton({
         {/* Product Name */}
         <div
           className={`w-3/4 h-3.5 rounded-full mt-2 ${
-            isDark ? "bg-white/15" : "bg-veyro-border"
+            isDark ? "bg-white/15" : "bg-neutral-300/90"
           } relative overflow-hidden`}
         >
           <div
             className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
-              isDark
-                ? "bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                : "bg-gradient-to-r from-transparent via-white/60 to-transparent"
-            } motion-reduce:animate-none`}
+              isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
+            } motion-reduce:animate-none pointer-events-none`}
           />
         </div>
 
         {/* Price Row */}
         <div
           className={`w-20 h-3 rounded-full mt-2 ${
-            isDark ? "bg-white/10" : "bg-veyro-border"
+            isDark ? "bg-white/10" : "bg-neutral-300/70"
           } relative overflow-hidden`}
         >
           <div
             className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
-              isDark
-                ? "bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                : "bg-gradient-to-r from-transparent via-white/60 to-transparent"
-            } motion-reduce:animate-none`}
+              isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
+            } motion-reduce:animate-none pointer-events-none`}
           />
         </div>
       </div>

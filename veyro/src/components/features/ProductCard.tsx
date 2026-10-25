@@ -53,6 +53,22 @@ export function ProductCard({
           className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
           aria-label={product.name}
         >
+          {/* Active skeleton shimmer placeholder before image is decoded */}
+          {!imageLoaded && (
+            <div
+              className={`absolute inset-0 z-0 overflow-hidden ${
+                theme === "dark" ? "bg-neutral-800" : "bg-neutral-200/90"
+              }`}
+              aria-hidden="true"
+            >
+              <div
+                className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
+                  theme === "dark" ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
+                } motion-reduce:animate-none pointer-events-none`}
+              />
+            </div>
+          )}
+
           <Image
             src={product.imageUrl}
             alt={product.name}
@@ -64,7 +80,7 @@ export function ProductCard({
             onError={() => setImageLoaded(true)}
             className={`object-cover object-center ${
               isWatch ? "" : "transition-transform duration-500 ease-out group-hover:scale-105"
-            } ${imageLoaded ? "opacity-100" : "opacity-90"}`}
+            } transition-opacity duration-500 ease-out ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           />
 
           {/* Secondary image on hover if provided - lazy loaded in background (disabled for watches or identical image) */}

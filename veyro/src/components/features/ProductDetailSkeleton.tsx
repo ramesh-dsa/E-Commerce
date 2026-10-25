@@ -20,21 +20,21 @@ export function ProductDetailSkeleton() {
               {[...Array(4)].map((_, i) => (
                 <Skeleton
                   key={i}
-                  className="w-20 h-26 rounded-lg bg-veyro-surface-alt border border-veyro-border/60 shrink-0"
+                  className="w-20 h-26 rounded-lg bg-neutral-200/90 border border-neutral-300/60 shrink-0"
                 />
               ))}
             </div>
 
             {/* Main Studio Frame Stage */}
             <div className="flex-1 flex flex-col gap-3">
-              <Skeleton className="w-full aspect-[3/4] rounded-lg bg-veyro-surface-alt border border-veyro-border" />
+              <Skeleton className="w-full aspect-[3/4] rounded-2xl bg-neutral-200/90 border border-neutral-300/60" />
 
               {/* Mobile Thumbnail Strip */}
               <div className="flex md:hidden gap-2 overflow-hidden pt-1">
                 {[...Array(4)].map((_, i) => (
                   <Skeleton
                     key={i}
-                    className="w-16 h-20 rounded-md shrink-0 bg-veyro-surface-alt border border-veyro-border/60"
+                    className="w-16 h-20 rounded-md shrink-0 bg-neutral-200/90 border border-neutral-300/60"
                   />
                 ))}
               </div>
