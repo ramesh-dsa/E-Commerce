@@ -129,6 +129,20 @@ const COLOR_SWATCHES = [
   },
 ];
 
+const CANONICAL_NEUTRAL_STEPS = [
+  { step: "50", hex: "#FAFAFA", token: "bg-neutral-50", role: "Page Canvas Tint", contrast: "1.04:1", isDark: false },
+  { step: "100", hex: "#F5F5F5", token: "bg-neutral-100", role: "Surface Alt / Header", contrast: "1.10:1", isDark: false },
+  { step: "200", hex: "#E5E5E5", token: "border-neutral-200", role: "Dividers / Card Border", contrast: "1.29:1", isDark: false },
+  { step: "300", hex: "#D4D4D4", token: "border-neutral-300", role: "Active Borders", contrast: "1.56:1", isDark: false },
+  { step: "400", hex: "#A3A3A3", token: "text-neutral-400", role: "Placeholders (Non-text)", contrast: "2.52:1", isDark: false },
+  { step: "500", hex: "#737373", token: "text-neutral-500", role: "Metadata / Sub-labels", contrast: "4.74:1 (AA)", isDark: true },
+  { step: "600", hex: "#525252", token: "text-neutral-600", role: "Secondary Copy / Icons", contrast: "7.81:1 (AAA)", isDark: true },
+  { step: "700", hex: "#404040", token: "text-neutral-700", role: "Body Copy (Standard)", contrast: "10.70:1 (AAA)", isDark: true },
+  { step: "800", hex: "#262626", token: "text-neutral-800", role: "Emphasized Text", contrast: "14.20:1 (AAA)", isDark: true },
+  { step: "900", hex: "#171717", token: "text-neutral-900", role: "Headings & Badges", contrast: "17.93:1 (AAA)", isDark: true },
+  { step: "950", hex: "#0A0A0A", token: "text-neutral-950", role: "Hero Titles / Deep Ink", contrast: "19.40:1 (AAA)", isDark: true },
+];
+
 const NEUTRAL_RAMP = [
   {
     name: "Primary Text (neutral-900)",
@@ -694,7 +708,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 03: COLOR */}
-              <section id="color" className="scroll-mt-28 space-y-6">
+              <section id="color" className="scroll-mt-28 space-y-8">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -704,63 +718,153 @@ export default function DesignGuidelinesPage() {
                       className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-[#111111]"
                       style={{ fontFamily: archivo.style.fontFamily }}
                     >
-                      Color
+                      Color System
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active colour tokens versus canonical system standards.
+                    Side-by-side comparison of active colour tokens versus canonical system standards and contrast gates.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Side-by-Side: Current Reality vs Standard Specification */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                   {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
+                  <div className="border border-neutral-300 rounded-2xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-5 shadow-2xs">
+                    <div className="space-y-5">
+                      <div className="flex items-center justify-between pb-3 border-b border-neutral-200">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
+                            CURRENT
+                          </span>
+                          <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
+                            Current in code (main)
+                          </h4>
+                        </div>
+                        <span className="text-xs font-mono font-bold text-neutral-600 bg-white px-2 py-0.5 rounded border border-neutral-200">
+                          99.4% Neutral Ramp
                         </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
                       </div>
 
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Declared @theme tokens in globals.css (14 tokens):</span>
-                          <p className="text-xs font-mono text-neutral-800 leading-relaxed bg-white p-3 rounded-lg border border-neutral-200">
-                            --color-veyro-yellow (#fcd017), --color-veyro-black (#111111), --color-veyro-charcoal (#1f1f1f), --color-veyro-muted (#999999), --color-veyro-subtle (#8e8e8e), --color-veyro-border (#e8e8e5), --color-veyro-surface (#f8f8f6), --color-veyro-surface-alt (#f3f3f0), --color-veyro-accent (#c44d25)...
-                          </p>
+                      <div className="space-y-4 text-sm text-neutral-800">
+                        {/* Declared Tokens */}
+                        <div className="space-y-1.5">
+                          <span className="font-bold text-neutral-950 block text-xs uppercase tracking-wider">
+                            Declared @theme tokens in globals.css (14 tokens):
+                          </span>
+                          <div className="p-3 bg-white rounded-xl border border-neutral-200 font-mono text-xs text-neutral-800 leading-relaxed space-y-1">
+                            <div className="flex flex-wrap gap-1.5">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-neutral-900 border border-neutral-200">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#fcd017] border border-black/10 inline-block" />
+                                --color-veyro-yellow (#fcd017)
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-neutral-900 border border-neutral-200">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#111111] inline-block" />
+                                --color-veyro-black (#111111)
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-neutral-900 border border-neutral-200">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#1f1f1f] inline-block" />
+                                --color-veyro-charcoal (#1f1f1f)
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-neutral-900 border border-neutral-200">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#999999] inline-block" />
+                                --color-veyro-muted (#999999)
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-neutral-900 border border-neutral-200">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#e8e8e5] inline-block" />
+                                --color-veyro-border (#e8e8e5)
+                              </span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-100 text-neutral-900 border border-neutral-200">
+                                <span className="w-2.5 h-2.5 rounded-full bg-[#f8f8f6] border border-black/10 inline-block" />
+                                --color-veyro-surface (#f8f8f6)
+                              </span>
+                            </div>
+                          </div>
                         </div>
 
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Top Hex Literals Used in Code:</span>
-                          <ul className="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li><span className="font-bold text-neutral-950">#111111:</span> 553 occurrences</li>
-                            <li><span className="font-bold text-neutral-950">#FCD017:</span> 170 occurrences</li>
-                            <li><span className="font-bold text-neutral-950">#666666:</span> 39 occurrences</li>
-                            <li><span className="font-bold text-neutral-950">#101828:</span> 34 occurrences (FAQ)</li>
-                            <li><span className="font-bold text-neutral-950">#888888:</span> 34 occurrences</li>
-                            <li><span className="font-bold text-neutral-950">#E8E8E5:</span> 27 occurrences</li>
-                            <li><span className="font-bold text-neutral-950">#555555:</span> 23 occurrences</li>
-                            <li><span className="font-bold text-neutral-950">#FAFAFA:</span> 21 occurrences</li>
-                          </ul>
+                        {/* Top Hex Literals */}
+                        <div className="space-y-1.5">
+                          <span className="font-bold text-neutral-950 block text-xs uppercase tracking-wider">
+                            Top Hex Literals Used in Code:
+                          </span>
+                          <div className="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-xl border border-neutral-200 text-neutral-800">
+                            <div className="flex items-center justify-between p-1.5 rounded bg-neutral-50">
+                              <span className="flex items-center gap-1.5 font-bold text-neutral-950">
+                                <span className="w-3 h-3 rounded-full bg-[#111111] inline-block" />
+                                #111111
+                              </span>
+                              <span className="text-neutral-600 font-semibold">553 times</span>
+                            </div>
+                            <div className="flex items-center justify-between p-1.5 rounded bg-neutral-50">
+                              <span className="flex items-center gap-1.5 font-bold text-neutral-950">
+                                <span className="w-3 h-3 rounded-full bg-[#FCD017] border border-black/10 inline-block" />
+                                #FCD017
+                              </span>
+                              <span className="text-neutral-600 font-semibold">170 times</span>
+                            </div>
+                            <div className="flex items-center justify-between p-1.5 rounded bg-neutral-50">
+                              <span className="flex items-center gap-1.5 font-bold text-neutral-950">
+                                <span className="w-3 h-3 rounded-full bg-[#666666] inline-block" />
+                                #666666
+                              </span>
+                              <span className="text-neutral-600 font-semibold">39 times</span>
+                            </div>
+                            <div className="flex items-center justify-between p-1.5 rounded bg-neutral-50">
+                              <span className="flex items-center gap-1.5 font-bold text-neutral-950">
+                                <span className="w-3 h-3 rounded-full bg-[#101828] inline-block" />
+                                #101828
+                              </span>
+                              <span className="text-neutral-600 font-semibold">34 times (FAQ)</span>
+                            </div>
+                            <div className="flex items-center justify-between p-1.5 rounded bg-neutral-50">
+                              <span className="flex items-center gap-1.5 font-bold text-neutral-950">
+                                <span className="w-3 h-3 rounded-full bg-[#888888] inline-block" />
+                                #888888
+                              </span>
+                              <span className="text-neutral-600 font-semibold">34 times</span>
+                            </div>
+                            <div className="flex items-center justify-between p-1.5 rounded bg-neutral-50">
+                              <span className="flex items-center gap-1.5 font-bold text-neutral-950">
+                                <span className="w-3 h-3 rounded-full bg-[#E8E8E5] border border-black/10 inline-block" />
+                                #E8E8E5
+                              </span>
+                              <span className="text-neutral-600 font-semibold">27 times</span>
+                            </div>
+                          </div>
                         </div>
 
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1 text-xs uppercase tracking-wider">Grey Families in Code:</span>
-                          <p className="text-xs leading-relaxed text-neutral-700">
-                            <strong className="text-neutral-950 font-bold">neutral:</strong> 2,104 tokens (dominant). Prohibited grey families: <strong className="text-red-700 font-bold">zinc:</strong> 8, <strong className="text-red-700 font-bold">slate:</strong> 5 (13 prohibited total).
-                          </p>
+                        {/* Grey Families in Code */}
+                        <div className="space-y-1.5">
+                          <span className="font-bold text-neutral-950 block text-xs uppercase tracking-wider">
+                            Grey Families in Code:
+                          </span>
+                          <div className="p-3 bg-white rounded-xl border border-neutral-200 flex items-center justify-between text-xs">
+                            <span className="font-bold text-neutral-950">
+                              <strong className="text-emerald-700">neutral:</strong> 2,104 tokens (99.4%)
+                            </span>
+                            <span className="text-red-700 font-semibold">
+                              Prohibited: zinc (8) • slate (5)
+                            </span>
+                          </div>
                         </div>
 
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Active Dark Surfaces (Line Citations):</span>
-                          <ul className="space-y-1.5 text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• AccountModal.tsx (line 412 shell: <code className="text-red-700 font-bold">bg-[#0c0c0e]</code>; line 472 panel: <code className="text-red-700 font-bold">bg-[#101013]</code>)</li>
-                            <li>• BrandPillarsSection.tsx (line 150: <code className="text-red-700 font-bold">bg-[#0a0a0a]</code>)</li>
-                            <li>• Footer.tsx (line 164: <code className="text-red-700 font-bold">bg-[#050505]</code>)</li>
+                        {/* Active Dark Surfaces */}
+                        <div className="space-y-1.5">
+                          <span className="font-bold text-neutral-950 block text-xs uppercase tracking-wider">
+                            Active Dark Surfaces (Line Citations):
+                          </span>
+                          <ul className="space-y-1.5 text-xs font-mono bg-white p-3 rounded-xl border border-neutral-200 text-neutral-800">
+                            <li className="flex items-center justify-between">
+                              <span>AccountModal.tsx (L412 shell / L472 panel)</span>
+                              <span className="text-red-700 font-bold bg-red-50 px-1.5 py-0.5 rounded">bg-[#0c0c0e] / #101013</span>
+                            </li>
+                            <li className="flex items-center justify-between">
+                              <span>BrandPillarsSection.tsx (L150)</span>
+                              <span className="text-red-700 font-bold bg-red-50 px-1.5 py-0.5 rounded">bg-[#0a0a0a]</span>
+                            </li>
+                            <li className="flex items-center justify-between">
+                              <span>Footer.tsx (L164)</span>
+                              <span className="text-red-700 font-bold bg-red-50 px-1.5 py-0.5 rounded">bg-[#050505]</span>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -768,53 +872,292 @@ export default function DesignGuidelinesPage() {
 
                     <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                       <span className="font-bold text-neutral-900">Standard adoption: 2,104 of 2,117 (99.4% neutral ramp)</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
+                      <a href="#transition-guidance" className="text-neutral-800 hover:text-neutral-950 font-bold underline underline-offset-2 flex items-center gap-1">
+                        See Section 12 Transition Guidance <ArrowRight className="w-3.5 h-3.5" />
                       </a>
                     </div>
                   </div>
 
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
+                  {/* Right: Standard Specification (Visual Overhaul) */}
+                  <div className="border-2 border-[#111111] rounded-2xl p-6 bg-white flex flex-col justify-between space-y-6 shadow-md relative overflow-hidden">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between pb-3 border-b border-neutral-200">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
+                            STANDARD
+                          </span>
+                          <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
+                            Standard Specification
+                          </h4>
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Check className="w-3 h-3 stroke-[2.5]" /> Canonical System
                         </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
                       </div>
 
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div className="grid grid-cols-2 gap-2.5">
-                          <div className="p-3 rounded-lg border border-[#E8E8E5] bg-[#F8F8F6]">
-                            <span className="font-bold block text-neutral-950 text-sm">Ink (#111111)</span>
-                            <span className="text-xs text-neutral-600 font-medium">18.88:1 AAA contrast on white</span>
+                      {/* Hero Visual Color Swatches */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Ink Swatch */}
+                        <div className="border border-neutral-300 rounded-xl p-3.5 bg-neutral-50/60 space-y-3">
+                          <div className="bg-[#111111] h-24 rounded-lg p-3.5 flex flex-col justify-between text-white shadow-inner relative overflow-hidden">
+                            <div className="flex items-center justify-between z-10">
+                              <span className="text-base font-bold uppercase tracking-wider" style={{ fontFamily: archivo.style.fontFamily }}>
+                                Ink
+                              </span>
+                              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-white/20 text-white backdrop-blur-xs flex items-center gap-1">
+                                <Check className="w-3 h-3 text-emerald-400 stroke-[2.5]" /> 18.88:1 AAA
+                              </span>
+                            </div>
+                            <div className="flex items-baseline justify-between z-10 font-mono text-xs">
+                              <span className="text-neutral-300">#111111</span>
+                              <span className="text-[11px] text-neutral-400">text-neutral-900</span>
+                            </div>
                           </div>
-                          <div className="p-3 rounded-lg border border-[#FCD017]/40 bg-[#FFF8E7]">
-                            <span className="font-bold block text-neutral-950 text-sm">Gold (#FCD017)</span>
-                            <span className="text-xs text-neutral-700 font-medium">Primary CTA &amp; accents only</span>
+                          <div className="space-y-1">
+                            <span className="font-mono text-xs font-bold text-neutral-900 block">--color-veyro-black</span>
+                            <p className="text-xs text-neutral-700 leading-relaxed font-normal">
+                              Primary text, deep solid contrast elements, logos, and authoritative accents.
+                            </p>
                           </div>
                         </div>
 
-                        <p className="text-sm text-neutral-700 leading-relaxed font-normal">
-                          Pure light mode everywhere. Zero dark islands. No arbitrary hex literals in markup—all colours reference tokens or the Tailwind neutral scale.
-                        </p>
+                        {/* Gold Swatch */}
+                        <div className="border border-amber-200 rounded-xl p-3.5 bg-amber-50/30 space-y-3">
+                          <div className="bg-[#FCD017] h-24 rounded-lg p-3.5 flex flex-col justify-between text-[#111111] shadow-inner relative overflow-hidden">
+                            <div className="flex items-center justify-between z-10">
+                              <span className="text-base font-bold uppercase tracking-wider" style={{ fontFamily: archivo.style.fontFamily }}>
+                                Volt Gold
+                              </span>
+                              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-black/15 text-[#111111] flex items-center gap-1">
+                                <Check className="w-3 h-3 text-[#111111] stroke-[2.5]" /> 13.10:1 AAA
+                              </span>
+                            </div>
+                            <div className="flex items-baseline justify-between z-10 font-mono text-xs">
+                              <span className="text-neutral-900 font-bold">#FCD017</span>
+                              <span className="text-[11px] text-neutral-800">bg-veyro-yellow</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="font-mono text-xs font-bold text-neutral-900 block">--color-veyro-yellow</span>
+                            <p className="text-xs text-neutral-700 leading-relaxed font-normal">
+                              Primary CTAs, notification accents, active indicators. Background only.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
 
-                        <div className="p-3.5 bg-red-50 border border-red-200 rounded-lg text-sm text-red-950 leading-relaxed">
-                          <strong className="font-bold text-red-900">Gold Rule:</strong> Gold (<code className="font-mono font-bold">#FCD017</code>) has a failing 1.48:1 contrast on white and is restricted strictly to backgrounds with Ink text. Never use Gold text on light surfaces.
+                      {/* Visual Contrast Rule: Live Demonstrator */}
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+                            <ShieldCheck className="w-4 h-4 text-neutral-800" />
+                            Gold Rule Contrast Gate (Live Demonstrator)
+                          </span>
+                          <span className="text-[11px] font-mono text-neutral-600">WCAG 2.2 Spec</span>
                         </div>
 
-                        <div className="p-3.5 bg-neutral-50 border border-neutral-200 rounded-lg text-sm text-neutral-900 leading-relaxed">
-                          <strong className="font-bold text-neutral-950">Greys Rule:</strong> Sole permitted neutral family is Tailwind <code className="font-mono font-bold">neutral-50</code> to <code className="font-mono font-bold">neutral-950</code>. All <code className="font-mono font-bold">zinc</code> and <code className="font-mono font-bold">slate</code> are forbidden.
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* DO: Ink on Gold */}
+                          <div className="border border-emerald-300 bg-emerald-50/70 rounded-xl p-3.5 space-y-2.5 flex flex-col justify-between">
+                            <div className="space-y-1.5">
+                              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1">
+                                <Check className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" /> Compliant Standard (Do)
+                              </span>
+                              <p className="text-xs text-neutral-700 leading-relaxed">
+                                Ink text on Gold background yields 13.10:1 contrast.
+                              </p>
+                            </div>
+                            <div className="pt-1">
+                              <div className="w-full bg-[#FCD017] text-[#111111] font-bold py-2.5 px-3 rounded-full text-xs uppercase tracking-wider text-center shadow-2xs flex items-center justify-center gap-1.5">
+                                <Check className="w-3.5 h-3.5 text-[#111111] stroke-[2.5]" />
+                                Add To Cart (13.10:1 AAA)
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* DON'T: Gold on White */}
+                          <div className="border border-red-300 bg-red-50/70 rounded-xl p-3.5 space-y-2.5 flex flex-col justify-between">
+                            <div className="space-y-1.5">
+                              <span className="text-[11px] font-bold uppercase tracking-wider text-red-900 flex items-center gap-1">
+                                <X className="w-3.5 h-3.5 text-red-700 stroke-[2.5]" /> Prohibited Failure (Don&apos;t)
+                              </span>
+                              <p className="text-xs text-neutral-700 leading-relaxed">
+                                Gold text on white has 1.48:1 contrast (WCAG failure).
+                              </p>
+                            </div>
+                            <div className="pt-1">
+                              <div className="w-full bg-white border border-neutral-300 text-[#FCD017] font-bold py-2.5 px-3 rounded-full text-xs uppercase tracking-wider text-center line-through opacity-80 flex items-center justify-center gap-1.5 shadow-2xs">
+                                <X className="w-3.5 h-3.5 text-red-600 stroke-[2.5]" />
+                                Add To Cart (1.48:1 Fail)
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Greys Rule: Approved vs Prohibited */}
+                      <div className="p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-neutral-900 block">
+                          Greys Rule: Single Neutral Family
+                        </span>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between text-xs bg-white p-2.5 rounded-lg border border-neutral-200">
+                            <span className="inline-flex items-center gap-1.5 font-bold text-emerald-900">
+                              <Check className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
+                              Sole Permitted: Tailwind <code className="font-mono text-neutral-950 font-bold bg-neutral-100 px-1 py-0.5 rounded">neutral-50</code> to <code className="font-mono text-neutral-950 font-bold bg-neutral-100 px-1 py-0.5 rounded">neutral-950</code>
+                            </span>
+                            <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[11px]">2,104 active</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs bg-white p-2.5 rounded-lg border border-neutral-200">
+                            <span className="inline-flex items-center gap-1.5 font-bold text-red-900 line-through">
+                              <X className="w-3.5 h-3.5 text-red-700 stroke-[2.5]" />
+                              Forbidden: <code className="font-mono text-red-900 font-bold bg-red-50 px-1 py-0.5 rounded">zinc</code> and <code className="font-mono text-red-900 font-bold bg-red-50 px-1 py-0.5 rounded">slate</code>
+                            </span>
+                            <span className="font-mono font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded text-[11px]">13 to purge</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Standard Canvas & Surfaces */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-neutral-900 block">
+                          Standard Surfaces &amp; Dividers
+                        </span>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          <div className="p-2.5 rounded-lg border border-neutral-200 bg-white text-center space-y-1 shadow-2xs">
+                            <span className="w-full h-5 rounded bg-white border border-neutral-200 block" />
+                            <span className="font-bold text-neutral-950 text-xs block">Page White</span>
+                            <span className="font-mono text-[11px] text-neutral-600 block">#FFFFFF</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg border border-neutral-200 bg-white text-center space-y-1 shadow-2xs">
+                            <span className="w-full h-5 rounded bg-[#F8F8F6] border border-neutral-200 block" />
+                            <span className="font-bold text-neutral-950 text-xs block">Section Surface</span>
+                            <span className="font-mono text-[11px] text-neutral-600 block">#F8F8F6</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg border border-neutral-200 bg-white text-center space-y-1 shadow-2xs">
+                            <span className="w-full h-5 rounded bg-[#F3F3F0] border border-neutral-200 block" />
+                            <span className="font-bold text-neutral-950 text-xs block">Surface Alt</span>
+                            <span className="font-mono text-[11px] text-neutral-600 block">#F3F3F0</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg border border-neutral-200 bg-white text-center space-y-1 shadow-2xs">
+                            <span className="w-full h-5 rounded bg-[#E8E8E5] block" />
+                            <span className="font-bold text-neutral-950 text-xs block">Divider Border</span>
+                            <span className="font-mono text-[11px] text-neutral-600 block">#E8E8E5</span>
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard Token Set: Ink, Gold, Gold Hover, Gold Tint, Page White, Section Surface, Surface Alt, Border, Light Border.
+                    <div className="pt-3 border-t border-neutral-200 text-xs text-neutral-700 font-medium flex items-center justify-between">
+                      <span>Zero Dark Islands • Pure Light Canvas Everywhere</span>
+                      <span className="font-mono text-neutral-900 font-bold">100% Light Mode</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* The 11-Step Canonical Neutral Ramp Visual Strip */}
+                <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white space-y-4 shadow-2xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#E8E8E5]">
+                    <div>
+                      <h4 className="text-sm sm:text-base font-bold uppercase tracking-tight text-neutral-950 flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-neutral-900" />
+                        The Canonical 11-Step Neutral Ramp
+                      </h4>
+                      <p className="text-xs text-neutral-600 mt-0.5">
+                        The sole permitted neutral family in VEYRO storefront. All steps measured against pure white canvas (#FFFFFF).
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-neutral-900 bg-neutral-100 px-2.5 py-1 rounded-full w-fit">
+                      11 Distinct Steps
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-2 pt-2">
+                    {CANONICAL_NEUTRAL_STEPS.map((step) => (
+                      <div
+                        key={step.step}
+                        className="border border-[#E8E8E5] rounded-xl p-2.5 flex flex-col justify-between space-y-2 bg-[#FAFAFA] hover:border-neutral-400 transition-colors"
+                      >
+                        <div
+                          className="w-full h-14 rounded-lg flex items-center justify-center shadow-inner border border-black/5"
+                          style={{ backgroundColor: step.hex }}
+                        >
+                          <span
+                            className={`font-mono text-xs font-bold ${
+                              step.isDark ? "text-white" : "text-neutral-900"
+                            }`}
+                          >
+                            {step.step}
+                          </span>
+                        </div>
+                        <div className="space-y-0.5 text-center">
+                          <span className="font-mono text-xs font-bold text-neutral-950 block">
+                            {step.hex}
+                          </span>
+                          <span className="text-[10px] text-neutral-600 block line-clamp-1">
+                            {step.role}
+                          </span>
+                          <span className="text-[10px] font-mono font-semibold text-neutral-900 bg-neutral-200/60 px-1 py-0.5 rounded inline-block">
+                            {step.contrast}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Semantic & Status Color Palette */}
+                <div className="border border-[#E8E8E5] rounded-2xl p-6 bg-white space-y-4 shadow-2xs">
+                  <div className="pb-3 border-b border-[#E8E8E5] flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm sm:text-base font-bold uppercase tracking-tight text-neutral-950">
+                        Semantic Status Color Palette
+                      </h4>
+                      <p className="text-xs text-neutral-600 mt-0.5">
+                        Restricted strictly to system feedback, order fulfillment states, and input validation notices.
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-neutral-600">
+                      Feedback Tokens
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {STATUS_COLORS.map((status) => (
+                      <div
+                        key={status.name}
+                        className={`p-4 rounded-xl border ${status.borderClass} ${status.bgClass} space-y-3 flex flex-col justify-between`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-sm text-neutral-950 uppercase tracking-tight">
+                              {status.name}
+                            </span>
+                            <span className="text-xs font-mono font-bold text-neutral-800">
+                              {status.hex}
+                            </span>
+                          </div>
+                          <div className="pt-1">
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white border ${status.borderClass} ${status.textClass} shadow-2xs`}
+                            >
+                              <span
+                                className="w-2 h-2 rounded-full inline-block"
+                                style={{ backgroundColor: status.hex }}
+                              />
+                              {status.usage.split(",")[0]}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-black/5 flex items-center justify-between text-xs">
+                          <span className="text-neutral-700 font-medium">Contrast: {status.contrast}</span>
+                          <span className="font-bold text-neutral-900 bg-white/80 px-2 py-0.5 rounded border border-black/10">
+                            {status.rating}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </section>
