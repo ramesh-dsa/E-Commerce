@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Archivo, Inter } from "next/font/google";
 import { Logo, VeyroMark } from "@/components/ui/Logo";
+import GuidelinesTreeSidebar from "./GuidelinesTreeSidebar";
 import {
   Download,
   Check,
@@ -34,42 +35,6 @@ export const metadata: Metadata = {
     follow: false,
   },
 };
-
-const SECTIONS = [
-  {
-    group: "Foundations",
-    items: [
-      { id: "brand-essence", num: "01", title: "Brand Essence" },
-      { id: "logo", num: "02", title: "Logo" },
-      { id: "color", num: "03", title: "Color" },
-      { id: "typography", num: "04", title: "Typography" },
-    ],
-  },
-  {
-    group: "System",
-    items: [
-      { id: "layout-spacing", num: "05", title: "Layout and Spacing" },
-      { id: "shape-elevation", num: "06", title: "Shape and Elevation" },
-      { id: "motion", num: "07", title: "Motion" },
-      { id: "z-index-ladder", num: "08", title: "Z-Index Ladder" },
-    ],
-  },
-  {
-    group: "Application",
-    items: [
-      { id: "components", num: "09", title: "Components" },
-      { id: "architecture", num: "10", title: "Architecture" },
-      { id: "accessibility", num: "11", title: "Accessibility" },
-    ],
-  },
-  {
-    group: "Governance",
-    items: [
-      { id: "transition-guidance", num: "12", title: "Transition Guidance" },
-      { id: "quick-reference", num: "13", title: "Quick Reference" },
-    ],
-  },
-];
 
 const COLOR_SWATCHES = [
   {
@@ -448,51 +413,12 @@ export default function DesignGuidelinesPage() {
 
       {/* Main Two-Column Layout */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col lg:flex-row gap-12">
-          {/* Sticky Desktop Navigation Sidebar */}
-          <aside className="lg:w-64 shrink-0">
-            <div className="lg:sticky lg:top-8 space-y-6">
-              <div className="border border-[#E8E8E5] rounded-xl p-5 bg-[#F8F8F6]">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-4 pb-2 border-b border-[#E8E8E5]">
-                  Table of Contents
-                </h2>
-                <nav className="space-y-4">
-                  {SECTIONS.map((group) => (
-                    <div key={group.group} className="space-y-1.5">
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 block px-2">
-                        {group.group}
-                      </span>
-                      <ul className="space-y-1">
-                        {group.items.map((item) => (
-                          <li key={item.id}>
-                            <a
-                              href={`#${item.id}`}
-                              className="group flex items-center justify-between text-xs px-2 py-1.5 rounded-md text-neutral-600 hover:text-neutral-900 hover:bg-white transition-colors"
-                            >
-                              <span className="truncate">{item.title}</span>
-                              <span className="text-[10px] text-neutral-400 group-hover:text-neutral-900 font-mono">
-                                {item.num}
-                              </span>
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </nav>
-              </div>
-
-              <div className="hidden lg:block border border-[#E8E8E5] rounded-xl p-4 bg-white text-xs text-neutral-500 space-y-2">
-                <p className="font-semibold text-neutral-900">Living Source</p>
-                <p>
-                  Maintained in version control at the repository root as <code className="text-[#111111] font-mono">DESIGN.md</code>.
-                </p>
-              </div>
-            </div>
-          </aside>
+        <div className="grid lg:grid-cols-[16rem_minmax(0,1fr)] gap-12">
+          {/* Navigation Rail */}
+          <GuidelinesTreeSidebar />
 
           {/* Main Content Editorial Body */}
-          <main className="flex-1 min-w-0 space-y-16">
+          <main className="min-w-0 space-y-16">
             {/* GROUP: FOUNDATIONS */}
             <div className="space-y-16">
               <div className="border-b border-[#111111] pb-2">
@@ -508,7 +434,7 @@ export default function DesignGuidelinesPage() {
               </div>
 
               {/* SECTION 01: BRAND ESSENCE */}
-              <section id="brand-essence" className="scroll-mt-12 space-y-6">
+              <section id="brand-essence" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -627,7 +553,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 02: LOGO */}
-              <section id="logo" className="scroll-mt-12 space-y-6">
+              <section id="logo" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -768,7 +694,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 03: COLOR */}
-              <section id="color" className="scroll-mt-12 space-y-6">
+              <section id="color" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -894,7 +820,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 04: TYPOGRAPHY */}
-              <section id="typography" className="scroll-mt-12 space-y-6">
+              <section id="typography" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1048,7 +974,7 @@ export default function DesignGuidelinesPage() {
               </div>
 
               {/* SECTION 05: LAYOUT AND SPACING */}
-              <section id="layout-spacing" className="scroll-mt-12 space-y-6">
+              <section id="layout-spacing" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1192,7 +1118,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 06: SHAPE AND ELEVATION */}
-              <section id="shape-elevation" className="scroll-mt-12 space-y-6">
+              <section id="shape-elevation" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1328,7 +1254,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 07: MOTION */}
-              <section id="motion" className="scroll-mt-12 space-y-6">
+              <section id="motion" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1453,7 +1379,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 08: Z-INDEX LADDER */}
-              <section id="z-index-ladder" className="scroll-mt-12 space-y-6">
+              <section id="z-index-ladder" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1570,7 +1496,7 @@ export default function DesignGuidelinesPage() {
               </div>
 
               {/* SECTION 09: COMPONENTS */}
-              <section id="components" className="scroll-mt-12 space-y-6">
+              <section id="components" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1723,7 +1649,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 10: ARCHITECTURE */}
-              <section id="architecture" className="scroll-mt-12 space-y-6">
+              <section id="architecture" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1785,7 +1711,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 11: ACCESSIBILITY */}
-              <section id="accessibility" className="scroll-mt-12 space-y-6">
+              <section id="accessibility" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1850,7 +1776,7 @@ export default function DesignGuidelinesPage() {
               </div>
 
               {/* SECTION 12: TRANSITION GUIDANCE */}
-              <section id="transition-guidance" className="scroll-mt-12 space-y-6">
+              <section id="transition-guidance" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
@@ -1935,7 +1861,7 @@ export default function DesignGuidelinesPage() {
               </section>
 
               {/* SECTION 13: QUICK REFERENCE */}
-              <section id="quick-reference" className="scroll-mt-12 space-y-6">
+              <section id="quick-reference" className="scroll-mt-28 space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono font-bold text-[#FCD017] bg-[#111111] px-2 py-0.5 rounded">
