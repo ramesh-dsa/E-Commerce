@@ -440,14 +440,23 @@ export default function AdminLoginPage() {
       <style jsx global>{`
         @keyframes laser-beam {
           0% {
-            transform: translateX(-100%);
+            transform: translate3d(-100%, 0, 0);
+            opacity: 0;
+          }
+          15% {
+            opacity: 1;
+          }
+          85% {
+            opacity: 1;
           }
           100% {
-            transform: translateX(450%);
+            transform: translate3d(450%, 0, 0);
+            opacity: 0;
           }
         }
         .animate-laser-beam {
-          animation: laser-beam 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          animation: laser-beam 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+          will-change: transform, opacity;
         }
       `}</style>
     </div>

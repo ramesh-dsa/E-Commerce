@@ -48,21 +48,24 @@ export function SplitText({
         return (
           <span
             key={index}
-            className={`inline-block will-change-transform transition-colors duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              enableHoverSpring
-                ? "hover:-translate-y-2 hover:scale-[1.14] hover:text-veyro-yellow cursor-pointer"
-                : ""
-            } ${charClassName}`}
+            className="inline-block will-change-transform transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             style={{
               opacity: mounted ? 1 : 0,
-              filter: mounted ? "blur(0px)" : "blur(12px)",
               transform: mounted
                 ? "perspective(800px) rotateX(0deg) translate3d(0, 0, 0)"
-                : "perspective(800px) rotateX(-55deg) translate3d(0, 32px, -40px)",
+                : "perspective(800px) rotateX(-50deg) translate3d(0, 24px, -20px)",
               transitionDelay: `${index * delay}ms`,
             }}
           >
-            {char}
+            <span
+              className={`inline-block will-change-transform transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                enableHoverSpring
+                  ? "hover:-translate-y-2.5 hover:scale-[1.14] hover:text-veyro-yellow cursor-pointer select-none"
+                  : ""
+              } ${charClassName}`}
+            >
+              {char}
+            </span>
           </span>
         );
       })}
