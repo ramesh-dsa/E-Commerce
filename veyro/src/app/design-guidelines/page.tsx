@@ -7,6 +7,7 @@ import ColorPaletteSpecimen from "./ColorPaletteSpecimen";
 import TypographySpecimen from "./TypographySpecimen";
 import LayoutSpacingSpecimen from "./LayoutSpacingSpecimen";
 import ShapeElevationSpecimen from "./ShapeElevationSpecimen";
+import MotionSpecimen from "./MotionSpecimen";
 import {
   Download,
   Check,
@@ -815,114 +816,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active transition patterns versus transform-only standards.
+                    Duration timing hierarchy, GPU-accelerated transition tokens, and reduced-motion accessibility.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Durations and Easings in Code:</span>
-                          <ul className="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• duration-200: 131</li>
-                            <li>• duration-300: 113</li>
-                            <li>• duration-150: 41</li>
-                            <li>• duration-500: 21</li>
-                            <li>• duration-700: 19</li>
-                            <li>• duration-1000: 2</li>
-                            <li>• ease-out: 105</li>
-                            <li>• ease-in: 18</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Transition-All Occurrences:</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 text-red-700 font-bold">
-                            transition-all: 223 occurrences across storefront
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Animation Libraries:</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            motion/react: 35 files • framer-motion: 7 files (dual library fragmentation)
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Files Animating Geometry (Height/Width/Offsets):</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• src/app/faq/page.tsx (accordion height)</li>
-                            <li>• src/components/features/CartDrawer.tsx (drawer slide offsets)</li>
-                            <li>• src/app/orders/[id]/page.tsx &amp; return/page.tsx</li>
-                            <li>• src/components/charts/chart-reveal-clip.tsx</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <span className="font-bold text-neutral-900">Standard adoption: 108 of 331 (32.6% specific transitions, 223 transition-all)</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div className="p-3.5 bg-[#F8F8F6] rounded-lg border border-[#E8E8E5] space-y-1.5">
-                          <strong className="text-neutral-950 font-bold block text-sm">Performance-First Rule:</strong>
-                          <p className="text-sm text-neutral-700 leading-relaxed font-normal">
-                            Animate <strong>only transform and opacity</strong> properties. Never animate geometry properties (<code className="font-mono font-bold text-neutral-900">top</code>, <code className="font-mono font-bold text-neutral-900">left</code>, <code className="font-mono font-bold text-neutral-900">width</code>, <code className="font-mono font-bold text-neutral-900">height</code>, <code className="font-mono font-bold text-neutral-900">margin</code>).
-                          </p>
-                        </div>
-
-                        <div className="p-3.5 bg-red-50 border border-red-200 rounded-lg text-sm text-red-950 space-y-1.5 leading-relaxed">
-                          <strong className="font-bold text-red-900">Transition Rule:</strong>
-                          <p>
-                            Never use <code className="font-mono font-bold">transition-all</code>. Explicitly declare <code className="font-mono font-bold">transition-colors</code>, <code className="font-mono font-bold">transition-transform</code>, or <code className="font-mono font-bold">transition-opacity</code>.
-                          </p>
-                        </div>
-
-                        <div className="p-3.5 bg-neutral-50 border border-neutral-200 rounded-lg text-sm space-y-1.5 text-neutral-900 leading-relaxed">
-                          <strong className="font-bold text-neutral-950">Library Standard:</strong>
-                          <p>
-                            Consolidate on <code className="font-mono font-bold text-neutral-900">import &#123; motion &#125; from &quot;motion/react&quot;</code>. Deprecate <code className="font-mono font-bold text-neutral-900">framer-motion</code>. Respect <code className="font-mono font-bold text-neutral-900">prefers-reduced-motion</code> universally.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard Durations: duration-200 (micro), duration-300 (cards), duration-500 (modals).
-                    </div>
-                  </div>
-                </div>
+                <MotionSpecimen />
               </section>
 
               {/* SECTION 08: Z-INDEX LADDER */}
