@@ -72,58 +72,6 @@ function usePrefersReducedMotion(): boolean {
 }
 
 /**
- * Calculates reading progress from section 01 top to section 13 bottom.
- */
-function useReadingProgress(): number {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let rafId: number | null = null;
-
-    const calculate = () => {
-      const firstSection = document.getElementById(SECTIONS[0].id);
-      const lastSection = document.getElementById(SECTIONS[SECTIONS.length - 1].id);
-      if (!firstSection || !lastSection) return;
-
-      const firstRect = firstSection.getBoundingClientRect();
-      const lastRect = lastSection.getBoundingClientRect();
-
-      const startY = firstRect.top + window.scrollY;
-      const endY = lastRect.bottom + window.scrollY;
-      const totalDistance = endY - startY;
-
-      if (totalDistance <= 0) return;
-
-      const currentPosition = window.scrollY + window.innerHeight * 0.35;
-      const raw = (currentPosition - startY) / totalDistance;
-      const clamped = Math.min(Math.max(raw, 0), 1);
-
-      setProgress(clamped);
-    };
-
-    const handleScroll = () => {
-      if (rafId !== null) return;
-      rafId = window.requestAnimationFrame(() => {
-        calculate();
-        rafId = null;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll, { passive: true });
-    calculate();
-
-    return () => {
-      if (rafId !== null) window.cancelAnimationFrame(rafId);
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, []);
-
-  return progress;
-}
-
-/**
  * High-precision scroll-spy with multiple IntersectionObserver thresholds.
  */
 function useScrollSpy(
@@ -213,15 +161,9 @@ function useScrollSpy(
 
 export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTreeSidebarProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const progress = useReadingProgress();
   const [activeId, navigateToSection] = useScrollSpy(prefersReducedMotion);
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSearchIndex, setSelectedSearchIndex] = useState(0);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const sheetSearchInputRef = useRef<HTMLInputElement>(null);
   const openButtonRef = useRef<HTMLButtonElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -235,16 +177,7 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
     return SECTIONS.find((s) => s.id === activeId) || SECTIONS[0];
   }, [activeId]);
 
-  // Filtered sections for search
-  const filteredSections = useMemo(() => {
-    if (!searchQuery.trim()) return SECTIONS;
-    const q = searchQuery.toLowerCase().trim();
-    return SECTIONS.filter(
-      (s) => s.number.includes(q) || s.title.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
-
-  // Group filtered sections
+  // Group sections
   const groupedSections = useMemo(() => {
     const groups: { name: SectionItem["group"]; items: SectionItem[] }[] = [
       { name: "Foundations", items: [] },
@@ -253,13 +186,13 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
       { name: "Governance", items: [] },
     ];
 
-    filteredSections.forEach((s) => {
+    SECTIONS.forEach((s) => {
       const g = groups.find((grp) => grp.name === s.group);
       if (g) g.items.push(s);
     });
 
-    return groups.filter((g) => g.items.length > 0);
-  }, [filteredSections]);
+    return groups;
+  }, []);
 
   // Update Volt Gold indicator position using offsetTop and height
   useEffect(() => {
@@ -268,79 +201,13 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
       setIndicatorTop(activeEl.offsetTop);
       setIndicatorHeight(activeEl.offsetHeight);
     }
-  }, [activeId, searchQuery, groupedSections]);
-
-  // Global keyboard shortcuts: "/" or Cmd/Ctrl+K to focus search, Esc to blur
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isInput =
-        document.activeElement?.tagName === "INPUT" ||
-        document.activeElement?.tagName === "TEXTAREA";
-
-      if (e.key === "/" && !isInput) {
-        e.preventDefault();
-        if (sheetOpen) {
-          sheetSearchInputRef.current?.focus();
-        } else {
-          searchInputRef.current?.focus();
-        }
-      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        if (sheetOpen) {
-          sheetSearchInputRef.current?.focus();
-        } else {
-          searchInputRef.current?.focus();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [sheetOpen]);
-
-  // Search input keydown handler (Arrow keys, Enter, Esc)
-  const handleSearchKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    isMobile = false
-  ) => {
-    if (e.key === "Escape") {
-      setSearchQuery("");
-      if (isMobile) {
-        sheetSearchInputRef.current?.blur();
-      } else {
-        searchInputRef.current?.blur();
-      }
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (filteredSections.length > 0) {
-        setSelectedSearchIndex((prev) => (prev + 1) % filteredSections.length);
-      }
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (filteredSections.length > 0) {
-        setSelectedSearchIndex(
-          (prev) => (prev - 1 + filteredSections.length) % filteredSections.length
-        );
-      }
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (filteredSections.length > 0) {
-        const target =
-          filteredSections[selectedSearchIndex] || filteredSections[0];
-        if (target) {
-          navigateToSection(target.id);
-          if (sheetOpen) setSheetOpen(false);
-        }
-      }
-    }
-  };
+  }, [activeId, groupedSections]);
 
   // Lock body scroll and handle focus trap when mobile sheet is open
   useEffect(() => {
     if (sheetOpen) {
       const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-      sheetSearchInputRef.current?.focus();
 
       const handleSheetKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
@@ -393,17 +260,6 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
             </button>
           </div>
         </div>
-
-        {/* Mobile Progress Bar along bottom edge */}
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-neutral-200 overflow-hidden">
-          <div
-            className="h-full bg-[#111111] origin-left"
-            style={{
-              transform: `scaleX(${progress})`,
-              transition: prefersReducedMotion ? "none" : "transform 200ms ease-out",
-            }}
-          />
-        </div>
       </div>
 
       {/* ── Mobile Modal Sheet (< lg) ── */}
@@ -420,82 +276,53 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
             className="w-full max-w-lg bg-white rounded-lg shadow-2xl p-5 max-h-[70vh] overflow-y-auto z-50 text-neutral-900"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Sheet Search */}
-            <div className="relative mb-4">
-              <label htmlFor="guidelines-sheet-search" className="sr-only">
-                Find a section
-              </label>
-              <input
-                id="guidelines-sheet-search"
-                ref={sheetSearchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setSelectedSearchIndex(0);
-                }}
-                onKeyDown={(e) => handleSearchKeyDown(e, true)}
-                placeholder="Find a section"
-                className="w-full bg-transparent border-b border-neutral-200 py-2 pr-6 text-sm text-[#111111] placeholder:text-neutral-500 focus:outline-none focus:border-[#111111]"
-              />
-              <span className="absolute right-0 top-1/2 -translate-y-1/2 font-mono text-xs text-neutral-400 select-none">
-                /
-              </span>
-            </div>
-
             {/* Sheet Nav List */}
             <nav aria-label="Guidelines mobile sections">
-              {groupedSections.length === 0 ? (
-                <div className="py-6 text-center text-sm text-neutral-500">
-                  No section found
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {groupedSections.map((group) => (
-                    <div key={group.name} className="space-y-1">
-                      <span className="text-xs uppercase tracking-wider text-neutral-500 font-semibold block px-1">
-                        {group.name}
-                      </span>
-                      <ul className="space-y-1">
-                        {group.items.map((item) => {
-                          const isActive = activeId === item.id;
-                          const ItemIcon = item.icon;
-                          return (
-                            <li key={item.id}>
-                              <a
-                                href={`#${item.id}`}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  navigateToSection(item.id);
-                                  setSheetOpen(false);
-                                }}
-                                className={`min-h-[44px] flex items-center gap-2.5 px-2 py-2 text-sm rounded-md transition-colors duration-200 ${
-                                  isActive
-                                    ? "text-[#111111] font-semibold bg-neutral-100"
-                                    : "text-neutral-500 hover:text-neutral-900"
-                                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
-                                aria-current={isActive ? "location" : undefined}
-                              >
-                                <ItemIcon
-                                  size={14}
-                                  className={`shrink-0 ${
-                                    isActive ? "text-[#111111]" : "text-neutral-400"
-                                  }`}
-                                  aria-hidden="true"
-                                />
-                                <span className="font-mono text-xs text-neutral-400 shrink-0">
-                                  {item.number}
-                                </span>
-                                <span className="truncate">{item.title}</span>
-                              </a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="space-y-4">
+                {groupedSections.map((group) => (
+                  <div key={group.name} className="space-y-1">
+                    <span className="text-xs uppercase tracking-wider text-neutral-500 font-semibold block px-1">
+                      {group.name}
+                    </span>
+                    <ul className="space-y-1">
+                      {group.items.map((item) => {
+                        const isActive = activeId === item.id;
+                        const ItemIcon = item.icon;
+                        return (
+                          <li key={item.id}>
+                            <a
+                              href={`#${item.id}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigateToSection(item.id);
+                                setSheetOpen(false);
+                              }}
+                              className={`min-h-[44px] flex items-center gap-2.5 px-2 py-2 text-sm rounded-md transition-colors duration-200 ${
+                                isActive
+                                  ? "text-[#111111] font-semibold bg-neutral-100"
+                                  : "text-neutral-500 hover:text-neutral-900"
+                              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
+                              aria-current={isActive ? "location" : undefined}
+                            >
+                              <ItemIcon
+                                size={14}
+                                className={`shrink-0 ${
+                                  isActive ? "text-[#111111]" : "text-neutral-400"
+                                }`}
+                                aria-hidden="true"
+                              />
+                              <span className="font-mono text-xs text-neutral-400 shrink-0">
+                                {item.number}
+                              </span>
+                              <span className="truncate">{item.title}</span>
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </nav>
           </div>
         </div>
@@ -503,137 +330,78 @@ export default function GuidelinesTreeSidebar({ className = "" }: GuidelinesTree
 
       {/* ── Desktop Floating Sticky Rail (>= lg) ── */}
       <aside className={`hidden lg:block lg:sticky lg:top-28 max-h-[calc(100vh-8rem)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}>
-        <nav aria-label="Guidelines sections" className="space-y-4">
-          {/* Top Block: INDEX & Progress */}
-          <div className="space-y-1.5 pb-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-xs uppercase tracking-wider text-neutral-500 font-semibold">
-                INDEX
-              </span>
-              <span className="font-mono tabular-nums text-xs font-semibold text-[#111111]">
-                {activeSection.number} / {SECTIONS.length.toString().padStart(2, "0")}
-              </span>
-            </div>
-
-            {/* 2px Progress Line (neutral-200 track, Ink fill) */}
-            <div className="h-[2px] w-full bg-neutral-200 overflow-hidden rounded-full">
-              <div
-                className="h-full bg-[#111111] origin-left"
-                style={{
-                  transform: `scaleX(${progress})`,
-                  transition: prefersReducedMotion ? "none" : "transform 200ms ease-out",
-                }}
-              />
-            </div>
-
-            <div className="flex justify-end">
-              <span className="font-mono tabular-nums text-xs text-neutral-500">
-                {Math.round(progress * 100)}%
-              </span>
-            </div>
-          </div>
-
-          {/* Minimal Search Input */}
-          <div className="relative pb-2">
-            <label htmlFor="guidelines-search" className="sr-only">
-              Find a section
-            </label>
-            <input
-              id="guidelines-search"
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setSelectedSearchIndex(0);
-              }}
-              onKeyDown={(e) => handleSearchKeyDown(e, false)}
-              placeholder="Find a section"
-              className="w-full bg-transparent border-b border-neutral-200 py-1.5 pr-6 text-sm text-[#111111] placeholder:text-neutral-500 focus:outline-none focus:border-[#111111] transition-colors duration-200"
+        <nav aria-label="Guidelines sections">
+          <div ref={listContainerRef} className="relative pl-3 space-y-4">
+            {/* Continuous 1px vertical line */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200"
+              aria-hidden="true"
             />
-            <span className="absolute right-0 top-1/2 -translate-y-1/2 font-mono text-xs text-neutral-400 select-none">
-              /
-            </span>
-          </div>
 
-          {/* Section List with Sliding Volt Gold Indicator */}
-          {groupedSections.length === 0 ? (
-            <div className="py-6 text-left text-sm text-neutral-500">
-              No section found
-            </div>
-          ) : (
-            <div ref={listContainerRef} className="relative pl-3 space-y-4">
-              {/* Continuous 1px vertical line */}
+            {/* 2px Volt Gold indicator sliding via translateY */}
+            {indicatorHeight > 0 && (
               <div
-                className="absolute left-0 top-0 bottom-0 w-px bg-neutral-200"
+                className="absolute left-0 w-[2px] bg-[#FCD017] rounded-full"
+                style={{
+                  height: `${indicatorHeight}px`,
+                  transform: `translateY(${indicatorTop}px)`,
+                  transition: prefersReducedMotion
+                    ? "none"
+                    : "transform 300ms ease-out, height 300ms ease-out",
+                }}
                 aria-hidden="true"
               />
+            )}
 
-              {/* 2px Volt Gold indicator sliding via translateY */}
-              {indicatorHeight > 0 && (
-                <div
-                  className="absolute left-0 w-[2px] bg-[#FCD017] rounded-full"
-                  style={{
-                    height: `${indicatorHeight}px`,
-                    transform: `translateY(${indicatorTop}px)`,
-                    transition: prefersReducedMotion
-                      ? "none"
-                      : "transform 300ms ease-out, height 300ms ease-out",
-                  }}
-                  aria-hidden="true"
-                />
-              )}
+            {groupedSections.map((group) => (
+              <div key={group.name} className="space-y-1.5">
+                <span className="text-xs uppercase tracking-wider text-neutral-500 font-semibold block">
+                  {group.name}
+                </span>
 
-              {groupedSections.map((group) => (
-                <div key={group.name} className="space-y-1.5">
-                  <span className="text-xs uppercase tracking-wider text-neutral-500 font-semibold block">
-                    {group.name}
-                  </span>
-
-                  <ul className="space-y-1">
-                    {group.items.map((item) => {
-                      const isActive = activeId === item.id;
-                      const ItemIcon = item.icon;
-                      return (
-                        <li key={item.id}>
-                          <a
-                            ref={(el) => {
-                              itemRefs.current[item.id] = el;
-                            }}
-                            href={`#${item.id}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigateToSection(item.id);
-                            }}
-                            className={`group flex items-center gap-2.5 py-1 text-sm rounded-md transition-colors duration-200 select-none ${
+                <ul className="space-y-1">
+                  {group.items.map((item) => {
+                    const isActive = activeId === item.id;
+                    const ItemIcon = item.icon;
+                    return (
+                      <li key={item.id}>
+                        <a
+                          ref={(el) => {
+                            itemRefs.current[item.id] = el;
+                          }}
+                          href={`#${item.id}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigateToSection(item.id);
+                          }}
+                          className={`group flex items-center gap-2.5 py-1 text-sm rounded-md transition-colors duration-200 select-none ${
+                            isActive
+                              ? "text-[#111111] font-semibold"
+                              : "text-neutral-500 hover:text-neutral-900"
+                          } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
+                          aria-current={isActive ? "location" : undefined}
+                        >
+                          <ItemIcon
+                            size={13}
+                            className={`shrink-0 transition-colors duration-200 ${
                               isActive
-                                ? "text-[#111111] font-semibold"
-                                : "text-neutral-500 hover:text-neutral-900"
-                            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111] focus-visible:ring-offset-2`}
-                            aria-current={isActive ? "location" : undefined}
-                          >
-                            <ItemIcon
-                              size={13}
-                              className={`shrink-0 transition-colors duration-200 ${
-                                isActive
-                                  ? "text-[#111111]"
-                                  : "text-neutral-400 group-hover:text-neutral-700"
-                              }`}
-                              aria-hidden="true"
-                            />
-                            <span className="font-mono text-xs text-neutral-400 shrink-0">
-                              {item.number}
-                            </span>
-                            <span className="truncate">{item.title}</span>
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
+                                ? "text-[#111111]"
+                                : "text-neutral-400 group-hover:text-neutral-700"
+                            }`}
+                            aria-hidden="true"
+                          />
+                          <span className="font-mono text-xs text-neutral-400 shrink-0">
+                            {item.number}
+                          </span>
+                          <span className="truncate">{item.title}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         </nav>
       </aside>
     </>
