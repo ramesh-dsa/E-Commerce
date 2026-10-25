@@ -539,7 +539,7 @@ export function CartDrawer() {
       <aside
         aria-label="Shopping Bag and Checkout Drawer"
         data-lenis-prevent="true"
-        className={`relative w-full max-w-[460px] h-full bg-white text-[#111111] shadow-2xl flex flex-col z-10 overscroll-contain transform-gpu ${
+        className={`relative w-full max-w-[460px] h-full bg-white text-veyro-black shadow-2xl flex flex-col z-10 overscroll-contain transform-gpu ${
           isClosing ? "animate-drawer-out" : "animate-drawer-in"
         }`}
       >
@@ -549,11 +549,11 @@ export function CartDrawer() {
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200">
               <div className="flex items-center gap-2.5">
-                <ShoppingBag size={20} className="stroke-[2.2] text-[#111111]" />
-                <h2 className="text-base font-black tracking-wider uppercase text-[#111111]">
+                <ShoppingBag size={20} className="stroke-[2.2] text-veyro-black" />
+                <h2 className="text-base font-black tracking-wider uppercase text-veyro-black">
                   SHOPPING BAG
                 </h2>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#fcd017] text-[#111111]">
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-veyro-yellow text-veyro-black">
                   {totalItems}
                 </span>
               </div>
@@ -577,7 +577,7 @@ export function CartDrawer() {
                       <span className="absolute -left-1 top-1/2 -translate-y-1/2 pointer-events-none flex items-center z-20">
                         <span className="w-2.5 h-2.5 rounded-full bg-neutral-400/80 animate-smoke-1 filter blur-[0.4px]" />
                         <span className="w-2 h-2 rounded-full bg-neutral-300/75 animate-smoke-2 filter blur-[0.4px] -ml-1" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017]/85 animate-smoke-3 filter blur-[0.4px] -ml-0.5" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-veyro-yellow/85 animate-smoke-3 filter blur-[0.4px] -ml-0.5" />
                       </span>
                     )}
                     <span
@@ -593,7 +593,7 @@ export function CartDrawer() {
                         <Truck
                           size={15}
                           className={`transition-colors ${
-                            selectedHasFreeShipping ? "text-emerald-700" : "text-[#111111]"
+                            selectedHasFreeShipping ? "text-emerald-700" : "text-veyro-black"
                           }`}
                         />
                         {/* Realistic Automotive Conical Headlight Beam & Lamp Flare */}
@@ -628,7 +628,7 @@ export function CartDrawer() {
               <div className="w-full h-1.5 bg-neutral-200 rounded-full overflow-hidden relative">
                 <div
                   className={`h-full transition-[width,background-color] duration-300 ease-out ${
-                    selectedHasFreeShipping ? "bg-emerald-500" : "bg-[#fcd017]"
+                    selectedHasFreeShipping ? "bg-emerald-500" : "bg-veyro-yellow"
                   }`}
                   style={{ width: `${selectedProgressPercent}%` }}
                 />
@@ -640,12 +640,12 @@ export function CartDrawer() {
 
             {/* Bundle Strip */}
             {selectedBundleDiscount > 0 && (
-              <div className="bg-[#fcd017]/15 border-b border-[#fcd017]/50 px-6 py-2.5 flex items-center justify-between text-xs">
+              <div className="bg-veyro-yellow/15 border-b border-veyro-yellow/50 px-6 py-2.5 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="bg-[#fcd017] text-[#111111] text-[9px] font-black px-1.5 py-0.5 rounded-[2px] uppercase tracking-wider">
+                  <span className="bg-veyro-yellow text-veyro-black text-[9px] font-black px-1.5 py-0.5 rounded-[2px] uppercase tracking-wider">
                     BUNDLE PASS
                   </span>
-                  <span className="font-bold text-[#111111] text-xs">
+                  <span className="font-bold text-veyro-black text-xs">
                     3 Archive T-Shirts for ₹1,199 Applied{selectedBundleCount > 1 ? ` (${selectedBundleCount}x)` : ""}
                   </span>
                 </div>
@@ -675,7 +675,7 @@ export function CartDrawer() {
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="inline-flex items-center gap-2 bg-[#111111] text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-[2px] hover:bg-black transition-colors cursor-pointer touch-manipulation"
+                      className="inline-flex items-center gap-2 bg-veyro-black text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-[2px] hover:bg-black transition-colors cursor-pointer touch-manipulation"
                     >
                       CONTINUE SHOPPING
                       <ArrowRight size={14} />
@@ -695,8 +695,8 @@ export function CartDrawer() {
                         <span
                           className={`w-[18px] h-[18px] rounded-[4px] border-2 flex items-center justify-center transition-all duration-200 ${
                             allSelected
-                              ? "bg-[#111111] border-[#111111]"
-                              : "border-neutral-400 group-hover:border-[#111111]"
+                              ? "bg-veyro-black border-veyro-black"
+                              : "border-neutral-400 group-hover:border-veyro-black"
                           }`}
                         >
                           <span
@@ -758,8 +758,8 @@ export function CartDrawer() {
                               <span
                                 className={`w-5 h-5 rounded-[5px] border-2 flex items-center justify-center transition-all duration-200 ${
                                   isSelected
-                                    ? "bg-[#111111] border-[#111111] shadow-xs"
-                                    : "border-neutral-400 bg-white group-hover:border-[#111111]"
+                                    ? "bg-veyro-black border-veyro-black shadow-xs"
+                                    : "border-neutral-400 bg-white group-hover:border-veyro-black"
                                 }`}
                               >
                                 <span
@@ -859,7 +859,7 @@ export function CartDrawer() {
                                   </button>
                                 )}
                               </div>
-                              <span className="text-sm font-black text-[#111111] tabular-nums transition-transform duration-150 origin-right">
+                              <span className="text-sm font-black text-veyro-black tabular-nums transition-transform duration-150 origin-right">
                                 {formatPrice(item.product.price * item.quantity)}
                               </span>
                             </div>
@@ -884,7 +884,7 @@ export function CartDrawer() {
               >
                 <div
                   ref={thumbRef}
-                  className="w-full bg-[#111111]/45 rounded-full transition-none transform-gpu shadow-2xs"
+                  className="w-full bg-veyro-black/45 rounded-full transition-none transform-gpu shadow-2xs"
                 />
               </div>
 
@@ -950,7 +950,7 @@ export function CartDrawer() {
                     <span>Taxes</span>
                     <span className="text-neutral-500">Included</span>
                   </div>
-                  <div className="flex justify-between text-sm font-black text-[#111111] pt-2 border-t border-neutral-200">
+                  <div className="flex justify-between text-sm font-black text-veyro-black pt-2 border-t border-neutral-200">
                     <span>ESTIMATED TOTAL</span>
                     <span className="tabular-nums">{formatPrice(selectedFinalTotal)}</span>
                   </div>
@@ -961,12 +961,12 @@ export function CartDrawer() {
                   disabled={selectedCount === 0 || isTruckDriving}
                   aria-disabled={selectedCount === 0 || isTruckDriving}
                   onClick={handleProceedToCheckout}
-                  className="w-full relative overflow-hidden bg-[#111111] text-white py-3.5 px-4 rounded-full font-black tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-black transition-all shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group touch-manipulation"
+                  className="w-full relative overflow-hidden bg-veyro-black text-white py-3.5 px-4 rounded-full font-black tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-black transition-all shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group touch-manipulation"
                 >
                   {selectedCount === 0 ? (
                     "SELECT ITEMS TO CHECKOUT"
                   ) : isTruckDriving ? (
-                    <span className="flex items-center gap-2 text-[#fcd017] tracking-wider">
+                    <span className="flex items-center gap-2 text-veyro-yellow tracking-wider">
                       <Truck size={15} className="animate-bounce" />
                       DISPATCHING TO CHECKOUT...
                     </span>
@@ -1010,7 +1010,7 @@ export function CartDrawer() {
                 <span>Bag</span>
               </button>
               <div className="text-center">
-                <h2 className="text-sm font-black tracking-wider uppercase text-[#111111]">EXPRESS CHECKOUT</h2>
+                <h2 className="text-sm font-black tracking-wider uppercase text-veyro-black">EXPRESS CHECKOUT</h2>
               </div>
               <button
                 type="button"
@@ -1027,12 +1027,12 @@ export function CartDrawer() {
               className="flex-1 overflow-y-auto overscroll-contain px-6 py-5"
             >
               {/* Order Summary — selected items only */}
-              <div className="bg-[#f8f8f6] border border-[#e8e8e5] p-3.5 rounded-[2px] mb-6">
+              <div className="bg-veyro-surface border border-veyro-border p-3.5 rounded-[2px] mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-700">
                     Order Summary ({selectedCount} {selectedCount === 1 ? "Item" : "Items"})
                   </span>
-                  <span className="text-xs font-black text-[#111111]">{formatPrice(selectedFinalTotal)}</span>
+                  <span className="text-xs font-black text-veyro-black">{formatPrice(selectedFinalTotal)}</span>
                 </div>
                 <div className="space-y-1.5 divide-y divide-neutral-200/60 text-xs">
                   {selectedItems.map((item) => (
@@ -1069,7 +1069,7 @@ export function CartDrawer() {
                   <span>{selectedHasFreeShipping ? "FREE EXPRESS DELIVERY" : "₹99"}</span>
                 </div>
                 {giftPackaging.enabled && (
-                  <div className="mt-1.5 pt-1.5 border-t border-neutral-200/80 flex items-center justify-between text-[11px] text-[#111111] font-bold">
+                  <div className="mt-1.5 pt-1.5 border-t border-neutral-200/80 flex items-center justify-between text-[11px] text-veyro-black font-bold">
                     <span className="flex items-center gap-1.5">
                       <Gift size={13} className="text-slate-400 shrink-0" />
                       <span>Signature Gift Packaging:</span>
@@ -1095,7 +1095,7 @@ export function CartDrawer() {
                           }
                         }}
                         placeholder="ENTER PROMO CODE (e.g. VEYRO10)"
-                        className="flex-1 bg-[#f8f8f6] border border-[#e8e8e5] rounded-[2px] px-2.5 py-1.5 text-[11px] font-mono uppercase text-[#111111] placeholder:text-neutral-400 focus:outline-none focus:border-[#111111]"
+                        className="flex-1 bg-veyro-surface border border-veyro-border rounded-[2px] px-2.5 py-1.5 text-[11px] font-mono uppercase text-veyro-black placeholder:text-neutral-400 focus:outline-none focus:border-veyro-black"
                       />
                       <button
                         type="button"
@@ -1104,7 +1104,7 @@ export function CartDrawer() {
                           setCouponMessage({ text: res.message, isError: !res.success });
                           if (res.success) setCouponInput("");
                         }}
-                        className="bg-[#111111] text-white px-3 py-1.5 text-[11px] font-bold uppercase rounded-[2px] hover:bg-neutral-800 transition-colors cursor-pointer shrink-0"
+                        className="bg-veyro-black text-white px-3 py-1.5 text-[11px] font-bold uppercase rounded-[2px] hover:bg-neutral-800 transition-colors cursor-pointer shrink-0"
                       >
                         Apply
                       </button>
@@ -1121,7 +1121,7 @@ export function CartDrawer() {
               {/* Form */}
               <form onSubmit={handleCheckoutSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-veyro-black mb-1.5">
                     Contact & Full Name *
                   </label>
                   <input
@@ -1130,13 +1130,13 @@ export function CartDrawer() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Enter your full name"
-                    className="w-full bg-[#f8f8f6] border border-[#e8e8e5] rounded-[2px] px-3.5 py-2.5 text-xs text-[#111111] placeholder:text-neutral-400 focus:outline-none focus:border-[#111111] transition-colors"
+                    className="w-full bg-veyro-surface border border-veyro-border rounded-[2px] px-3.5 py-2.5 text-xs text-veyro-black placeholder:text-neutral-400 focus:outline-none focus:border-veyro-black transition-colors"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-veyro-black mb-1.5">
                       Phone Number *
                     </label>
                     <input
@@ -1146,11 +1146,11 @@ export function CartDrawer() {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })}
                       placeholder="10-digit mobile"
-                      className="w-full bg-[#f8f8f6] border border-[#e8e8e5] rounded-[2px] px-3.5 py-2.5 text-xs text-[#111111] placeholder:text-neutral-400 focus:outline-none focus:border-[#111111] transition-colors"
+                      className="w-full bg-veyro-surface border border-veyro-border rounded-[2px] px-3.5 py-2.5 text-xs text-veyro-black placeholder:text-neutral-400 focus:outline-none focus:border-veyro-black transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-veyro-black mb-1.5">
                       Pincode *
                     </label>
                     <input
@@ -1160,13 +1160,13 @@ export function CartDrawer() {
                       value={formData.pincode}
                       onChange={(e) => setFormData({ ...formData, pincode: e.target.value.replace(/\D/g, "") })}
                       placeholder="600001"
-                      className="w-full bg-[#f8f8f6] border border-[#e8e8e5] rounded-[2px] px-3.5 py-2.5 text-xs text-[#111111] placeholder:text-neutral-400 focus:outline-none focus:border-[#111111] transition-colors"
+                      className="w-full bg-veyro-surface border border-veyro-border rounded-[2px] px-3.5 py-2.5 text-xs text-veyro-black placeholder:text-neutral-400 focus:outline-none focus:border-veyro-black transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-veyro-black mb-1.5">
                     Delivery Address *
                   </label>
                   <textarea
@@ -1175,12 +1175,12 @@ export function CartDrawer() {
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     placeholder="House/Flat No., Building, Street, Area"
-                    className="w-full bg-[#f8f8f6] border border-[#e8e8e5] rounded-[2px] px-3.5 py-2 text-xs text-[#111111] placeholder:text-neutral-400 focus:outline-none focus:border-[#111111] resize-none transition-colors"
+                    className="w-full bg-veyro-surface border border-veyro-border rounded-[2px] px-3.5 py-2 text-xs text-veyro-black placeholder:text-neutral-400 focus:outline-none focus:border-veyro-black resize-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-veyro-black mb-2">
                     Payment Method
                   </label>
                   <div className="grid grid-cols-3 gap-2 text-xs">
@@ -1194,8 +1194,8 @@ export function CartDrawer() {
                         }}
                         className={`p-2.5 rounded-[2px] border text-center font-bold transition-all cursor-pointer ${
                           formData.paymentMethod === method
-                            ? "border-[#111111] bg-[#111111] text-white shadow-xs"
-                            : "border-[#e8e8e5] bg-white text-neutral-800 hover:border-neutral-400"
+                            ? "border-veyro-black bg-veyro-black text-white shadow-xs"
+                            : "border-veyro-border bg-white text-neutral-800 hover:border-neutral-400"
                         }`}
                       >
                         {method === "upi" ? "UPI / QR" : method === "cod" ? "Cash on Delivery" : "Card / Net"}
@@ -1252,7 +1252,7 @@ export function CartDrawer() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-13 bg-[#fcd017] text-[#111111] hover:bg-[#e5bc05] font-black text-xs uppercase tracking-[0.18em] rounded-[2px] transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                    className="w-full h-13 bg-veyro-yellow text-veyro-black hover:bg-veyro-yellow-dark font-black text-xs uppercase tracking-[0.18em] rounded-[2px] transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center gap-2">
@@ -1292,25 +1292,25 @@ export function CartDrawer() {
               <span className="text-[11px] font-mono tracking-widest uppercase text-neutral-400 block mb-1">
                 [ ORDER CONFIRMED ]
               </span>
-              <h3 className="text-2xl font-black uppercase tracking-tight text-[#111111] mb-2">
+              <h3 className="text-2xl font-black uppercase tracking-tight text-veyro-black mb-2">
                 Thank You For Your Order
               </h3>
               <p className="text-xs font-mono text-neutral-500 mb-6">
-                Reference: <span className="font-bold text-[#111111]">{confirmedOrderId}</span>
+                Reference: <span className="font-bold text-veyro-black">{confirmedOrderId}</span>
               </p>
 
-              <div className="bg-[#f8f8f6] border border-[#e8e8e5] p-4 rounded-[2px] text-left text-xs space-y-2 mb-6">
+              <div className="bg-veyro-surface border border-veyro-border p-4 rounded-[2px] text-left text-xs space-y-2 mb-6">
                 <div className="flex justify-between">
                   <span className="text-neutral-500">Order Status:</span>
                   <span className="font-bold text-emerald-700">Confirmed & Processing</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-neutral-500">Dispatch Location:</span>
-                  <span className="font-bold text-[#111111]">Tirupur Mill Hub, India</span>
+                  <span className="font-bold text-veyro-black">Tirupur Mill Hub, India</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-neutral-500">Estimated Delivery:</span>
-                  <span className="font-bold text-[#111111]">2–3 Business Days</span>
+                  <span className="font-bold text-veyro-black">2–3 Business Days</span>
                 </div>
               </div>
 
@@ -1328,7 +1328,7 @@ export function CartDrawer() {
                     router.push(`/orders/${confirmedOrderId}`);
                   }
                 }}
-                className="w-full bg-[#fcd017] text-[#111111] py-3.5 text-xs font-black uppercase tracking-widest rounded-[2px] hover:bg-[#e5bc05] transition-colors cursor-pointer flex items-center justify-center gap-2 mb-2.5 shadow-sm"
+                className="w-full bg-veyro-yellow text-veyro-black py-3.5 text-xs font-black uppercase tracking-widest rounded-[2px] hover:bg-veyro-yellow-dark transition-colors cursor-pointer flex items-center justify-center gap-2 mb-2.5 shadow-sm"
               >
                 <Package size={15} className="stroke-[2.5]" />
                 <span>VIEW ORDER DETAILS</span>
@@ -1342,7 +1342,7 @@ export function CartDrawer() {
                   closeCart();
                   router.push("/orders");
                 }}
-                className="w-full bg-[#111111] text-white py-3.5 text-xs font-bold uppercase tracking-widest rounded-[2px] hover:bg-neutral-800 transition-colors cursor-pointer flex items-center justify-center gap-2 mb-2.5"
+                className="w-full bg-veyro-black text-white py-3.5 text-xs font-bold uppercase tracking-widest rounded-[2px] hover:bg-neutral-800 transition-colors cursor-pointer flex items-center justify-center gap-2 mb-2.5"
               >
                 <Truck size={15} />
                 <span>TRACK MY ORDERS</span>
@@ -1351,7 +1351,7 @@ export function CartDrawer() {
               <button
                 type="button"
                 onClick={() => { setCartView("bag"); closeCart(); }}
-                className="w-full text-neutral-500 hover:text-[#111111] py-2 text-[11px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
+                className="w-full text-neutral-500 hover:text-veyro-black py-2 text-[11px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
               >
                 Continue Exploring
               </button>

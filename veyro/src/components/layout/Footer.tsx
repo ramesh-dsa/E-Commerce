@@ -51,7 +51,7 @@ function DecryptCode({
   }, [active, target]);
 
   return (
-    <span className="font-mono text-sm sm:text-base font-black tracking-widest text-[#fcd017] drop-shadow-[0_0_10px_rgba(252,208,23,0.6)] inline-block">
+    <span className="font-mono text-sm sm:text-base font-black tracking-widest text-veyro-yellow drop-shadow-[0_0_10px_rgba(252,208,23,0.6)] inline-block">
       {active ? displayed : "••••••••"}
     </span>
   );
@@ -177,13 +177,13 @@ export function Footer() {
               <div className="flex items-center gap-3">
                 <Logo height={32} variant="white" />
               </div>
-              <p className="mt-5 text-sm sm:text-base text-[#999999] leading-relaxed max-w-sm font-light">
+              <p className="mt-5 text-sm sm:text-base text-veyro-muted leading-relaxed max-w-sm font-light">
                 Engineered for the modern Indian uniform. Architectural cuts, premium textiles, and brutalist silhouettes.
               </p>
             </div>
 
             <div className="mt-8 flex items-center gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#fcd017] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-veyro-yellow animate-pulse" />
               <span className="text-xs font-semibold tracking-widest text-[#888888] uppercase">
                 MADE IN INDIA • GLOBAL STANDARD
               </span>
@@ -192,7 +192,7 @@ export function Footer() {
 
           {/* Newsletter / The VEYRO Club VIP Ticket Box */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            <span className="text-xs font-semibold tracking-wider text-[#fcd017] uppercase mb-2 font-mono">
+            <span className="text-xs font-semibold tracking-wider text-veyro-yellow uppercase mb-2 font-mono">
               THE VEYRO CLUB
             </span>
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
@@ -226,7 +226,7 @@ export function Footer() {
                 </div>
                 <button
                   type="submit"
-                  className="self-center sm:self-auto inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase hover:bg-[#fcd017] hover:text-black transition-colors cursor-pointer shrink-0 rounded-[1px]"
+                  className="self-center sm:self-auto inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase hover:bg-veyro-yellow hover:text-black transition-colors cursor-pointer shrink-0 rounded-[1px]"
                 >
                   <span>Request Pass</span>
                   <ArrowRightIcon size={14} />
@@ -286,7 +286,7 @@ export function Footer() {
                           </p>
                         </div>
                         <div className="pt-2 border-t border-white/10">
-                          <span className="text-[11px] font-light text-[#fcd017] italic tracking-wider block">
+                          <span className="text-[11px] font-light text-veyro-yellow italic tracking-wider block">
                             10% Privileged
                           </span>
                         </div>
@@ -313,7 +313,7 @@ export function Footer() {
                             Edition 01
                           </span>
                           {isTorn && (
-                            <span className="text-[10px] font-serif italic tracking-widest text-[#fcd017] animate-in fade-in duration-700">
+                            <span className="text-[10px] font-serif italic tracking-widest text-veyro-yellow animate-in fade-in duration-700">
                               Unlocked
                             </span>
                           )}
@@ -355,10 +355,10 @@ export function Footer() {
                     <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                       <Link
                         href="/cart"
-                        className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white hover:text-[#fcd017] transition-colors cursor-pointer"
+                        className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white hover:text-veyro-yellow transition-colors cursor-pointer"
                       >
-                        <span className="relative pb-0.5 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-[1px] after:bottom-0 after:left-0 after:bg-[#fcd017] after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">Proceed to Bag</span>
-                        <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1 text-[#fcd017]" />
+                        <span className="relative pb-0.5 after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-[1px] after:bottom-0 after:left-0 after:bg-veyro-yellow after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">Proceed to Bag</span>
+                        <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1 text-veyro-yellow" />
                       </Link>
                     </div>
                   </div>
@@ -435,7 +435,7 @@ export function Footer() {
             <div className="text-xs text-[#888888] space-y-2 leading-relaxed">
               <p>VEYRO Apparel & Footwear Pvt. Ltd.</p>
               <p>Bengaluru & Tirupur, India</p>
-              <p className="pt-2 text-white font-medium hover:text-[#fcd017] transition-colors">
+              <p className="pt-2 text-white font-medium hover:text-veyro-yellow transition-colors">
                 <a href="mailto:support@veyro.in">support@veyro.in</a>
               </p>
               <p>Mon – Sat, 10:00 AM – 7:00 PM IST</p>
@@ -456,7 +456,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Follow VEYRO on ${social.label}`}
-                      className="w-8 h-8 rounded-full bg-[#111111] border border-[#222222] text-[#888888] hover:text-[#fcd017] hover:border-[#fcd017] hover:bg-[#181818] flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
+                      className="w-8 h-8 rounded-full bg-veyro-black border border-[#222222] text-[#888888] hover:text-veyro-yellow hover:border-veyro-yellow hover:bg-[#181818] flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <Icon className="w-3.5 h-3.5" />
                     </a>
