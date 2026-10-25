@@ -9,6 +9,7 @@ import LayoutSpacingSpecimen from "./LayoutSpacingSpecimen";
 import ShapeElevationSpecimen from "./ShapeElevationSpecimen";
 import MotionSpecimen from "./MotionSpecimen";
 import ZIndexSpecimen from "./ZIndexSpecimen";
+import ComponentsSpecimen from "./ComponentsSpecimen";
 import {
   Download,
   Check,
@@ -866,142 +867,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active inline elements versus shared design system primitives.
+                    Interactive UI primitives, action buttons, status badges, luxury cards, and global toast feedback components.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Raw Button Elements vs Shared ui/Button:</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• <strong className="text-red-700 font-bold">Raw &lt;button&gt; tags:</strong> 312 across 44 files</li>
-                            <li>• <strong className="text-neutral-950 font-bold">ui/Button renders:</strong> 0 renders in JSX</li>
-                            <li>• <strong className="text-neutral-950 font-bold">Button focus styling:</strong> 16 with focus ring vs 296 without</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Primary Button Style Combinations:</span>
-                          <ul className="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• bg-neutral-900 + rounded-lg: 6</li>
-                            <li>• dark-bg + no-radius: 6</li>
-                            <li>• dark-bg + rounded-full: 5</li>
-                            <li>• dark-bg + rounded-lg: 4</li>
-                            <li>• bg-neutral-900 + rounded-xl: 3</li>
-                            <li>• bg-black + no-radius: 2</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Active Inputs and Cards:</span>
-                          <p className="text-xs leading-relaxed bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            No shared <code className="font-mono font-bold text-neutral-900">ui/Input</code> or <code className="font-mono font-bold text-neutral-900">ui/Card</code> primitives. Cards use inline divs split between <code className="font-mono font-bold text-neutral-900">rounded-xl</code> (111) and <code className="font-mono font-bold text-neutral-900">rounded-2xl</code> (74). Inputs use inline tags with mixed radii.
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Active Modals &amp; Drawers in Code:</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• AccountModal.tsx: bg-[#0c0c0e], z-[70], rounded-2xl sm:rounded-3xl</li>
-                            <li>• CartDrawer.tsx: bg-white, z-50, right full-height slide-over</li>
-                            <li>• ProductSearch.tsx: bg-white, z-[150], fullscreen overlay</li>
-                            <li>• WatchFilterSidebar.tsx: bg-white, z-50, filter drawer</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <span className="font-bold text-neutral-900">Standard adoption: 0 of 312 action buttons using shared ui/Button (0.0%)</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        {/* Live Button Specimens */}
-                        <div className="space-y-2">
-                          <span className="font-bold text-neutral-950 block text-xs uppercase tracking-wider">Standard ui/Button Primitives:</span>
-                          <div className="flex flex-wrap gap-2.5">
-                            <button
-                              type="button"
-                              className="px-5 py-2.5 bg-[#FCD017] hover:bg-[#E5BC05] text-[#111111] font-bold text-xs rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                            >
-                              Primary Gold
-                            </button>
-                            <button
-                              type="button"
-                              className="px-5 py-2.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                            >
-                              Secondary Ink
-                            </button>
-                            <button
-                              type="button"
-                              className="px-5 py-2.5 bg-transparent border border-neutral-400 hover:border-neutral-900 text-[#111111] font-bold text-xs rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                            >
-                              Outline Ghost
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Standard Input Specimen */}
-                        <div className="space-y-1.5">
-                          <label className="text-xs font-bold uppercase tracking-wider text-neutral-800 block">
-                            Standard Input (ui/Input)
-                          </label>
-                          <input
-                            type="text"
-                            readOnly
-                            value="Standard input with rounded-lg and 2px focus ring"
-                            className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E8E8E5] rounded-lg text-neutral-900 font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                          />
-                        </div>
-
-                        {/* Standard Card Specimen */}
-                        <div className="p-4 border border-[#E8E8E5] rounded-xl bg-white shadow-sm space-y-1.5">
-                          <span className="text-xs font-mono font-bold uppercase tracking-widest text-neutral-600">[ 001 ] STANDARD CARD</span>
-                          <h6 className="text-sm font-bold text-neutral-950">Architectural Heavyweight Tee</h6>
-                          <p className="text-xs text-neutral-700">rounded-xl • border #E8E8E5 • shadow-sm hover:shadow-lg</p>
-                        </div>
-
-                        <div className="p-3 bg-[#FFF8E7] rounded-lg border border-[#FCD017]/30 text-sm text-neutral-950 leading-relaxed">
-                          <strong className="font-bold text-neutral-950">Standard Overlay Rule:</strong> Centered modals (<code className="font-mono font-bold">ui/Modal</code>) use <code className="font-mono font-bold">rounded-xl</code> with <code className="font-mono font-bold">shadow-2xl</code> on white canvas. Drawers use <code className="font-mono font-bold">z-50</code>.
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard Component Architecture: Centralized primitives for all actions and inputs.
-                    </div>
-                  </div>
-                </div>
+                <ComponentsSpecimen />
               </section>
 
               {/* SECTION 10: ARCHITECTURE */}
