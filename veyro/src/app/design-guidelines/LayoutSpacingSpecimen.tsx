@@ -308,24 +308,6 @@ export default function LayoutSpacingSpecimen() {
 
         {/* Device Frame Viewport */}
         <div className="p-4 sm:p-8 bg-[#F4F4F1] flex flex-col items-center justify-center min-h-[380px] overflow-hidden">
-          {/* Active Blueprint Specs Banner */}
-          <div className="mb-4 w-full max-w-4xl flex items-center justify-between text-xs font-mono bg-white px-4 py-2 rounded-xl border border-neutral-200 text-neutral-700 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-bold text-neutral-950">Active Viewport:</span>
-              <span>
-                {activeDevice === "mobile" && "Mobile • < 640px • 2 Columns"}
-                {activeDevice === "tablet" && "Tablet • 640px – 1024px • 3 Columns"}
-                {activeDevice === "desktop" && "Desktop • > 1024px • 4 Columns"}
-              </span>
-            </div>
-            <span className="text-[11px] bg-neutral-100 px-2 py-0.5 rounded font-bold text-neutral-900">
-              {activeDevice === "mobile" && "grid-cols-2 gap-3 px-4"}
-              {activeDevice === "tablet" && "sm:grid-cols-3 gap-4 sm:px-8"}
-              {activeDevice === "desktop" && "xl:grid-cols-4 gap-6 xl:px-10"}
-            </span>
-          </div>
-
           {/* Scaled Interactive Window Mockup */}
           <div
             className={`bg-white rounded-2xl border-2 border-neutral-300 shadow-lg p-4 sm:p-6 transition-all duration-300 ease-out w-full ${
@@ -342,6 +324,11 @@ export default function LayoutSpacingSpecimen() {
                 <div className="w-2.5 h-2.5 rounded-full bg-[#111111]" />
                 <span className="font-bold text-xs tracking-wider uppercase text-neutral-900 font-mono">
                   VEYRO STOREFRONT
+                </span>
+                <span className="text-[10px] font-mono text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">
+                  {activeDevice === "mobile" && "grid-cols-2 • gap-3"}
+                  {activeDevice === "tablet" && "sm:grid-cols-3 • gap-4"}
+                  {activeDevice === "desktop" && "xl:grid-cols-4 • gap-6"}
                 </span>
               </div>
               <span className="text-[11px] font-mono text-neutral-400">
