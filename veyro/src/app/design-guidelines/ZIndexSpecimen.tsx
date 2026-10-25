@@ -471,16 +471,39 @@ export default function ZIndexSpecimen() {
               </div>
             </div>
 
-            {/* Layer 70: Account Modal Toast Wrapper */}
+            {/* Layer 70: Account Modal Dialog + Top Toast Wrapper */}
             <div
-              className={`absolute top-20 left-1/2 -translate-x-1/2 z-[70] bg-[#111111] text-white px-3 py-1.5 rounded-full shadow-2xl border border-neutral-700 flex items-center gap-1.5 text-[9px] font-mono transition-all duration-300 ${
+              className={`absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 transition-all duration-300 ${
                 activeToken === "z-[70]"
-                  ? "scale-100 opacity-100 ring-2 ring-[#FCD017]"
-                  : "scale-90 opacity-0 pointer-events-none"
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
               }`}
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-[#FCD017]" />
-              <span>z-[70]: AccountModal.tsx:390 Toast Wrapper</span>
+              {/* Floating Toast Notification on top of modal */}
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[70] bg-[#111111] text-white px-3 py-1 rounded-full shadow-2xl border border-[#FCD017] flex items-center gap-1.5 text-[8.5px] font-mono ring-2 ring-[#FCD017]">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FCD017]" />
+                <span className="font-bold text-[#FCD017]">z-[70]:</span>
+                <span>Toast Alert (Floating Above Modal)</span>
+              </div>
+
+              {/* AccountModal Dialog Container */}
+              <div className="w-52 bg-[#0c0c0e] border border-white/20 rounded-xl p-3 text-white shadow-2xl space-y-2 mt-4">
+                <div className="flex items-center justify-between border-b border-white/10 pb-1">
+                  <span className="text-[9px] font-mono font-bold text-neutral-300">AccountModal.tsx (z-50)</span>
+                  <span className="text-[7.5px] font-mono text-neutral-500">Member Portal</span>
+                </div>
+                <div className="space-y-1">
+                  <div className="h-4 bg-white/5 rounded border border-white/10 px-2 flex items-center text-[7.5px] font-mono text-neutral-400">
+                    user@veyro.com
+                  </div>
+                  <div className="h-4 bg-white/5 rounded border border-white/10 px-2 flex items-center text-[7.5px] font-mono text-neutral-400">
+                    ••••••••
+                  </div>
+                </div>
+                <div className="h-5 bg-[#FCD017] text-[#111111] rounded text-[8px] font-mono font-bold flex items-center justify-center">
+                  Sign In (z-50 Dialog)
+                </div>
+              </div>
             </div>
 
             {/* Layer 100: Mobile Navigation Drawer */}
