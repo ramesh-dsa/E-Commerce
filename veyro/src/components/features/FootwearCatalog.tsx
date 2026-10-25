@@ -677,8 +677,8 @@ export function FootwearCatalog() {
                       </Link>
 
                       {/* Top Badges (Left) */}
-                      <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 pointer-events-none z-10">
-                        {product.badge && (
+                      {product.badge && (
+                        <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
                           <Badge
                             variant={
                               product.badge === "SALE"
@@ -690,11 +690,8 @@ export function FootwearCatalog() {
                           >
                             {product.badge}
                           </Badge>
-                        )}
-                        <span className="px-2 py-0.5 rounded-xs bg-veyro-black/85 backdrop-blur-xs text-veyro-yellow text-[9px] font-extrabold uppercase tracking-wider">
-                          {product.subcategoryTag}
-                        </span>
-                      </div>
+                        </div>
+                      )}
 
                       {/* Wishlist Heart Button (Right) */}
                       <WishlistButton product={product} isWishlisted={isWishlisted} />
