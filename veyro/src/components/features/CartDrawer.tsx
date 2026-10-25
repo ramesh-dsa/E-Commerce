@@ -1234,7 +1234,7 @@ export function CartDrawer() {
                             }}
                             className="group mt-2.5 inline-flex items-center gap-1.5 text-xs font-bold text-neutral-900 hover:text-black cursor-pointer transition-colors active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-900 rounded-sm"
                           >
-                            <span className="relative pb-0.5 border-b border-neutral-300/80 group-hover:border-transparent after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-neutral-950 after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
+                            <span className="relative pb-1 border-b border-neutral-300/80 group-hover:border-transparent after:absolute after:bottom-0 after:left-0 after:h-[2.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-neutral-950 after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100 motion-reduce:after:transition-none">
                               Switch to Cash on Delivery
                             </span>
                             <ArrowRight
