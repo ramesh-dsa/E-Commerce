@@ -20,7 +20,6 @@ export function ProductCard({
   className = "",
 }: ProductCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   
   const { getStats } = useReviews();
@@ -54,10 +53,10 @@ export function ProductCard({
           className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
           aria-label={product.name}
         >
-          {/* Active skeleton shimmer placeholder before image is decoded */}
+          {/* Active skeleton shimmer placeholder before image is decoded or when loading/offline */}
           {!imageLoaded && (
             <div
-              className={`absolute inset-0 z-0 overflow-hidden ${
+              className={`absolute inset-0 z-10 overflow-hidden ${
                 theme === "dark" ? "bg-neutral-800" : "bg-neutral-200/90"
               }`}
               aria-hidden="true"
@@ -78,21 +77,10 @@ export function ProductCard({
             unoptimized={true}
             sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
             onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              setImageError(true);
-              setImageLoaded(true);
-            }}
             className={`object-cover object-center ${
               isWatch ? "" : "transition-transform duration-500 ease-out group-hover:scale-105"
-            } transition-opacity duration-500 ease-out ${imageLoaded && !imageError ? "opacity-100" : "opacity-0"}`}
+            } transition-opacity duration-500 ease-out ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           />
-
-          {/* Graceful Fallback if image fails or is unavailable */}
-          {imageError && (
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-neutral-100 text-neutral-400">
-              <span className="text-2xs font-mono uppercase tracking-widest text-neutral-500">{product.name}</span>
-            </div>
-          )}
 
           {/* Secondary image on hover if provided - lazy loaded in background (disabled for watches or identical image) */}
           {!isWatch && product.secondaryImageUrl && product.secondaryImageUrl !== product.imageUrl && (
