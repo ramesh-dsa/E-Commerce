@@ -5,103 +5,201 @@ import {
   Copy,
   Check,
   Layers,
-  Code2,
-  Bell,
-  PanelRight,
+  Search,
   Menu,
-  ChevronDown,
+  Shield,
+  PanelRight,
   Filter,
   Grid,
+  Image as ImageIcon,
   Wallpaper,
+  Code2,
+  Sparkles,
+  SlidersHorizontal,
 } from "lucide-react";
 
-interface ZTier {
+interface ZToken {
   token: string;
-  level: number;
+  elevation: number;
   name: string;
+  count: number;
   role: string;
-  sourceFile: string;
+  primaryFile: string;
+  sourceFiles: string[];
   icon: React.ComponentType<{ className?: string }>;
-  accentColor: string;
-  bgHighlight: string;
+  tagBg: string;
+  tagText: string;
+  accentBorder: string;
 }
 
-const Z_TIERS: ZTier[] = [
+const STOREFRONT_Z_TOKENS: ZToken[] = [
   {
-    token: "z-60",
-    level: 60,
-    name: "Toasts & Critical Alerts",
-    role: "Global notification toasts, order status banners, network error bars & floating snackbars",
-    sourceFile: "Toast.tsx:71 • CartDrawer.tsx",
-    icon: Bell,
-    accentColor: "bg-[#FCD017] text-[#111111]",
-    bgHighlight: "border-l-[#FCD017]",
+    token: "z-[150]",
+    elevation: 150,
+    name: "Fullscreen Search Takeover",
+    count: 1,
+    role: "Full-viewport search takeover modal covering all page elements and browser toolbars",
+    primaryFile: "ProductSearch.tsx:243",
+    sourceFiles: ["src/components/features/ProductSearch.tsx:243"],
+    icon: Search,
+    tagBg: "bg-[#111111]",
+    tagText: "text-[#FCD017]",
+    accentBorder: "border-l-[#111111]",
+  },
+  {
+    token: "z-[100]",
+    elevation: 100,
+    name: "Mobile Navigation Drawers",
+    count: 2,
+    role: "Mobile navigation slide-over menu and section filter drawers on handheld screens",
+    primaryFile: "Navbar.tsx:497",
+    sourceFiles: [
+      "src/components/layout/Navbar.tsx:497",
+      "src/app/section/[slug]/page.tsx:222",
+    ],
+    icon: Menu,
+    tagBg: "bg-neutral-900",
+    tagText: "text-white",
+    accentBorder: "border-l-neutral-900",
+  },
+  {
+    token: "z-[70]",
+    elevation: 70,
+    name: "Account Modal Toast Wrapper",
+    count: 1,
+    role: "In-modal alert toast wrapper floating above login & profile authentication forms",
+    primaryFile: "AccountModal.tsx:390",
+    sourceFiles: ["src/components/features/AccountModal.tsx:390"],
+    icon: Shield,
+    tagBg: "bg-neutral-800",
+    tagText: "text-white",
+    accentBorder: "border-l-neutral-800",
   },
   {
     token: "z-50",
-    level: 50,
-    name: "Modal Sheets & Drawers",
-    role: "CartDrawer slide-over, AccountModal dialog, full-screen search overlay & backdrop scrims",
-    sourceFile: "CartDrawer.tsx:527 • AccountModal.tsx:412",
+    elevation: 50,
+    name: "Modals, Drawers & Sticky Header",
+    count: 22,
+    role: "Sticky desktop Navbar, CartDrawer slide-over, WishlistDrawer & global Toast notifications",
+    primaryFile: "Navbar.tsx:252 • CartDrawer.tsx:527",
+    sourceFiles: [
+      "src/components/layout/Navbar.tsx:252",
+      "src/components/features/CartDrawer.tsx:527",
+      "src/components/ui/Toast.tsx:71",
+      "src/components/features/WishlistDrawer.tsx:182",
+    ],
     icon: PanelRight,
-    accentColor: "bg-[#111111] text-white",
-    bgHighlight: "border-l-neutral-900",
+    tagBg: "bg-neutral-900",
+    tagText: "text-white",
+    accentBorder: "border-l-neutral-900",
   },
   {
     token: "z-40",
-    level: 40,
-    name: "Sticky Navigation Header",
-    role: "Sticky top navigation navbar, announcement ticker bar & desktop category dropdown root",
-    sourceFile: "Navbar.tsx:252 • Header.tsx",
-    icon: Menu,
-    accentColor: "bg-neutral-800 text-white",
-    bgHighlight: "border-l-neutral-700",
+    elevation: 40,
+    name: "Announcement Bar & Checkout Header",
+    count: 7,
+    role: "Top yellow ticker announcement bar, sticky checkout navigation & order status headers",
+    primaryFile: "AnnouncementBar.tsx:23 • checkout/page.tsx:968",
+    sourceFiles: [
+      "src/components/layout/AnnouncementBar.tsx:23",
+      "src/app/checkout/page.tsx:968",
+      "src/app/orders/[id]/page.tsx:239",
+    ],
+    icon: Sparkles,
+    tagBg: "bg-[#FCD017]",
+    tagText: "text-[#111111]",
+    accentBorder: "border-l-[#FCD017]",
   },
   {
     token: "z-30",
-    level: 30,
-    name: "Dropdowns & Popovers",
-    role: "SortDropdown menu, autocomplete search results list, size guide popovers & tooltips",
-    sourceFile: "SortDropdown.tsx:84 • ProductSearch.tsx",
-    icon: ChevronDown,
-    accentColor: "bg-neutral-700 text-white",
-    bgHighlight: "border-l-neutral-600",
+    elevation: 30,
+    name: "Catalog Sticky Filter Bars & Subnav",
+    count: 11,
+    role: "In-page sticky sub-nav category filter bars on Footwear & Watches catalog pages",
+    primaryFile: "FootwearCatalog.tsx:428 • WatchesCatalog.tsx:581",
+    sourceFiles: [
+      "src/components/features/FootwearCatalog.tsx:428",
+      "src/components/features/WatchesCatalog.tsx:581",
+      "src/components/features/CartDrawer.tsx:584",
+    ],
+    icon: Filter,
+    tagBg: "bg-neutral-700",
+    tagText: "text-white",
+    accentBorder: "border-l-neutral-700",
   },
   {
     token: "z-20",
-    level: 20,
-    name: "Sticky Subnav & Filter Bars",
-    role: "Catalog sticky filter headers, category tab pills bar & in-page section jump nav",
-    sourceFile: "ActiveFilterChips.tsx:30 • FootwearCatalog.tsx",
-    icon: Filter,
-    accentColor: "bg-neutral-600 text-white",
-    bgHighlight: "border-l-neutral-500",
+    elevation: 20,
+    name: "Interactive Buttons, Badges & Overlays",
+    count: 25,
+    role: "Product gallery zoom pills, category carousel arrows, QR checkout optical sweep",
+    primaryFile: "ProductGallery.tsx:164 • checkout/page.tsx:2349",
+    sourceFiles: [
+      "src/components/features/ProductGallery.tsx:164",
+      "src/app/checkout/page.tsx:2349",
+      "src/components/features/BrandPillarsSection.tsx:192",
+    ],
+    icon: SlidersHorizontal,
+    tagBg: "bg-neutral-600",
+    tagText: "text-white",
+    accentBorder: "border-l-neutral-600",
   },
   {
     token: "z-10",
-    level: 10,
-    name: "Standard Page Content",
-    role: "Product catalog grid cards, typography headers, footwear imagery & interactive buttons",
-    sourceFile: "ProductCard.tsx:45 • FootwearCatalog.tsx",
+    elevation: 10,
+    name: "Standard Catalog & Content Cards",
+    count: 99,
+    role: "Product cards, editorial banners, footwear grids, hero slides & interactive tiles",
+    primaryFile: "ProductCard.tsx:45 • FootwearSection.tsx",
+    sourceFiles: [
+      "src/components/catalog/ProductCard.tsx:45",
+      "src/app/section/[slug]/page.tsx:80",
+      "src/components/features/HeroPanel.tsx:141",
+    ],
     icon: Grid,
-    accentColor: "bg-neutral-500 text-white",
-    bgHighlight: "border-l-neutral-400",
+    tagBg: "bg-neutral-500",
+    tagText: "text-white",
+    accentBorder: "border-l-neutral-500",
+  },
+  {
+    token: "z-1",
+    elevation: 1,
+    name: "Image Readability Scrims",
+    count: 9,
+    role: "Dark linear & radial gradient underlays ensuring white text contrast over photos",
+    primaryFile: "FootwearCatalog.tsx:393, 610",
+    sourceFiles: [
+      "src/components/features/FootwearCatalog.tsx:393",
+      "src/components/features/FootwearCatalog.tsx:610",
+      "src/components/features/AccountModal.tsx:427",
+    ],
+    icon: ImageIcon,
+    tagBg: "bg-neutral-400",
+    tagText: "text-neutral-900",
+    accentBorder: "border-l-neutral-400",
   },
   {
     token: "z-0",
-    level: 0,
-    name: "Canvas & Ambient Aura",
-    role: "Deep background canvas, grid line textures, radial luxury gradient aura & watermark logos",
-    sourceFile: "Footer.tsx:168 • BrandPillarsSection.tsx",
+    elevation: 0,
+    name: "Canvas Backgrounds & Track Rails",
+    count: 8,
+    role: "Background canvas fills, progress timeline tracks, watermark grids & aura layers",
+    primaryFile: "orders/[id]/return/page.tsx:259 • Footer.tsx:168",
+    sourceFiles: [
+      "src/app/orders/[id]/return/page.tsx:259",
+      "src/components/layout/Footer.tsx:168",
+      "src/components/features/WatchesCatalog.tsx:531",
+    ],
     icon: Wallpaper,
-    accentColor: "bg-neutral-400 text-white",
-    bgHighlight: "border-l-neutral-300",
+    tagBg: "bg-neutral-300",
+    tagText: "text-neutral-800",
+    accentBorder: "border-l-neutral-300",
   },
 ];
 
 export default function ZIndexSpecimen() {
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [activeTier, setActiveTier] = useState<number>(50);
+  const [activeToken, setActiveToken] = useState<string>("z-50");
 
   const handleCopy = (token: string) => {
     if (navigator?.clipboard) {
@@ -111,84 +209,96 @@ export default function ZIndexSpecimen() {
     }
   };
 
+  const selectedTier = STOREFRONT_Z_TOKENS.find((t) => t.token === activeToken) || STOREFRONT_Z_TOKENS[3];
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* ============================================================== */}
-      {/* 1. SECTION HEADER                                              */}
+      {/* 1. SECTION SUMMARY HEADER                                       */}
       {/* ============================================================== */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-2">
-            <Layers className="w-4 h-4 text-[#111111]" />
-            Canonical 7-Tier Stacking Context Ladder
-          </h4>
-          <p className="text-xs text-neutral-500 font-normal">
-            Deterministic z-index tiers preventing overlay conflicts and accidental element overlaps
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#FAFAF8] rounded-xl border border-[#E8E8E5]">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-[#111111] text-[#FCD017] flex items-center justify-center font-bold">
+            <Layers className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-neutral-950 flex items-center gap-2">
+              Active Storefront Stacking Stack
+              <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                100% Real Codebase
+              </span>
+            </h4>
+            <p className="text-xs text-neutral-600">
+              185 total z-index occurrences across 10 active tokens in the storefront
+            </p>
+          </div>
         </div>
-        <span className="text-[11px] text-neutral-400 font-medium">Click layer row to highlight on stack</span>
+        <div className="text-xs font-mono text-neutral-600 flex items-center gap-2">
+          <span className="font-bold text-neutral-900">Highest: z-[150]</span>
+          <span>•</span>
+          <span className="font-bold text-neutral-900">Lowest: z-0</span>
+        </div>
       </div>
 
       {/* ============================================================== */}
-      {/* 2. TWO-COLUMN LAYOUT: STACK LADDER + VISUAL 3D CHOREOGRAPHY   */}
+      {/* 2. MAIN TWO-COLUMN VIEW: CARDS LIST + LIVE COMPONENT PREVIEW    */}
       {/* ============================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Ladder Rows */}
+        {/* Left Column: 10 Real Stacking Tiers */}
         <div className="lg:col-span-7 border border-[#E8E8E5] rounded-2xl bg-white shadow-2xs overflow-hidden divide-y divide-neutral-100">
-          {Z_TIERS.map((tier) => {
-            const isSelected = activeTier === tier.level;
-            const isCopied = copiedToken === tier.token;
-            const Icon = tier.icon;
+          {STOREFRONT_Z_TOKENS.map((item) => {
+            const isSelected = activeToken === item.token;
+            const isCopied = copiedToken === item.token;
+            const Icon = item.icon;
 
             return (
               <div
-                key={tier.token}
-                onClick={() => setActiveTier(tier.level)}
+                key={item.token}
+                onClick={() => setActiveToken(item.token)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    setActiveTier(tier.level);
+                    setActiveToken(item.token);
                   }
                 }}
                 role="button"
                 tabIndex={0}
-                className={`p-3.5 sm:p-4 flex items-center justify-between gap-4 cursor-pointer transition-colors border-l-4 ${
+                className={`p-3.5 sm:p-4 flex items-center justify-between gap-3 cursor-pointer transition-colors border-l-4 ${
                   isSelected
-                    ? `${tier.bgHighlight} bg-[#FAF9F6]`
+                    ? `${item.accentBorder} bg-[#FAF9F6]`
                     : "border-l-transparent hover:bg-[#FBFBFA]"
                 }`}
               >
-                {/* Left info */}
-                <div className="flex items-center gap-3">
+                {/* Left token info */}
+                <div className="flex items-center gap-3 min-w-0">
                   <span
-                    className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${tier.accentColor} shadow-2xs min-w-[54px] text-center`}
+                    className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${item.tagBg} ${item.tagText} shadow-2xs min-w-[62px] text-center shrink-0`}
                   >
-                    {tier.token}
+                    {item.token}
                   </span>
 
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-1.5">
-                      <Icon className="w-3.5 h-3.5 text-neutral-500" />
-                      <h5 className="text-xs sm:text-sm font-bold text-neutral-950">
-                        {tier.name}
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Icon className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+                      <h5 className="text-xs sm:text-sm font-bold text-neutral-950 truncate">
+                        {item.name}
                       </h5>
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 font-semibold">
+                        {item.count} {item.count === 1 ? "use" : "uses"}
+                      </span>
                     </div>
-                    <p className="text-xs text-neutral-600 line-clamp-1 max-w-sm">
-                      {tier.role}
+                    <p className="text-xs text-neutral-600 line-clamp-1">
+                      {item.role}
                     </p>
                   </div>
                 </div>
 
                 {/* Right actions */}
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-neutral-400 hidden sm:inline">
-                    Layer {tier.level}
-                  </span>
-
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleCopy(tier.token);
+                      handleCopy(item.token);
                     }}
                     className="font-mono text-[11px] font-bold text-neutral-700 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded transition-colors flex items-center gap-1"
                     title="Click to copy token"
@@ -211,97 +321,100 @@ export default function ZIndexSpecimen() {
           })}
         </div>
 
-        {/* Right Column: Visual Stacking Wireframe Simulation */}
+        {/* Right Column: Active Token Inspector & Code Sources */}
         <div className="lg:col-span-5 border border-[#E8E8E5] rounded-2xl p-5 bg-[#FAFAF8] shadow-2xs space-y-4 sticky top-28">
           <div className="space-y-1 pb-3 border-b border-neutral-200/80">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase font-bold text-neutral-500 tracking-wider">
-                Live Stacking Isolation
+                Storefront Stacking Layer
               </span>
-              <span className="text-xs font-mono font-bold bg-[#111111] text-[#FCD017] px-2 py-0.5 rounded">
-                z-{activeTier}
+              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${selectedTier.tagBg} ${selectedTier.tagText}`}>
+                {selectedTier.token}
               </span>
             </div>
-            <h5 className="text-sm font-bold text-neutral-900">
-              {Z_TIERS.find((t) => t.level === activeTier)?.name}
+            <h5 className="text-sm font-bold text-neutral-950">
+              {selectedTier.name}
             </h5>
             <p className="text-xs text-neutral-600 leading-relaxed">
-              {Z_TIERS.find((t) => t.level === activeTier)?.role}
+              {selectedTier.role}
             </p>
           </div>
 
           {/* Visual Layered UI Simulation */}
           <div className="relative h-64 bg-white rounded-xl border border-neutral-200 p-4 overflow-hidden flex flex-col justify-between">
-            {/* Layer 0: Background Canvas */}
+            {/* Layer 0: Canvas */}
             <div
               className={`absolute inset-0 bg-[#F4F4F1] p-3 transition-opacity duration-300 ${
-                activeTier === 0 ? "opacity-100 ring-2 ring-neutral-900" : "opacity-30"
+                activeToken === "z-0" ? "opacity-100 ring-2 ring-neutral-900" : "opacity-30"
               }`}
             >
               <span className="text-[9px] font-mono text-neutral-500 font-bold">
-                z-0: Ambient Canvas &amp; Aura
+                z-0: Ambient Canvas &amp; Rails
+              </span>
+            </div>
+
+            {/* Layer 1: Scrim */}
+            <div
+              className={`absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 to-transparent p-2 z-1 transition-opacity duration-300 ${
+                activeToken === "z-1" ? "opacity-100 ring-2 ring-[#FCD017]" : "opacity-30"
+              }`}
+            >
+              <span className="text-[9px] font-mono text-white/90 font-bold">
+                z-1: Dark Scrim Readability Layer
               </span>
             </div>
 
             {/* Layer 10: Content Grid */}
             <div
               className={`relative z-10 grid grid-cols-2 gap-2 mt-auto p-2 bg-white rounded-lg border border-neutral-200 shadow-2xs transition-all duration-300 ${
-                activeTier === 10
+                activeToken === "z-10"
                   ? "ring-2 ring-neutral-900 bg-white"
-                  : activeTier < 10
-                  ? "opacity-20"
-                  : "opacity-60"
+                  : "opacity-70"
               }`}
             >
-              <div className="h-8 bg-neutral-100 rounded text-[9px] font-mono flex items-center justify-center text-neutral-500">
-                Product Card
+              <div className="h-8 bg-neutral-100 rounded text-[9px] font-mono flex items-center justify-center text-neutral-600">
+                ProductCard (z-10)
               </div>
-              <div className="h-8 bg-neutral-100 rounded text-[9px] font-mono flex items-center justify-center text-neutral-500">
-                Product Card
+              <div className="h-8 bg-neutral-100 rounded text-[9px] font-mono flex items-center justify-center text-neutral-600">
+                FootwearCard (z-10)
               </div>
             </div>
 
-            {/* Layer 20: Subnav Filter */}
-            <div
-              className={`relative z-20 flex items-center justify-between p-2 bg-neutral-100 rounded-lg border border-neutral-200 text-[9px] font-mono transition-all duration-300 ${
-                activeTier === 20
-                  ? "ring-2 ring-neutral-900 bg-neutral-200 text-neutral-950 font-bold"
-                  : activeTier < 20
-                  ? "opacity-20"
-                  : "opacity-60"
-              }`}
-            >
-              <span>z-20: Filter Chips Bar</span>
-              <span>All / Footwear / Tees</span>
+            {/* Layer 30 & 40: Subnav & Navbar */}
+            <div className="space-y-1.5 relative z-40">
+              <div
+                className={`flex items-center justify-between p-2 bg-[#111111] text-white rounded text-[9px] font-mono transition-all duration-300 ${
+                  activeToken === "z-50"
+                    ? "ring-2 ring-[#FCD017] shadow-md"
+                    : activeToken === "z-40"
+                    ? "ring-2 ring-neutral-400"
+                    : "opacity-85"
+                }`}
+              >
+                <span className="font-bold text-[#FCD017]">Navbar Header (z-50)</span>
+                <span>Cart (2)</span>
+              </div>
+              <div
+                className={`flex items-center justify-between p-1.5 bg-neutral-100 rounded text-[8px] font-mono transition-all duration-300 ${
+                  activeToken === "z-30" ? "ring-2 ring-neutral-900 bg-neutral-200 font-bold" : "opacity-70"
+                }`}
+              >
+                <span>Filter Subnav Bar (z-30)</span>
+                <span>Footwear / All</span>
+              </div>
             </div>
 
-            {/* Layer 40: Navbar */}
-            <div
-              className={`relative z-40 flex items-center justify-between p-2.5 bg-[#111111] text-white rounded-lg text-[9px] font-mono transition-all duration-300 ${
-                activeTier === 40
-                  ? "ring-2 ring-[#FCD017] shadow-md"
-                  : activeTier < 40
-                  ? "opacity-20"
-                  : "opacity-80"
-              }`}
-            >
-              <span className="font-bold text-[#FCD017]">z-40: VEYRO NAVBAR</span>
-              <span>Cart (2)</span>
-            </div>
-
-            {/* Layer 50: Drawer / Modal */}
+            {/* Layer 50 / 100: Drawers */}
             <div
               className={`absolute top-0 right-0 w-36 h-full bg-white border-l-2 border-neutral-300 shadow-xl p-3 z-50 flex flex-col justify-between transition-all duration-300 ${
-                activeTier === 50
+                activeToken === "z-50" || activeToken === "z-[100]"
                   ? "translate-x-0 ring-2 ring-neutral-900"
-                  : activeTier < 50
-                  ? "translate-x-full opacity-0"
-                  : "translate-x-0 opacity-70"
+                  : "translate-x-full opacity-0"
               }`}
             >
               <div className="space-y-1">
                 <span className="text-[9px] font-mono font-bold text-neutral-900 block">
-                  z-50: CartDrawer
+                  {activeToken === "z-[100]" ? "Mobile Drawer (z-[100])" : "CartDrawer (z-50)"}
                 </span>
                 <div className="h-2 bg-neutral-200 rounded w-full" />
                 <div className="h-2 bg-neutral-100 rounded w-3/4" />
@@ -311,26 +424,40 @@ export default function ZIndexSpecimen() {
               </div>
             </div>
 
-            {/* Layer 60: Toast Notification */}
+            {/* Layer 150: Fullscreen Search */}
             <div
-              className={`absolute top-2 left-1/2 -translate-x-1/2 z-60 bg-[#111111] text-white px-3 py-1 rounded-full shadow-lg border border-neutral-700 flex items-center gap-1.5 text-[9px] font-mono transition-all duration-300 ${
-                activeTier === 60
-                  ? "scale-100 opacity-100 ring-2 ring-[#FCD017]"
-                  : "scale-90 opacity-0 pointer-events-none"
+              className={`absolute inset-0 bg-white z-[150] p-4 flex flex-col justify-between border-2 border-neutral-950 transition-all duration-300 ${
+                activeToken === "z-[150]" ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
               }`}
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-[#FCD017]" />
-              <span>z-60: Added to bag!</span>
+              <div className="flex items-center gap-2 border-b pb-2">
+                <Search className="w-3.5 h-3.5 text-neutral-400" />
+                <span className="text-[10px] font-mono font-bold text-neutral-900">
+                  ProductSearch.tsx:243 (z-[150])
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-neutral-500">
+                Full-screen search takeover overlay active
+              </span>
             </div>
           </div>
 
-          {/* Active Source File Reference */}
-          <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500 pt-2 border-t border-neutral-200/80">
-            <span className="flex items-center gap-1">
-              <Code2 className="w-3.5 h-3.5 text-neutral-400" />
-              <span>{Z_TIERS.find((t) => t.level === activeTier)?.sourceFile}</span>
+          {/* Actual Source Files */}
+          <div className="space-y-2 pt-2 border-t border-neutral-200/80">
+            <span className="text-[10px] font-mono uppercase font-bold text-neutral-500 tracking-wider block">
+              Verified Codebase Locations
             </span>
-            <span className="text-neutral-400">Strict Layer Order</span>
+            <div className="space-y-1 max-h-36 overflow-y-auto">
+              {selectedTier.sourceFiles.map((file) => (
+                <div
+                  key={file}
+                  className="flex items-center gap-1.5 text-[11px] font-mono text-neutral-700 bg-white px-2 py-1 rounded border border-neutral-200"
+                >
+                  <Code2 className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+                  <span className="truncate">{file}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -829,7 +829,7 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    The canonical 7-tier stacking context ladder, component layer mapping, and visual stacking isolation.
+                    Active stacking context tokens in the storefront codebase, component layer mappings, and verified file locations.
                   </p>
                 </div>
 
