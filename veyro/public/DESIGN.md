@@ -402,7 +402,7 @@ The transition strategy is organized around six concrete architectural pillars, 
 | Pillar | Title & Target | Source Files | Architectural Implementation |
 |---|---|---|---|
 | **01** | Brand design token consolidation | `src/app/globals.css` | Legacy hex literals (`#111111` dark ink, `#fcd017` brand gold, `#f8f8f6` surface) migrate to Tailwind v4 `@theme` tokens (`veyro-black`, `veyro-yellow`, `veyro-surface`, `veyro-border`). Global shell components (`Navbar.tsx`, `Footer.tsx`, `CartDrawer.tsx`) are 100% unified. |
-| **02** | Shared action & badge primitives | `src/components/ui/Button.tsx` | Divergent raw `<button>` tags across product catalog pages consolidate onto `ui/Button.tsx` (Primary Gold CTA, Secondary Ink, Ghost/Outline) and `ui/Badge.tsx`, ensuring universal keyboard focus rings and active states. |
+| **02** | Shared action & badge primitives | `src/components/ui/Button.tsx` | Divergent raw `<button>` tags across product catalog pages consolidate onto `ui/Button.tsx` (Primary Ink CTA, High-Impact Gold, Ghost/Outline) and `ui/Badge.tsx`, ensuring universal keyboard focus rings and active states. |
 | **03** | Product card & bento surface standard | `src/components/features/ProductCard.tsx` | Clothing, footwear, and watch catalog cards strictly adhere to `rounded-2xl` geometry, `bg-veyro-surface` image viewports, liquid wishlist spring animations, and standardized INR currency formatting. |
 | **04** | 10-Tier Z-Index ladder governance | `src/app/design-guidelines/ZIndexSpecimen.tsx` | All 185 stacking contexts across the storefront align to the verified 10-tier scale — from `z-0` canvas, `z-40` Navbar, `z-50` CartDrawer, `z-[70]` Toasts, up to `z-[150]` Fullscreen Lightbox — preventing stacking leaks. |
 | **05** | Hardware-accelerated GPU motion | `src/components/ui/SpotlightBentoCard.tsx` | Continuous interactive motion is restricted strictly to `transform` and `opacity` with `motion/react` and `transform-gpu`. Geometry-animating transitions (`width`, `height`, `top`) are replaced to guarantee smooth 60fps renders on mobile. |
@@ -417,8 +417,8 @@ A concise 12-row summary of canonical standards versus code anti-patterns:
 | Category | Follow (The Standard) | Avoid (Anti-Pattern) |
 |---|---|---|
 | **1. Primary Text** | `text-neutral-900` or `text-veyro-black` | Inline `#111111`, `#000000`, or deep navy `#101828` |
-| **2. Primary Action / CTA** | `bg-veyro-yellow text-neutral-900 hover:bg-veyro-yellow-dark` | `bg-black`, `bg-[#111111]`, or terracotta literals |
-| **3. Gold Accent Usage** | Gold as background (`bg-[#FCD017]`) or accent bar with Ink text | Gold text on white surfaces (`text-[#FCD017]` fails at 1.48:1) |
+| **2. Primary Action / CTA** | Primary Ink (`bg-veyro-black text-white`) or High-Impact Gold (`bg-veyro-yellow text-veyro-black`) | Raw hex literals (`bg-[#111111]`, `bg-[#fcd017]`) or ad-hoc untokenized buttons |
+| **3. Gold Accent Usage** | Gold as background (`bg-veyro-yellow`) or accent bar with Ink text | Gold text on white surfaces (`text-veyro-yellow` fails at 1.48:1) |
 | **4. Neutral Greys** | Tailwind `neutral` scale (`neutral-50` through `neutral-950`) | `zinc`, `slate`, `gray`, `stone`, or hardcoded grey hexes |
 | **5. Heading Typography** | Geist Sans, Montserrat, Outfit (`uppercase tracking-tight`) | Unloaded external fonts, serif fonts, unoptimized web fonts |
 | **6. Font Sizes** | Standard Tailwind scale (`text-2xs` through `text-6xl`) | Arbitrary pixel sizes (`text-[11px]`, `text-[10px]`, `text-[13px]`) |

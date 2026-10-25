@@ -235,13 +235,13 @@ const QUICK_REFERENCE = [
   },
   {
     category: "2. Primary Action / CTA",
-    follow: "bg-veyro-yellow text-neutral-900 hover:bg-veyro-yellow-dark",
-    avoid: "bg-black, bg-[#111111], or terracotta literals",
+    follow: "Primary Ink (bg-veyro-black text-white) or High-Impact Gold (bg-veyro-yellow text-veyro-black)",
+    avoid: "Raw hex literals (bg-[#111111], bg-[#fcd017]) or ad-hoc untokenized buttons",
   },
   {
     category: "3. Gold Accent Usage",
-    follow: "Gold as background (bg-[#FCD017]) or accent bar with Ink text",
-    avoid: "Gold text on white surfaces (text-[#FCD017] fails at 1.48:1)",
+    follow: "Gold as background (bg-veyro-yellow) or accent bar with Ink text",
+    avoid: "Gold text on white surfaces (text-veyro-yellow fails at 1.48:1)",
   },
   {
     category: "4. Neutral Greys",
@@ -1006,13 +1006,13 @@ export default function DesignGuidelinesPage() {
                       <tbody className="divide-y divide-[#E8E8E5] text-neutral-700 leading-relaxed">
                         {QUICK_REFERENCE.map((row) => (
                           <tr key={row.category} className="hover:bg-neutral-50/50 transition-colors">
-                            <td className="py-3 px-4 font-bold text-neutral-950">{row.category}</td>
-                            <td className="py-3 px-4 font-mono text-neutral-950 font-medium">
-                              <span className="text-emerald-700 font-bold mr-1.5">✓</span>
+                            <td className="py-3 px-4 font-bold text-neutral-950 text-xs sm:text-sm font-sans">{row.category}</td>
+                            <td className="py-3 px-4 text-neutral-950 font-medium text-xs sm:text-sm font-sans">
+                              <span className="text-emerald-700 font-bold mr-1.5 font-mono">✓</span>
                               {row.follow}
                             </td>
-                            <td className="py-3 px-4 font-mono text-neutral-700">
-                              <span className="text-red-600 font-bold mr-1.5">✕</span>
+                            <td className="py-3 px-4 text-neutral-600 font-normal text-xs sm:text-sm font-sans">
+                              <span className="text-red-600 font-bold mr-1.5 font-mono">✕</span>
                               {row.avoid}
                             </td>
                           </tr>
