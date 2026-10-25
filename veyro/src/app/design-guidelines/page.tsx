@@ -14,7 +14,6 @@ import {
   Download,
   Check,
   X,
-  Info,
 } from "lucide-react";
 
 const archivo = Archivo({
@@ -318,39 +317,18 @@ export default function DesignGuidelinesPage() {
               >
                 Brand & Design Guidelines
               </h1>
-              <p className="text-base sm:text-lg text-neutral-700 max-w-2xl leading-relaxed font-normal">
-                The prescriptive brand, geometric, and visual system standard for the VEYRO digital storefront.
-                The guidelines state the standard; where existing code disagrees, the rule wins and the code is scheduled for migration.
+              <p className="text-base sm:text-lg text-neutral-600 max-w-2xl leading-relaxed font-normal">
+                The architectural brand, geometric, and visual system standard for the VEYRO digital storefront.
               </p>
-
-              {/* Status Banner */}
-              <div className="border-l-4 border-[#FCD017] bg-white p-4 rounded-r-lg shadow-2xs border-y border-r border-[#E8E8E5] max-w-3xl">
-                <div className="flex items-start gap-2.5">
-                  <Info className="w-4 h-4 text-neutral-800 shrink-0 mt-0.5" />
-                  <p className="text-sm text-neutral-800 leading-relaxed font-medium">
-                    This document defines the standard VEYRO is moving to. The live website on this branch does not follow it everywhere yet. Each section shows what the code uses today and what the standard requires. Section 12 lists the migration order.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-medium text-neutral-600">
-                <span className="px-2.5 py-1 bg-white border border-[#E8E8E5] rounded-full text-neutral-900 font-bold">
-                  Version 1.0
-                </span>
-                <span>•</span>
-                <span>Updated October 2026</span>
-                <span>•</span>
-                <span>Standard Specification &amp; Code Audit</span>
-              </div>
             </div>
 
-            <div className="shrink-0">
+            <div className="shrink-0 pb-1">
               <a
                 href="/DESIGN.md"
                 download="DESIGN.md"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#FCD017] hover:bg-[#E5BC05] text-[#111111] font-semibold text-sm rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#FCD017] hover:bg-[#E5BC05] text-[#111111] font-bold text-sm rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] shadow-2xs"
               >
-                <Download className="w-4 h-4 text-[#111111]" />
+                <Download className="w-4 h-4 text-[#111111] stroke-[2.2]" />
                 <span>Download DESIGN.md</span>
               </a>
             </div>
