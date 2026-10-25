@@ -4,6 +4,7 @@ import { Archivo, Inter } from "next/font/google";
 import { Logo, VeyroMark } from "@/components/ui/Logo";
 import GuidelinesTreeSidebar from "./GuidelinesTreeSidebar";
 import ColorPaletteSpecimen from "./ColorPaletteSpecimen";
+import TypographySpecimen from "./TypographySpecimen";
 import {
   Download,
   Check,
@@ -731,128 +732,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active storefront font families and sizes versus the two-font standard.
+                    The two-font architectural standard: Archivo for bold headlines and Inter for clean UI &amp; reading copy.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">5 Font Families Loaded in layout.tsx:</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• <strong className="text-neutral-950 font-sans font-bold">Geist Sans:</strong> Default base font across all 178 files (23 explicit font-sans).</li>
-                            <li>• <strong className="text-neutral-950 font-mono font-bold">Geist Mono:</strong> 157 uses (font-mono) for SKUs, vouchers, and metadata tags.</li>
-                            <li>• <strong className="text-neutral-950 font-sans font-bold">Dancing Script:</strong> 19 uses (.font-script) for cursive headlines.</li>
-                            <li>• <strong className="text-neutral-950 font-sans font-bold">Montserrat:</strong> 17 uses (.font-luxury) for luxury banner accents.</li>
-                            <li>• <strong className="text-neutral-950 font-sans font-bold">Outfit:</strong> 12 uses (--font-outfit) for subheadings.</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Standard Tailwind Text Sizes (1,083 uses):</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 leading-relaxed text-neutral-800">
-                            text-xs (578), text-sm (219), text-3xl (67), text-2xl (65), text-4xl (37), text-base (32), text-xl (31), text-lg (27), text-5xl (14), text-6xl (8), text-7xl (5).
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Top 8 Arbitrary Sizes (796 uses across 39 sizes):</span>
-                          <ul className="grid grid-cols-2 gap-2 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• text-[11px]: 312</li>
-                            <li>• text-[10px]: 178</li>
-                            <li>• text-[13px]: 54</li>
-                            <li>• text-[14px]: 45</li>
-                            <li>• text-[9px]: 37</li>
-                            <li>• text-[12px]: 20</li>
-                            <li>• text-[15px]: 18</li>
-                            <li>• text-[10.5px]: 17</li>
-                          </ul>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2.5 text-xs">
-                          <div className="bg-white p-2.5 rounded-lg border border-neutral-200">
-                            <span className="font-bold block text-neutral-950 mb-1 uppercase tracking-wider text-[11px]">Weights:</span>
-                            bold (587), semibold (295), medium (215), black (141), normal (55), extrabold (31), light (18).
-                          </div>
-                          <div className="bg-white p-2.5 rounded-lg border border-neutral-200">
-                            <span className="font-bold block text-neutral-950 mb-1 uppercase tracking-wider text-[11px]">Tracking:</span>
-                            tracking-wider (241), tracking-tight (107), tracking-widest (59), tracking-wide (44), bracketed (65).
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <span className="font-bold text-neutral-900">Standard adoption: 1,083 of 1,879 (57.6% standard sizes)</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        {/* Archivo Live Specimen */}
-                        <div className="border border-[#E8E8E5] p-4 rounded-xl bg-[#F8F8F6] space-y-1.5">
-                          <span className="text-xs font-bold uppercase tracking-wider text-neutral-700 block">
-                            Heading Font: Archivo (font-heading)
-                          </span>
-                          <p className="text-2xl font-bold uppercase tracking-tight text-[#111111]" style={{ fontFamily: archivo.style.fontFamily }}>
-                            BUILT FOR THE ARCHIVE
-                          </p>
-                          <span className="text-xs text-neutral-600 font-medium block">Weights: 500 (Medium), 600 (SemiBold), 700 (Bold).</span>
-                        </div>
-
-                        {/* Inter Live Specimen */}
-                        <div className="border border-[#E8E8E5] p-4 rounded-xl bg-[#F8F8F6] space-y-1.5">
-                          <span className="text-xs font-bold uppercase tracking-wider text-neutral-700 block">
-                            Body &amp; UI Font: Inter (font-body)
-                          </span>
-                          <p className="text-sm text-neutral-900 leading-relaxed font-normal" style={{ fontFamily: inter.style.fontFamily }}>
-                            100% long-staple Indian combed cotton. Architectural drape that retains shape wash after wash.
-                          </p>
-                          <span className="text-xs text-neutral-600 font-medium block">Weights: 400 (Regular), 500 (Medium), 600 (SemiBold), 700 (Bold).</span>
-                        </div>
-
-                        <div className="border-l-2 border-[#111111] pl-3 py-1 text-sm text-neutral-800 leading-relaxed font-medium">
-                          <strong>Standard Rule:</strong> Only Archivo and Inter are permitted. Geist, Geist Mono, Dancing Script, Montserrat, and Outfit are outside the system and scheduled for migration.
-                        </div>
-
-                        <div className="p-3 bg-[#FFF8E7] rounded-lg border border-[#FCD017]/30 text-sm text-neutral-950 leading-relaxed">
-                          <strong>Scale Rule:</strong> All arbitrary sizes (e.g. <code className="font-mono font-bold">text-[11px]</code>) must map to canonical scale tokens (<code className="font-mono font-bold">text-2xs</code> through <code className="font-mono font-bold">text-6xl</code>).
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard Type Scale: text-2xs (11px) to text-6xl (60px).
-                    </div>
-                  </div>
-                </div>
+                <TypographySpecimen />
               </section>
             </div>
 
