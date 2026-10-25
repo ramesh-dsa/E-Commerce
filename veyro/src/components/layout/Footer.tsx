@@ -161,13 +161,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-veyro-black text-white pt-16 sm:pt-24 pb-12 border-t border-neutral-800/80 overflow-hidden">
-      {/* Subtle luxury ambient radial aura */}
-      <div
-        aria-hidden="true"
-        className="absolute top-0 inset-x-0 h-48 bg-[radial-gradient(ellipse_75%_140px_at_50%_0%,rgba(255,255,255,0.035),transparent)] pointer-events-none"
-      />
-
+    <footer className="relative w-full bg-veyro-black text-white pt-16 sm:pt-24 pb-12 border-t border-white/10 overflow-hidden">
       <Container>
         {/* Newsletter & Brand Statement Strip */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 pb-16 border-b border-neutral-800/80">
