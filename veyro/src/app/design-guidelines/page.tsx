@@ -966,7 +966,7 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Storefront architecture modernization roadmap, token migration recipes, and continuous verification audits.
+                    The built surface largely honors the system. Where it diverges, migration follows this order of impact — a pull request that changes UI is checked against these guidelines before it ships.
                   </p>
                 </div>
 
