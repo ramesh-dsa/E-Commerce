@@ -161,124 +161,88 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-veyro-black text-white pt-16 sm:pt-20 pb-8 border-t border-neutral-800 overflow-hidden">
+    <footer className="relative w-full bg-veyro-black text-white pt-16 sm:pt-24 pb-12 border-t border-neutral-800/80 overflow-hidden">
+      {/* Subtle luxury ambient radial aura */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 h-48 bg-[radial-gradient(ellipse_75%_140px_at_50%_0%,rgba(255,255,255,0.035),transparent)] pointer-events-none"
+      />
+
       <Container>
-        {/* Row 1: Brand Ethos (Left) & The VEYRO Club Newsletter / VIP Pass (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 pb-16 items-start">
-          {/* Brand Ethos (Col 1 to 5) */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+        {/* Newsletter & Brand Statement Strip */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 pb-16 border-b border-neutral-800/80">
+          {/* Brand Vision */}
+          <div className="lg:col-span-6 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <Logo height={30} variant="white" />
+                <Logo height={32} variant="white" />
               </div>
-              <p className="mt-4 text-sm sm:text-base text-neutral-300 leading-relaxed max-w-sm font-normal">
-                Engineered for the modern Indian uniform. Heavyweight 240 GSM architectural cuts, handcrafted Horology calibres, and vulcanized footwear silhouettes.
+              <p className="mt-5 text-sm sm:text-base text-neutral-300 leading-relaxed max-w-sm font-normal">
+                Engineered for the modern Indian uniform. Architectural cuts, premium textiles, and brutalist silhouettes.
               </p>
             </div>
 
-            <div className="space-y-2 border-l border-neutral-800 pl-4 py-1">
-              <div className="flex items-center gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-veyro-yellow animate-pulse" />
-                <span className="text-2xs font-semibold tracking-widest text-neutral-300 uppercase font-mono">
-                  BENGALURU & TIRUPUR • MADE IN INDIA
-                </span>
-              </div>
-              <p className="text-2xs text-neutral-400 font-mono tracking-wider uppercase">
-                ARCHIVAL RUNS ONLY • NO MASS RESTOCKS
+            <div className="mt-8">
+              <p className="text-xs font-medium tracking-[0.2em] text-neutral-500 uppercase font-mono">
+                Bengaluru • Tirupur — Made in India
               </p>
-            </div>
-
-            {/* Social Presence */}
-            <div className="pt-1">
-              <span className="block text-2xs font-bold uppercase tracking-widest text-neutral-400 mb-2.5 font-mono">
-                Connect @veyro.in
-              </span>
-              <div className="flex items-center gap-2">
-                {socialLinks.map((social) => {
-                  const Icon = social.icon;
-                  return (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Follow VEYRO on ${social.label}`}
-                      className="w-8 h-8 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-white hover:bg-neutral-900 flex items-center justify-center transition-colors duration-200"
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                    </a>
-                  );
-                })}
-              </div>
             </div>
           </div>
 
-          {/* The VEYRO Club: Clean Newsletter or Unlocked VIP Pass (Col 6 to 12) */}
-          <div className="lg:col-span-7 flex flex-col justify-center">
-            {!isJoined ? (
-              /* State A: Clean Editorial Newsletter Form (Before email submission) */
-              <div className="space-y-4">
-                <span className="text-xs font-bold tracking-widest text-veyro-yellow uppercase font-mono flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-veyro-yellow" />
-                  THE VEYRO CLUB
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                  Unlock inaugural privileges.
-                </h3>
-                <p className="text-sm text-neutral-300 font-normal leading-relaxed max-w-md">
-                  Join the archival registry for early drop notifications, private capsule releases, and claim an immediate 10% inaugural membership pass.
-                </p>
+          {/* Newsletter / The VEYRO Club VIP Ticket Box */}
+          <div className="lg:col-span-6 flex flex-col justify-center">
+            <span className="text-xs font-bold tracking-[0.2em] text-veyro-yellow uppercase mb-2 font-mono block">
+              THE VEYRO CLUB
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+              Unlock inaugural privileges.
+            </h3>
+            <p className="text-sm text-neutral-300 mb-6 font-normal">
+              Early access to releases. Exclusive archival cuts.
+            </p>
 
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (email.trim()) {
-                      setEmailJoined(true);
-                    }
-                  }}
-                  className="flex flex-col sm:flex-row gap-3 pt-3 max-w-md"
-                >
+            {!isJoined ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (email.trim()) {
+                    setEmailJoined(true);
+                  }
+                }}
+                className="flex flex-col sm:flex-row gap-3 w-full items-center sm:items-end"
+              >
+                <div className="flex-1 w-full">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder="Enter your email address"
                     autoComplete="off"
                     spellCheck={false}
-                    className="flex-1 bg-neutral-900 border border-neutral-700 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-[#121214] border border-white/10 px-4 py-3.5 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-veyro-yellow focus:ring-1 focus:ring-veyro-yellow transition-all rounded-lg shadow-inner"
                     required
                   />
-                  <button
-                    type="submit"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-black hover:bg-veyro-yellow hover:text-black px-6 py-3 text-xs font-bold tracking-[0.1em] uppercase transition-colors cursor-pointer shrink-0"
-                  >
-                    <span>Request Pass</span>
-                    <ArrowRightIcon size={14} />
-                  </button>
-                </form>
-                <p className="text-2xs text-neutral-400 font-mono tracking-wider uppercase">
-                  VIP Pass issued upon subscription • No spam
-                </p>
-              </div>
+                </div>
+                <button
+                  type="submit"
+                  className="self-center sm:self-auto inline-flex items-center justify-center gap-2 bg-white text-black hover:bg-veyro-yellow hover:text-black px-8 py-3.5 text-xs sm:text-sm font-bold tracking-[0.1em] uppercase transition-all cursor-pointer shrink-0 rounded-lg shadow-md active:scale-98"
+                >
+                  <span>Request Pass</span>
+                  <ArrowRightIcon size={14} />
+                </button>
+              </form>
             ) : (
-              /* State B: Unlocked VIP Tear Pass (After user submits email) */
-              <div className="border border-neutral-800 bg-neutral-950 p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-300">
-                <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-neutral-800">
-                  <div>
-                    <span className="text-2xs font-mono font-bold uppercase tracking-widest text-veyro-yellow flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-veyro-yellow" />
-                      Privilege Issued
-                    </span>
-                    <h4 className="text-lg font-bold text-white mt-0.5">Your Inaugural VIP Pass</h4>
-                  </div>
-                  {!isTorn && (
-                    <span className="text-2xs text-neutral-400 font-mono">
+              <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                {!isTorn && (
+                  <div className="flex items-center justify-end text-xs">
+                    <span className="text-xs text-neutral-400 font-mono">
                       Drag or tap right stub to tear →
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                <div className="w-full overflow-visible flex items-center justify-center py-2 relative min-h-[240px]">
+                {/* The Luxury Tear Ticket Container with elevated glassmorphic charcoal border */}
+                <div className="w-full overflow-visible flex items-center justify-center py-6 px-4 sm:px-6 relative min-h-[270px] bg-[#121214] border border-white/10 rounded-2xl shadow-2xl shadow-black/80">
                   <TearTicket
                     image="/images/veyro-vip-pass-artwork.jpg"
                     imageAlt="VEYRO Luxury Atelier VIP Pass"
@@ -293,7 +257,7 @@ export function Footer() {
                     tearAngle={45}
                     stretch={45}
                     resistance={0.65}
-                    rotate={1.2}
+                    rotate={1.5}
                     tilt
                     tiltMax={8}
                     tiltReach={240}
@@ -302,7 +266,7 @@ export function Footer() {
                     background="#121214"
                     color="#f5f5f5"
                     border
-                    borderColor="rgba(255, 255, 255, 0.15)"
+                    borderColor="rgba(255, 255, 255, 0.12)"
                     borderWidth={1}
                     recenter
                     torn={isTorn}
@@ -329,6 +293,7 @@ export function Footer() {
                     }
                   >
                     <div className="absolute inset-0 flex flex-col justify-between p-4 font-mono select-none pointer-events-none overflow-hidden">
+                      {/* Holographic Liquid Foil Sweep */}
                       {isTorn && (
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none z-20 animate-ticket-shimmer" />
                       )}
@@ -361,6 +326,7 @@ export function Footer() {
                           </span>
                           <DecryptCode target="VEYRO10" active={isTorn} />
                         </div>
+                        {/* Barcode Graphic */}
                         <div className="flex items-center gap-0.5 h-6 opacity-85">
                           <span className="w-0.5 h-full bg-white block" />
                           <span className="w-1.5 h-full bg-white block" />
@@ -376,19 +342,24 @@ export function Footer() {
                   </TearTicket>
                 </div>
 
+                {/* Ticket Status / Action Bar */}
                 {isTorn && (
-                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700 border-t border-neutral-800 pt-4">
-                    <div>
-                      <p className="text-xs font-bold text-white tracking-[0.15em] uppercase">10% Inaugural Privilege Unlocked</p>
-                      <p className="text-xs text-neutral-300 font-normal mt-0.5 tracking-wide">Code VEYRO10 has been automatically applied to your bag.</p>
+                  <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700 border-t border-white/10 pt-4">
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <p className="text-xs font-bold text-white tracking-[0.15em] uppercase">Privilege Unlocked</p>
+                        <p className="text-xs text-neutral-300 font-normal mt-0.5 tracking-wide">10% inaugural discount automatically applied.</p>
+                      </div>
                     </div>
-                    <Link
-                      href="/cart"
-                      className="group flex items-center gap-2 text-xs font-bold uppercase tracking-[0.1em] px-5 py-2.5 bg-veyro-yellow text-black hover:bg-white transition-colors cursor-pointer shrink-0"
-                    >
-                      <span>Proceed to Bag</span>
-                      <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1 text-black" />
-                    </Link>
+                    <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                      <Link
+                        href="/cart"
+                        className="group flex items-center gap-2 text-xs font-bold uppercase tracking-[0.1em] px-5 py-2.5 bg-veyro-yellow text-black hover:bg-white rounded-full transition-colors cursor-pointer shadow-md"
+                      >
+                        <span>Proceed to Bag</span>
+                        <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1 text-black" />
+                      </Link>
+                    </div>
                   </div>
                 )}
               </div>
@@ -396,12 +367,12 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Row 2: Links Navigation Grid (Clean black background, zero clutter) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-16 border-t border-neutral-800">
+        {/* Links Navigation Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-14 border-b border-neutral-800/80">
           {/* Col 1: Shop */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4 font-mono">
-              Shop Collections
+              Shop
             </h4>
             <ul className="space-y-2.5 text-sm text-neutral-400">
               {footerLinks.shop.map((link) => (
@@ -420,7 +391,7 @@ export function Footer() {
           {/* Col 2: Brand Ethos */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4 font-mono">
-              The Atelier
+              About
             </h4>
             <ul className="space-y-2.5 text-sm text-neutral-400">
               {footerLinks.about.map((link) => (
@@ -439,7 +410,7 @@ export function Footer() {
           {/* Col 3: Customer Care */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4 font-mono">
-              Client Service
+              Support
             </h4>
             <ul className="space-y-2.5 text-sm text-neutral-400">
               {footerLinks.help.map((link) => (
@@ -455,33 +426,49 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 4: Store Info & Contact */}
+          {/* Col 4: Store Info & Social Follow */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4 font-mono">
-              Flagship Contact
+              Contact
             </h4>
             <div className="text-xs text-neutral-400 space-y-2 leading-relaxed">
-              <p className="text-white font-medium">VEYRO Apparel & Footwear Pvt. Ltd.</p>
+              <p>VEYRO Apparel & Footwear Pvt. Ltd.</p>
               <p>Bengaluru & Tirupur, India</p>
               <p className="pt-2 text-white font-semibold hover:text-veyro-yellow transition-colors">
                 <a href="mailto:support@veyro.in">support@veyro.in</a>
               </p>
               <p>Mon – Sat, 10:00 AM – 7:00 PM IST</p>
-              <p className="pt-1 text-2xs text-neutral-400 font-mono">Fast Track Dispatch Across India</p>
+            </div>
+
+            {/* Social Presence */}
+            <div className="mt-5 pt-4 border-t border-neutral-800/80">
+              <span className="block text-xs font-bold uppercase tracking-widest text-neutral-300 mb-2.5 font-mono">
+                Follow @veyro.in
+              </span>
+              <div className="flex items-center gap-2">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Follow VEYRO on ${social.label}`}
+                      className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-black hover:bg-veyro-yellow hover:border-veyro-yellow flex items-center justify-center transition duration-200 hover:-translate-y-0.5 shadow-2xs"
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Row 3: Grand Monumental VEYRO Brand Signature (Cleanly below links, no overlap) */}
-        <div className="border-t border-neutral-800/80 pt-10 sm:pt-14 pb-4 overflow-hidden select-none pointer-events-none text-center">
-          <span className="font-sans font-black text-[15vw] tracking-[-0.04em] text-neutral-800/60 uppercase leading-none block whitespace-nowrap">
-            VEYRO
-          </span>
-        </div>
-
-        {/* Row 4: Bottom Legal & Copyright Bar */}
-        <div className="pt-6 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
-          <p>© {currentYear} VEYRO APPAREL & FOOTWEAR. ALL RIGHTS RESERVED.</p>
+        {/* Bottom Legal & Copyright Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+          <p>© {currentYear} VEYRO APPAREL. ALL RIGHTS RESERVED.</p>
           <div className="flex items-center gap-6">
             <Link href="/faq#terms" className="hover:text-white transition-colors">
               Privacy Policy
