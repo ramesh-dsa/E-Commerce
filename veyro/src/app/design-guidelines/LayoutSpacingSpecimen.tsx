@@ -11,6 +11,7 @@ import {
   MoveHorizontal,
   MoveVertical,
   ShoppingBag,
+  Code2,
 } from "lucide-react";
 
 interface ContainerTier {
@@ -23,6 +24,7 @@ interface ContainerTier {
   padding: string;
   usage: string;
   layoutType: "showcase" | "catalog" | "checkout" | "reading";
+  sourceFile: string;
 }
 
 const CONTAINER_TIERS: ContainerTier[] = [
@@ -36,6 +38,7 @@ const CONTAINER_TIERS: ContainerTier[] = [
     padding: "px-4 sm:px-8 xl:px-10",
     usage: "Full-bleed hero carousels, immersive lookbooks, and high-impact marquee banners.",
     layoutType: "showcase",
+    sourceFile: "src/components/ui/Container.tsx:18",
   },
   {
     id: "default",
@@ -47,6 +50,7 @@ const CONTAINER_TIERS: ContainerTier[] = [
     padding: "px-4 sm:px-8 xl:px-10",
     usage: "Canonical storefront grid, product card listings, search results, and brand footer.",
     layoutType: "catalog",
+    sourceFile: "src/components/ui/Container.tsx:17",
   },
   {
     id: "narrow",
@@ -58,17 +62,50 @@ const CONTAINER_TIERS: ContainerTier[] = [
     padding: "px-4 sm:px-6",
     usage: "Checkout funnel, shopping cart summary, order status tracking, and account portal.",
     layoutType: "checkout",
+    sourceFile: "src/components/ui/Container.tsx:19",
   },
   {
     id: "reading",
     title: "Reading & Dialog",
     widthPx: 768,
     widthLabel: "768px / 448px",
-    propToken: 'max-w-3xl / max-w-md',
+    propToken: "max-w-3xl / max-w-md",
     cssClass: "max-w-3xl",
     padding: "px-4 sm:px-6",
     usage: "Terms of service, FAQ accordions, authentication modals, and login dialogs.",
     layoutType: "reading",
+    sourceFile: "BrandPillarsSection.tsx:155 • checkout/page.tsx:942",
+  },
+];
+
+const STOREFRONT_REAL_SHOES = [
+  {
+    id: "vey-ftw-min-001",
+    name: "Blanc Court Sneaker",
+    price: "₹2,699",
+    tag: "BESTSELLER",
+    image: "/products/shoes/veyro-shoe-01-primary.webp",
+  },
+  {
+    id: "vey-ftw-min-002",
+    name: "Mono Low Sneaker",
+    price: "₹2,799",
+    tag: "MINIMAL",
+    image: "/products/shoes/veyro-shoe-02-primary.webp",
+  },
+  {
+    id: "vey-ftw-min-003",
+    name: "Fog Low Sneaker",
+    price: "₹2,499",
+    tag: "NEW",
+    image: "/products/shoes/veyro-shoe-03-primary.webp",
+  },
+  {
+    id: "vey-ftw-ret-001",
+    name: "Campus Retro Sneaker",
+    price: "₹3,199",
+    tag: "RETRO",
+    image: "/products/shoes/veyro-shoe-04-primary.webp",
   },
 ];
 
@@ -91,6 +128,7 @@ const SECTION_VERTICAL_SPACING = [
     mobilePx: "96px",
     role: "High-impact storytelling, flagship hero intros & brand pillars",
     barPercent: 100,
+    sourceFile: "BrandPillarsSection.tsx:153",
   },
   {
     name: "Standard Section",
@@ -99,6 +137,7 @@ const SECTION_VERTICAL_SPACING = [
     mobilePx: "64px",
     role: "New arrivals, category showcases, reviews & footer navigation",
     barPercent: 65,
+    sourceFile: "TshirtsSection.tsx:127 • Footer.tsx:164",
   },
   {
     name: "Compact Catalog / Filters",
@@ -107,6 +146,7 @@ const SECTION_VERTICAL_SPACING = [
     mobilePx: "32px",
     role: "Product filters, breadcrumbs, search bars & notification bars",
     barPercent: 35,
+    sourceFile: "orders/[id]/page.tsx:353 • FootwearCatalog.tsx:545",
   },
 ];
 
@@ -236,9 +276,15 @@ export default function LayoutSpacingSpecimen() {
                     {tier.usage}
                   </p>
 
-                  <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-neutral-500 border-t border-neutral-100">
-                    <span>Gutter: <strong className="text-neutral-800">{tier.padding}</strong></span>
-                    <span>{tier.cssClass}</span>
+                  <div className="pt-2 flex flex-col gap-1 text-[11px] font-mono text-neutral-500 border-t border-neutral-100">
+                    <div className="flex items-center justify-between">
+                      <span>Gutter: <strong className="text-neutral-800">{tier.padding}</strong></span>
+                      <span>{tier.cssClass}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-neutral-400">
+                      <Code2 className="w-3 h-3 text-neutral-400" />
+                      <span>{tier.sourceFile}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -259,7 +305,7 @@ export default function LayoutSpacingSpecimen() {
               Responsive Breakpoints &amp; Product Grid Simulator
             </h4>
             <p className="text-xs text-neutral-500">
-              Select viewport to preview how footwear catalog cards adapt to screen size
+              Select viewport to preview how live Footwear catalog cards adapt across breakpoints
             </p>
           </div>
 
@@ -325,18 +371,22 @@ export default function LayoutSpacingSpecimen() {
                 <span className="font-bold text-xs tracking-wider uppercase text-neutral-900 font-mono">
                   VEYRO STOREFRONT
                 </span>
-                <span className="text-[10px] font-mono text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded font-bold">
                   {activeDevice === "mobile" && "grid-cols-2 • gap-3"}
-                  {activeDevice === "tablet" && "sm:grid-cols-3 • gap-4"}
+                  {activeDevice === "tablet" && "md:grid-cols-3 • gap-4"}
                   {activeDevice === "desktop" && "xl:grid-cols-4 • gap-6"}
                 </span>
               </div>
-              <span className="text-[11px] font-mono text-neutral-400">
-                {activeDevice === "mobile" ? "375px" : activeDevice === "tablet" ? "768px" : "1540px"}
-              </span>
+              <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-500">
+                <span className="text-neutral-400">
+                  {activeDevice === "mobile" ? "375px (Mobile)" : activeDevice === "tablet" ? "768px (Tablet)" : "1540px (Desktop)"}
+                </span>
+                <span className="hidden sm:inline text-neutral-300">•</span>
+                <span className="hidden sm:inline text-[10px] text-neutral-400">FootwearCatalog.tsx:545</span>
+              </div>
             </div>
 
-            {/* Dynamic Product Grid */}
+            {/* Dynamic Product Grid with REAL Veyro Footwear SKUs */}
             <div
               className={`grid transition-all duration-300 ${
                 activeDevice === "mobile"
@@ -346,48 +396,45 @@ export default function LayoutSpacingSpecimen() {
                   : "grid-cols-4 gap-4"
               }`}
             >
-              {[
-                { name: "Apex Stealth Runner", price: "₹4,999", tag: "BESTSELLER", bg: "bg-[#111111]" },
-                { name: "Velocity Low-Top", price: "₹3,799", tag: "NEW", bg: "bg-neutral-800" },
-                { name: "Volt Nitro Trainer", price: "₹5,499", tag: "LIMITED", bg: "bg-neutral-900" },
-                { name: "Aero Glide Minimal", price: "₹4,299", tag: "TRENDING", bg: "bg-neutral-700" },
-              ]
-                .slice(0, activeDevice === "tablet" ? 3 : 4)
-                .map((product, idx) => (
-                  <div
-                    key={idx}
-                    className="border border-[#E8E8E5] rounded-xl p-3 bg-[#FAFAF8] space-y-2.5 hover:border-neutral-900 transition-all group"
-                  >
-                    {/* Footwear Visual Swatch */}
-                    <div className="w-full h-24 rounded-lg bg-neutral-200/80 relative overflow-hidden flex items-center justify-center">
-                      <div className="absolute top-1.5 left-1.5 bg-[#FCD017] text-[#111111] text-[9px] font-bold font-mono px-1.5 py-0.5 rounded shadow-2xs">
-                        {product.tag}
-                      </div>
-                      <div className="text-neutral-400 font-mono text-[11px] font-bold">
-                        SNEAKER {idx + 1}
-                      </div>
+              {STOREFRONT_REAL_SHOES.slice(0, activeDevice === "tablet" ? 3 : 4).map((product) => (
+                <div
+                  key={product.id}
+                  className="border border-[#E8E8E5] rounded-xl p-3 bg-[#FAFAF8] space-y-2.5 hover:border-neutral-900 transition-all group"
+                >
+                  {/* Footwear Visual Swatch */}
+                  <div className="w-full h-28 rounded-lg bg-[#EFEFED] relative overflow-hidden flex items-center justify-center p-2">
+                    <div className="absolute top-1.5 left-1.5 bg-[#FCD017] text-[#111111] text-[9px] font-bold font-mono px-1.5 py-0.5 rounded shadow-2xs z-10">
+                      {product.tag}
                     </div>
-
-                    {/* Metadata */}
-                    <div className="space-y-0.5">
-                      <h6 className="text-xs font-bold text-neutral-900 truncate">
-                        {product.name}
-                      </h6>
-                      <p className="text-[11px] font-mono font-bold text-neutral-600">
-                        {product.price}
-                      </p>
-                    </div>
-
-                    {/* Action Button */}
-                    <button
-                      type="button"
-                      className="w-full bg-[#111111] hover:bg-black text-white text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
-                    >
-                      <ShoppingBag className="w-3 h-3 text-[#FCD017]" />
-                      <span>Add</span>
-                    </button>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
                   </div>
-                ))}
+
+                  {/* Metadata */}
+                  <div className="space-y-0.5">
+                    <h6 className="text-xs font-bold text-neutral-900 truncate" title={product.name}>
+                      {product.name}
+                    </h6>
+                    <p className="text-[11px] font-mono font-bold text-neutral-700">
+                      {product.price}
+                    </p>
+                  </div>
+
+                  {/* Action Button */}
+                  <button
+                    type="button"
+                    className="w-full bg-[#111111] hover:bg-black text-white text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition-colors"
+                  >
+                    <ShoppingBag className="w-3 h-3 text-[#FCD017]" />
+                    <span>Add to Bag</span>
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -446,9 +493,15 @@ export default function LayoutSpacingSpecimen() {
                 </div>
               </div>
 
-              <p className="text-xs text-neutral-600 font-normal leading-relaxed">
-                {spacing.role}
-              </p>
+              <div className="space-y-1.5">
+                <p className="text-xs text-neutral-600 font-normal leading-relaxed">
+                  {spacing.role}
+                </p>
+                <div className="flex items-center gap-1 text-[10px] font-mono text-neutral-400 pt-2 border-t border-neutral-100">
+                  <Code2 className="w-3 h-3 text-neutral-400" />
+                  <span>{spacing.sourceFile}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
