@@ -39,7 +39,7 @@ export function ProductCardSkeleton({
           }`}
         >
           <div
-            className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
+            className={`absolute inset-0 animate-skeleton-shimmer ${
               isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
             } motion-reduce:animate-none pointer-events-none`}
           />
@@ -56,7 +56,7 @@ export function ProductCardSkeleton({
             } relative overflow-hidden`}
           >
             <div
-              className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
+              className={`absolute inset-0 animate-skeleton-shimmer ${
                 isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
               } motion-reduce:animate-none pointer-events-none`}
             />
@@ -75,7 +75,7 @@ export function ProductCardSkeleton({
           } relative overflow-hidden`}
         >
           <div
-            className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
+            className={`absolute inset-0 animate-skeleton-shimmer ${
               isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
             } motion-reduce:animate-none pointer-events-none`}
           />
@@ -88,7 +88,7 @@ export function ProductCardSkeleton({
           } relative overflow-hidden`}
         >
           <div
-            className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
+            className={`absolute inset-0 animate-skeleton-shimmer ${
               isDark ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
             } motion-reduce:animate-none pointer-events-none`}
           />

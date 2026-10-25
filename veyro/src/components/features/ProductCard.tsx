@@ -20,6 +20,7 @@ export function ProductCard({
   className = "",
 }: ProductCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   
   const { getStats } = useReviews();
@@ -47,7 +48,7 @@ export function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container */}
-      <div className={`relative w-full overflow-hidden rounded-2xl transition-colors duration-300 ${theme === 'dark' ? 'bg-neutral-800 border border-white/[0.08]' : 'bg-veyro-surface-alt'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
+      <div className={`relative w-full overflow-hidden rounded-2xl transition-colors duration-300 ${theme === 'dark' ? 'bg-neutral-800 border border-white/[0.08]' : 'bg-neutral-200/90 border border-neutral-300/40'} ${isFeatured ? 'aspect-[3/4] lg:h-full lg:aspect-auto' : aspectRatio}`}>
         <Link
           href={`/product/${product.slug}`}
           className="relative block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
@@ -62,7 +63,7 @@ export function ProductCard({
               aria-hidden="true"
             >
               <div
-                className={`absolute inset-0 -translate-x-full animate-skeleton-shimmer ${
+                className={`absolute inset-0 animate-skeleton-shimmer ${
                   theme === "dark" ? "skeleton-shimmer-sweep-dark" : "skeleton-shimmer-sweep"
                 } motion-reduce:animate-none pointer-events-none`}
               />
@@ -73,15 +74,25 @@ export function ProductCard({
             src={product.imageUrl}
             alt={product.name}
             fill
-            quality={80}
-            unoptimized={product.imageUrl?.startsWith("data:")}
+            quality={85}
+            unoptimized={true}
             sizes={isFeatured ? "(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw" : "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
             onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(true)}
+            onError={() => {
+              setImageError(true);
+              setImageLoaded(true);
+            }}
             className={`object-cover object-center ${
               isWatch ? "" : "transition-transform duration-500 ease-out group-hover:scale-105"
-            } transition-opacity duration-500 ease-out ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            } transition-opacity duration-500 ease-out ${imageLoaded && !imageError ? "opacity-100" : "opacity-0"}`}
           />
+
+          {/* Graceful Fallback if image fails or is unavailable */}
+          {imageError && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center bg-neutral-100 text-neutral-400">
+              <span className="text-2xs font-mono uppercase tracking-widest text-neutral-500">{product.name}</span>
+            </div>
+          )}
 
           {/* Secondary image on hover if provided - lazy loaded in background (disabled for watches or identical image) */}
           {!isWatch && product.secondaryImageUrl && product.secondaryImageUrl !== product.imageUrl && (

@@ -130,7 +130,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         >
           {/* Subtle background shimmer wave while image loads/switches */}
           <div
-            className="absolute inset-0 -translate-x-full animate-skeleton-shimmer skeleton-shimmer-sweep motion-reduce:animate-none pointer-events-none z-0"
+            className="absolute inset-0 animate-skeleton-shimmer skeleton-shimmer-sweep motion-reduce:animate-none pointer-events-none z-0"
             aria-hidden="true"
           />
 

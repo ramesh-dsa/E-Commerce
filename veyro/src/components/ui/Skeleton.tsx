@@ -18,7 +18,7 @@ export function Skeleton({
     >
       {shimmer && (
         <div
-          className="absolute inset-0 -translate-x-full animate-skeleton-shimmer skeleton-shimmer-sweep dark:skeleton-shimmer-sweep-dark motion-reduce:animate-none pointer-events-none"
+          className="absolute inset-0 animate-skeleton-shimmer skeleton-shimmer-sweep dark:skeleton-shimmer-sweep-dark motion-reduce:animate-none pointer-events-none"
           aria-hidden="true"
         />
       )}
