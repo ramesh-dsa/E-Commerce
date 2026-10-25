@@ -966,7 +966,7 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    The built surface largely honors the system. Where it diverges, migration follows this order of impact — a pull request that changes UI is checked against these guidelines before it ships.
+                    Architecture modernization roadmap for the VEYRO storefront. How legacy code patterns migrate to our official design tokens, shared primitives, and layout standards.
                   </p>
                 </div>
 

@@ -2,69 +2,81 @@
 
 import React from "react";
 
-interface GuidanceItem {
+interface VeyroGuidanceItem {
   num: string;
   title: string;
+  fileTag: string;
   description: string;
 }
 
-const GUIDANCE_ITEMS: GuidanceItem[] = [
+const VEYRO_GUIDANCE_ITEMS: VeyroGuidanceItem[] = [
   {
     num: "01",
-    title: "Color consolidation",
+    title: "Brand design token consolidation",
+    fileTag: "src/app/globals.css",
     description:
-      "Hardcoded brand hexes migrate to @theme tokens (--color-veyro-*), competing gray families collapse into neutral, and one-off hex literals are retired across components. The largest share of inconsistency at the lowest risk.",
+      "Legacy hex literals (#111111 dark ink, #fcd017 brand gold, #f8f8f6 surface) migrate to Tailwind v4 @theme tokens (veyro-black, veyro-yellow, veyro-surface, veyro-border). Global shell components (Navbar, Footer, CartDrawer) are already 100% unified.",
   },
   {
     num: "02",
-    title: "A shared Button primitive",
+    title: "Shared action & badge primitives",
+    fileTag: "src/components/ui/Button.tsx",
     description:
-      "Action recipes are extracted and unified into ui/Button.tsx with variant props (primary gold, secondary ink, outline), protecting every future rebrand tweak and standardizing hover and loading states.",
+      "Divergent raw <button> tags across product catalog pages consolidate onto ui/Button.tsx (Primary Gold CTA, Secondary Ink, Ghost/Outline) and ui/Badge.tsx, ensuring universal keyboard focus rings and active states.",
   },
   {
     num: "03",
-    title: "Section rhythm and containers",
+    title: "Product card & bento surface standard",
+    fileTag: "src/components/features/ProductCard.tsx",
     description:
-      "Arbitrary padding stacks and competing max-widths converge onto the canonical container tiers (Wide 1440px, Standard 7xl, Reading 3xl, Form md) with predictable py-16 / py-20 vertical section rhythm.",
+      "Clothing, footwear, and watch catalog cards strictly adhere to rounded-2xl geometry, bg-veyro-surface image viewports, liquid wishlist spring animations, and standardized INR currency formatting.",
   },
   {
     num: "04",
-    title: "Scale leaks",
+    title: "10-Tier Z-Index ladder governance",
+    fileTag: "src/app/design-guidelines/ZIndexSpecimen.tsx",
     description:
-      "Legacy radii, arbitrary font sizes (e.g. text-[11px]), blanket transition-all, and off-ladder z-index values migrate to the defined system vocabularies (rounded-2xl cards, standard text scale, and 7-tier z-index).",
+      "All 185 stacking contexts across the storefront align to the verified 10-tier scale — from z-0 canvas, z-40 Navbar, z-50 CartDrawer, z-[70] Toasts, up to z-[150] Fullscreen Lightbox — preventing stacking leaks.",
   },
   {
     num: "05",
-    title: "GPU motion & surface parity",
+    title: "Hardware-accelerated GPU motion",
+    fileTag: "src/components/ui/SpotlightBentoCard.tsx",
     description:
-      "Layout-reflow transitions (height, width) migrate to hardware-accelerated transform and opacity. Storefront product cards and bento surfaces standardize on rounded-2xl geometry with subtle border definitions.",
+      "Continuous interactive motion is restricted strictly to transform and opacity with motion/react and transform-gpu. Geometry-animating transitions (width, height, top) are replaced to guarantee smooth 60fps renders on mobile.",
   },
   {
     num: "06",
-    title: "Accessible focus & motion safety",
+    title: "Storefront typography ramp alignment",
+    fileTag: "src/app/layout.tsx",
     description:
-      "Universal 2px focus rings (focus-visible:ring-veyro-yellow) are enforced across all interactive targets, paired with strict motion-reduce fallbacks for all continuous springs and transitions.",
+      "Arbitrary text-[11px] and text-[13px] pixel overrides consolidate onto canonical Tailwind scale tokens (text-xs through text-6xl), harmonized across the verified storefront fonts: Geist Sans, Montserrat, and Outfit.",
   },
 ];
 
 export default function TransitionGuidanceSpecimen() {
   return (
     <div className="flex flex-col gap-3.5 sm:gap-4">
-      {GUIDANCE_ITEMS.map((item) => (
+      {VEYRO_GUIDANCE_ITEMS.map((item) => (
         <div
           key={item.num}
-          className="group border border-neutral-200/90 rounded-2xl bg-white p-5 sm:p-6 shadow-2xs hover:border-neutral-300 hover:shadow-xs transition-all duration-200 flex items-start gap-5 sm:gap-6"
+          className="group border border-neutral-200/90 rounded-2xl bg-white p-5 sm:p-6 shadow-2xs hover:border-neutral-300 hover:shadow-xs transition-all duration-200 flex items-start gap-4 sm:gap-6"
         >
-          {/* Soft Pastel Number */}
-          <span className="text-2xl sm:text-3xl font-bold font-mono text-[#d8b4e2] shrink-0 select-none tracking-tight pt-0.5">
+          {/* VEYRO Mono Number */}
+          <span className="text-2xl sm:text-3xl font-mono font-black text-neutral-300 group-hover:text-veyro-black transition-colors shrink-0 select-none tracking-tight pt-0.5">
             {item.num}
           </span>
 
-          {/* Content */}
-          <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
-            <h4 className="text-base sm:text-lg font-bold text-neutral-900 tracking-tight">
-              {item.title}
-            </h4>
+          {/* Card Body */}
+          <div className="space-y-1.5 flex-1 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h4 className="text-base sm:text-lg font-bold text-neutral-900 tracking-tight">
+                {item.title}
+              </h4>
+              <span className="text-[10px] sm:text-[11px] font-mono text-neutral-500 bg-neutral-100/90 px-2.5 py-0.5 rounded-full border border-neutral-200/60 shrink-0">
+                {item.fileTag}
+              </span>
+            </div>
             <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-normal">
               {item.description}
             </p>
