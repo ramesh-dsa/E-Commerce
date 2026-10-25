@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Check, CheckCircle2, XCircle } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 
 interface ColorItem {
   name: string;
@@ -218,53 +218,6 @@ export default function ColorPaletteSpecimen() {
         </div>
       </div>
 
-      {/* 2. Visual DO & DON'T (Show, Don't Preach) */}
-      <div className="space-y-3">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-600">
-          Contrast Rule: Show, Don&apos;t Tell
-        </h4>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* DO Card */}
-          <div className="border border-emerald-200/80 rounded-xl p-5 bg-emerald-50/30 space-y-3.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>DO: Gold Background + Ink Text</span>
-            </div>
-
-            <div className="p-4 bg-white rounded-lg border border-emerald-100 flex items-center justify-center">
-              <button
-                type="button"
-                className="px-6 py-2.5 bg-[#FCD017] hover:bg-[#E5BC05] text-[#111111] font-bold text-sm rounded-lg transition-colors shadow-2xs cursor-default"
-              >
-                Add to Cart
-              </button>
-            </div>
-
-            <p className="text-xs text-emerald-900 font-medium leading-relaxed">
-              <strong>12.7:1 AAA Contrast.</strong> Razor-sharp legibility. Gold is only used as a container surface behind Ink glyphs.
-            </p>
-          </div>
-
-          {/* DON'T Card */}
-          <div className="border border-red-200/80 rounded-xl p-5 bg-red-50/30 space-y-3.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-800">
-              <XCircle className="w-4 h-4 text-red-600" />
-              <span>DON&apos;T: Gold Text on Light Surfaces</span>
-            </div>
-
-            <div className="p-4 bg-white rounded-lg border border-red-100 flex items-center justify-center">
-              <span className="text-[#FCD017] font-bold text-base tracking-wide select-none">
-                Add to Cart
-              </span>
-            </div>
-
-            <p className="text-xs text-red-900 font-medium leading-relaxed">
-              <strong>1.48:1 FAILS WCAG.</strong> Completely unreadable against white surfaces. Never render Gold colored typography.
-            </p>
-          </div>
-        </div>
-      </div>
 
       {/* 3. Surface & Structural Swatches */}
       <div className="space-y-3">
