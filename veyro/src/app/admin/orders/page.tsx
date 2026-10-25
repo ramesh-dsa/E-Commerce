@@ -1035,15 +1035,9 @@ export default function AdminOrdersPage() {
       {/* ── TOP HEADER & LUXURY CONTROLS ────────────────────────────────────── */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-[var(--admin-surface)] p-6 rounded-2xl border border-white/5">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
-              Orders &amp; Sales Hub
-            </h1>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#00F59B]/15 text-[#00F59B] border border-[#00F59B]/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00F59B] animate-pulse" />
-              Live Sync ({orders.length})
-            </span>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
+            Orders &amp; Sales Hub
+          </h1>
           <p className="text-xs sm:text-sm text-[var(--admin-text-muted)] mt-1">
             Real-time management for all transactions, cumulative lifetime analytics, and day-wise sales stepping.
           </p>
