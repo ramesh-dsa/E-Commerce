@@ -8,6 +8,7 @@ import TypographySpecimen from "./TypographySpecimen";
 import LayoutSpacingSpecimen from "./LayoutSpacingSpecimen";
 import ShapeElevationSpecimen from "./ShapeElevationSpecimen";
 import MotionSpecimen from "./MotionSpecimen";
+import ZIndexSpecimen from "./ZIndexSpecimen";
 import {
   Download,
   Check,
@@ -228,16 +229,6 @@ const TYPE_SCALE = [
   { token: "text-4xl", size: "36px", lh: "40px", usage: "High-level page headers" },
   { token: "text-5xl", size: "48px", lh: "48px", usage: "Display titles" },
   { token: "text-6xl", size: "60px", lh: "60px", usage: "Hero display headings only" },
-];
-
-const Z_INDEX_LADDER = [
-  { token: "z-60", val: 60, name: "z-toast", role: "Global notification toasts, critical alerts, sticky banners" },
-  { token: "z-50", val: 50, name: "z-overlay", role: "Drawers, cart sheet, modal dialogs, backdrop scrims" },
-  { token: "z-40", val: 40, name: "z-header", role: "Announcement bar, primary navigation navbar" },
-  { token: "z-30", val: 30, name: "z-popover", role: "Dropdown menus, autocomplete lists, tooltips" },
-  { token: "z-20", val: 20, name: "z-subnav", role: "In-section sticky filter bars, sub-nav tabs" },
-  { token: "z-10", val: 10, name: "z-content", role: "Standard page content, text, media, card grids" },
-  { token: "z-0", val: 0, name: "z-canvas", role: "Deep background canvas, grid lines, ambient patterns" },
 ];
 
 const TRANSITION_ITEMS = [
@@ -838,91 +829,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active stacking contexts versus the canonical 7-tier ladder.
+                    The canonical 7-tier stacking context ladder, component layer mapping, and visual stacking isolation.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Z-Index Values in Code (185 uses across 10 values):</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• <strong className="text-neutral-950 font-bold">z-10:</strong> 99 uses (standard content in 31 files)</li>
-                            <li>• <strong className="text-neutral-950 font-bold">z-20:</strong> 25 uses (sub-nav filter bars in 15 files)</li>
-                            <li>• <strong className="text-neutral-950 font-bold">z-50:</strong> 22 uses (modals, drawers, dropdowns in 19 files)</li>
-                            <li>• <strong className="text-neutral-950 font-bold">z-30:</strong> 11 uses (dropdown menus in 10 files)</li>
-                            <li className="text-red-700 font-bold">• <strong className="text-red-700">z-1:</strong> 9 uses (scrims &amp; underlays in 4 files)</li>
-                            <li>• <strong className="text-neutral-950 font-bold">z-0:</strong> 8 uses (canvas backgrounds in 4 files)</li>
-                            <li>• <strong className="text-neutral-950 font-bold">z-40:</strong> 7 uses (headers and sticky bars in 6 files)</li>
-                            <li className="text-red-700 font-bold">• <strong className="text-red-700">z-[100]:</strong> 2 uses (Navbar mobile menu, section drawer)</li>
-                            <li className="text-red-700 font-bold">• <strong className="text-red-700">z-[70]:</strong> 1 use (AccountModal backdrop wrapper)</li>
-                            <li className="text-red-700 font-bold">• <strong className="text-red-700">z-[150]:</strong> 1 use (ProductSearch fullscreen modal)</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <span className="font-bold text-neutral-900">Standard adoption: 172 of 185 (93.0% canonical z-index tokens)</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
-                      </div>
-
-                      <div className="space-y-2.5 text-sm text-neutral-800">
-                        {Z_INDEX_LADDER.map((z, idx) => (
-                          <div
-                            key={z.token}
-                            className="flex items-center justify-between p-2.5 rounded-lg border border-[#E8E8E5]"
-                            style={{ backgroundColor: idx === 0 ? "#FFF8E7" : idx === 1 ? "#F8F8F6" : "#FFFFFF" }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <span className="font-mono font-bold text-xs px-2 py-0.5 bg-neutral-900 text-white rounded">
-                                {z.token}
-                              </span>
-                              <span className="text-xs font-bold text-neutral-950 uppercase">{z.name}</span>
-                            </div>
-                            <span className="text-xs text-neutral-600 font-mono font-medium">Layer {z.val}</span>
-                          </div>
-                        ))}
-
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-950 leading-relaxed mt-2">
-                          <strong className="font-bold text-red-900">Ladder Rule:</strong> Arbitrary z-indexes (<code className="font-mono font-bold">z-[70]</code>, <code className="font-mono font-bold">z-[100]</code>, <code className="font-mono font-bold">z-[150]</code>, <code className="font-mono font-bold">z-1</code>) are prohibited. All stacking contexts must fit into layers 0 to 60.
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard Ladder: z-0 (Canvas) to z-60 (Toasts &amp; Critical Alerts).
-                    </div>
-                  </div>
-                </div>
+                <ZIndexSpecimen />
               </section>
             </div>
 
