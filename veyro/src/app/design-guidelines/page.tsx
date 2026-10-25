@@ -5,6 +5,7 @@ import { Logo, VeyroMark } from "@/components/ui/Logo";
 import GuidelinesTreeSidebar from "./GuidelinesTreeSidebar";
 import ColorPaletteSpecimen from "./ColorPaletteSpecimen";
 import TypographySpecimen from "./TypographySpecimen";
+import LayoutSpacingSpecimen from "./LayoutSpacingSpecimen";
 import {
   Download,
   Check,
@@ -769,133 +770,11 @@ export default function DesignGuidelinesPage() {
                     </h3>
                   </div>
                   <p className="text-[15px] sm:text-base text-neutral-700 leading-relaxed font-normal">
-                    Side-by-side comparison of active container definitions versus the 4 canonical recipes.
+                    Container width architecture, responsive product grid breakpoints, and the 8pt rhythm spacing scale.
                   </p>
                 </div>
 
-                {/* Side-by-Side: Current vs Standard */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Current in code */}
-                  <div className="border border-neutral-300 rounded-xl p-6 bg-[#FAFAFA] flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-200">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-200 text-neutral-900">
-                          CURRENT
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Current in code (main)
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Container.tsx Current Scale:</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800 leading-relaxed">
-                            default: max-w-[1540px], wide: max-w-[1600px], narrow: max-w-[1200px], full: max-w-full. Padding: px-4 sm:px-8 xl:px-10.
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Active Max-Width Classes:</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 leading-relaxed text-neutral-800">
-                            max-w-md (19), max-w-full (15), max-w-2xl (13), max-w-sm (11), max-w-xl (10), max-w-xs (10), max-w-6xl (8), max-w-lg (6), max-w-7xl (2), max-w-[1300px] (3), max-w-[1536px] (2).
-                          </p>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Active Section Paddings:</span>
-                          <ul className="space-y-1.5 font-mono text-xs bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            <li>• BrandPillarsSection.tsx:153: py-24 sm:py-40</li>
-                            <li>• Footer.tsx:164: py-16 sm:py-24</li>
-                            <li>• Footer.tsx:372: py-14</li>
-                            <li>• Storefront catalogs: py-8 sm:py-12</li>
-                          </ul>
-                        </div>
-
-                        <div>
-                          <span className="font-bold text-neutral-950 block mb-1.5 text-xs uppercase tracking-wider">Product Grid Breakpoints:</span>
-                          <p className="text-xs font-mono bg-white p-3 rounded-lg border border-neutral-200 text-neutral-800">
-                            grid-cols-2 (mobile) → sm:grid-cols-3 (tablet) → xl:grid-cols-4 (desktop).
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <span className="font-bold text-neutral-900">Status: Non-standard 1540px container across codebase</span>
-                      <a href="#transition-guidance" className="text-neutral-700 hover:text-neutral-950 font-semibold underline underline-offset-2">
-                        See Section 12 Transition Guidance →
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right: Standard */}
-                  <div className="border border-[#FCD017]/40 rounded-xl p-6 bg-white flex flex-col justify-between space-y-4 shadow-2xs">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
-                        <span className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded bg-[#FCD017] text-[#111111]">
-                          STANDARD
-                        </span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-neutral-950">
-                          Standard Specification
-                        </h4>
-                      </div>
-
-                      <div className="space-y-3.5 text-sm text-neutral-800">
-                        {/* 4 Container Bars */}
-                        <div className="space-y-2.5">
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-xs">
-                              <strong className="text-neutral-950 font-bold">Wide (max-w-[1440px])</strong>
-                              <span className="text-neutral-600 font-medium">Hero showcases, home grids</span>
-                            </div>
-                            <div className="w-full bg-[#F8F8F6] p-1 rounded-lg border border-[#E8E8E5]">
-                              <div className="w-full bg-neutral-900 text-white text-[10px] font-mono font-bold py-1.5 rounded text-center">1440px</div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-xs">
-                              <strong className="text-neutral-950 font-bold">Standard (max-w-7xl)</strong>
-                              <span className="text-neutral-600 font-medium">Cart, checkout, account</span>
-                            </div>
-                            <div className="w-full bg-[#F8F8F6] p-1 rounded-lg border border-[#E8E8E5]">
-                              <div className="w-[88%] bg-neutral-800 text-white text-[10px] font-mono font-bold py-1.5 rounded text-center">1280px</div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-xs">
-                              <strong className="text-neutral-950 font-bold">Reading (max-w-3xl)</strong>
-                              <span className="text-neutral-600 font-medium">Policies, FAQs</span>
-                            </div>
-                            <div className="w-full bg-[#F8F8F6] p-1 rounded-lg border border-[#E8E8E5]">
-                              <div className="w-[53%] bg-neutral-700 text-white text-[10px] font-mono font-bold py-1.5 rounded text-center">768px</div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-xs">
-                              <strong className="text-neutral-950 font-bold">Form (max-w-md)</strong>
-                              <span className="text-neutral-600 font-medium">Login, dialogs</span>
-                            </div>
-                            <div className="w-full bg-[#F8F8F6] p-1 rounded-lg border border-[#E8E8E5]">
-                              <div className="w-[31%] bg-neutral-600 text-white text-[10px] font-mono font-bold py-1.5 rounded text-center">448px</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="p-3 bg-[#F8F8F6] rounded-lg border border-[#E8E8E5] text-sm text-neutral-800 leading-relaxed">
-                          <strong className="font-bold text-neutral-950">Universal Gutter:</strong> <code className="font-mono font-bold text-neutral-900">px-4 sm:px-6 lg:px-8</code>. Standard section spacing: <code className="font-mono font-bold text-neutral-900">py-16 sm:py-20 lg:py-24</code>.
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-neutral-100 text-xs text-neutral-600 font-medium">
-                      Standard containers consolidate 12 divergent max-widths into 4 clean recipes.
-                    </div>
-                  </div>
-                </div>
+                <LayoutSpacingSpecimen />
               </section>
 
               {/* SECTION 06: SHAPE AND ELEVATION */}
