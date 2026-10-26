@@ -261,14 +261,14 @@ export function ProductSearch({
               onKeyDown={handleKeyDown}
               placeholder="Search products..."
               aria-label="Search products"
-              className="h-11 w-full rounded-full bg-neutral-100 pl-10 pr-9 text-sm font-medium text-veyro-black placeholder:text-neutral-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-veyro-yellow border border-transparent transition-colors"
+              className="h-11 w-full rounded-full bg-neutral-100 pl-10 pr-9 text-base sm:text-sm font-medium text-veyro-black placeholder:text-neutral-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-veyro-yellow border border-transparent transition-colors"
             />
             {query.length > 0 && (
               <button
                 type="button"
                 onClick={handleClear}
                 aria-label="Clear search query"
-                className="absolute right-3 p-1 rounded-full text-neutral-400 hover:text-black hover:bg-neutral-200/60 transition-colors cursor-pointer"
+                className="absolute right-2.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full text-neutral-400 hover:text-black hover:bg-neutral-200/60 transition-colors cursor-pointer"
               >
                 <CloseIcon size={14} />
               </button>
@@ -278,7 +278,7 @@ export function ProductSearch({
             type="button"
             onClick={handleCloseMobile}
             aria-label="Cancel search"
-            className="text-sm font-semibold text-neutral-700 hover:text-black cursor-pointer shrink-0 py-1 pl-1"
+            className="min-h-[44px] flex items-center text-sm font-semibold text-neutral-700 hover:text-black cursor-pointer shrink-0 py-1 px-2 -mr-1"
           >
             Cancel
           </button>

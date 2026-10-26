@@ -254,12 +254,12 @@ export function Navbar() {
       <div className="flex h-[74px] sm:h-[78px] lg:h-[82px] w-full items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-14">
         {/* Left: Brand Wordmark & Main Nav Links */}
         <div className="flex items-center">
-          {/* Mobile Hamburger Toggle */}
+          {/* Mobile Hamburger Toggle (44x44px tap target envelope) */}
           <button
             type="button"
             aria-label="Open navigation menu"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex lg:hidden p-1.5 mr-3 text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer"
+            className="flex lg:hidden min-w-[44px] min-h-[44px] items-center justify-center -ml-2 mr-1 text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer"
           >
             <MenuIcon size={24} />
           </button>
@@ -333,12 +333,12 @@ export function Navbar() {
             <ProductSearch />
           </div>
 
-          {/* Mobile Search Toggle Icon */}
+          {/* Mobile Search Toggle Icon (44x44px tap target envelope) */}
           <button
             type="button"
             aria-label="Search"
             onClick={() => setMobileSearchOpen(true)}
-            className="flex md:hidden p-1.5 text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer"
+            className="flex md:hidden min-w-[44px] min-h-[44px] items-center justify-center text-veyro-black hover:text-neutral-600 transition-colors cursor-pointer"
           >
             <SearchIcon size={21} />
           </button>
@@ -501,8 +501,8 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Drawer Menu (Pinned 3-row layout fitting 100dvh viewport) */}
-          <div className="relative flex w-4/5 max-w-sm h-[100dvh] max-h-[100dvh] flex-col justify-between bg-white px-5 py-4 sm:p-6 shadow-xl z-10 overscroll-contain select-none">
+          {/* Drawer Menu (Pinned 3-row layout fitting 100dvh viewport with pb-safe) */}
+          <div className="relative flex w-4/5 max-w-sm h-[100dvh] max-h-[100dvh] flex-col justify-between bg-white px-5 pt-4 pb-safe sm:p-6 shadow-xl z-10 overscroll-contain select-none">
             {/* 1. Pinned Header */}
             <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-neutral-200 shrink-0">
               <Link
@@ -516,7 +516,7 @@ export function Navbar() {
                 type="button"
                 aria-label="Close menu"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1.5 text-veyro-black hover:text-neutral-500 cursor-pointer"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center text-veyro-black hover:text-neutral-500 cursor-pointer -mr-2"
               >
                 <CloseIcon size={22} />
               </button>
@@ -550,7 +550,7 @@ export function Navbar() {
                       }
                       setMobileMenuOpen(false);
                     }}
-                    className="py-2.5 sm:py-3 text-sm font-semibold tracking-wider uppercase text-veyro-black hover:text-neutral-500 transition-colors flex items-center justify-between"
+                    className="py-2.5 sm:py-3 min-h-[44px] text-sm font-semibold tracking-wider uppercase text-veyro-black hover:text-neutral-500 transition-colors flex items-center justify-between"
                     aria-current={isActive ? "page" : undefined}
                   >
                     <span className="relative">
@@ -568,8 +568,8 @@ export function Navbar() {
               })}
             </nav>
 
-            {/* 3. Pinned Bottom Account & Wishlist Row */}
-            <div className="shrink-0 border-t border-neutral-200 pt-3 space-y-0.5">
+            {/* 3. Pinned Bottom Account & Wishlist Row with pb-safe */}
+            <div className="shrink-0 border-t border-neutral-200 pt-3 pb-safe space-y-0.5">
               {user ? (
                 <div className="space-y-0.5">
                   {/* User Profile Summary */}
@@ -589,7 +589,7 @@ export function Navbar() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
+                    className="flex items-center justify-between w-full min-h-[44px] text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <Package size={17} className="text-veyro-black" />
@@ -604,7 +604,7 @@ export function Navbar() {
                   <Link
                     href="/account/addresses"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
+                    className="flex items-center justify-between w-full min-h-[44px] text-sm font-medium text-veyro-black py-2 hover:text-black cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <LucideUser size={17} className="text-veyro-black" />
@@ -617,7 +617,7 @@ export function Navbar() {
                   <Link
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
+                    className="flex items-center justify-between w-full min-h-[44px] text-sm font-medium text-veyro-black py-2 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <HeartIcon size={17} />
@@ -637,7 +637,7 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       handleSignOut();
                     }}
-                    className="flex items-center gap-3 w-full text-xs font-semibold text-neutral-600 hover:text-red-600 py-1.5 cursor-pointer pt-2 border-t border-neutral-150 mt-1"
+                    className="flex items-center gap-3 w-full min-h-[44px] text-xs font-semibold text-neutral-600 hover:text-red-600 py-1.5 cursor-pointer pt-2 border-t border-neutral-150 mt-1"
                   >
                     <LogOut size={14} />
                     <span>Sign Out</span>
@@ -648,7 +648,7 @@ export function Navbar() {
                   <Link
                     href="/wishlist"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
+                    className="flex items-center justify-between w-full min-h-[44px] text-sm font-medium text-veyro-black py-2 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <HeartIcon size={18} />
@@ -667,7 +667,7 @@ export function Navbar() {
                       setMobileMenuOpen(false);
                       openAccountModal();
                     }}
-                    className="flex items-center justify-between w-full text-sm font-medium text-veyro-black py-2 cursor-pointer"
+                    className="flex items-center justify-between w-full min-h-[44px] text-sm font-medium text-veyro-black py-2 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <UserIcon size={18} />

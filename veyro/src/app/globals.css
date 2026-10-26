@@ -33,6 +33,10 @@
   --veyro-accent: #ffd400;
   --underline-height: 4px;
   --underline-gap: 8px;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
   --chart-1: oklch(0.32 0 none);
   --chart-2: oklch(0.41 0 none);
   --chart-3: oklch(0.54 0 none);
@@ -86,6 +90,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/* ─── Safe Area Layout Utilities (iOS Dynamic Island & Home Bar) ────────── */
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+
+@utility pt-safe {
+  padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+}
+
+@utility mb-safe {
+  margin-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
 }
 
 /* Script calligraphy font class linking to Google Font variable */

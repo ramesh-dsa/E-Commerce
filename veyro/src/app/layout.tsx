@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Dancing_Script, Montserrat, Outfit } from "next/font/google";
 import "./globals.css";
 import { SmoothScrolling, Navbar, Footer, ScrollToTop } from "@/components/layout";
@@ -47,6 +47,13 @@ const outfit = Outfit({
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("http://localhost:3000"),
