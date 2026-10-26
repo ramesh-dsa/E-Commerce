@@ -636,115 +636,11 @@ export function ClothingCatalog() {
                     delay={cardDelay}
                     amount={0.05}
                   >
-                    <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl h-full">
-                    {/* Image Stage Container */}
-                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-veyro-surface-alt transition-colors duration-300">
-                      <Link
-                        href={`/product/${product.slug}`}
-                        className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
-                        aria-label={product.name}
-                      >
-                        {/* Primary Image */}
-                        <Image
-                          src={product.imageUrl}
-                          alt={product.name}
-                          fill
-                          quality={80}
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
-                        />
-
-                        {/* Secondary Angle Photo on Hover */}
-                        {product.secondaryImageUrl && (
-                          <Image
-                            src={product.secondaryImageUrl}
-                            alt={`${product.name} alternate view`}
-                            fill
-                            quality={80}
-                            loading="lazy"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
-                          />
-                        )}
-                      </Link>
-
-                      {/* Top Badges (Left) */}
-                      {product.badge && (
-                        <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
-                          <Badge
-                            variant={
-                              product.badge === "SALE"
-                                ? "sale"
-                                : product.badge === "NEW"
-                                ? "dark"
-                                : "default"
-                            }
-                          >
-                            {product.badge}
-                          </Badge>
-                        </div>
-                      )}
-
-                      {/* Wishlist Heart Button (Right) */}
-                      <WishlistButton product={product} isWishlisted={isWishlisted} />
-
-                    </div>
-
-                    {/* Product Details Block */}
-                    <div className="pt-3 pb-1 flex flex-col flex-1">
-                      {/* Meta tag, 240 GSM Pill & Color Swatch */}
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-2xs sm:text-xs font-semibold uppercase tracking-wider text-veyro-subtle">
-                            {product.subcategoryTag || product.category}
-                          </span>
-                          {product.material.toLowerCase().includes("240gsm") && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-neutral-100 text-neutral-600 border border-neutral-200/90 shadow-2xs">
-                              240 GSM
-                            </span>
-                          )}
-                        </div>
-                        {product.colorHex && (
-                          <span
-                            className="h-3 w-3 rounded-full border border-black/10 shrink-0"
-                            style={{ backgroundColor: product.colorHex }}
-                            title={product.colorName}
-                          />
-                        )}
-                      </div>
-
-                      {/* Title */}
-                      <h4 className="mt-1 text-xs sm:text-sm font-semibold tracking-tight text-veyro-black group-hover:text-neutral-800 line-clamp-1">
-                        <Link href={`/product/${product.slug}`} className="focus:outline-none">
-                          {product.name}
-                        </Link>
-                      </h4>
-
-                      {/* Material Spec */}
-                      <span className="text-xs text-veyro-subtle line-clamp-1 mt-0.5">
-                        {product.material.split(",")[0]}
-                      </span>
-
-                      {/* Price Strip */}
-                      <div className="mt-2 flex items-center gap-2">
-                        {product.originalPrice && product.originalPrice > product.price && (
-                          <>
-                            <span className="text-xs text-veyro-subtle line-through font-mono">
-                              {formatPrice(product.originalPrice)}
-                            </span>
-                          </>
-                        )}
-                        <span className="text-sm sm:text-sm font-bold text-veyro-black font-mono">
-                          {formatPrice(product.price)}
-                        </span>
-                        {product.originalPrice && product.originalPrice > product.price && discountPercent && (
-                          <span className="text-2xs font-bold text-veyro-accent font-mono">
-                            {discountPercent}% OFF
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </article>
+                    <ClothingCatalogCard
+                      product={product}
+                      isWishlisted={isWishlisted}
+                      discountPercent={discountPercent}
+                    />
                   </ScrollReveal>
                 </React.Fragment>
               );
@@ -955,5 +851,143 @@ export function ClothingCatalog() {
         </div>
       )}
     </div>
+  );
+}
+
+interface ClothingCatalogCardProps {
+  product: Product;
+  isWishlisted: boolean;
+  discountPercent: number | null;
+}
+
+function ClothingCatalogCard({
+  product,
+  isWishlisted,
+  discountPercent,
+}: ClothingCatalogCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  return (
+    <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl h-full">
+      {/* Image Stage Container */}
+      <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200/90 border border-neutral-300/40 transition-colors duration-300">
+        <Link
+          href={`/product/${product.slug}`}
+          className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
+          aria-label={product.name}
+        >
+          {/* Active skeleton shimmer placeholder before image is decoded or when loading/offline */}
+          {!imageLoaded && (
+            <div
+              className="absolute inset-0 z-10 overflow-hidden bg-neutral-200/90"
+              aria-hidden="true"
+            >
+              <div className="absolute inset-0 animate-skeleton-shimmer skeleton-shimmer-sweep motion-reduce:animate-none pointer-events-none" />
+            </div>
+          )}
+
+          {/* Primary Image */}
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            quality={85}
+            unoptimized={true}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            onLoad={() => setImageLoaded(true)}
+            className={`object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108 transition-opacity duration-500 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+
+          {/* Secondary Angle Photo on Hover */}
+          {product.secondaryImageUrl && (
+            <Image
+              src={product.secondaryImageUrl}
+              alt={`${product.name} alternate view`}
+              fill
+              quality={80}
+              loading="lazy"
+              unoptimized={true}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+            />
+          )}
+        </Link>
+
+        {/* Top Badges (Left) */}
+        {product.badge && (
+          <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
+            <Badge
+              variant={
+                product.badge === "SALE"
+                  ? "sale"
+                  : product.badge === "NEW"
+                  ? "dark"
+                  : "default"
+              }
+            >
+              {product.badge}
+            </Badge>
+          </div>
+        )}
+
+        {/* Wishlist Heart Button (Right) */}
+        <WishlistButton product={product} isWishlisted={isWishlisted} />
+      </div>
+
+      {/* Product Details Block */}
+      <div className="pt-3 pb-1 flex flex-col flex-1">
+        {/* Meta tag, 240 GSM Pill & Color Swatch */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-2xs sm:text-xs font-semibold uppercase tracking-wider text-veyro-subtle">
+              {product.subcategoryTag || product.category}
+            </span>
+            {product.material.toLowerCase().includes("240gsm") && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-neutral-100 text-neutral-600 border border-neutral-200/90 shadow-2xs">
+                240 GSM
+              </span>
+            )}
+          </div>
+          {product.colorHex && (
+            <span
+              className="h-3 w-3 rounded-full border border-black/10 shrink-0"
+              style={{ backgroundColor: product.colorHex }}
+              title={product.colorName}
+            />
+          )}
+        </div>
+
+        {/* Title */}
+        <h4 className="mt-1 text-xs sm:text-sm font-semibold tracking-tight text-veyro-black group-hover:text-neutral-800 line-clamp-1">
+          <Link href={`/product/${product.slug}`} className="focus:outline-none">
+            {product.name}
+          </Link>
+        </h4>
+
+        {/* Material Spec */}
+        <span className="text-xs text-veyro-subtle line-clamp-1 mt-0.5">
+          {product.material.split(",")[0]}
+        </span>
+
+        {/* Price Strip */}
+        <div className="mt-2 flex items-center gap-2">
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="text-xs text-veyro-subtle line-through font-mono">
+              {formatPrice(product.originalPrice)}
+            </span>
+          )}
+          <span className="text-sm sm:text-sm font-bold text-veyro-black font-mono">
+            {formatPrice(product.price)}
+          </span>
+          {product.originalPrice && product.originalPrice > product.price && discountPercent && (
+            <span className="text-2xs font-bold text-veyro-accent font-mono">
+              {discountPercent}% OFF
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }

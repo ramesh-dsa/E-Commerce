@@ -664,98 +664,11 @@ export function FootwearCatalog() {
                     delay={cardDelay}
                     amount={0.05}
                   >
-                    <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl h-full">
-                    {/* Image Stage Container */}
-                    <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-veyro-surface-alt transition-colors duration-300">
-                      <Link
-                        href={`/product/${product.slug}`}
-                        className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
-                        aria-label={product.name}
-                      >
-                        {/* Primary Image */}
-                        <Image
-                          src={product.imageUrl}
-                          alt={product.name}
-                          fill
-                          quality={80}
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108"
-                        />
-
-                        {/* Secondary Angle / Macro Photo on Hover */}
-                        {product.secondaryImageUrl && (
-                          <Image
-                            src={product.secondaryImageUrl}
-                            alt={`${product.name} macro view`}
-                            fill
-                            quality={80}
-                            loading="lazy"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
-                          />
-                        )}
-                      </Link>
-
-                      {/* Top Badges (Left) */}
-                      {product.badge && (
-                        <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
-                          <Badge
-                            variant={
-                              product.badge === "SALE"
-                                ? "sale"
-                                : product.badge === "NEW"
-                                ? "dark"
-                                : "default"
-                            }
-                          >
-                            {product.badge}
-                          </Badge>
-                        </div>
-                      )}
-
-                      {/* Wishlist Heart Button (Right) */}
-                      <WishlistButton product={product} isWishlisted={isWishlisted} />
-
-                    </div>
-
-                    {/* Metadata Stage */}
-                    <div className="pt-3.5 flex flex-col flex-grow">
-                      {/* Subcategory & Colorway */}
-                      <div className="flex items-center justify-between text-xs font-medium text-veyro-subtle uppercase tracking-wider mb-1">
-                        <span>{product.subcategoryTag} Sneaker</span>
-                        <span>{product.colorName}</span>
-                      </div>
-
-                      {/* Product Name */}
-                      <h3 className="text-sm font-bold tracking-tight text-veyro-black group-hover:text-neutral-600 transition-colors leading-snug">
-                        <Link href={`/product/${product.slug}`}>
-                          {product.name}
-                        </Link>
-                      </h3>
-
-                      {/* Material Spec */}
-                      <p className="text-xs text-neutral-500 truncate mt-0.5">
-                        {product.material}
-                      </p>
-
-                      {/* Pricing Block */}
-                      <div className="mt-2.5 pt-2 border-t border-veyro-border-light flex items-baseline gap-2">
-                        {product.originalPrice && product.originalPrice > product.price && (
-                          <span className="text-xs text-veyro-subtle line-through font-mono">
-                            {formatPrice(product.originalPrice)}
-                          </span>
-                        )}
-                        <span className="text-sm sm:text-base font-black text-veyro-black font-mono">
-                          {formatPrice(product.price)}
-                        </span>
-                        {discountPercent && (
-                          <span className="text-[10.5px] font-extrabold text-veyro-accent font-mono ml-auto">
-                            {discountPercent}% OFF
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </article>
+                    <FootwearCatalogCard
+                      product={product}
+                      isWishlisted={isWishlisted}
+                      discountPercent={discountPercent}
+                    />
                   </ScrollReveal>
                 </React.Fragment>
               );
@@ -960,5 +873,128 @@ export function FootwearCatalog() {
         </div>
       )}
     </div>
+  );
+}
+
+interface FootwearCatalogCardProps {
+  product: Product;
+  isWishlisted: boolean;
+  discountPercent: number | null;
+}
+
+function FootwearCatalogCard({
+  product,
+  isWishlisted,
+  discountPercent,
+}: FootwearCatalogCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  return (
+    <article className="group flex flex-col relative isolate transition-transform duration-300 ease-out hover:-translate-y-1.5 rounded-2xl h-full">
+      {/* Image Stage Container */}
+      <div className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200/90 border border-neutral-300/40 transition-colors duration-300">
+        <Link
+          href={`/product/${product.slug}`}
+          className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-veyro-black"
+          aria-label={product.name}
+        >
+          {/* Active skeleton shimmer placeholder before image is decoded or when loading/offline */}
+          {!imageLoaded && (
+            <div
+              className="absolute inset-0 z-10 overflow-hidden bg-neutral-200/90"
+              aria-hidden="true"
+            >
+              <div className="absolute inset-0 animate-skeleton-shimmer skeleton-shimmer-sweep motion-reduce:animate-none pointer-events-none" />
+            </div>
+          )}
+
+          {/* Primary Image */}
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            quality={85}
+            unoptimized={true}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            onLoad={() => setImageLoaded(true)}
+            className={`object-cover object-center transition-transform duration-500 ease-out group-hover:scale-108 transition-opacity duration-500 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+
+          {/* Secondary Angle / Macro Photo on Hover */}
+          {product.secondaryImageUrl && (
+            <Image
+              src={product.secondaryImageUrl}
+              alt={`${product.name} macro view`}
+              fill
+              quality={80}
+              loading="lazy"
+              unoptimized={true}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover object-center opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+            />
+          )}
+        </Link>
+
+        {/* Top Badges (Left) */}
+        {product.badge && (
+          <div className="absolute top-2.5 left-2.5 pointer-events-none z-10">
+            <Badge
+              variant={
+                product.badge === "SALE"
+                  ? "sale"
+                  : product.badge === "NEW"
+                  ? "dark"
+                  : "default"
+              }
+            >
+              {product.badge}
+            </Badge>
+          </div>
+        )}
+
+        {/* Wishlist Heart Button (Right) */}
+        <WishlistButton product={product} isWishlisted={isWishlisted} />
+      </div>
+
+      {/* Metadata Stage */}
+      <div className="pt-3.5 flex flex-col flex-grow">
+        {/* Subcategory & Colorway */}
+        <div className="flex items-center justify-between text-xs font-medium text-veyro-subtle uppercase tracking-wider mb-1">
+          <span>{product.subcategoryTag} Sneaker</span>
+          <span>{product.colorName}</span>
+        </div>
+
+        {/* Product Name */}
+        <h3 className="text-sm font-bold tracking-tight text-veyro-black group-hover:text-neutral-600 transition-colors leading-snug">
+          <Link href={`/product/${product.slug}`}>
+            {product.name}
+          </Link>
+        </h3>
+
+        {/* Material Spec */}
+        <p className="text-xs text-neutral-500 truncate mt-0.5">
+          {product.material}
+        </p>
+
+        {/* Pricing Block */}
+        <div className="mt-2.5 pt-2 border-t border-veyro-border-light flex items-baseline gap-2">
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="text-xs text-veyro-subtle line-through font-mono">
+              {formatPrice(product.originalPrice)}
+            </span>
+          )}
+          <span className="text-sm sm:text-base font-black text-veyro-black font-mono">
+            {formatPrice(product.price)}
+          </span>
+          {discountPercent && (
+            <span className="text-[10.5px] font-extrabold text-veyro-accent font-mono ml-auto">
+              {discountPercent}% OFF
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
